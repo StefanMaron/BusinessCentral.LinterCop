@@ -3,7 +3,7 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Immutable;
 
-namespace BusinessCentral.LinterCop.Readability
+namespace BusinessCentral.LinterCop.Design
 {
   [DiagnosticAnalyzer]
   public class Rule0001FlowFieldsShouldNotBeEditable : DiagnosticAnalyzer

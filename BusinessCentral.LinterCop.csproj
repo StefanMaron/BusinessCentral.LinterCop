@@ -38,17 +38,21 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CodeAnalysis">
-      <HintPath>lib\Microsoft.CodeAnalysis.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis, Version=2.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.CodeAnalysis.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Dynamics.Nav.Analyzers.Common">
-      <HintPath>lib\Microsoft.Dynamics.Nav.Analyzers.Common.dll</HintPath>
+    <Reference Include="Microsoft.Dynamics.Nav.Analyzers.Common, Version=7.4.7.37768, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.Analyzers.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis">
-      <HintPath>lib\Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
+    <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis, Version=7.4.7.37768, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces">
-      <HintPath>lib\Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
+    <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces, Version=7.4.7.37768, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable">
@@ -60,6 +64,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Design\Rule0001FlowFieldsShouldNotBeEditable.cs" />
     <Compile Include="LinterCopAnalyzers.Designer.cs" />
     <Compile Include="LinterCopAnalyzers.Generated.cs" />
     <Compile Include="LinterCopDiagnosticsAnalyzerBase.cs" />
@@ -69,7 +74,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Design\Rule0001FlowFieldsShouldNotBeEditable.cs" />
+    <Compile Include="Design\Rule0002CommitMustBeExplainedByComment.cs" />
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
