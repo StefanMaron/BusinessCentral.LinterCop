@@ -20,6 +20,7 @@ namespace BusinessCentral.LinterCop.Design
             {
                 SymbolKind.GlobalVariable,
                 SymbolKind.LocalVariable,
+                SymbolKind.Property,
                 SymbolKind.Method
             });
 
@@ -57,17 +58,20 @@ namespace BusinessCentral.LinterCop.Design
                         }
                     }
                 }
-
-                if (IsObjectType(method.ReturnValueSymbol.ReturnType.NavTypeKind))
+                try
                 {
-                    declariation = GetDeclaration(method.ReturnValueSymbol);
-
-                    if (Regex.IsMatch(declariation, @"\d+"))
+                    if (IsObjectType(method.ReturnValueSymbol.ReturnType.NavTypeKind))
                     {
-                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, method.ReturnValueSymbol.GetLocation(), new object[] { declariation }));
+                        declariation = GetDeclaration(method.ReturnValueSymbol);
+
+                        if (Regex.IsMatch(declariation, @"\d+"))
+                        {
+                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, method.ReturnValueSymbol.GetLocation(), new object[] { declariation }));
+                        }
                     }
                 }
-
+                catch (System.NullReferenceException)
+                { }
 
             }
             else
