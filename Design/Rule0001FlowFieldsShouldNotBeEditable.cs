@@ -8,7 +8,7 @@ namespace BusinessCentral.LinterCop.Design
   [DiagnosticAnalyzer]
   public class Rule0001FlowFieldsShouldNotBeEditable : DiagnosticAnalyzer
   {
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0001FlowFieldsShouldNotBeEditable, DiagnosticDescriptors.Rule0001FlowFieldsShouldNotBeEditable);
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0001FlowFieldsShouldNotBeEditable);
 
 
     public override void Initialize(AnalysisContext context) => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.AnalyzeFlowFieldEditable), SymbolKind.Field);

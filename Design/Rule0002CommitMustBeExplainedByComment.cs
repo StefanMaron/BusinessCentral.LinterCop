@@ -9,7 +9,7 @@ namespace BusinessCentral.LinterCop.Design
   [DiagnosticAnalyzer]
   public class Rule0002CommitMustBeExplainedByComment : DiagnosticAnalyzer
   {
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0002CommitMustBeExplainedByComment, DiagnosticDescriptors.Rule0002CommitMustBeExplainedByComment);
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0002CommitMustBeExplainedByComment);
 
     public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckCommitForExplainingComment), OperationKind.InvocationExpression);
 
@@ -18,7 +18,6 @@ namespace BusinessCentral.LinterCop.Design
         IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
         if (operation.TargetMethod.Name.ToUpper() == "COMMIT")
         {
-                //if (operation.Syntax.)
                 foreach (SyntaxTrivia trivia in operation.Syntax.Parent.GetLeadingTrivia())
                 {
                     if (trivia.IsKind(SyntaxKind.LineCommentTrivia))

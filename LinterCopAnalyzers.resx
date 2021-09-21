@@ -138,4 +138,13 @@
   <data name="Rule0002CommitMustBeExplainedByCommentTitle" xml:space="preserve">
     <value>Commit() needs a comment to justify its existance. Either a leading or a trailing comment.</value>
   </data>
+  <data name="Rule0003DoNotUseObjectIDsInVariablesOrPropertiesDescription" xml:space="preserve">
+    <value>Do not use an Object ID for properties or variables declaration.</value>
+  </data>
+  <data name="Rule0003DoNotUseObjectIDsInVariablesOrPropertiesFormat" xml:space="preserve">
+    <value>Do not use an Object ID for properties or variables declaration. {0}</value>
+  </data>
+  <data name="Rule0003DoNotUseObjectIDsInVariablesOrPropertiesTitle" xml:space="preserve">
+    <value>Do not use an Object ID for properties or variables declaration.</value>
+  </data>
 </root>
