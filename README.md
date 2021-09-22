@@ -11,6 +11,6 @@ For now the only way to run the checks is, to run the al compiler manually via p
 
 |Id| Title|Default Severity|
 |---|---|---|
-|LC0001|FlowFields should not be editable.|Warining|
+|LC0001|FlowFields should not be editable.|Warning|
 |LC0002|Commit() needs a comment to justify its existance. Either a leading or a trailing comment.|Warning|
 |LC0003|Do not use an Object ID for properties or variables declaration. |Warning|
