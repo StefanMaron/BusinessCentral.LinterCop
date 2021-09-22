@@ -147,4 +147,13 @@
   <data name="Rule0003DoNotUseObjectIDsInVariablesOrPropertiesTitle" xml:space="preserve">
     <value>Do not use an Object ID for properties or variables declaration.</value>
   </data>
+  <data name="Rule0004LookupPageIdAndDrillDownPageIdDescription" xml:space="preserve">
+    <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table</value>
+  </data>
+  <data name="Rule0004LookupPageIdAndDrillDownPageIdFormat" xml:space="preserve">
+    <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table</value>
+  </data>
+  <data name="Rule0004LookupPageIdAndDrillDownPageIdTitle" xml:space="preserve">
+    <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table</value>
+  </data>
 </root>
