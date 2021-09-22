@@ -18,27 +18,18 @@ namespace BusinessCentral.LinterCop.Design
         {
             context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForLookupPageIdAndDrilldownPageId), new SymbolKind[]
             {
-                SymbolKind.Page,
-                SymbolKind.Table,
-                SymbolKind.Property
+                SymbolKind.Page
             });
         }
 
         private void CheckForLookupPageIdAndDrilldownPageId(SymbolAnalysisContext context)
         {
-            ISymbol symbol = context.Symbol;
+            if (context.Symbol.Kind != SymbolKind.Page)
+                return;
 
-            switch (symbol.Kind) {
-                case SymbolKind.Page:
-                    IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)symbol;
-                    if (pageTypeSymbol.PageType == PageTypeKind.List && pageTypeSymbol.RelatedTable != null)
-                        CheckTable(pageTypeSymbol.RelatedTable, ref context);
-
-                    break;
-
-                default:
-                    return;
-            }
+            IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)context.Symbol;
+            if (pageTypeSymbol.PageType == PageTypeKind.List && pageTypeSymbol.RelatedTable != null)
+                CheckTable(pageTypeSymbol.RelatedTable, ref context);
         }
 
         private void CheckTable(ITableTypeSymbol table, ref SymbolAnalysisContext context) {
