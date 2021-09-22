@@ -42,12 +42,17 @@ namespace BusinessCentral.LinterCop.Design
         }
 
         private void CheckTable(ITableTypeSymbol table, ref SymbolAnalysisContext context) {
+            bool drillDownExists = false, lookupPageExists = false;
+
             foreach (IPropertySymbol property in table.Properties) {
-                if (property.PropertyKind == PropertyKind.DrillDownPageId ||
-                    property.PropertyKind == PropertyKind.LookupPageId) {
-                    return;
-                }
+                if (property.PropertyKind == PropertyKind.DrillDownPageId)
+                    drillDownExists = true;
+                if (property.PropertyKind == PropertyKind.LookupPageId)
+                    lookupPageExists = true;
             }
+
+            if (drillDownExists && lookupPageExists)
+                return;
 
             context.ReportDiagnostic(
                 Diagnostic.Create(
