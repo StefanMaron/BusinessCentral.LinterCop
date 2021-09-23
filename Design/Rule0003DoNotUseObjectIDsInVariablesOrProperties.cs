@@ -36,7 +36,7 @@ namespace BusinessCentral.LinterCop.Design
                 IVariableSymbol variable = (IVariableSymbol)symbol;
                 if (IsObjectType(variable.Type.NavTypeKind))
                 {
-                    if (Regex.IsMatch(declariation, @"\d+"))
+                    if (Regex.IsMatch(declariation, @":.*\d+"))
                     {
                         ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Symbol.GetLocation(), new object[] { declariation }));
                     }
@@ -52,7 +52,7 @@ namespace BusinessCentral.LinterCop.Design
                     {
                         declariation = GetDeclaration(member);
 
-                        if (Regex.IsMatch(declariation, @"\d+"))
+                        if (Regex.IsMatch(declariation, @":.*\d+"))
                         {
                             ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, member.GetLocation(), new object[] { declariation }));
                         }
@@ -63,8 +63,8 @@ namespace BusinessCentral.LinterCop.Design
                     if (IsObjectType(method.ReturnValueSymbol.ReturnType.NavTypeKind))
                     {
                         declariation = GetDeclaration(method.ReturnValueSymbol);
-
-                        if (Regex.IsMatch(declariation, @"\d+"))
+                    
+                        if (Regex.IsMatch(declariation, @":.*\d+"))
                         {
                             ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, method.ReturnValueSymbol.GetLocation(), new object[] { declariation }));
                         }
@@ -73,6 +73,17 @@ namespace BusinessCentral.LinterCop.Design
                 catch (System.NullReferenceException)
                 { }
 
+            }
+            else if (symbol.Kind == SymbolKind.Property)
+            {
+                IPropertySymbol property = (IPropertySymbol)symbol;
+                if (IsPropertyObjectType(property.PropertyKind))
+                {
+                    if (Regex.IsMatch(declariation, @"\d+"))
+                    {
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Symbol.GetLocation(), new object[] { declariation }));
+                    }
+                }
             }
             else
             {
@@ -87,6 +98,12 @@ namespace BusinessCentral.LinterCop.Design
         {
             return symbol.Location.SourceTree.GetText(CancellationToken.None).GetSubText(symbol.DeclaringSyntaxReference.Span).ToString();
         }
+
+        private static bool IsPropertyObjectType(PropertyKind type)
+        {
+            return (new PropertyKind[] { PropertyKind.CardPageId, PropertyKind.LookupPageId, PropertyKind.RunObject,PropertyKind.SourceTable,PropertyKind.TableNo,PropertyKind.DrillDownPageId }).Contains(type);
+        }
+
 
         private static bool IsObjectType(NavTypeKind type)
         {
