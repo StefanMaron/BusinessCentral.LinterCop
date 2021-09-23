@@ -13,6 +13,13 @@
 2. Add `"${analyzerfolder}BusinessCentral.LinterCop.dll"` to the `"al.codeAnalyzers"` in either user, workspace or folder settings
 3. Be aware that folder settings overwrite workspace and workspace overwrite user settings. If you have codecops defined in folder settings, the codecops defined in the user settings wont be applied
 
+### BCContainerhelper `[Only in preview of bccontainerhelper]`
+
+For manual compile you can use the `Compile-AppInBcContainer` command and pass the path to the `BusinessCentral.LinterCop.dll` in via the parameter `-CustomCodeCops`
+
+If you are using `Run-ALPipeline` in you build pipelines you can also pass in the `BusinessCentral.LinterCop.dll` in via the parameter `-CustomCodeCops`
+
+Be aware tho, the `BusinessCentral.LinterCop.dll` needs to be placed in a folder shared with the container.
 
 ## Rules
 
