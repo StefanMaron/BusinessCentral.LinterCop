@@ -1,5 +1,9 @@
 # BusinessCentral.LinterCop
 
+## Please Contribute!
+
+The Linter is not finished yet (and probably never will be :D ) If you have any rule on mind that would be nice to be covered, **please submit it as an issue!**. This way we can build value for all of us. If you want to write the rule yourself you can of course also submit a pull request ;)
+
 ## How to use
 
 ### Manual Compile
@@ -28,3 +32,11 @@ Be aware tho, the `BusinessCentral.LinterCop.dll` needs to be placed in a folder
 |LC0001|FlowFields should not be editable.|Warning|
 |LC0002|Commit() needs a comment to justify its existance. Either a leading or a trailing comment.|Warning|
 |LC0003|Do not use an Object ID for properties or variables declaration. |Warning|
+
+## Can I disable certain rules?
+
+Since the linter integrates with the AL compiler directly, you can use the custom rule sets like you are used to from the other code cops.  
+https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-rule-set-syntax-for-code-analysis-tools
+
+Of cource you can also use pragmas for disabling a rule just for a certain place in code.  
+https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/directives/devenv-directive-pragma-warning
