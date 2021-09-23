@@ -12,7 +12,7 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0004LookupPageIdAndDrillDownPageId : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0004LookupPageIdAndDrillDownPageId);
 
         public override void Initialize(AnalysisContext context)
         {
