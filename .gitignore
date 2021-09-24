@@ -2,3 +2,9 @@
 /bin
 /lib
 /obj
+/packages/System.Composition.AttributedModel.5.0.1/lib
+/Resources/Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll
+/Resources/Microsoft.Dynamics.Nav.CodeAnalysis.dll
+/Resources/Microsoft.Dynamics.Nav.Analyzers.Common.dll
+/Resources/Microsoft.CodeAnalysis.dll
+/packages/System.Composition.AttributedModel.5.0.1

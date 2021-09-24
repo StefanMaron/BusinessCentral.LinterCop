@@ -24,9 +24,9 @@ namespace BusinessCentral.LinterCop
     internal static IdentifierNameSyntax GetIdentifierNameSyntax(
       this SyntaxNodeAnalysisContext context)
     {
-      if (context.Node.IsKind(SyntaxKind.IdentifierName))
+        if (context.Node.IsKind(SyntaxKind.IdentifierName))
         return (IdentifierNameSyntax) context.Node;
-      return !context.Node.IsKind(SyntaxKind.IdentifierNameOrEmpty) ? (IdentifierNameSyntax) null : ((IdentifierNameOrEmptySyntax) context.Node).IdentifierName;
+        return !context.Node.IsKind(SyntaxKind.IdentifierNameOrEmpty) ? (IdentifierNameSyntax) null : ((IdentifierNameOrEmptySyntax) context.Node).IdentifierName;
     }
 
     internal static bool TryGetSymbolFromIdentifier(
@@ -35,13 +35,13 @@ namespace BusinessCentral.LinterCop
       SymbolKind symbolKind,
       out ISymbol symbol)
     {
-      symbol = (ISymbol) null;
-      SymbolInfo symbolInfo = syntaxNodeAnalysisContext.SemanticModel.GetSymbolInfo((ExpressionSyntax) identifierName, new CancellationToken());
-      ISymbol symbol1 = symbolInfo.Symbol;
-      if ((symbol1 != null ? (symbol1.Kind != symbolKind ? 1 : 0) : 1) != 0)
+        symbol = (ISymbol) null;
+        SymbolInfo symbolInfo = syntaxNodeAnalysisContext.SemanticModel.GetSymbolInfo((ExpressionSyntax) identifierName, new CancellationToken());
+        ISymbol symbol1 = symbolInfo.Symbol;
+        if ((symbol1 != null ? (symbol1.Kind != symbolKind ? 1 : 0) : 1) != 0)
         return false;
-      symbol = symbolInfo.Symbol;
-      return true;
+        symbol = symbolInfo.Symbol;
+        return true;
     }
   }
 }
