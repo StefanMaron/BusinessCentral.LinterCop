@@ -33,6 +33,7 @@ Be aware tho, the `BusinessCentral.LinterCop.dll` needs to be placed in a folder
 |LC0002|Commit() needs a comment to justify its existance. Either a leading or a trailing comment.|Warning|
 |LC0003|Do not use an Object ID for properties or variables declaration. |Warning|
 |LC0004|"DrillDownPageId" and "LookupPageId" must be filled in table when table is used in list page|Warning|
+|LC0005|The casing of variable/method usage must allign with the definition|Warning|
 
 ## Can I disable certain rules?
 
