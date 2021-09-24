@@ -54,7 +54,7 @@ namespace BusinessCentral.LinterCop.Design
                     };
                 }   
                 
-                if (ctx.Node.ToString().Trim('"') != property.ValueText && property.PropertyKind != PropertyKind.Permissions)
+                if (ctx.Node.ToString().Trim('"') != property.ValueText && property.PropertyKind != PropertyKind.Permissions && property.PropertyKind != PropertyKind.AccessByPermission)
                     ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), property.ValueText }));
             }
 
