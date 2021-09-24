@@ -16,99 +16,49 @@ namespace BusinessCentral.LinterCop.Design
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForObjectIDsInVariablesOrProperties), new SymbolKind[]
-            {
-                SymbolKind.GlobalVariable,
-                SymbolKind.LocalVariable,
-                SymbolKind.Property,
-                SymbolKind.Method
-            });
+            context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.CheckForObjectIDsInVariablesOrProperties), SyntaxKind.ObjectReference);
 
         }
-
-        private void CheckForObjectIDsInVariablesOrProperties(SymbolAnalysisContext ctx)
+        private void CheckForObjectIDsInVariablesOrProperties(SyntaxNodeAnalysisContext ctx)
         {
-            ISymbol symbol = (ISymbol)ctx.Symbol;
-            string declariation = GetDeclaration(symbol);
-
-            if (symbol.Kind == SymbolKind.GlobalVariable || symbol.Kind == SymbolKind.LocalVariable)
+            if (ctx.ContainingSymbol.Kind == SymbolKind.LocalVariable || ctx.ContainingSymbol.Kind == SymbolKind.GlobalVariable)
             {
-                IVariableSymbol variable = (IVariableSymbol)symbol;
-                if (IsObjectType(variable.Type.NavTypeKind))
-                {
-                    if (Regex.IsMatch(declariation, @":.*\d+"))
-                    {
-                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Symbol.GetLocation(), new object[] { declariation }));
-                    }
-                }
+                IVariableSymbol variable = (IVariableSymbol)ctx.ContainingSymbol;
+                if (ctx.Node.ToString().Trim('"') != variable.Type.ToString().Replace(variable.Type.NavTypeKind.ToString(), "").Trim(' ', '"'))
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), variable.Type.ToString().Replace(variable.Type.NavTypeKind.ToString(),"").Trim(' ','"') }));
             }
-            else if (symbol.Kind == SymbolKind.Method)
+            if (ctx.ContainingSymbol.Kind == SymbolKind.Property)
             {
-                IMethodSymbol method = (IMethodSymbol)symbol;
+                IPropertySymbol property = (IPropertySymbol)ctx.ContainingSymbol;
+                if (ctx.Node.ToString().Trim('"') != property.ValueText)
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), property.ValueText }));
+            }
 
-                foreach (IParameterSymbol member in method.Parameters)
+            if (ctx.ContainingSymbol.Kind == SymbolKind.Method)
+            {
+                IMethodSymbol method = (IMethodSymbol)ctx.ContainingSymbol;
+
+                foreach (IParameterSymbol parameter in method.Parameters)
                 {
-                    if (IsObjectType(member.ParameterType.NavTypeKind))
+                    if (ctx.Node.GetLocation().SourceSpan.End == parameter.DeclaringSyntaxReference.GetSyntax(CancellationToken.None).Span.End)
                     {
-                        declariation = GetDeclaration(member);
-
-                        if (Regex.IsMatch(declariation, @":.*\d+"))
-                        {
-                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, member.GetLocation(), new object[] { declariation }));
-                        }
-                    }
+                        if (ctx.Node.ToString().Trim('"') != parameter.ParameterType.ToString().Replace(parameter.ParameterType.NavTypeKind.ToString(), "").Trim(' ', '"'))
+                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), parameter.ParameterType.ToString().Replace(parameter.ParameterType.NavTypeKind.ToString(), "").Trim(' ', '"') }));
+                    }                    
                 }
                 try
                 {
-                    if (IsObjectType(method.ReturnValueSymbol.ReturnType.NavTypeKind))
+                    IReturnValueSymbol returnValue = (IReturnValueSymbol)method.ReturnValueSymbol;
+
+                    if (ctx.Node.GetLocation().SourceSpan.End == returnValue.DeclaringSyntaxReference.GetSyntax(CancellationToken.None).Span.End)
                     {
-                        declariation = GetDeclaration(method.ReturnValueSymbol);
-                    
-                        if (Regex.IsMatch(declariation, @":.*\d+"))
-                        {
-                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, method.ReturnValueSymbol.GetLocation(), new object[] { declariation }));
-                        }
+                        if (ctx.Node.ToString().Trim('"') != returnValue.ReturnType.ToString().Replace(returnValue.ReturnType.NavTypeKind.ToString(), "").Trim(' ', '"'))
+                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), returnValue.ReturnType.ToString().Replace(returnValue.ReturnType.NavTypeKind.ToString(), "").Trim(' ', '"') }));
                     }
                 }
                 catch (System.NullReferenceException)
                 { }
-
-            }
-            else if (symbol.Kind == SymbolKind.Property)
-            {
-                IPropertySymbol property = (IPropertySymbol)symbol;
-                if (IsPropertyObjectType(property.PropertyKind))
-                {
-                    if (Regex.IsMatch(declariation, @"\d+"))
-                    {
-                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Symbol.GetLocation(), new object[] { declariation }));
-                    }
-                }
-            }
-            else
-            {
-                if (Regex.IsMatch(declariation, @"\d+"))
-                {
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Symbol.GetLocation(), new object[] { declariation }));
-                }
             }
         }
-
-        private static string GetDeclaration(ISymbol symbol)
-        {
-            return symbol.Location.SourceTree.GetText(CancellationToken.None).GetSubText(symbol.DeclaringSyntaxReference.Span).ToString();
-        }
-
-        private static bool IsPropertyObjectType(PropertyKind type)
-        {
-            return (new PropertyKind[] { PropertyKind.CardPageId, PropertyKind.LookupPageId, PropertyKind.RunObject,PropertyKind.SourceTable,PropertyKind.TableNo,PropertyKind.DrillDownPageId }).Contains(type);
-        }
-
-
-        private static bool IsObjectType(NavTypeKind type)
-        {
-            return (new NavTypeKind[] { NavTypeKind.Record, NavTypeKind.Codeunit, NavTypeKind.Enum, NavTypeKind.Page, NavTypeKind.Query, NavTypeKind.Report, NavTypeKind.TestPage, NavTypeKind.XmlPort }).Contains(type);
-        }
-    }
-    
+    }    
 }

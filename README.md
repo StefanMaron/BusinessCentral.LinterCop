@@ -2,7 +2,7 @@
 
 ## Please Contribute!
 
-The Linter is not finished yet (and probably never will be :D ) If you have any rule on mind that would be nice to be covered, **please start a new discussion!** then we can maybe sharpen the rule a bit if necessary and I will create an issue afterwards. This way we can build value for all of us. If you want to write the rule yourself you can of course also submit a pull request ;)
+The Linter is not finished yet (and probably never will be :D ) If you have any rule on mind that would be nice to be covered, **please start a new [discussion](https://github.com/StefanMaron/BusinessCentral.LinterCop/discussions)!** then we can maybe sharpen the rule a bit if necessary and I will create an issue afterwards. This way we can build value for all of us. If you want to write the rule yourself you can of course also submit a pull request ;)
 
 ## How to use
 
