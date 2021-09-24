@@ -15,36 +15,38 @@ namespace BusinessCentral.LinterCop.Design
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0004LookupPageIdAndDrillDownPageId);
 
         public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForLookupPageIdAndDrilldownPageId), new SymbolKind[]
-            {
-                SymbolKind.Page
-            });
-        }
+            => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForLookupPageIdAndDrilldownPageId), SymbolKind.Page);
 
         private void CheckForLookupPageIdAndDrilldownPageId(SymbolAnalysisContext context)
         {
-            if (context.Symbol.Kind != SymbolKind.Page)
-                return;
-
             IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)context.Symbol;
             if (pageTypeSymbol.PageType == PageTypeKind.List && pageTypeSymbol.RelatedTable != null)
                 CheckTable(pageTypeSymbol.RelatedTable, ref context);
         }
 
         private void CheckTable(ITableTypeSymbol table, ref SymbolAnalysisContext context) {
+            if (!IsObjectInAccess(table)) return;
             bool exists = table.Properties.Where(e => e.PropertyKind == PropertyKind.DrillDownPageId || e.PropertyKind == PropertyKind.LookupPageId).Count() == 2;
             if (exists) return;
 
             context.ReportDiagnostic(
                 Diagnostic.Create(
                     DiagnosticDescriptors.Rule0004LookupPageIdAndDrillDownPageId,
-                    context.Symbol.GetLocation(),
-                    new object[] { GetDeclaration(table) }));
+                    table.GetLocation(),
+                    new object[] { GetDeclaration(table), table.Name, context.Symbol.Name }));
         }
 
         private static string GetDeclaration(ISymbol symbol)
             => symbol.Location.SourceTree.GetText(CancellationToken.None).GetSubText(symbol.DeclaringSyntaxReference.Span).ToString();
+
+        private static bool IsObjectInAccess(ISymbol symbol) {
+            try {
+                GetDeclaration(symbol);
+                return true;
+            } catch(Exception) {
+                return false;
+            }
+        }
     }
     
 }
