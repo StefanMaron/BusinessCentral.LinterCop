@@ -40,31 +40,34 @@
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=2.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.CodeAnalysis.dll</HintPath>
+      <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.CodeAnalysis.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Dynamics.Nav.Analyzers.Common, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Dynamics.Nav.Analyzers.Common, Version=7.4.7.43721, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.Analyzers.Common.dll</HintPath>
+      <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.Analyzers.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis, Version=7.4.7.37768, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis, Version=7.4.7.43721, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
+      <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces, Version=7.4.7.37768, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces, Version=7.4.7.43721, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
+      <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable">
-      <HintPath>lib\System.Collections.Immutable.dll</HintPath>
-    </Reference>
     <Reference Include="netstandard" />
-    <Reference Include="System.Composition.AttributedModel">
-      <HintPath>..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\System.Composition.AttributedModel.dll</HintPath>
+    <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Composition.AttributedModel, Version=1.0.35.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\System.Composition.AttributedModel.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Design\Rule0001FlowFieldsShouldNotBeEditable.cs" />
+    <Compile Include="Design\Rule0004LookupPageIdAndDrillDownPageId.cs" />
     <Compile Include="Design\Rule0003DoNotUseObjectIDsInVariablesOrProperties.cs" />
     <Compile Include="LinterCopAnalyzers.Designer.cs" />
     <Compile Include="LinterCopAnalyzers.Generated.cs" />
@@ -79,9 +82,13 @@
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="LinterCopAnalyzers.resx" />
+    <EmbeddedResource Include="LinterCopAnalyzers.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
