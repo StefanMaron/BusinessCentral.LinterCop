@@ -32,6 +32,7 @@ Be aware tho, the `BusinessCentral.LinterCop.dll` needs to be placed in a folder
 |LC0001|FlowFields should not be editable.|Warning|
 |LC0002|Commit() needs a comment to justify its existance. Either a leading or a trailing comment.|Warning|
 |LC0003|Do not use an Object ID for properties or variables declaration. |Warning|
+|LC0004|"DrillDownPageId" and "LookupPageId" must be filled in table when table is used in list page|Warning|
 
 ## Can I disable certain rules?
 
