@@ -16,7 +16,10 @@ namespace BusinessCentral.LinterCop.Design
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.CheckForObjectIDsInVariablesOrProperties), SyntaxKind.ObjectReference);
+            context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.CheckForObjectIDsInVariablesOrProperties), new SyntaxKind[] {
+                SyntaxKind.ObjectReference,
+                SyntaxKind.PermissionValue
+            });
 
         }
         private void CheckForObjectIDsInVariablesOrProperties(SyntaxNodeAnalysisContext ctx)
@@ -30,7 +33,28 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.ContainingSymbol.Kind == SymbolKind.Property)
             {
                 IPropertySymbol property = (IPropertySymbol)ctx.ContainingSymbol;
-                if (ctx.Node.ToString().Trim('"') != property.ValueText)
+
+                if (ctx.Node.Kind == SyntaxKind.PermissionValue)
+                {
+                    var nodes = ctx.Node.ChildNodesAndTokens().GetEnumerator();
+                   
+                    while (nodes.MoveNext())
+                    {
+                        if (nodes.Current.IsNode)
+                        {
+                            var subnodes = nodes.Current.ChildNodesAndTokens().GetEnumerator();
+
+                            while (subnodes.MoveNext())
+                            {                                
+                                if (subnodes.Current.Kind == SyntaxKind.ObjectId)
+                                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, nodes.Current.GetLocation(), new object[] { "", "the object name" }));
+                            };
+                        }
+
+                    };
+                }   
+                
+                if (ctx.Node.ToString().Trim('"') != property.ValueText && property.PropertyKind != PropertyKind.Permissions)
                     ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), property.ValueText }));
             }
 

@@ -142,7 +142,7 @@
     <value>Do not use an Object ID for properties or variables declaration.</value>
   </data>
   <data name="Rule0003DoNotUseObjectIDsInVariablesOrPropertiesFormat" xml:space="preserve">
-    <value>Do not use an Object ID for properties or variables declaration. Use "{1}" instead.</value>
+    <value>Do not use an Object ID for properties or variables declaration. Use {1} instead.</value>
   </data>
   <data name="Rule0003DoNotUseObjectIDsInVariablesOrPropertiesTitle" xml:space="preserve">
     <value>Do not use an Object ID for properties or variables declaration.</value>
