@@ -156,4 +156,13 @@
   <data name="Rule0004LookupPageIdAndDrillDownPageIdTitle" xml:space="preserve">
     <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table because it is used in list page</value>
   </data>
+  <data name="Rule0005VariableCasingShouldNotDIfferFromDeclarationDescription" xml:space="preserve">
+    <value>Wrong casing detected!</value>
+  </data>
+  <data name="Rule0005VariableCasingShouldNotDIfferFromDeclarationFormat" xml:space="preserve">
+    <value>Wrong casing detected! Use {0} instead.</value>
+  </data>
+  <data name="Rule0005VariableCasingShouldNotDIfferFromDeclarationTitle" xml:space="preserve">
+    <value>Wrong casing detected!</value>
+  </data>
 </root>
