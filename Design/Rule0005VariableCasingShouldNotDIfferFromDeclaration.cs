@@ -64,7 +64,7 @@ namespace BusinessCentral.LinterCop.Design
 
             if (OnlyDiffersInCasing(ctx.Operation.Syntax.ToString(), targetName))
             {
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Operation.Syntax.GetLocation(), new object[] { targetName, ctx.Operation.Syntax.Kind }));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Operation.Syntax.GetLocation(), new object[] { targetName, ""}));
                 return;
             }
 
@@ -74,7 +74,7 @@ namespace BusinessCentral.LinterCop.Design
         }
         private bool OnlyDiffersInCasing(string left, string right)
         {
-            return left.ToUpper() == right.ToUpper() && left != right;
+            return left.Trim('"').ToUpper() == right.Trim('"').ToUpper() && left.Trim('"') != right.Trim('"');
         }
 
   }
