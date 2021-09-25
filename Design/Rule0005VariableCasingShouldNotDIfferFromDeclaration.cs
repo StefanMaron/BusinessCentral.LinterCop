@@ -9,64 +9,73 @@ using System.Linq;
 
 namespace BusinessCentral.LinterCop.Design
 {
-  [DiagnosticAnalyzer]
-  public class Rule0005VariableCasingShouldNotDIfferFromDeclaration : DiagnosticAnalyzer
-  {
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration);
+    [DiagnosticAnalyzer]
+    public class Rule0005VariableCasingShouldNotDIfferFromDeclaration : DiagnosticAnalyzer
+    {
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration);
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.CheckForVariableWithCasingMismatch), SyntaxKind.IdentifierName);
-            context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForBuiltInMethodsWithCasingMismatch), OperationKind.InvocationExpression);
+            context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForBuiltInMethodsWithCasingMismatch), new OperationKind[] { 
+                OperationKind.InvocationExpression,
+                OperationKind.FieldAccess,
+                OperationKind.GlobalReferenceExpression,
+                OperationKind.LocalReferenceExpression,
+                OperationKind.ParameterReferenceExpression,
+                OperationKind.ReturnValueReferenceExpression
+            });
         }
 
         private void CheckForBuiltInMethodsWithCasingMismatch(OperationAnalysisContext ctx)
         {
-            IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
+            var targetName = "";
+            if (ctx.Operation.Kind == OperationKind.InvocationExpression)
+            {
+                IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
+                targetName = operation.TargetMethod.Name;
+            }
+            if (ctx.Operation.Kind == OperationKind.FieldAccess)
+            {
+                IFieldAccess operation = (IFieldAccess)ctx.Operation;
+                targetName = operation.FieldSymbol.Name;
+            }
+            if ( new object[] {
+                OperationKind.GlobalReferenceExpression,
+                OperationKind.LocalReferenceExpression,
+                OperationKind.ParameterReferenceExpression,
+                OperationKind.ReturnValueReferenceExpression }.Contains(ctx.Operation.Kind))
+            {
+                switch (ctx.Operation.Kind)
+                {
+                    case OperationKind.GlobalReferenceExpression:
+                        targetName = ((IGlobalReferenceExpression)ctx.Operation).GlobalVariable.Name;
+                        break;
+                    case OperationKind.LocalReferenceExpression:
+                        targetName = ((ILocalReferenceExpression)ctx.Operation).LocalVariable.Name;
+                        break;
+                    case OperationKind.ParameterReferenceExpression:
+                        targetName = ((IParameterReferenceExpression)ctx.Operation).Parameter.Name;
+                        break;
+                    case OperationKind.ReturnValueReferenceExpression:
+                        targetName = ((IReturnValueReferenceExpression)ctx.Operation).ReturnValue.Name;
+                        break;
+                }
+            }
 
-            var nodes = Array.Find(operation.Syntax.DescendantNodes().ToArray(), element => element.ToString().ToUpper() == operation.TargetMethod.Name.ToString().ToUpper() && element.ToString() != operation.TargetMethod.Name.ToString());
+            if (OnlyDiffersInCasing(ctx.Operation.Syntax.ToString(), targetName))
+            {
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Operation.Syntax.GetLocation(), new object[] { targetName, ctx.Operation.Syntax.Kind }));
+                return;
+            }
+
+            var nodes = Array.Find(ctx.Operation.Syntax.DescendantNodes((SyntaxNode e) => true).ToArray(), element => OnlyDiffersInCasing(element.ToString(), targetName));
             if (nodes != null)
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Operation.Syntax.GetLocation(), new object[] { operation.TargetMethod.Name, "" }));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Operation.Syntax.GetLocation(), new object[] { targetName, "" }));
         }
-        private void CheckForVariableWithCasingMismatch(SyntaxNodeAnalysisContext ctx)
+        private bool OnlyDiffersInCasing(string left, string right)
         {
-            List<ISymbol> vars = new List<ISymbol>();
+            return left.ToUpper() == right.ToUpper() && left != right;
+        }
 
-            if (ctx.ContainingSymbol.Kind != SymbolKind.Method)
-            {
-                return;
-            }
-            IMethodSymbol method = (IMethodSymbol)ctx.ContainingSymbol;
-            if (method.IsEvent || method.IsObsoleteRemoved || method.IsObsoletePending)
-            {
-                return;
-            }
-            IContainerSymbol currObject = (IContainerSymbol)method.ContainingSymbol;
-            while (currObject.Kind == SymbolKind.Field || currObject.Kind == SymbolKind.Control)
-                currObject = (IContainerSymbol)currObject.ContainingSymbol;
-
-            foreach (ISymbol symbol in currObject.GetMembers())
-            {
-                if (symbol.Kind == SymbolKind.GlobalVariable)
-                    vars.Add(symbol);
-            }
-            foreach (ISymbol symbol in method.LocalVariables)
-            {
-                    vars.Add(symbol);
-            }
-            foreach (ISymbol symbol in method.Parameters)
-            {
-                    vars.Add(symbol);
-            }
-            vars.Add(method.ReturnValueSymbol);
-
-            foreach (ISymbol variable in vars)
-            {
-                if (variable != null)
-                    if (ctx.Node.ToString().ToUpper() == variable.Name.ToUpper() && ctx.Node.ToString() != variable.Name.ToString())
-                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Node.GetLocation(), new object[] { variable.Name ,"" }));
-            }
-            
-    }
   }
 }
