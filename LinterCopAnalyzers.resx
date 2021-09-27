@@ -174,4 +174,13 @@
   <data name="Rule0006FieldNotAutoIncrementInTemporaryTableTitle" xml:space="preserve">
     <value>AutoIncrement fields are not possible in temporary tables!</value>
   </data>
+  <data name="Rule0007DataPerCompanyShouldAlwaysBeSetDescription" xml:space="preserve">
+    <value>DataPerCompany is missing!</value>
+  </data>
+  <data name="Rule0007DataPerCompanyShouldAlwaysBeSetFormat" xml:space="preserve">
+    <value>DataPerCompany is missing! {0}</value>
+  </data>
+  <data name="Rule0007DataPerCompanyShouldAlwaysBeSetTitle" xml:space="preserve">
+    <value>DataPerCompany is missing!</value>
+  </data>
 </root>

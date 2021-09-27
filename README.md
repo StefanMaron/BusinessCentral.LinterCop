@@ -35,6 +35,7 @@ Be aware tho, the `BusinessCentral.LinterCop.dll` needs to be placed in a folder
 |LC0004|"DrillDownPageId" and "LookupPageId" must be filled in table when table is used in list page|Warning|
 |LC0005|The casing of variable/method usage must allign with the definition|Warning|
 |LC0006|Fields with property "AutoIncrement" cannot be used in temporary table (TableType = Temporary).|Error|
+|LC0007|Every table needs to specify "DataPerCompany". Either true or false|Disabled|
 
 ## Can I disable certain rules?
 
