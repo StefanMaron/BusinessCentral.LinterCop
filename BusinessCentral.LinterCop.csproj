@@ -55,7 +55,7 @@
       <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Dynamics.Nav.CodeCop">
-      <HintPath>..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.CodeCop.dll</HintPath>
+      <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.CodeCop.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="netstandard" />
@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Design\Rule0001FlowFieldsShouldNotBeEditable.cs" />
+    <Compile Include="Design\Rule0006FieldNotAutoIncrementInTemporaryTable.cs" />
     <Compile Include="Design\Rule0005VariableCasingShouldNotDIfferFromDeclaration.cs" />
     <Compile Include="Design\Rule0004LookupPageIdAndDrillDownPageId.cs" />
     <Compile Include="Design\Rule0003DoNotUseObjectIDsInVariablesOrProperties.cs" />
