@@ -36,8 +36,7 @@ namespace BusinessCentral.LinterCop.Design
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             DiagnosticDescriptors.Rule0006PrimaryKeyNotAutoIncrementInTemporaryTable,
-                            propertySymbol.GetLocation(),
-                            new object[] { GetDeclaration(propertySymbol), field.Name }));
+                            propertySymbol.GetLocation()));
                 }
             }
         }

@@ -169,7 +169,7 @@
     <value>AutoIncrement primary key fields are not possible in temporary tables!</value>
   </data>
   <data name="Rule0006PrimaryKeyNotAutoIncrementInTemporaryTableFormat" xml:space="preserve">
-    <value>AutoIncrement primary key fields are not possible in temporary tables! Affected field: {1}</value>
+    <value>AutoIncrement primary key fields are not possible in temporary tables!</value>
   </data>
   <data name="Rule0006PrimaryKeyNotAutoIncrementInTemporaryTableTitle" xml:space="preserve">
     <value>AutoIncrement primary key fields are not possible in temporary tables!</value>
