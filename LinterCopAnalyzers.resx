@@ -178,7 +178,7 @@
     <value>DataPerCompany is missing!</value>
   </data>
   <data name="Rule0007DataPerCompanyShouldAlwaysBeSetFormat" xml:space="preserve">
-    <value>DataPerCompany is missing! {0}</value>
+    <value>DataPerCompany is missing!</value>
   </data>
   <data name="Rule0007DataPerCompanyShouldAlwaysBeSetTitle" xml:space="preserve">
     <value>DataPerCompany is missing!</value>
