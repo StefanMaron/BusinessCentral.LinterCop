@@ -27,8 +27,14 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.ContainingSymbol.Kind == SymbolKind.LocalVariable || ctx.ContainingSymbol.Kind == SymbolKind.GlobalVariable)
             {
                 IVariableSymbol variable = (IVariableSymbol)ctx.ContainingSymbol;
-                if (ctx.Node.ToString().Trim('"') != variable.Type.ToString().Replace(variable.Type.NavTypeKind.ToString(), "").Trim(' ', '"'))
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), variable.Type.ToString().Replace(variable.Type.NavTypeKind.ToString(),"").Trim(' ','"') }));
+                var correctName = variable.Type.ToString();
+                if (correctName.StartsWith(variable.Type.NavTypeKind.ToString()))
+                {
+                    correctName = correctName.Substring(variable.Type.NavTypeKind.ToString().Length +1).Trim(' ', '"');
+                }
+
+                if (ctx.Node.ToString().Trim('"') != correctName)
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
             }
             if (ctx.ContainingSymbol.Kind == SymbolKind.Property)
             {
