@@ -31,12 +31,13 @@ namespace BusinessCentral.LinterCop.Design
                 return;
 
             foreach (var field in table.PrimaryKey.Fields) {
-                if (field.GetProperty(PropertyKind.AutoIncrement) != null) {
+                IPropertySymbol propertySymbol = field.GetProperty(PropertyKind.AutoIncrement);
+                if (propertySymbol != null) {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             DiagnosticDescriptors.Rule0006PrimaryKeyNotAutoIncrementInTemporaryTable,
-                            field.GetLocation(),
-                            new object[] { GetDeclaration(field), field.Name }));
+                            propertySymbol.GetLocation(),
+                            new object[] { GetDeclaration(propertySymbol), field.Name }));
                 }
             }
         }
