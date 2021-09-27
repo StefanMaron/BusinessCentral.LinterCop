@@ -10,9 +10,9 @@ using System.Threading;
 namespace BusinessCentral.LinterCop.Design
 {
     [DiagnosticAnalyzer]
-    public class Rule0006PrimaryKeyNotAutoIncrementInTemporaryTable : DiagnosticAnalyzer
+    public class Rule0006FieldNotAutoIncrementInTemporaryTable : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0006PrimaryKeyNotAutoIncrementInTemporaryTable);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0006FieldNotAutoIncrementInTemporaryTable);
 
         public override void Initialize(AnalysisContext context)
             => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckTablePrimaryKeyIsNotAutoIncrement), SymbolKind.Table);
@@ -30,12 +30,15 @@ namespace BusinessCentral.LinterCop.Design
             if (table.TableType != TableTypeKind.Temporary)
                 return;
 
-            foreach (var field in table.PrimaryKey.Fields) {
+            foreach (var field in table.Fields) {
                 IPropertySymbol propertySymbol = field.GetProperty(PropertyKind.AutoIncrement);
-                if (propertySymbol != null) {
+                if(propertySymbol == null)
+                    continue;
+
+                if (propertySymbol?.ValueText != "0") {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
-                            DiagnosticDescriptors.Rule0006PrimaryKeyNotAutoIncrementInTemporaryTable,
+                            DiagnosticDescriptors.Rule0006FieldNotAutoIncrementInTemporaryTable,
                             propertySymbol.GetLocation()));
                 }
             }
