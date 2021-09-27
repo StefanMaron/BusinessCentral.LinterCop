@@ -25,7 +25,7 @@ namespace BusinessCentral.LinterCop.Design
         }
 
         private void CheckTable(ITableTypeSymbol table, ref SymbolAnalysisContext context) {
-            if (!IsObjectInAccess(table)) return;
+            if (!IsSymbolAccessible(table)) return;
             bool exists = table.Properties.Where(e => e.PropertyKind == PropertyKind.DrillDownPageId || e.PropertyKind == PropertyKind.LookupPageId).Count() == 2;
             if (exists) return;
 
@@ -39,7 +39,7 @@ namespace BusinessCentral.LinterCop.Design
         private static string GetDeclaration(ISymbol symbol)
             => symbol.Location.SourceTree.GetText(CancellationToken.None).GetSubText(symbol.DeclaringSyntaxReference.Span).ToString();
 
-        private static bool IsObjectInAccess(ISymbol symbol) {
+        private static bool IsSymbolAccessible(ISymbol symbol) {
             try {
                 GetDeclaration(symbol);
                 return true;

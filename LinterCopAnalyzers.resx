@@ -165,4 +165,13 @@
   <data name="Rule0005VariableCasingShouldNotDIfferFromDeclarationTitle" xml:space="preserve">
     <value>Wrong casing detected!</value>
   </data>
+  <data name="Rule0006PrimaryKeyNotAutoIncrementInTemporaryTableDescription" xml:space="preserve">
+    <value>AutoIncrement primary key fields are not possible in temporary tables!</value>
+  </data>
+  <data name="Rule0006PrimaryKeyNotAutoIncrementInTemporaryTableFormat" xml:space="preserve">
+    <value>AutoIncrement primary key fields are not possible in temporary tables! Affected field: {1}</value>
+  </data>
+  <data name="Rule0006PrimaryKeyNotAutoIncrementInTemporaryTableTitle" xml:space="preserve">
+    <value>AutoIncrement primary key fields are not possible in temporary tables!</value>
+  </data>
 </root>
