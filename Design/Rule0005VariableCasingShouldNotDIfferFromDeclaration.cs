@@ -36,8 +36,14 @@ namespace BusinessCentral.LinterCop.Design
             }
             if (ctx.Operation.Kind == OperationKind.FieldAccess)
             {
-                IFieldAccess operation = (IFieldAccess)ctx.Operation;
-                targetName = operation.FieldSymbol.Name;
+                try
+                {
+                    IFieldAccess operation = (IFieldAccess)ctx.Operation;
+                    targetName = operation.FieldSymbol.Name;
+                }
+                catch (System.InvalidCastException)
+                {
+                }      
             }
             if ( new object[] {
                 OperationKind.GlobalReferenceExpression,
