@@ -20,7 +20,7 @@ namespace BusinessCentral.LinterCop.Design
         private void CheckforMissionDataPerCompanyOnTables(SymbolAnalysisContext context)
         {
             ITableTypeSymbol table = (ITableTypeSymbol)context.Symbol;
-            if (table.TableType != TableTypeKind.Temporary)
+            if (table.TableType == TableTypeKind.Temporary)
                 return;
 
             if (!IsSymbolAccessible(table))
