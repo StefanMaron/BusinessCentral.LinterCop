@@ -12,7 +12,7 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0003DoNotUseObjectIDsInVariablesOrProperties : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties,DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -24,17 +24,18 @@ namespace BusinessCentral.LinterCop.Design
         }
         private void CheckForObjectIDsInVariablesOrProperties(SyntaxNodeAnalysisContext ctx)
         {
+            var correctName = "";
+
             if (ctx.ContainingSymbol.Kind == SymbolKind.LocalVariable || ctx.ContainingSymbol.Kind == SymbolKind.GlobalVariable)
             {
                 IVariableSymbol variable = (IVariableSymbol)ctx.ContainingSymbol;
-                var correctName = variable.Type.ToString();
-                if (correctName.StartsWith(variable.Type.NavTypeKind.ToString()))
-                {
-                    correctName = correctName.Substring(variable.Type.NavTypeKind.ToString().Length +1).Trim(' ', '"');
-                }
+                correctName = GetCorrectName(variable.Type.NavTypeKind, variable.Type.ToString());
+
+                if (ctx.Node.ToString().Trim('"').ToUpper() != correctName.ToUpper())
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
 
                 if (ctx.Node.ToString().Trim('"') != correctName)
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Node.GetLocation(), new object[] { correctName, "" }));
             }
             if (ctx.ContainingSymbol.Kind == SymbolKind.Property)
             {
@@ -58,10 +59,13 @@ namespace BusinessCentral.LinterCop.Design
                         }
 
                     };
-                }   
-                
-                if (ctx.Node.ToString().Trim('"') != property.ValueText && property.PropertyKind != PropertyKind.Permissions && property.PropertyKind != PropertyKind.AccessByPermission)
+                }
+
+                if (ctx.Node.ToString().Trim('"').ToUpper() != property.ValueText.ToUpper() && property.PropertyKind != PropertyKind.Permissions && property.PropertyKind != PropertyKind.AccessByPermission)
                     ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), property.ValueText }));
+
+                if (ctx.Node.ToString().Trim('"') != property.ValueText && property.PropertyKind != PropertyKind.Permissions && property.PropertyKind != PropertyKind.AccessByPermission)
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Node.GetLocation(), new object[] {  property.ValueText,"" }));
             }
 
             if (ctx.ContainingSymbol.Kind == SymbolKind.Method)
@@ -72,8 +76,13 @@ namespace BusinessCentral.LinterCop.Design
                 {
                     if (ctx.Node.GetLocation().SourceSpan.End == parameter.DeclaringSyntaxReference.GetSyntax(CancellationToken.None).Span.End)
                     {
-                        if (ctx.Node.ToString().Trim('"') != parameter.ParameterType.ToString().Replace(parameter.ParameterType.NavTypeKind.ToString(), "").Trim(' ', '"'))
-                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), parameter.ParameterType.ToString().Replace(parameter.ParameterType.NavTypeKind.ToString(), "").Trim(' ', '"') }));
+                        correctName = GetCorrectName(parameter.ParameterType.NavTypeKind, parameter.ParameterType.ToString());
+
+                        if (ctx.Node.ToString().Trim('"').ToUpper() != correctName.ToUpper())
+                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
+
+                        if (ctx.Node.ToString().Trim('"') != correctName)
+                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Node.GetLocation(), new object[] { correctName, "" }));
                     }                    
                 }
                 try
@@ -82,13 +91,28 @@ namespace BusinessCentral.LinterCop.Design
 
                     if (ctx.Node.GetLocation().SourceSpan.End == returnValue.DeclaringSyntaxReference.GetSyntax(CancellationToken.None).Span.End)
                     {
-                        if (ctx.Node.ToString().Trim('"') != returnValue.ReturnType.ToString().Replace(returnValue.ReturnType.NavTypeKind.ToString(), "").Trim(' ', '"'))
-                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), returnValue.ReturnType.ToString().Replace(returnValue.ReturnType.NavTypeKind.ToString(), "").Trim(' ', '"') }));
+                        correctName = GetCorrectName(returnValue.ReturnType.NavTypeKind, returnValue.ReturnType.ToString());
+
+                        if (ctx.Node.ToString().Trim('"').ToUpper() != correctName.ToUpper())
+                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
+
+                        if (ctx.Node.ToString().Trim('"') != correctName)
+                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Node.GetLocation(), new object[] { correctName,"" }));
                     }
                 }
                 catch (System.NullReferenceException)
                 { }
             }
+        }
+
+        private static string GetCorrectName(NavTypeKind kind, string OldName)
+        {
+            if (OldName.StartsWith(kind.ToString()))
+            {
+                OldName = OldName.Substring(kind.ToString().Length + 1).Trim(' ', '"');
+            }
+
+            return OldName;
         }
     }    
 }
