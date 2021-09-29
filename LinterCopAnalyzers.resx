@@ -192,4 +192,13 @@
   <data name="Rule0008NoFilterOperatorsInSetRangeTitle" xml:space="preserve">
     <value>Filter operators should not be used in SetRange. Use SetFilter instead.</value>
   </data>
+  <data name="Rule0009CodeMetricsInfoDescription" xml:space="preserve">
+    <value>Cyclomatic complexity and Maintainability index</value>
+  </data>
+  <data name="Rule0009CodeMetricsInfoFormat" xml:space="preserve">
+    <value>Cyclomatic complexity: {0}, Maintainability index: {1}</value>
+  </data>
+  <data name="Rule0009CodeMetricsInfoTitle" xml:space="preserve">
+    <value>Cyclomatic complexity and Maintainability index</value>
+  </data>
 </root>

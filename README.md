@@ -37,6 +37,7 @@ Be aware tho, the `BusinessCentral.LinterCop.dll` needs to be placed in a folder
 |LC0006|Fields with property "AutoIncrement" cannot be used in temporary table (TableType = Temporary).|Error|
 |LC0007|Every table needs to specify "DataPerCompany". Either true or false|Disabled|
 |LC0008|Filter operators should not be used in SetRange.|Warning|
+|LC0009|Show info message about code metrics for each function or trigger|Disabled|
 
 ## Can I disable certain rules?
 

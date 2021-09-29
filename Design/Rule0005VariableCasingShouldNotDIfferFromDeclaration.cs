@@ -1,6 +1,5 @@
 ﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using Microsoft.Dynamics.Nav.CodeCop.Utilities;
 using System;
 using System.Collections.Immutable;
 using System.Collections.Generic;
