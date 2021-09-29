@@ -32,6 +32,9 @@ namespace BusinessCentral.LinterCop.Design
             if (operand.Type.GetNavTypeKindSafe() != NavTypeKind.String && operand.Type.GetNavTypeKindSafe() != NavTypeKind.Joker)
                 return;
 
+            if (operand.Syntax.Kind != SyntaxKind.LiteralExpression)
+                return;
+
             string parameterString = operand.Syntax.ToFullString();
             if (!(parameterString.Contains('<') || parameterString.Contains('>') ||
                 parameterString.Contains("..") || parameterString.Contains('*') ||
