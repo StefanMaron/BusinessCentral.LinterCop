@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Design\Rule0001FlowFieldsShouldNotBeEditable.cs" />
+    <Compile Include="Design\Rule0008NoFilterOperatorsInSetRange.cs" />
     <Compile Include="Design\Rule0007DataPerCompanyShouldAlwaysBeSet.cs" />
     <Compile Include="Design\Rule0006FieldNotAutoIncrementInTemporaryTable.cs" />
     <Compile Include="Design\Rule0005VariableCasingShouldNotDIfferFromDeclaration.cs" />

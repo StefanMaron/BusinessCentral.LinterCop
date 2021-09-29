@@ -183,4 +183,13 @@
   <data name="Rule0007DataPerCompanyShouldAlwaysBeSetTitle" xml:space="preserve">
     <value>DataPerCompany is missing!</value>
   </data>
+  <data name="Rule0008NoFilterOperatorsInSetRangeDescription" xml:space="preserve">
+    <value>Filter operators should not be used in SetRange. Use SetFilter instead.</value>
+  </data>
+  <data name="Rule0008NoFilterOperatorsInSetRangeFormat" xml:space="preserve">
+    <value>Filter operators should not be used in SetRange. Use SetFilter instead.</value>
+  </data>
+  <data name="Rule0008NoFilterOperatorsInSetRangeTitle" xml:space="preserve">
+    <value>Filter operators should not be used in SetRange. Use SetFilter instead.</value>
+  </data>
 </root>
