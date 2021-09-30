@@ -48,7 +48,7 @@ These are the default values:
 ``` json
 {
     "cyclomaticComplexetyThreshold": 8,
-    "maintainablityIndexThreshold": 20;
+    "maintainablityIndexThreshold": 20
 }
 ```
 
