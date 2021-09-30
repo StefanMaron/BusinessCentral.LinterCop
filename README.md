@@ -38,7 +38,7 @@ Be aware tho, the `BusinessCentral.LinterCop.dll` needs to be placed in a folder
 |LC0007|Every table needs to specify "DataPerCompany". Either true or false|Disabled|
 |LC0008|Filter operators should not be used in SetRange.|Warning|
 |LC0009|Show info message about code metrics for each function or trigger|Disabled|
-|LC0009|Show warning about code metrics for each function or trigger if either cyclomatic complexity is 8 or greater or maintainability index 20 or lower|Warning|
+|LC0010|Show warning about code metrics for each function or trigger if either cyclomatic complexity is 8 or greater or maintainability index 20 or lower|Warning|
 
 ## Configuration
 
