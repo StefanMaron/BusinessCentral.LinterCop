@@ -42,7 +42,9 @@ Be aware tho, the `BusinessCentral.LinterCop.dll` needs to be placed in a folder
 
 ## Configuration
 
-Some rules can be configured by adding a file named `LinterCop.json` in the root of your project.
+Some rules can be configured by adding a file named `LinterCop.json` in the root of your project.  
+**Important:** The file will only be read on start up of the linter, meaning if you make any changes you need to reload vs code once.
+
 These are the default values:
 
 ``` json
