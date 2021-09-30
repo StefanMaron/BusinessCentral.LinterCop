@@ -28,11 +28,11 @@ namespace BusinessCentral.LinterCop.Design
             if (LinterSettings.instance != null)
                 if (cyclomaticComplexety >= LinterSettings.instance.cyclomaticComplexetyThreshold || Math.Round(HalsteadVolume) <= LinterSettings.instance.maintainablityIndexThreshold)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0010CodeMetricsWarning, context.OwningSymbol.GetLocation(), new object[] { context.OwningSymbol.ContainingType, Math.Round(HalsteadVolume) }));
+                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0010CodeMetricsWarning, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexety, Math.Round(HalsteadVolume) }));
                     return;
                 }
 
-            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0009CodeMetricsInfo, context.OwningSymbol.GetLocation(), new object[] { context.OwningSymbol.ContainingType, Math.Round(HalsteadVolume) }));
+            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0009CodeMetricsInfo, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexety, Math.Round(HalsteadVolume) }));
         }
 
         private static double GetHalsteadVolume(SyntaxNode CodeBlock, ref CodeBlockAnalysisContext context,int cyclomaticComplexety)
