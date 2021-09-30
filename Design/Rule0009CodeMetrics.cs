@@ -4,13 +4,14 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using BusinessCentral.LinterCop.Helpers;
 
 namespace BusinessCentral.LinterCop.Design
 {
     [DiagnosticAnalyzer]
     public class Rule0009CodeMetrics : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0009CodeMetricsInfo);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0009CodeMetricsInfo, DiagnosticDescriptors.Rule0010CodeMetricsWarning);
 
         public override void Initialize(AnalysisContext context)
             => context.RegisterCodeBlockAction(new Action<CodeBlockAnalysisContext>(this.CheckforMissionDataPerCompanyOnTables));
@@ -19,6 +20,14 @@ namespace BusinessCentral.LinterCop.Design
         {
             int cyclomaticComplexety = GetCyclomaticComplexety(context.CodeBlock);
             double HalsteadVolume = GetHalsteadVolume(context.CodeBlock, ref context, cyclomaticComplexety);
+
+            LinterSettings.Create();
+
+            if (cyclomaticComplexety >= LinterSettings.instance.cyclomaticComplexetyThreshold || Math.Round(HalsteadVolume) <= LinterSettings.instance.maintainablityIndexThreshold)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0010CodeMetricsWarning, context.OwningSymbol.GetLocation(), new object[] { LinterSettings.instance.cyclomaticComplexetyThreshold, Math.Round(HalsteadVolume) }));
+                return;
+            }
             
             context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0009CodeMetricsInfo, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexety, Math.Round(HalsteadVolume)}));
         }
@@ -66,7 +75,7 @@ namespace BusinessCentral.LinterCop.Design
                 }
                 else return false;
             });
-            return nodes;
+            return nodes + 1;
         }
     }
 }

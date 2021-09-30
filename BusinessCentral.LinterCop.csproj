@@ -57,6 +57,10 @@
     <Reference Include="Microsoft.Dynamics.Nav.CodeCop">
       <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.CodeCop.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="netstandard" />
     <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -77,6 +81,7 @@
     <Compile Include="Design\Rule0005VariableCasingShouldNotDIfferFromDeclaration.cs" />
     <Compile Include="Design\Rule0004LookupPageIdAndDrillDownPageId.cs" />
     <Compile Include="Design\Rule0003DoNotUseObjectIDsInVariablesOrProperties.cs" />
+    <Compile Include="Helpers\LinterSettings.cs" />
     <Compile Include="LinterCopAnalyzers.Designer.cs" />
     <Compile Include="LinterCopAnalyzers.Generated.cs" />
     <Compile Include="LinterCopDiagnosticsAnalyzerBase.cs" />
@@ -102,5 +107,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
