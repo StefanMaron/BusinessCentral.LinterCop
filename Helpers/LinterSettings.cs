@@ -22,7 +22,7 @@ namespace BusinessCentral.LinterCop.Helpers
                     if (instance == null)
                         instance = new LinterSettings();
                 }
-                catch 
+                catch
                 {
                     instance = new LinterSettings();
                 }
