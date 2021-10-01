@@ -27,9 +27,8 @@ Be aware though, the `BusinessCentral.LinterCop.dll` needs to be placed in a fol
 
 Further note that you should have BcContainerHelper version 2.0.16 (or newer) installed.
 
-You can find an example for this in the [DownloadFile.ps1](https://github.com/StefanMaron/vsc-lintercop/blob/master/DownloadFile.ps1) script used by the BusinessCentral.LinterCop VSCode helper extension for automatic updates.
 
-**Tip:** You also can let your build pipelines download the latest version of the `BusinessCentral.LinterCop.dll` via the GitHub API. 
+**Tip:** You also can let your build pipelines download the latest version of the `BusinessCentral.LinterCop.dll` via the GitHub API. You can find an example for this in the [DownloadFile.ps1](https://github.com/StefanMaron/vsc-lintercop/blob/master/DownloadFile.ps1) script used by the BusinessCentral.LinterCop VSCode helper extension for automatic updates.
 
 ## Rules
 
