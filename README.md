@@ -15,25 +15,29 @@ The Linter is not finished yet (and probably never will be :D ) If you have any 
 
 1. Get my helper extension https://marketplace.visualstudio.com/items?itemName=StefanMaron.businesscentral-lintercop
 2. Add `"${analyzerfolder}BusinessCentral.LinterCop.dll"` to the `"al.codeAnalyzers"` in either user, workspace or folder settings
-3. Be aware that folder settings overwrite workspace and workspace overwrite user settings. If you have codecops defined in folder settings, the codecops defined in the user settings wont be applied
+3. Be aware that folder settings overwrite workspace and workspace overwrite user settings. If you have codecops defined in folder settings, the codecops defined in the user settings won't be applied
 
-### BCContainerhelper `[Only in preview of bccontainerhelper]`
+### BcContainerHelper
 
 For manual compile you can use the `Compile-AppInBcContainer` command and pass the path to the `BusinessCentral.LinterCop.dll` in via the parameter `-CustomCodeCops`
 
-If you are using `Run-ALPipeline` in you build pipelines you can also pass in the `BusinessCentral.LinterCop.dll` in via the parameter `-CustomCodeCops`
+If you are using `Run-ALPipeline` in your build pipelines you can also pass in the `BusinessCentral.LinterCop.dll` in via the parameter `-CustomCodeCops`
 
-Be aware tho, the `BusinessCentral.LinterCop.dll` needs to be placed in a folder shared with the container.
+Be aware though, the `BusinessCentral.LinterCop.dll` needs to be placed in a folder shared with the container.
+
+Further note that you should have BcContainerHelper version 2.0.16 (or newer) installed.
+
+**Tip:** You can let your build pipelines download the latest version of the `BusinessCentral.LinterCop.dll` via the GitHub API. You can find an example for this in the [DownloadFile.ps1](https://github.com/StefanMaron/vsc-lintercop/blob/master/DownloadFile.ps1) script used by the BusinessCentral.LinterCop VSCode helper extension for automatic updates.
 
 ## Rules
 
 |Id| Title|Default Severity|
 |---|---|---|
 |LC0001|FlowFields should not be editable.|Warning|
-|LC0002|Commit() needs a comment to justify its existance. Either a leading or a trailing comment.|Warning|
-|LC0003|Do not use an Object ID for properties or variables declaration. |Warning|
+|LC0002|Commit() needs a comment to justify its existence. Either a leading or a trailing comment.|Warning|
+|LC0003|Do not use an Object ID for properties or variable declarations. |Warning|
 |LC0004|"DrillDownPageId" and "LookupPageId" must be filled in table when table is used in list page|Warning|
-|LC0005|The casing of variable/method usage must allign with the definition|Warning|
+|LC0005|The casing of variable/method usage must align with the definition|Warning|
 |LC0006|Fields with property "AutoIncrement" cannot be used in temporary table (TableType = Temporary).|Error|
 |LC0007|Every table needs to specify "DataPerCompany". Either true or false|Disabled|
 |LC0008|Filter operators should not be used in SetRange.|Warning|
@@ -43,7 +47,7 @@ Be aware tho, the `BusinessCentral.LinterCop.dll` needs to be placed in a folder
 ## Configuration
 
 Some rules can be configured by adding a file named `LinterCop.json` in the root of your project.  
-**Important:** The file will only be read on start up of the linter, meaning if you make any changes you need to reload vs code once.
+**Important:** The file will only be read on startup of the linter, meaning if you make any changes you need to reload VS Code once.
 
 These are the default values:
 
@@ -59,5 +63,5 @@ These are the default values:
 Since the linter integrates with the AL compiler directly, you can use the custom rule sets like you are used to from the other code cops.  
 https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-rule-set-syntax-for-code-analysis-tools
 
-Of cource you can also use pragmas for disabling a rule just for a certain place in code.  
+Of course you can also use pragmas for disabling a rule just for a certain place in code.  
 https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/directives/devenv-directive-pragma-warning
