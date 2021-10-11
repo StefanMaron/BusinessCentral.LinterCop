@@ -48,7 +48,7 @@ namespace BusinessCentral.LinterCop.Design
                 if (ctx.Node.Kind == SyntaxKind.PermissionValue)
                 {
                     var nodes = ctx.Node.ChildNodesAndTokens().GetEnumerator();
-                   
+
                     while (nodes.MoveNext())
                     {
                         if (nodes.Current.IsNode)
@@ -65,11 +65,14 @@ namespace BusinessCentral.LinterCop.Design
                     };
                 }
 
-                if (ctx.Node.ToString().Trim('"').ToUpper() != property.ValueText.ToUpper() && property.PropertyKind != PropertyKind.Permissions && property.PropertyKind != PropertyKind.AccessByPermission)
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), property.ValueText }));
+                if (property.PropertyKind != PropertyKind.Permissions && property.PropertyKind.ToString() != "AccessByPermission") //seems like there was a breaking change in some version of the compiler where internal ids moved. Using text to be save
+                {
+                    if (ctx.Node.ToString().Trim('"').ToUpper() != property.ValueText.ToUpper())
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), property.ValueText }));
 
-                if (ctx.Node.ToString().Trim('"') != property.ValueText && property.PropertyKind != PropertyKind.Permissions && property.PropertyKind != PropertyKind.AccessByPermission)
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Node.GetLocation(), new object[] {  property.ValueText,"" }));
+                    if (ctx.Node.ToString().Trim('"') != property.ValueText)
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Node.GetLocation(), new object[] { property.ValueText, "" }));
+                }
             }
 
             if (ctx.ContainingSymbol.Kind == SymbolKind.Method)
