@@ -29,8 +29,12 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.ContainingSymbol.Kind == SymbolKind.LocalVariable || ctx.ContainingSymbol.Kind == SymbolKind.GlobalVariable)
             {
                 IVariableSymbol variable = (IVariableSymbol)ctx.ContainingSymbol;
-                correctName = GetCorrectName(variable.Type.NavTypeKind, variable.Type.ToString());
 
+                if (variable.Type.NavTypeKind == NavTypeKind.Array)
+                    correctName = GetCorrectName(ctx.Node.Parent.Parent.ToString().Replace(ctx.Node.ToString(),"").Trim(), variable.Type.ToString());
+                else
+                    correctName = GetCorrectName(variable.Type.NavTypeKind.ToString(), variable.Type.ToString());
+                
                 if (ctx.Node.ToString().Trim('"').ToUpper() != correctName.ToUpper())
                     ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
 
@@ -76,7 +80,7 @@ namespace BusinessCentral.LinterCop.Design
                 {
                     if (ctx.Node.GetLocation().SourceSpan.End == parameter.DeclaringSyntaxReference.GetSyntax(CancellationToken.None).Span.End)
                     {
-                        correctName = GetCorrectName(parameter.ParameterType.NavTypeKind, parameter.ParameterType.ToString());
+                        correctName = GetCorrectName(parameter.ParameterType.NavTypeKind.ToString(), parameter.ParameterType.ToString());
 
                         if (ctx.Node.ToString().Trim('"').ToUpper() != correctName.ToUpper())
                             ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
@@ -91,7 +95,7 @@ namespace BusinessCentral.LinterCop.Design
 
                     if (ctx.Node.GetLocation().SourceSpan.End == returnValue.DeclaringSyntaxReference.GetSyntax(CancellationToken.None).Span.End)
                     {
-                        correctName = GetCorrectName(returnValue.ReturnType.NavTypeKind, returnValue.ReturnType.ToString());
+                        correctName = GetCorrectName(returnValue.ReturnType.NavTypeKind.ToString(), returnValue.ReturnType.ToString());
 
                         if (ctx.Node.ToString().Trim('"').ToUpper() != correctName.ToUpper())
                             ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
@@ -105,11 +109,11 @@ namespace BusinessCentral.LinterCop.Design
             }
         }
 
-        private static string GetCorrectName(NavTypeKind kind, string OldName)
+        private static string GetCorrectName(string kind, string OldName)
         {
-            if (OldName.StartsWith(kind.ToString()))
+            if (OldName.Trim().StartsWith(kind))
             {
-                OldName = OldName.Substring(kind.ToString().Length + 1).Trim(' ', '"');
+                OldName = OldName.Substring(kind.Length + 1).Trim(' ', '"');
             }
 
             return OldName;
