@@ -1,11 +1,7 @@
 ﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -15,15 +11,13 @@ namespace BusinessCentral.LinterCop.Design
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0011AccessPropertyShouldAlwaysBeSet);
 
         public override void Initialize(AnalysisContext context)
-            => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForMissingAccessProperty), SymbolKind.Codeunit, SymbolKind.Enum, SymbolKind.Interface, SymbolKind.Page, SymbolKind.PermissionSet, SymbolKind.Query, SymbolKind.Table, SymbolKind.XmlPort);
+            => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForMissingAccessProperty), SymbolKind.Codeunit, SymbolKind.Enum, SymbolKind.Interface, SymbolKind.PermissionSet, SymbolKind.Query, SymbolKind.Table, SymbolKind.Field);
 
         private void CheckForMissingAccessProperty(SymbolAnalysisContext context)
         {
-            IApplicationObjectTypeSymbol applicationObject = (IApplicationObjectTypeSymbol)context.Symbol;
-
-            if (applicationObject.GetProperty(PropertyKind.Access) == null)
+            if (context.Symbol.GetProperty(PropertyKind.Access) == null)
             {
-                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0011AccessPropertyShouldAlwaysBeSet, applicationObject.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0011AccessPropertyShouldAlwaysBeSet, context.Symbol.GetLocation()));
             }
         }
     }
