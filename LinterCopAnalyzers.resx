@@ -201,4 +201,13 @@
   <data name="Rule0009CodeMetricsInfoTitle" xml:space="preserve">
     <value>Cyclomatic complexity and Maintainability index</value>
   </data>
+  <data name="Rule0011AccessPropertyShouldAlwaysBeSetDescription" xml:space="preserve">
+    <value>Access property is missing!</value>
+  </data>
+  <data name="Rule0011AccessPropertyShouldAlwaysBeSetFormat" xml:space="preserve">
+    <value>Access property is missing!</value>
+  </data>
+  <data name="Rule0011AccessPropertyShouldAlwaysBeSetTitle" xml:space="preserve">
+    <value>Access property is missing!</value>
+  </data>
 </root>

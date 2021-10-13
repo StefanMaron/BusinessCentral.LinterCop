@@ -14,25 +14,27 @@ namespace BusinessCentral.LinterCop.Design
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0009CodeMetricsInfo, DiagnosticDescriptors.Rule0010CodeMetricsWarning);
 
         public override void Initialize(AnalysisContext context)
-            => context.RegisterCodeBlockAction(new Action<CodeBlockAnalysisContext>(this.CheckforMissionDataPerCompanyOnTables));
+            => context.RegisterCodeBlockAction(new Action<CodeBlockAnalysisContext>(this.CheckCodeMetrics));
 
-        private void CheckforMissionDataPerCompanyOnTables(CodeBlockAnalysisContext context)
+        private void CheckCodeMetrics(CodeBlockAnalysisContext context)
         {
-            if (context.OwningSymbol.ContainingSymbol.Kind == SymbolKind.ControlAddIn || context.OwningSymbol.ContainingSymbol.Kind == SymbolKind.Interface)
-                return;
-
-            int cyclomaticComplexety = GetCyclomaticComplexety(context.CodeBlock);
-            double HalsteadVolume = GetHalsteadVolume(context.CodeBlock, ref context, cyclomaticComplexety);     
+            int cyclomaticComplexity = GetCyclomaticComplexity(context.CodeBlock);
+            double HalsteadVolume = GetHalsteadVolume(context.CodeBlock, ref context, cyclomaticComplexity);
 
             LinterSettings.Create();
             if (LinterSettings.instance != null)
-                if (cyclomaticComplexety >= LinterSettings.instance.cyclomaticComplexetyThreshold || Math.Round(HalsteadVolume) <= LinterSettings.instance.maintainablityIndexThreshold)
+                if (cyclomaticComplexity >= LinterSettings.instance.cyclomaticComplexetyThreshold || Math.Round(HalsteadVolume) <= LinterSettings.instance.maintainablityIndexThreshold)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0010CodeMetricsWarning, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexety, Math.Round(HalsteadVolume) }));
+                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0010CodeMetricsWarning, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexity, Math.Round(HalsteadVolume) }));
                     return;
                 }
 
-            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0009CodeMetricsInfo, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexety, Math.Round(HalsteadVolume) }));
+            if (cyclomaticComplexity >= LinterSettings.instance.cyclomaticComplexetyThreshold || Math.Round(HalsteadVolume) <= LinterSettings.instance.maintainablityIndexThreshold)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0010CodeMetricsWarning, context.OwningSymbol.GetLocation(), new object[] { LinterSettings.instance.cyclomaticComplexetyThreshold, Math.Round(HalsteadVolume) }));
+                return;
+            }
+            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0009CodeMetricsInfo, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexity, Math.Round(HalsteadVolume)}));
         }
 
         private static double GetHalsteadVolume(SyntaxNode CodeBlock, ref CodeBlockAnalysisContext context,int cyclomaticComplexety)
@@ -67,7 +69,7 @@ namespace BusinessCentral.LinterCop.Design
                 return 0.0;
             }
         }
-        private static int GetCyclomaticComplexety(SyntaxNode CodeBlock)
+        private static int GetCyclomaticComplexity(SyntaxNode CodeBlock)
         {
             var Syntax = CodeBlock.DescendantNodesAndTokens(e => true).ToList();
             var ComplexKinds = new object[] { SyntaxKind.IfKeyword, SyntaxKind.ElifKeyword, SyntaxKind.LogicalAndExpression, SyntaxKind.LogicalOrExpression, SyntaxKind.CaseLine, SyntaxKind.ForKeyword, SyntaxKind.ForEachKeyword, SyntaxKind.WhileKeyword, SyntaxKind.UntilKeyword };
