@@ -2,6 +2,7 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Immutable;
+using BusinessCentral.LinterCop.Helpers;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -15,10 +16,20 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckForMissingAccessProperty(SymbolAnalysisContext context)
         {
-            if (context.Symbol.GetProperty(PropertyKind.Access) == null)
+            if (context.Symbol.Kind == SymbolKind.Field)
             {
-                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0011AccessPropertyShouldAlwaysBeSet, context.Symbol.GetLocation()));
+                LinterSettings.Create();
+                if (LinterSettings.instance.enableRule0011ForTableFields)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0011AccessPropertyShouldAlwaysBeSet, context.Symbol.GetLocation()));
+                }
             }
+            else
+                if (context.Symbol.GetProperty(PropertyKind.Access) == null)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0011AccessPropertyShouldAlwaysBeSet, context.Symbol.GetLocation()));
+                }
+
         }
     }
 }

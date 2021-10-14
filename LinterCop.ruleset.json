@@ -1,0 +1,50 @@
+{
+  "name": "LinterCopRuleset",
+  "description": "These are the default rules of the linter cop. You can use this file as a template to start from",
+  "rules": [
+        {
+            "id": "LC0001",
+            "action": "Warning"
+        },
+        {
+            "id": "LC0002",
+            "action": "Warning"
+        },
+        {
+            "id": "LC0003",
+            "action": "Warning"
+        },
+        {
+            "id": "LC0004",
+            "action": "Warning"
+        },
+        {
+            "id": "LC0005",
+            "action": "Warning"
+        },
+        {
+            "id": "LC0006",
+            "action": "Error"
+        },
+        {
+            "id": "LC0007",
+            "action": "Hidden"
+        },
+        {
+            "id": "LC0008",
+            "action": "Warning"
+        },
+        {
+            "id": "LC0009",
+            "action": "Hidden"
+        },
+        {
+          "id": "LC0010",
+          "action": "Warning"
+        },
+        {
+            "id": "LC0011",
+            "action": "Hidden"
+        }
+    ]
+}
