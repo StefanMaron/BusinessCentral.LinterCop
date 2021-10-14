@@ -43,7 +43,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |LC0008|Filter operators should not be used in `SetRange`.|Warning|
 |LC0009|Show info message about code metrics for each function or trigger|Disabled|
 |LC0010|Show warning about code metrics for each function or trigger if either cyclomatic complexity is 8 or greater or maintainability index 20 or lower|Warning|
-|LC0011|Every object needs to specify a value for the `Access` property. Either `true` or `false`|Disabled|
+|LC0011|Every object needs to specify a value for the `Access` property. Either `true` or `false`. Optionally this can also be activated for table fields with the setting `enableRule0011ForTableFields`|Disabled|
 
 ## Configuration
 
