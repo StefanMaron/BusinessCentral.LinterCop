@@ -43,7 +43,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |LC0008|Filter operators should not be used in `SetRange`.|Warning|
 |LC0009|Show info message about code metrics for each function or trigger|Disabled|
 |LC0010|Show warning about code metrics for each function or trigger if either cyclomatic complexity is 8 or greater or maintainability index 20 or lower|Warning|
-|LC0011|Every object needs to specify a value for the `Access` property. Either `true` or `false`|Disabled|
+|LC0011|Every object needs to specify a value for the `Access` property. Either `true` or `false`. Optionally this can also be activated for table fields with the setting `enableRule0011ForTableFields`|Disabled|
 |LC0012|Using hardcoded IDs in functions like `Codeunit.Run()` is not allow (Preview)|Warning|
 
 ## Configuration
@@ -51,15 +51,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 Some rules can be configured by adding a file named `LinterCop.json` in the root of your project.
 **Important:** The file will only be read on startup of the linter, meaning if you make any changes you need to reload VS Code once.
 
-These are the default values:
-
-``` json
-{
-    "cyclomaticComplexetyThreshold": 8,
-    "maintainablityIndexThreshold": 20,
-    "enableRule0011ForTableFields": false
-}
-```
+For an example and the default values see: [LinterCop.json](LinterCop.json)
 
 ## Can I disable certain rules?
 
@@ -68,3 +60,5 @@ https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/develope
 
 Of course you can also use pragmas for disabling a rule just for a certain place in code.
 https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/directives/devenv-directive-pragma-warning
+
+For an example and the default values see: [LinterCop.ruleset.json](LinterCop.ruleset.json)
