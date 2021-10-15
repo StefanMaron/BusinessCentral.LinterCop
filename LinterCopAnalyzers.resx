@@ -210,4 +210,13 @@
   <data name="Rule0011AccessPropertyShouldAlwaysBeSetTitle" xml:space="preserve">
     <value>Access property is missing!</value>
   </data>
+  <data name="Rule0012DoNotUseObjectIdInSystemFunctionsDescription" xml:space="preserve">
+    <value>Wrong Parameter detected.</value>
+  </data>
+  <data name="Rule0012DoNotUseObjectIdInSystemFunctionsFormat" xml:space="preserve">
+    <value>Wrong Parameter detected. Select the correct object with "{0}::" instead.</value>
+  </data>
+  <data name="Rule0012DoNotUseObjectIdInSystemFunctionsTitle" xml:space="preserve">
+    <value>Wrong Parameter detected.</value>
+  </data>
 </root>

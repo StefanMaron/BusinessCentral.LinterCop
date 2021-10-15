@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Design\Rule0001FlowFieldsShouldNotBeEditable.cs" />
+    <Compile Include="Design\Rule0012DoNotUseObjectIdInSystemFunctions.cs" />
     <Compile Include="Design\Rule0011AccessPropertyShouldAlwaysBeSet.cs" />
     <Compile Include="Design\Rule0008NoFilterOperatorsInSetRange.cs" />
     <Compile Include="Design\Rule0009CodeMetrics.cs" />
