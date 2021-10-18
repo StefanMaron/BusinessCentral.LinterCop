@@ -26,6 +26,8 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckTable(ITableTypeSymbol table, ref SymbolAnalysisContext context) {
             if (!IsSymbolAccessible(table)) return;
+            if (table.GetProperty(PropertyKind.TableType)?.ValueText == "Temporary") return;
+
             bool exists = table.Properties.Where(e => e.PropertyKind == PropertyKind.DrillDownPageId || e.PropertyKind == PropertyKind.LookupPageId).Count() == 2;
             if (exists) return;
 
