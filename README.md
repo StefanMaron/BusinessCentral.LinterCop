@@ -1,5 +1,9 @@
 # BusinessCentral.LinterCop
 
+[![Github All Releases](https://img.shields.io/github/downloads/StefanMaron/BusinessCentral.LinterCop/total?label=Downloads%20total)]()
+[![Github All Releases](https://img.shields.io/github/v/release/StefanMaron/BusinessCentral.LinterCop?label=latest%20version)]()
+[![Github All Releases](https://img.shields.io/github/downloads/StefanMaron/BusinessCentral.LinterCop/latest/total?label=downloads%20latest%20version)]()
+
 ## Please Contribute!
 
 The Linter is not finished yet (and probably never will be :D ) If you have any rule on mind that would be nice to be covered, **please start a new [discussion](https://github.com/StefanMaron/BusinessCentral.LinterCop/discussions)!** then we can maybe sharpen the rule a bit if necessary and I will create an issue afterwards. This way we can build value for all of us. If you want to write the rule yourself you can of course also submit a pull request ;)
