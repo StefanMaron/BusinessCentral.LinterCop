@@ -20,6 +20,7 @@ namespace BusinessCentral.LinterCop.Design
         {
             if (context.OwningSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.OwningSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
             if (context.OwningSymbol.IsObsoletePending ||context.OwningSymbol.IsObsoleteRemoved) return;
+            if (context.OwningSymbol.GetContainingObjectTypeSymbol().NavTypeKind == NavTypeKind.Interface || context.OwningSymbol.GetContainingObjectTypeSymbol().NavTypeKind == NavTypeKind.ControlAddIn) return;
 
             int cyclomaticComplexity = GetCyclomaticComplexity(context.CodeBlock);
             double HalsteadVolume = GetHalsteadVolume(context.CodeBlock, ref context, cyclomaticComplexity);
