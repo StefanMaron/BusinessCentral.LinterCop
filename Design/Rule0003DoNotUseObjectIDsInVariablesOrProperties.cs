@@ -34,7 +34,7 @@ namespace BusinessCentral.LinterCop.Design
                 IVariableSymbol variable = (IVariableSymbol)ctx.ContainingSymbol;
 
                 if (variable.Type.NavTypeKind == NavTypeKind.Array)
-                    correctName = GetCorrectName(ctx.Node.Parent.Parent.ToString().Replace(ctx.Node.ToString(),"").Trim(), variable.Type.ToString());
+                    correctName = GetCorrectName(ctx.Node.Parent.Parent.ToString().Replace(" temporary","").Replace(ctx.Node.ToString(), "").Trim(), variable.Type.ToString());
                 else
                     correctName = GetCorrectName(variable.Type.NavTypeKind.ToString(), variable.Type.ToString());
                 
