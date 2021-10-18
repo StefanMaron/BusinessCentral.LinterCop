@@ -19,14 +19,16 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckForLookupPageIdAndDrilldownPageId(SymbolAnalysisContext context)
         {
+            if (context.Symbol.IsObsoletePending || context.Symbol.IsObsoleteRemoved) return;
             IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)context.Symbol;
             if (pageTypeSymbol.PageType == PageTypeKind.List && pageTypeSymbol.RelatedTable != null)
                 CheckTable(pageTypeSymbol.RelatedTable, ref context);
         }
 
         private void CheckTable(ITableTypeSymbol table, ref SymbolAnalysisContext context) {
+            if (table.IsObsoletePending || table.IsObsoleteRemoved) return;
             if (!IsSymbolAccessible(table)) return;
-            if (table.GetProperty(PropertyKind.TableType)?.ValueText == "Temporary") return;
+            if (table.TableType == TableTypeKind.Temporary) return;
 
             bool exists = table.Properties.Where(e => e.PropertyKind == PropertyKind.DrillDownPageId || e.PropertyKind == PropertyKind.LookupPageId).Count() == 2;
             if (exists) return;

@@ -18,6 +18,9 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckCodeMetrics(CodeBlockAnalysisContext context)
         {
+            if (context.OwningSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.OwningSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+            if (context.OwningSymbol.IsObsoletePending ||context.OwningSymbol.IsObsoleteRemoved) return;
+
             int cyclomaticComplexity = GetCyclomaticComplexity(context.CodeBlock);
             double HalsteadVolume = GetHalsteadVolume(context.CodeBlock, ref context, cyclomaticComplexity);
 

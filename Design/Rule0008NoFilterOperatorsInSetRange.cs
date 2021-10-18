@@ -17,11 +17,13 @@ namespace BusinessCentral.LinterCop.Design
 
         public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeInvocation), Microsoft.Dynamics.Nav.CodeAnalysis.OperationKind.InvocationExpression);
 
-        private void AnalyzeInvocation(OperationAnalysisContext context) {
+        private void AnalyzeInvocation(OperationAnalysisContext context)
+        {
+            if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+            if (context.ContainingSymbol.IsObsoletePending ||context.ContainingSymbol.IsObsoleteRemoved) return;
             IInvocationExpression operation = (IInvocationExpression)context.Operation;
             if (!SemanticFacts.IsSameName(operation.TargetMethod.Name,"setrange") || operation.TargetMethod == null || operation.Arguments.Count() < 2)
                 return;
-
 
             CheckParameter(operation.Arguments[1].Value, ref operation, ref context);
             if(operation.Arguments.Count() == 3)

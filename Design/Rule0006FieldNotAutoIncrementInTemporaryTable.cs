@@ -19,6 +19,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckTablePrimaryKeyIsNotAutoIncrement(SymbolAnalysisContext context)
         {
+            if (context.Symbol.IsObsoletePending ||context.Symbol.IsObsoleteRemoved) return;
             ITableTypeSymbol tableTypeSymbol = (ITableTypeSymbol)context.Symbol;
             if (!IsSymbolAccessible(tableTypeSymbol))
                 return;

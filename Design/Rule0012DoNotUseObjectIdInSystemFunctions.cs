@@ -18,6 +18,8 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckForObjectIdsInFunctionInvocations(OperationAnalysisContext context)
         {
+            if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+            if (context.ContainingSymbol.IsObsoletePending ||context.ContainingSymbol.IsObsoleteRemoved) return;
             IInvocationExpression operation = (IInvocationExpression)context.Operation;
             RelevantFuntion CurrentFunction = null;
             try

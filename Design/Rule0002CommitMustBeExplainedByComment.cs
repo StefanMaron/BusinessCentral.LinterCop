@@ -15,6 +15,9 @@ namespace BusinessCentral.LinterCop.Design
 
     private void CheckCommitForExplainingComment(OperationAnalysisContext ctx)
     {
+        if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+        if (ctx.ContainingSymbol.IsObsoletePending ||ctx.ContainingSymbol.IsObsoleteRemoved) return;
+
         IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
         if (operation.TargetMethod.Name.ToUpper() == "COMMIT")
         {

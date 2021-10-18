@@ -19,6 +19,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckforMissingDataPerCompanyOnTables(SymbolAnalysisContext context)
         {
+            if (context.Symbol.IsObsoletePending ||context.Symbol.IsObsoleteRemoved) return;
             ITableTypeSymbol table = (ITableTypeSymbol)context.Symbol;
             if (table.TableType == TableTypeKind.Temporary)
                 return;

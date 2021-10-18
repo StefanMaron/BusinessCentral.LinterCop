@@ -16,6 +16,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckForMissingAccessProperty(SymbolAnalysisContext context)
         {
+            if (context.Symbol.IsObsoletePending ||context.Symbol.IsObsoleteRemoved) return;
             if (context.Symbol.Kind == SymbolKind.Field)
             {
                 LinterSettings.Create();

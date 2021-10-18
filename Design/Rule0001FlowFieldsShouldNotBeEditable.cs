@@ -14,7 +14,10 @@ namespace BusinessCentral.LinterCop.Design
         
     private void AnalyzeFlowFieldEditable(SymbolAnalysisContext ctx)
     {
-        var isFlowField = "";
+        if (ctx.Symbol.IsObsoletePending ||ctx.Symbol.IsObsoleteRemoved) return;
+        if (ctx.Symbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.Symbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+
+            var isFlowField = "";
         var isEditable = "";
         var LastEditableLocation = ctx.Symbol.GetLocation();
         foreach (IPropertySymbol symbol in ctx.Symbol.Properties)

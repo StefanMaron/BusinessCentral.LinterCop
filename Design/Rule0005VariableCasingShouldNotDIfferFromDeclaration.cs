@@ -27,6 +27,9 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckForBuiltInMethodsWithCasingMismatch(OperationAnalysisContext ctx)
         {
+            if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+            if (ctx.ContainingSymbol.IsObsoletePending ||ctx.ContainingSymbol.IsObsoleteRemoved) return;
+
             var targetName = "";
             if (ctx.Operation.Kind == OperationKind.InvocationExpression)
             {
