@@ -17,24 +17,10 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.Symbol.IsObsoletePending || ctx.Symbol.IsObsoleteRemoved) return;
             if (ctx.Symbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.Symbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
 
-            var isFlowField = "";
-            var isEditable = "";
             var LastEditableLocation = ctx.Symbol.GetLocation();
-            foreach (IPropertySymbol symbol in ctx.Symbol.Properties)
-            {
-                if (symbol.PropertyKind.ToString() == "FieldClass" && symbol.ValueText == "FlowField")
-                    isFlowField = "true";
-
-                if (symbol.PropertyKind == PropertyKind.Editable && symbol.ValueText == "0")
-                    isEditable = "false";
-
-                if (symbol.PropertyKind == PropertyKind.Editable)
-                    LastEditableLocation = symbol.GetLocation();
-            }
-            if (isFlowField == "true" && isEditable != "false")
-            {
+            IFieldSymbol field = (IFieldSymbol)ctx.Symbol;
+            if (field.FieldClass == FieldClassKind.FlowField && field.GetBooleanPropertyValue(PropertyKind.Editable).Value)
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0001FlowFieldsShouldNotBeEditable, LastEditableLocation));
-            }
         }
     }
 }
