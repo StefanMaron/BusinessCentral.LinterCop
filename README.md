@@ -4,9 +4,13 @@
 [![Github All Releases](https://img.shields.io/github/v/release/StefanMaron/BusinessCentral.LinterCop?label=latest%20version)]()
 [![Github All Releases](https://img.shields.io/github/downloads/StefanMaron/BusinessCentral.LinterCop/latest/total?label=downloads%20latest%20version)]()
 
+This code analyzer is meant to check your code for all sorts of problems. Be it code that tecnically compiles but will generate errors during runtime or more a kind of guideline check to achieve cleaner code. Some rule even are disabled by default as they may not go along the main coding guidelines but are maybe helpful in certain projects. In general all rule ideas are welcome, even if they should be and maybe will be covered by Microsoft at some point but could be part of the linter in the meantime.
+
+If you are not happy with some rules or only feel like you need one rule of this analyzer, you can always control the rules with a [Custom.ruleset.json](LinterCop.ruleset.json) and disable all rules you dont need.
+
 ## Please Contribute!
 
-The Linter is not finished yet (and probably never will be :D ) If you have any rule on mind that would be nice to be covered, **please start a new [discussion](https://github.com/StefanMaron/BusinessCentral.LinterCop/discussions)!** then we can maybe sharpen the rule a bit if necessary and I will create an issue afterwards. This way we can build value for all of us. If you want to write the rule yourself you can of course also submit a pull request ;)
+The Linter is not finished yet (and probably never will be :D ) If you have any rule on mind that would be nice to be covered, **please start a new [discussion](https://github.com/StefanMaron/BusinessCentral.LinterCop/discussions)!** then we can maybe sharpen the rule a bit if necessary. This way we can build value for all of us. If you want to write the rule yourself you can of course also submit a pull request ;)
 
 ## How to use
 
