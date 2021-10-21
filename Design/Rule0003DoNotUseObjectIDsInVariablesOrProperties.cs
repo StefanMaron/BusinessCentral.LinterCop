@@ -32,6 +32,7 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.ContainingSymbol.Kind == SymbolKind.LocalVariable || ctx.ContainingSymbol.Kind == SymbolKind.GlobalVariable)
             {
                 IVariableSymbol variable = (IVariableSymbol)ctx.ContainingSymbol;
+                if (variable.Type.NavTypeKind == NavTypeKind.DotNet) return;
 
                 if (variable.Type.NavTypeKind == NavTypeKind.Array)
                     correctName = GetCorrectName(ctx.Node.Parent.Parent.ToString().Replace(" temporary", "").Replace(ctx.Node.ToString(), "").Trim(), variable.Type.ToString());
