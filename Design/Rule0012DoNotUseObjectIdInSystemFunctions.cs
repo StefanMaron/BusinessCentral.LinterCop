@@ -1,10 +1,10 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using BusinessCentral.LinterCop.Helpers;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using BusinessCentral.LinterCop.Helpers;
-using System.Collections.Generic;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -14,12 +14,20 @@ namespace BusinessCentral.LinterCop.Design
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions);
 
         public override void Initialize(AnalysisContext context)
-            => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForObjectIdsInFunctionInvocations), OperationKind.InvocationExpression);
+        {
+            context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForObjectIdsInFunctionInvocations), OperationKind.InvocationExpression);
+            //context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForObjectIdsEventSubscribers), SymbolKind.Method);
+        }
+        private void CheckForObjectIdsEventSubscribers(SymbolAnalysisContext context)
+        {
+            IMethodSymbol method = (IMethodSymbol)context.Symbol;
+            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, method.GetLocation(), new object[] { String.Join(";", method.Attributes[0].DeclaringSyntaxReference.GetSyntax().DescendantNodes(o => true).Where(o => o.Kind == SyntaxKind.OptionAccessAttributeArgument)), "" }));
+        }
 
         private void CheckForObjectIdsInFunctionInvocations(OperationAnalysisContext context)
         {
             if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-            if (context.ContainingSymbol.IsObsoletePending ||context.ContainingSymbol.IsObsoleteRemoved) return;
+            if (context.ContainingSymbol.IsObsoletePending || context.ContainingSymbol.IsObsoleteRemoved) return;
             IInvocationExpression operation = (IInvocationExpression)context.Operation;
             RelevantFuntion CurrentFunction = null;
             try
@@ -30,20 +38,20 @@ namespace BusinessCentral.LinterCop.Design
             { }
 
             SyntaxKind[] AllowedParameterKinds = { SyntaxKind.MemberAccessExpression, SyntaxKind.IdentifierName };
-            
-            if (CurrentFunction != null && operation.TargetMethod.Parameters.Length != 0 && !AllowedParameterKinds.Contains(operation.Arguments[0].Syntax.Kind) && (operation.Arguments[0].Syntax.ToString() != "0" || !CurrentFunction.ZeroIDAllowed))                
+
+            if (CurrentFunction != null && operation.TargetMethod.Parameters.Length != 0 && !AllowedParameterKinds.Contains(operation.Arguments[0].Syntax.Kind) && (operation.Arguments[0].Syntax.ToString() != "0" || !CurrentFunction.ZeroIDAllowed))
+            {
+                if (operation.TargetMethod.Parameters[0].ParameterType.NavTypeKind == NavTypeKind.Integer)
                 {
-                    if (operation.TargetMethod.Parameters[0].ParameterType.NavTypeKind == NavTypeKind.Integer)
-                    {
-                        int tempint = 0;
-                        if (int.TryParse(operation.Arguments[0].Syntax.ToString(), out tempint))
-                            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, context.Operation.Syntax.GetLocation(), new object[] { CurrentFunction.CorrectAccessSymbol, "" }));
-                        else
-                            if (!operation.Arguments[0].Syntax.ToString().ToUpper().StartsWith(CurrentFunction.CorrectAccessSymbol.ToUpper()))
-                            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, context.Operation.Syntax.GetLocation(), new object[] { CurrentFunction.CorrectAccessSymbol, "" }));
-                    }
+                    int tempint = 0;
+                    if (int.TryParse(operation.Arguments[0].Syntax.ToString(), out tempint))
+                        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, context.Operation.Syntax.GetLocation(), new object[] { CurrentFunction.CorrectAccessSymbol, "" }));
+                    else
+                        if (!operation.Arguments[0].Syntax.ToString().ToUpper().StartsWith(CurrentFunction.CorrectAccessSymbol.ToUpper()))
+                        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, context.Operation.Syntax.GetLocation(), new object[] { CurrentFunction.CorrectAccessSymbol, "" }));
                 }
-            
+            }
+
         }
     }
 
@@ -54,7 +62,7 @@ namespace BusinessCentral.LinterCop.Design
         public string CorrectAccessSymbol;
         public bool ZeroIDAllowed;
 
-        public RelevantFuntion(NavTypeKind ObjType, string FnctName,string AccessSymbol,bool ZeroID)
+        public RelevantFuntion(NavTypeKind ObjType, string FnctName, string AccessSymbol, bool ZeroID)
         {
             ObjectType = ObjType;
             FunctionName = FnctName;
