@@ -17,10 +17,9 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.Symbol.IsObsoletePending || ctx.Symbol.IsObsoleteRemoved) return;
             if (ctx.Symbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.Symbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
 
-            var LastEditableLocation = ctx.Symbol.GetLocation();
             IFieldSymbol field = (IFieldSymbol)ctx.Symbol;
             if (field.FieldClass == FieldClassKind.FlowField && field.GetBooleanPropertyValue(PropertyKind.Editable).Value)
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0001FlowFieldsShouldNotBeEditable, LastEditableLocation));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0001FlowFieldsShouldNotBeEditable, field.Location));
         }
     }
 }
