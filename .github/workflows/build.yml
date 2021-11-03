@@ -18,7 +18,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.*
+        dotnet-version: 2.1.*
     - name: Download platform artifact
       run: curl -v https://bcartifacts.blob.core.windows.net/onprem/19.0.29894.30693/platform -o platform.zip
     - name: Unzip platform
