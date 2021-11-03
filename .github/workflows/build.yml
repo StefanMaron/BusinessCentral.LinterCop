@@ -21,6 +21,6 @@ jobs:
     - name: Download platform artifact
       run: curl -v https://bcartifacts.blob.core.windows.net/onprem/19.0.29894.30693/platform -o platform.zip
     - name: Unzip platform
-      run: find ~+ -type f -name "*.vsix" | xargs unzip -d ms-dynamics-smb.al-latest
+      run: find ~+ -type f -name "*.vsix"
     - name: Build
       run: dotnet build --no-restore
