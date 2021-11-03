@@ -24,7 +24,7 @@ jobs:
     - name: list directory content
       run: ls
     - name: Unzip platform
-      run: unzip -j -v platform.zip "ModernDev/program files/Microsoft Dynamics NAV/190/AL Development Environment/ALLanguage.vsix"
+      run: unzip -j -v platform.zip
     - name: Unzip vsix
       run: unzip "ALLanguage.vsix" -d ms-dynamics-smb.al-latest
     - name: Build
