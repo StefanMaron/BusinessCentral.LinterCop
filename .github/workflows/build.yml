@@ -24,7 +24,7 @@ jobs:
     - name: Unzip platform
       run: 7z x platform.zip
     - name: copy vsix
-      run: cp "ModernDev\program files\Microsoft Dynamics NAV\190\AL Development Environment\ALLanguage.vsix" .
+      run: cp "ModernDev\program files\Microsoft Dynamics NAV\190\AL Development Environment\ALLanguage.vsix" "./ALLanguage.vsix"
     - name: Unzip vsix
       run: unzip "ALLanguage.vsix" -d ms-dynamics-smb.al-latest
     - name: Build
