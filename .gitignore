@@ -1,6 +1,6 @@
 /.vs
 /bin
-/lib
+/ms-dynamics-smb.al-latest
 /obj
 /packages/System.Composition.AttributedModel.5.0.1/lib
 /Resources/Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll

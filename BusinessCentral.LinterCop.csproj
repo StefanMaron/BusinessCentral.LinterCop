@@ -8,7 +8,7 @@
     <AssemblyName>BusinessCentral.LinterCop</AssemblyName>
     <ApplicationVersion>7.4.7.37768</ApplicationVersion>
     <RootNamespace>BusinessCentral.LinterCop</RootNamespace>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -38,38 +38,47 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="netstandard" />
     <Reference Include="Microsoft.CodeAnalysis, Version=2.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.CodeAnalysis.dll</HintPath>
+      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.CodeAnalysis.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Dynamics.Nav.Analyzers.Common, Version=7.4.7.43721, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.Analyzers.Common.dll</HintPath>
+      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.Dynamics.Nav.Analyzers.Common.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis, Version=7.4.7.43721, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
+      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces, Version=7.4.7.43721, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
+      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Dynamics.Nav.CodeCop">
-      <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Microsoft.Dynamics.Nav.CodeCop.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/MMicrosoft.Dynamics.Nav.CodeCop.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\Newtonsoft.Json.dll</HintPath>
+      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="netstandard" />
     <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\System.Collections.Immutable.dll</HintPath>
+      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/System.Collections.Immutable.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System.Composition.AttributedModel, Version=1.0.35.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\Analyzers\System.Composition.AttributedModel.dll</HintPath>
+      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/System.Composition.AttributedModel.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -86,13 +95,7 @@
     <Compile Include="Helpers\LinterSettings.cs" />
     <Compile Include="LinterCopAnalyzers.Designer.cs" />
     <Compile Include="LinterCopAnalyzers.Generated.cs" />
-    <Compile Include="LinterCopDiagnosticsAnalyzerBase.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Include="Design\Rule0002CommitMustBeExplainedByComment.cs" />
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
