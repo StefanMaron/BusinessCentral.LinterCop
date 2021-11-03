@@ -21,6 +21,8 @@ jobs:
     - name: Download platform artifact
       run: curl -v https://bcartifacts.blob.core.windows.net/onprem/19.0.29894.30693/platform -o platform.zip
     - name: Unzip platform
+      run: unzip platform.zip -o platform
+    - name: Unzip vsix
       run: find ~+ -type f -name "*.vsix"
     - name: Build
       run: dotnet build --no-restore
