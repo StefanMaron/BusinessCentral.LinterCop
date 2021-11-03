@@ -21,7 +21,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Download vsix from Marketplace
-      run: curl https://marketplace.visualstudio.com/_apis/public/gallery/publishers/ms-dynamics-smb/vsextensions/al/latest/vspackage -o ms-dynamics-smb.al-latest.vsix
+      run: curl -v https://marketplace.visualstudio.com/_apis/public/gallery/publishers/ms-dynamics-smb/vsextensions/al/latest/vspackage -o ms-dynamics-smb.al-latest.vsix
     - name: Unzip dependencies
       run: unzip ms-dynamics-smb.al-8.1.525271.vsix -d ms-dynamics-smb.al-latest 
     - name: Build
