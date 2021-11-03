@@ -22,7 +22,7 @@ jobs:
     - name: Download platform artifact
       run: curl -v https://bcartifacts.blob.core.windows.net/onprem/19.0.29894.30693/platform -o platform.zip
     - name: Unzip platform
-      run: unzip -j -v platform.zip -d platform
+      run: unzip platform.zip -d platform
     - name: copy vsix
       run: cp "platform\ModernDev\program files\Microsoft Dynamics NAV\190\AL Development Environment\ALLanguage.vsix" .
     - name: Unzip vsix
