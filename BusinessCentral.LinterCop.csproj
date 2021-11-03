@@ -60,11 +60,6 @@
       <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.Dynamics.Nav.CodeCop">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/MMicrosoft.Dynamics.Nav.CodeCop.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Newtonsoft.Json.dll</HintPath>
@@ -73,11 +68,6 @@
     <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/System.Collections.Immutable.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Composition.AttributedModel, Version=1.0.35.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/System.Composition.AttributedModel.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
