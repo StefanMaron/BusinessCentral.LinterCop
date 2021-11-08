@@ -33,6 +33,6 @@ jobs:
       if: steps.cache-vsix.outputs.cache-hit != 'true'
       run: cp "ModernDev\program files\Microsoft Dynamics NAV\190\AL Development Environment\ALLanguage.vsix" "./ALLanguage.vsix"
     - name: Unzip vsix
-      run: 7z x "ALLanguage.vsix" -d "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r
+      run: 7z x "ALLanguage.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r
     - name: Build
       run: dotnet build --no-restore
