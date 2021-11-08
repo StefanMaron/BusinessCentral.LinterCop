@@ -22,7 +22,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ALLanguage.vsix
-        key: vsix-19.0.29894.30693-a
+        key: vsix-19.0.29894.30693
     - name: Download platform artifact
       if: steps.cache-vsix.outputs.cache-hit != 'true'
       run: Invoke-WebRequest https://bcartifacts.blob.core.windows.net/onprem/19.0.29894.30693/platform -OutFile platform.zip
