@@ -22,17 +22,17 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ALLanguage.vsix
-        key: vsix-19.0.29894.30693
+        key: vsix-19.0.29894.30693-a
     - name: Download platform artifact
       if: steps.cache-vsix.outputs.cache-hit != 'true'
       run: Invoke-WebRequest https://bcartifacts.blob.core.windows.net/onprem/19.0.29894.30693/platform -OutFile platform.zip
     - name: Unzip platform
       if: steps.cache-vsix.outputs.cache-hit != 'true'
-      run: 7z x platform.zip
+      run: 7z x platform.zip *.vsix -r
     - name: copy vsix
       if: steps.cache-vsix.outputs.cache-hit != 'true'
       run: cp "ModernDev\program files\Microsoft Dynamics NAV\190\AL Development Environment\ALLanguage.vsix" "./ALLanguage.vsix"
     - name: Unzip vsix
-      run: unzip "ALLanguage.vsix" -d ms-dynamics-smb.al-latest
+      run: 7z x "ALLanguage.vsix" -d "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r
     - name: Build
       run: dotnet build --no-restore
