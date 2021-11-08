@@ -10,7 +10,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     
@@ -20,7 +20,7 @@ jobs:
       with:
         dotnet-version: 2.1.*
     - name: Download platform artifact
-      run: curl -v https://bcartifacts.blob.core.windows.net/onprem/19.0.29894.30693/platform -o platform.zip
+      run: Invoke-WebRequest https://bcartifacts.blob.core.windows.net/onprem/19.0.29894.30693/platform -OutFile platform.zip
     - name: Unzip platform
       run: 7z x platform.zip
     - name: copy vsix
