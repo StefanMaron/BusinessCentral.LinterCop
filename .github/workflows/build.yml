@@ -34,8 +34,14 @@ jobs:
       run: cp "ModernDev\program files\Microsoft Dynamics NAV\190\AL Development Environment\ALLanguage.vsix" "./ALLanguage.vsix"
     - name: Unzip vsix
       run: 7z x "ALLanguage.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r
+    - name: Set outputs
+      id: vars
+      run: echo "::set-output name=production::true"
     - name: Print Version
       run: echo $RESOLVED_VERSION
+    - name: Check outputs
+      shell: pwsh
+      run: echo ${{ steps.vars.outputs.production }}
     - name: Build
       run: dotnet build --no-restore
     - name: Upload a Build Artifact
