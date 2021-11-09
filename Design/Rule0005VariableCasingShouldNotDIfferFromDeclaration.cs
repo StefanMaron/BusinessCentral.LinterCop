@@ -2,8 +2,6 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Immutable;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
 
 namespace BusinessCentral.LinterCop.Design
@@ -15,7 +13,7 @@ namespace BusinessCentral.LinterCop.Design
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForBuiltInMethodsWithCasingMismatch), new OperationKind[] { 
+            context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForBuiltInMethodsWithCasingMismatch), new OperationKind[] {
                 OperationKind.InvocationExpression,
                 OperationKind.FieldAccess,
                 OperationKind.GlobalReferenceExpression,
@@ -23,12 +21,78 @@ namespace BusinessCentral.LinterCop.Design
                 OperationKind.ParameterReferenceExpression,
                 OperationKind.ReturnValueReferenceExpression
             });
+
+            context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForBuiltInTypeCasingMismatch), new SymbolKind[] {
+                SymbolKind.Codeunit,
+                SymbolKind.Entitlement,
+                SymbolKind.Enum,
+                SymbolKind.EnumExtension,
+                SymbolKind.Interface,
+                SymbolKind.Page,
+                SymbolKind.PageCustomization,
+                SymbolKind.PageExtension,
+                SymbolKind.Permission,
+                SymbolKind.PermissionSet,
+                SymbolKind.PermissionSetExtension,
+                SymbolKind.Profile,
+                SymbolKind.ProfileExtension,
+                SymbolKind.Query,
+                SymbolKind.Report,
+                SymbolKind.ReportExtension,
+                SymbolKind.Table,
+                SymbolKind.TableExtension,
+                SymbolKind.XmlPort
+            });
+        }
+        private void CheckForBuiltInTypeCasingMismatch(SymbolAnalysisContext ctx)
+        {
+            foreach (var node in ctx.Symbol.DeclaringSyntaxReference.GetSyntax().DescendantNodesAndTokens().Where(n => IsValidToken(n)))
+            {
+                if (node.IsToken)
+                    if (SyntaxFactory.Token(node.Kind).ToString() != node.ToString())
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, node.GetLocation(), new object[] { SyntaxFactory.Token(node.Kind), "" }));
+                if (node.IsNode)
+                {
+                    if (node.AsNode().IsKind(SyntaxKind.SimpleTypeReference) || node.Kind.ToString().Contains("DataType"))
+                    {
+                        var targetName = Enum.GetValues(typeof(NavTypeKind)).Cast<NavTypeKind>().FirstOrDefault(Kind => Kind.ToString().ToUpper() == node.AsNode().ToString().ToUpper() && Kind.ToString() != node.AsNode().ToString());
+                        if (targetName != NavTypeKind.None)
+                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, node.GetLocation(), new object[] { targetName, "" }));
+                    }
+                    if (node.AsNode().IsKind(SyntaxKind.SubtypedDataType) || node.AsNode().IsKind(SyntaxKind.GenericDataType) || node.AsNode().IsKind(SyntaxKind.OptionAccessExpression))
+                    {
+                        var targetName = Enum.GetValues(typeof(NavTypeKind)).Cast<NavTypeKind>().FirstOrDefault(Kind => node.AsNode().ToString().ToUpper().StartsWith(Kind.ToString().ToUpper()) && !node.AsNode().ToString().StartsWith(Kind.ToString()));
+                        if (targetName != NavTypeKind.None)
+                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, node.GetLocation(), new object[] { targetName, "" }));
+                    }
+
+                }
+
+            }
+        }
+
+        private static bool IsValidToken(Microsoft.Dynamics.Nav.CodeAnalysis.Syntax.SyntaxNodeOrToken n)
+        {
+            if (n.Kind.ToString().Contains("Keyword"))
+                return true;
+            if (n.Kind.ToString().Contains("DataType"))
+                return true;
+            if (n.Kind == SyntaxKind.SimpleTypeReference)
+                return true;
+            if (n.Kind == SyntaxKind.SubtypedDataType)
+                return true;
+            if (n.Kind == SyntaxKind.GenericDataType)
+                return true;
+            if (n.Kind == SyntaxKind.OptionAccessExpression)
+                return true;
+
+            return false;
         }
 
         private void CheckForBuiltInMethodsWithCasingMismatch(OperationAnalysisContext ctx)
         {
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-            if (ctx.ContainingSymbol.IsObsoletePending ||ctx.ContainingSymbol.IsObsoleteRemoved) return;
+            if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
 
             var targetName = "";
             if (ctx.Operation.Kind == OperationKind.InvocationExpression)
@@ -45,9 +109,9 @@ namespace BusinessCentral.LinterCop.Design
                 }
                 catch (System.InvalidCastException)
                 {
-                }      
+                }
             }
-            if ( new object[] {
+            if (new object[] {
                 OperationKind.GlobalReferenceExpression,
                 OperationKind.LocalReferenceExpression,
                 OperationKind.ParameterReferenceExpression,
@@ -72,7 +136,7 @@ namespace BusinessCentral.LinterCop.Design
 
             if (OnlyDiffersInCasing(ctx.Operation.Syntax.ToString(), targetName))
             {
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Operation.Syntax.GetLocation(), new object[] { targetName, ""}));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Operation.Syntax.GetLocation(), new object[] { targetName, "" }));
                 return;
             }
 
@@ -84,6 +148,5 @@ namespace BusinessCentral.LinterCop.Design
         {
             return left.Trim('"').ToUpper() == right.Trim('"').ToUpper() && left.Trim('"') != right.Trim('"');
         }
-
-  }
+    }
 }
