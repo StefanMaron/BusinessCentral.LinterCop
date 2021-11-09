@@ -36,3 +36,8 @@ jobs:
       run: 7z x "ALLanguage.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r
     - name: Build
       run: dotnet build --no-restore
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.4
+      with:
+        name: BusinessCentral.LinterCop.dll
+        path: bin\Debug\BusinessCentral.LinterCop.dll
