@@ -42,7 +42,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Set current version
-      run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]', "Version(""${{ steps.create_release.outputs.tagName }}"")]" |  Out-File AssemblyInfo.cs
+      run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]', "Version(""${{ steps.create_release.outputs.tag_name }}"")]" |  Out-File AssemblyInfo.cs
     - name: Build
       run: dotnet build --no-restore
     - name: Upload a Build Artifact
