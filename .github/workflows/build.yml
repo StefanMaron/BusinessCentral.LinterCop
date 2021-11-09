@@ -52,6 +52,8 @@ jobs:
         path: bin\Debug\BusinessCentral.LinterCop.dll
     - name: Remove a Release Asset
       uses: flcdrg/remove-release-asset-action@v1.0.13
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         release_id: ${{ steps.create_release.outputs.id }} 
         asset_name: BusinessCentral.LinterCop.dll
