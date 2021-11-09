@@ -57,3 +57,4 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
         asset_path: bin\Debug\BusinessCentral.LinterCop.dll
         asset_name: BusinessCentral.LinterCop.dll
+        asset_content_type: application/octet-stream
