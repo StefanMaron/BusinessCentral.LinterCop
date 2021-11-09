@@ -34,13 +34,6 @@ jobs:
       run: cp "ModernDev\program files\Microsoft Dynamics NAV\190\AL Development Environment\ALLanguage.vsix" "./ALLanguage.vsix"
     - name: Unzip vsix
       run: 7z x "ALLanguage.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v2.2.4
-      with:
-        name: BusinessCentral.LinterCop.dll
-        path: bin\Debug\BusinessCentral.LinterCop.dll
     - name: Release
       id: create_release
       uses: release-drafter/release-drafter@v5
@@ -48,6 +41,15 @@ jobs:
         disable-autolabeler: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Set current version
+      run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]', "Version(""$RESOLVED_VERSION"")]" |  Out-File AssemblyInfo.cs
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.4
+      with:
+        name: BusinessCentral.LinterCop.dll
+        path: bin\Debug\BusinessCentral.LinterCop.dll
     - name: Upload Release Asset
       id: upload-release-asset 
       uses: actions/upload-release-asset@v1
