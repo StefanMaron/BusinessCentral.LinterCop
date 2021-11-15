@@ -15,12 +15,26 @@ namespace BusinessCentral.LinterCop.Design
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForObjectIdsInFunctionInvocations), OperationKind.InvocationExpression);
-            //context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForObjectIdsEventSubscribers), SymbolKind.Method);
+            context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForObjectIdsEventSubscribers), SymbolKind.Method);
         }
         private void CheckForObjectIdsEventSubscribers(SymbolAnalysisContext context)
         {
             IMethodSymbol method = (IMethodSymbol)context.Symbol;
-            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, method.GetLocation(), new object[] { String.Join(";", method.Attributes[0].DeclaringSyntaxReference.GetSyntax().DescendantNodes(o => true).Where(o => o.Kind == SyntaxKind.OptionAccessAttributeArgument)), "" }));
+            if (method.Attributes.Length == 0)
+                return;
+
+            var ObjectAccessToUse = method.Attributes[0].DeclaringSyntaxReference.GetSyntax().DescendantNodes(o => true).FirstOrDefault(n => n.IsKind(SyntaxKind.OptionAccessExpression));
+            if (ObjectAccessToUse == null)
+                return;
+
+            var ObjectAccessToUseText = ObjectAccessToUse.DescendantNodes().ToArray()[1].ToString();
+            if (ObjectAccessToUseText == "Table")
+                ObjectAccessToUseText = "Database";
+
+            var wrongSyntaxLiteral = method.Attributes[0].DeclaringSyntaxReference.GetSyntax().DescendantNodes(o => true).FirstOrDefault(n => n.IsKind(SyntaxKind.Int32SignedLiteralValue));
+
+            if (wrongSyntaxLiteral != null)
+                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, wrongSyntaxLiteral.GetLocation(), new object[] { ObjectAccessToUseText, "" }));
         }
 
         private void CheckForObjectIdsInFunctionInvocations(OperationAnalysisContext context)
