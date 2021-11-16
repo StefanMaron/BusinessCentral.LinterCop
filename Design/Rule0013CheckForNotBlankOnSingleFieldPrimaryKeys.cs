@@ -26,7 +26,7 @@ namespace BusinessCentral.LinterCop.Design
                 return;
 
             if (table.PrimaryKey.Fields[0].Equals(field))
-                if (field.GetBooleanPropertyValue(PropertyKind.NotBlank) != true)
+                if (field.GetProperty(PropertyKind.NotBlank) == null)
                     context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0013CheckForNotBlankOnSingleFieldPrimaryKeys, field.GetLocation()));
         }
 

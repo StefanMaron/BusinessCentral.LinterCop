@@ -254,15 +254,15 @@
     <comment/>
   </data>
   <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysDescription" xml:space="preserve">
-    <value>Tables with a single field PK sould have NotBlank set to true</value>
+    <value>Tables with a single field PK should have NotBlank set to true</value>
     <comment/>
   </data>
   <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysTitle" xml:space="preserve">
-    <value>Tables with a single field PK sould have NotBlank set to true</value>
+    <value>Tables with a single field PK should have NotBlank set to true</value>
     <comment/>
   </data>
   <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysFormat" xml:space="preserve">
-    <value>Tables with a single field PK sould have NotBlank set to true</value>
+    <value>Tables with a single field PK should have NotBlank set to true</value>
     <comment/>
   </data>
 </root>
