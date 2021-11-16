@@ -82,6 +82,8 @@ namespace BusinessCentral.LinterCop.Design
                 !n.Kind.ToString().StartsWith("Page") &&
                 !n.Kind.ToString().StartsWith("Interface") &&
                 !n.Kind.ToString().StartsWith("Report") &&
+                !n.Kind.ToString().StartsWith("Query") &&
+                !n.Kind.ToString().StartsWith("XmlPort") &&
                 !n.Kind.ToString().StartsWith("DotNet")
             )
                 return true;
