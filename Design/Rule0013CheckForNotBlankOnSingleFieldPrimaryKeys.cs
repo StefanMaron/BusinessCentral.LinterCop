@@ -38,6 +38,7 @@ namespace BusinessCentral.LinterCop.Design
                 field.FieldClass != FieldClassKind.Normal ||
                 field.GetContainingObjectTypeSymbol().IsObsoletePending ||
                 field.GetContainingObjectTypeSymbol().IsObsoleteRemoved ||
+                field.GetContainingObjectTypeSymbol().Kind != SymbolKind.Table ||
                 !field.DeclaringSyntaxReference.GetSyntax().DescendantNodes().Any(Token => Token.Kind == SyntaxKind.LengthDataType);
         }
     }

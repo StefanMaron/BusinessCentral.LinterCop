@@ -66,9 +66,7 @@ namespace BusinessCentral.LinterCop.Design
                         if (targetName != NavTypeKind.None)
                             ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, node.GetLocation(), new object[] { targetName, "" }));
                     }
-
                 }
-
             }
         }
 
