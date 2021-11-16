@@ -74,7 +74,15 @@ namespace BusinessCentral.LinterCop.Design
 
         private static bool IsValidToken(Microsoft.Dynamics.Nav.CodeAnalysis.Syntax.SyntaxNodeOrToken n)
         {
-            if (n.Kind.ToString().Contains("Keyword") && !n.Kind.ToString().StartsWith("Codeunit") && !n.Kind.ToString().StartsWith("Enum") && !n.Kind.ToString().StartsWith("Label") && !n.Kind.ToString().StartsWith("DotNet"))
+            if (n.Kind.ToString().Contains("Keyword") &&
+                !n.Kind.ToString().StartsWith("Codeunit") &&
+                !n.Kind.ToString().StartsWith("Enum") &&
+                !n.Kind.ToString().StartsWith("Label") &&
+                !n.Kind.ToString().StartsWith("Action") &&
+                !n.Kind.ToString().StartsWith("Page") &&
+                !n.Kind.ToString().StartsWith("Interface") &&
+                !n.Kind.ToString().StartsWith("DotNet")
+            )
                 return true;
             if (n.Kind.ToString().Contains("DataType"))
                 return true;
