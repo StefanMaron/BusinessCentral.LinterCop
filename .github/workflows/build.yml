@@ -39,7 +39,7 @@ jobs:
       id: create_release
       uses: release-drafter/release-drafter@v5
       with:
-        prerelease: github.ref != 'refs/heads/master'
+        prerelease: true
         disable-autolabeler: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
