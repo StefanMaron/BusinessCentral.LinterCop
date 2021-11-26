@@ -17,7 +17,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 2.1.*
+        dotnet-version: 3.1.*
     - name: Cache VSIX
       id: cache-vsix
       uses: actions/cache@v2
