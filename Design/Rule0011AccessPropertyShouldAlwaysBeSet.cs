@@ -3,6 +3,7 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
+using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -16,7 +17,11 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckForMissingAccessProperty(SymbolAnalysisContext context)
         {
-            if (context.Symbol.IsObsoletePending ||context.Symbol.IsObsoleteRemoved) return;
+            var manifest = AppSourceCopConfigurationProvider.GetManifest(context.Compilation);
+            if (manifest.Runtime < RuntimeVersion.Spring2021 && (context.Symbol.Kind == SymbolKind.Enum || context.Symbol.Kind == SymbolKind.Interface))
+                return;
+
+            if (context.Symbol.IsObsoletePending || context.Symbol.IsObsoleteRemoved) return;
             if (context.Symbol.Kind == SymbolKind.Field)
             {
                 LinterSettings.Create();
@@ -27,9 +32,9 @@ namespace BusinessCentral.LinterCop.Design
             }
             else
                 if (context.Symbol.GetProperty(PropertyKind.Access) == null)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0011AccessPropertyShouldAlwaysBeSet, context.Symbol.GetLocation()));
-                }
+            {
+                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0011AccessPropertyShouldAlwaysBeSet, context.Symbol.GetLocation()));
+            }
 
         }
     }

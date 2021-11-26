@@ -40,24 +40,29 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="netstandard" />
-    <Reference Include="Microsoft.CodeAnalysis, Version=2.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.CodeAnalysis">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.CodeAnalysis.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.Dynamics.Nav.Analyzers.Common, Version=7.4.7.43721, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Dynamics.Nav.Analyzers.Common">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.Dynamics.Nav.Analyzers.Common.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis, Version=7.4.7.43721, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces, Version=7.4.7.43721, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.Dynamics.Nav.Analyzers.Common">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.Dynamics.Nav.Analyzers.Common.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
