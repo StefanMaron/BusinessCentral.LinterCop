@@ -51,7 +51,7 @@ namespace BusinessCentral.LinterCop.Design
                 if (node.IsToken)
                     if (SyntaxFactory.Token(node.Kind).ToString() != node.ToString())
                         ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, node.GetLocation(), new object[] { SyntaxFactory.Token(node.Kind), "" }));
-                if (node.IsNode)
+                if (node.IsNode && !node.AsNode().ToString().StartsWith("array"))
                 {
                     if ((node.AsNode().IsKind(SyntaxKind.SimpleTypeReference) || node.Kind.ToString().Contains("DataType")) && !node.Kind.ToString().StartsWith("Codeunit") && !node.Kind.ToString().StartsWith("Enum") && !node.Kind.ToString().StartsWith("Label"))
                     {
