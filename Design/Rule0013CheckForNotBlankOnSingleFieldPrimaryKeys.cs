@@ -39,7 +39,19 @@ namespace BusinessCentral.LinterCop.Design
                 field.GetContainingObjectTypeSymbol().IsObsoletePending ||
                 field.GetContainingObjectTypeSymbol().IsObsoleteRemoved ||
                 field.GetContainingObjectTypeSymbol().Kind != SymbolKind.Table ||
-                !field.DeclaringSyntaxReference.GetSyntax().DescendantNodes().Any(Token => Token.Kind == SyntaxKind.LengthDataType);
+                !field.DeclaringSyntaxReference.GetSyntax().DescendantNodes().Any(Token => Token.Kind == SyntaxKind.LengthDataType) ||
+                TableContainsNoSeries((ITableTypeSymbol)field.GetContainingObjectTypeSymbol());
+        }
+
+        private static bool TableContainsNoSeries(ITableTypeSymbol table)
+        {
+            return table.Fields.Any(field =>
+            {
+                var property = field.GetProperty(PropertyKind.TableRelation);
+                if (property != null)
+                    return field.GetProperty(PropertyKind.TableRelation).ValueText.StartsWith("\"No. Series\"");
+                return false;
+            });
         }
     }
 }
