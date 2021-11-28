@@ -40,6 +40,7 @@ jobs:
       uses: release-drafter/release-drafter@v5
       with:
         prerelease: ${{ github.ref != 'refs/heads/master' }}
+        commitish: ${{ github.ref }}
         disable-autolabeler: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
