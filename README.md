@@ -54,6 +54,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |LC0011|Every object needs to specify a value for the `Access` property. Either `true` or `false`. Optionally this can also be activated for table fields with the setting `enableRule0011ForTableFields`|Disabled|
 |LC0012|Using hardcoded IDs in functions like `Codeunit.Run()` is not allowed|Warning|
 |LC0013|Any table with a single field in the PK of type code or text, should have set `NotBlank` on the PK field|Warning|
+|LC0014|The Caption of permissionset objects should not exceed the maximum length.|Warning|
 
 ## Configuration
 
