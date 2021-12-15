@@ -43,17 +43,18 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |---|---|---|
 |LC0001|FlowFields should not be editable.|Warning|
 |LC0002|`Commit()` needs a comment to justify its existence. Either a leading or a trailing comment.|Warning|
-|LC0003|Do not use an Object ID for properties or variable declarations. |Warning|
-|LC0004|`DrillDownPageId` and `LookupPageId` must be filled in table when table is used in list page|Warning|
-|LC0005|The casing of variable/method usage must align with the definition|Warning|
+|LC0003|Do not use an Object ID for properties or variable declarations.|Warning|
+|LC0004|`DrillDownPageId` and `LookupPageId` must be filled in table when table is used in list page.|Warning|
+|LC0005|The casing of variable/method usage must align with the definition.|Warning|
 |LC0006|Fields with property `AutoIncrement` cannot be used in temporary table (`TableType = Temporary`).|Error|
-|LC0007|Every table needs to specify a value for the `DataPerCompany` property. Either `true` or `false`|Disabled|
+|LC0007|Every table needs to specify a value for the `DataPerCompany` property. Either `true` or `false`.|Disabled|
 |LC0008|Filter operators should not be used in `SetRange`.|Warning|
-|LC0009|Show info message about code metrics for each function or trigger|Disabled|
-|LC0010|Show warning about code metrics for each function or trigger if either cyclomatic complexity is 8 or greater or maintainability index 20 or lower|Warning|
-|LC0011|Every object needs to specify a value for the `Access` property. Either `true` or `false`. Optionally this can also be activated for table fields with the setting `enableRule0011ForTableFields`|Disabled|
-|LC0012|Using hardcoded IDs in functions like `Codeunit.Run()` is not allowed|Warning|
-|LC0013|Any table with a single field in the PK of type code or text, should have set `NotBlank` on the PK field|Warning|
+|LC0009|Show info message about code metrics for each function or trigger.|Disabled|
+|LC0010|Show warning about code metrics for each function or trigger if either cyclomatic complexity is 8 or greater or maintainability index 20 or lower.|Warning|
+|LC0011|Every object needs to specify a value for the `Access` property. Either `true` or `false`. Optionally this can also be activated for table fields with the setting `enableRule0011ForTableFields`.|Disabled|
+|LC0012|Using hardcoded IDs in functions like `Codeunit.Run()` is not allowed.|Warning|
+|LC0013|Any table with a single field in the PK of type code or text, should have set `NotBlank` on the PK field.|Warning|
+|LC0015|All application objects should be covered by at least one permission set in the extension.|Warning|
 
 ## Configuration
 

@@ -119,150 +119,122 @@
   </resheader>
   <data name="AnalyzerPrefix" xml:space="preserve">
     <value>LC</value>
-    <comment/>
   </data>
   <data name="Rule0001FlowFieldsShouldNotBeEditableDescription" xml:space="preserve">
     <value>FlowFields should not be editable.</value>
-    <comment/>
   </data>
   <data name="Rule0001FlowFieldsShouldNotBeEditableFormat" xml:space="preserve">
     <value>FlowFields should not be editable.</value>
-    <comment/>
   </data>
   <data name="Rule0001FlowFieldsShouldNotBeEditableTitle" xml:space="preserve">
     <value>FlowFields should not be editable.</value>
-    <comment/>
   </data>
   <data name="Rule0002CommitMustBeExplainedByCommentDescription" xml:space="preserve">
     <value>Commit() needs a comment to justify its existance. Either a leading or a trailing comment.</value>
-    <comment/>
   </data>
   <data name="Rule0002CommitMustBeExplainedByCommentFormat" xml:space="preserve">
     <value>Commit() needs a comment to justify its existance. Either a leading or a trailing comment.</value>
-    <comment/>
   </data>
   <data name="Rule0002CommitMustBeExplainedByCommentTitle" xml:space="preserve">
     <value>Commit() needs a comment to justify its existance. Either a leading or a trailing comment.</value>
-    <comment/>
   </data>
   <data name="Rule0003DoNotUseObjectIDsInVariablesOrPropertiesDescription" xml:space="preserve">
     <value>Do not use an Object ID for properties or variables declaration.</value>
-    <comment/>
   </data>
   <data name="Rule0003DoNotUseObjectIDsInVariablesOrPropertiesFormat" xml:space="preserve">
     <value>Do not use an Object ID for properties or variables declaration. Use {1} instead.</value>
-    <comment/>
   </data>
   <data name="Rule0003DoNotUseObjectIDsInVariablesOrPropertiesTitle" xml:space="preserve">
     <value>Do not use an Object ID for properties or variables declaration.</value>
-    <comment/>
   </data>
   <data name="Rule0004LookupPageIdAndDrillDownPageIdDescription" xml:space="preserve">
     <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table because it is used in list page</value>
-    <comment/>
   </data>
   <data name="Rule0004LookupPageIdAndDrillDownPageIdFormat" xml:space="preserve">
     <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table "{1}" because it is used in page "{2}" (list)</value>
-    <comment/>
   </data>
   <data name="Rule0004LookupPageIdAndDrillDownPageIdTitle" xml:space="preserve">
     <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table because it is used in list page</value>
-    <comment/>
   </data>
   <data name="Rule0005VariableCasingShouldNotDIfferFromDeclarationDescription" xml:space="preserve">
     <value>Wrong casing detected!</value>
-    <comment/>
   </data>
   <data name="Rule0005VariableCasingShouldNotDIfferFromDeclarationFormat" xml:space="preserve">
     <value>Wrong casing detected! Use {0} instead.</value>
-    <comment/>
   </data>
   <data name="Rule0005VariableCasingShouldNotDIfferFromDeclarationTitle" xml:space="preserve">
     <value>Wrong casing detected!</value>
-    <comment/>
   </data>
   <data name="Rule0006FieldNotAutoIncrementInTemporaryTableDescription" xml:space="preserve">
     <value>AutoIncrement fields are not possible in temporary tables!</value>
-    <comment/>
   </data>
   <data name="Rule0006FieldNotAutoIncrementInTemporaryTableFormat" xml:space="preserve">
     <value>AutoIncrement fields are not possible in temporary tables!</value>
-    <comment/>
   </data>
   <data name="Rule0006FieldNotAutoIncrementInTemporaryTableTitle" xml:space="preserve">
     <value>AutoIncrement fields are not possible in temporary tables!</value>
-    <comment/>
   </data>
   <data name="Rule0007DataPerCompanyShouldAlwaysBeSetDescription" xml:space="preserve">
     <value>DataPerCompany is missing!</value>
-    <comment/>
   </data>
   <data name="Rule0007DataPerCompanyShouldAlwaysBeSetFormat" xml:space="preserve">
     <value>DataPerCompany is missing!</value>
-    <comment/>
   </data>
   <data name="Rule0007DataPerCompanyShouldAlwaysBeSetTitle" xml:space="preserve">
     <value>DataPerCompany is missing!</value>
-    <comment/>
   </data>
   <data name="Rule0008NoFilterOperatorsInSetRangeDescription" xml:space="preserve">
     <value>Filter operators should not be used in SetRange. Use SetFilter instead.</value>
-    <comment/>
   </data>
   <data name="Rule0008NoFilterOperatorsInSetRangeFormat" xml:space="preserve">
     <value>Filter operators should not be used in SetRange. Use SetFilter instead.</value>
-    <comment/>
   </data>
   <data name="Rule0008NoFilterOperatorsInSetRangeTitle" xml:space="preserve">
     <value>Filter operators should not be used in SetRange. Use SetFilter instead.</value>
-    <comment/>
   </data>
   <data name="Rule0009CodeMetricsInfoDescription" xml:space="preserve">
     <value>Cyclomatic complexity and Maintainability index</value>
-    <comment/>
   </data>
   <data name="Rule0009CodeMetricsInfoFormat" xml:space="preserve">
     <value>Cyclomatic complexity: {0}, Maintainability index: {1}</value>
-    <comment/>
   </data>
   <data name="Rule0009CodeMetricsInfoTitle" xml:space="preserve">
     <value>Cyclomatic complexity and Maintainability index</value>
-    <comment/>
   </data>
   <data name="Rule0011AccessPropertyShouldAlwaysBeSetDescription" xml:space="preserve">
     <value>Access property is missing!</value>
-    <comment/>
   </data>
   <data name="Rule0011AccessPropertyShouldAlwaysBeSetFormat" xml:space="preserve">
     <value>Access property is missing!</value>
-    <comment/>
   </data>
   <data name="Rule0011AccessPropertyShouldAlwaysBeSetTitle" xml:space="preserve">
     <value>Access property is missing!</value>
-    <comment/>
   </data>
   <data name="Rule0012DoNotUseObjectIdInSystemFunctionsDescription" xml:space="preserve">
     <value>Wrong Parameter detected.</value>
-    <comment/>
   </data>
   <data name="Rule0012DoNotUseObjectIdInSystemFunctionsFormat" xml:space="preserve">
     <value>Wrong Parameter detected. Select the correct object with "{0}::" instead.</value>
-    <comment/>
   </data>
   <data name="Rule0012DoNotUseObjectIdInSystemFunctionsTitle" xml:space="preserve">
     <value>Wrong Parameter detected.</value>
-    <comment/>
   </data>
   <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysDescription" xml:space="preserve">
     <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
-    <comment/>
   </data>
   <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysTitle" xml:space="preserve">
     <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
-    <comment/>
   </data>
   <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysFormat" xml:space="preserve">
     <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
-    <comment/>
+  </data>
+  <data name="Rule0015PermissionSetCoverageDescription" xml:space="preserve">
+    <value>All application objects should be covered by at least one permission set in the extension.</value>
+  </data>
+  <data name="Rule0015PermissionSetCoverageFormat" xml:space="preserve">
+    <value>The application object {0} {1} is not covered by any permission set in the extension.</value>
+  </data>
+  <data name="Rule0015PermissionSetCoverageTitle" xml:space="preserve">
+    <value>All application objects should be covered by at least one permission set in the extension.</value>
   </data>
 </root>
