@@ -19,12 +19,6 @@ namespace BusinessCentral.LinterCop.Design {
 
         private void CheckPermissionSetCoverage(SymbolAnalysisContext context)
         {
-            var manifest = AppSourceCopConfigurationProvider.GetManifest(context.Compilation);
-            if (manifest.Runtime < RuntimeVersion.Fall2021)
-            {
-                return;
-            }
-
             IModuleSymbol moduleSymbol = context.Symbol as IModuleSymbol;
             if (moduleSymbol == null)
             {
@@ -104,7 +98,7 @@ namespace BusinessCentral.LinterCop.Design {
                     }
                 }
                 immutableHashSet = instance.ToImmutableHashSet();
-            } 
+            }
             finally
             {
                 instance.Free();
