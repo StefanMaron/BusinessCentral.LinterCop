@@ -236,5 +236,13 @@
   </data>
   <data name="Rule0014PermissionSetCaptionLengthTitle" xml:space="preserve">
     <value>The Caption of permissionset objects should not exceed the maximum length.</value>
+  <data name="Rule0015PermissionSetCoverageDescription" xml:space="preserve">
+    <value>All application objects should be covered by at least one permission set in the extension.</value>
+  </data>
+  <data name="Rule0015PermissionSetCoverageFormat" xml:space="preserve">
+    <value>The application object {0} {1} is not covered by any permission set in the extension.</value>
+  </data>
+  <data name="Rule0015PermissionSetCoverageTitle" xml:space="preserve">
+    <value>All application objects should be covered by at least one permission set in the extension.</value>
   </data>
 </root>

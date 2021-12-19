@@ -70,11 +70,26 @@
       <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Buffers, Version=4.6.28619.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/System.Collections.Immutable.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Memory, Version=4.700.19.56404, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.6.255193.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.700.20.12001, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Design\Rule0001FlowFieldsShouldNotBeEditable.cs" />
@@ -90,6 +105,7 @@
     <Compile Include="Design\Rule0012DoNotUseObjectIdInSystemFunctions.cs" />
     <Compile Include="Design\Rule0013CheckForNotBlankOnSingleFieldPrimaryKeys.cs" />
     <Compile Include="Design\Rule0014PermissionSetCaptionLength.cs" />
+    <Compile Include="Design\Rule0015PermissionSetCoverage.cs" />
     <Compile Include="Helpers\LinterSettings.cs" />
     <Compile Include="LinterCopAnalyzers.Designer.cs" />
     <Compile Include="LinterCopAnalyzers.Generated.cs" />
@@ -109,6 +125,5 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
