@@ -4,63 +4,78 @@
   "rules": [
     {
       "id": "LC0001",
-      "action": "Warning"
+      "action": "Warning",
+      "justification": "FlowFields should not be editable."
     },
     {
       "id": "LC0002",
-      "action": "Warning"
+      "action": "Warning",
+      "justification": "Commit() needs a comment to justify its existence. Either a leading or a trailing comment."
     },
     {
       "id": "LC0003",
-      "action": "Warning"
+      "action": "Warning",
+      "justification": "Do not use an Object ID for properties or variable declarations."
     },
     {
       "id": "LC0004",
-      "action": "Warning"
+      "action": "Warning",
+      "justification": "DrillDownPageId and LookupPageId must be filled in table when table is used in list page."
     },
     {
       "id": "LC0005",
-      "action": "Warning"
+      "action": "Warning",
+      "justification": "The casing of variable/method usage must align with the definition."
     },
     {
       "id": "LC0006",
-      "action": "Error"
+      "action": "Error",
+      "justification": "Fields with property AutoIncrement cannot be used in temporary table (TableType = Temporary)."
     },
     {
       "id": "LC0007",
-      "action": "Hidden"
+      "action": "Hidden",
+      "justification": "Every table needs to specify a value for the DataPerCompany property. Either true or false."
     },
     {
       "id": "LC0008",
-      "action": "Warning"
+      "action": "Warning",
+      "justification": "Filter operators should not be used in SetRange"
     },
     {
       "id": "LC0009",
-      "action": "Hidden"
+      "action": "Hidden",
+      "justification": "Show info message about code metrics for each function or trigger."
     },
     {
       "id": "LC0010",
-      "action": "Warning"
+      "action": "Warning",
+      "justification": "Show warning about code metrics for each function or trigger if either cyclomatic complexity is 8 or greater or maintainability index 20 or lower."
     },
     {
       "id": "LC0011",
-      "action": "Hidden"
+      "action": "Hidden",
+      "justification": "Every object needs to specify a value for the Access property. Either true or false. Optionally this can also be activated for table fields with the setting enableRule0011ForTableFields."
     },
     {
       "id": "LC0012",
-      "action": "Warning"
+      "action": "Warning",
+      "justification": "Using hardcoded IDs in functions like Codeunit.Run() is not allowed."
     },
     {
       "id": "LC0013",
-      "action": "Warning"
+      "action": "Warning",
+      "justification": "Any table with a single field in the PK of type code or text, should have set NotBlank on the PK field."
     },
     {
       "id": "LC0014",
-      "action": "Warning"
+      "action": "Warning",
+      "justification": "The Caption of permissionset objects should not exceed the maximum length."
     },
     {
       "id": "LC0015",
-      "action": "Warning"
+      "action": "Warning",
+      "justification": "All application objects should be covered by at least one permission set in the extension."
     }
   ]
 }
