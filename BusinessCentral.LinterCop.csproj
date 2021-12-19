@@ -104,6 +104,7 @@
     <Compile Include="Design\Rule0011AccessPropertyShouldAlwaysBeSet.cs" />
     <Compile Include="Design\Rule0012DoNotUseObjectIdInSystemFunctions.cs" />
     <Compile Include="Design\Rule0013CheckForNotBlankOnSingleFieldPrimaryKeys.cs" />
+    <Compile Include="Design\Rule0014PermissionSetCaptionLength.cs" />
     <Compile Include="Design\Rule0015PermissionSetCoverage.cs" />
     <Compile Include="Helpers\LinterSettings.cs" />
     <Compile Include="LinterCopAnalyzers.Designer.cs" />
