@@ -48,6 +48,11 @@ namespace BusinessCentral.LinterCop.Design
         {
             foreach (var node in ctx.Symbol.DeclaringSyntaxReference.GetSyntax().DescendantNodesAndTokens().Where(n => IsValidToken(n)))
             {
+                if (node.Kind.ToString().StartsWith("DotNet"))
+                {
+                    continue;
+                }
+
                 if (node.IsToken)
                     if (SyntaxFactory.Token(node.Kind).ToString() != node.ToString())
                         ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, node.GetLocation(), new object[] { SyntaxFactory.Token(node.Kind), "" }));

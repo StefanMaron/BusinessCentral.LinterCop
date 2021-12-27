@@ -85,6 +85,11 @@ namespace BusinessCentral.LinterCop.Design
 
                 foreach (IParameterSymbol parameter in method.Parameters)
                 {
+                    if (parameter.ParameterType.NavTypeKind == NavTypeKind.DotNet)
+                    {
+                        continue;
+                    }
+
                     if (ctx.Node.GetLocation().SourceSpan.End == parameter.DeclaringSyntaxReference.GetSyntax(CancellationToken.None).Span.End)
                     {
                         correctName = GetCorrectName(parameter.ParameterType.NavTypeKind.ToString(), parameter.ParameterType.ToString());
@@ -98,7 +103,11 @@ namespace BusinessCentral.LinterCop.Design
                 }
                 try
                 {
-                    IReturnValueSymbol returnValue = (IReturnValueSymbol)method.ReturnValueSymbol;
+                    IReturnValueSymbol returnValue = method.ReturnValueSymbol;
+                    if (returnValue.ReturnType.NavTypeKind == NavTypeKind.DotNet)
+                    {
+                        return;
+                    }
 
                     if (ctx.Node.GetLocation().SourceSpan.End == returnValue.DeclaringSyntaxReference.GetSyntax(CancellationToken.None).Span.End)
                     {
