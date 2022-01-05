@@ -23,10 +23,10 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ALLanguage.vsix
-        key: vsix-19.1.31886.32949
+        key: vsix-19.2.32968.34478
     - name: Download platform artifact
       if: steps.cache-vsix.outputs.cache-hit != 'true'
-      run: Invoke-WebRequest https://bcartifacts.blob.core.windows.net/sandbox/19.1.31886.32949/platform -OutFile platform.zip
+      run: Invoke-WebRequest https://bcartifacts.blob.core.windows.net/sandbox/19.2.32968.34478/platform -OutFile platform.zip
     - name: Unzip platform
       if: steps.cache-vsix.outputs.cache-hit != 'true'
       run: 7z x platform.zip *.vsix -r
