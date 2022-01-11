@@ -29,7 +29,7 @@ The Linter is not finished yet (and probably never will be :D ) If you have any 
 
 For manual compile you can use the `Compile-AppInBcContainer` command and pass the path to the `BusinessCentral.LinterCop.dll` in via the parameter `-CustomCodeCops`.
 
-If you are using `Run-ALPipeline` in your build pipelines you can also pass in the `BusinessCentral.LinterCop.dll` in via the parameter `-CustomCodeCops`.
+If you are using `Run-ALPipeline` in your build pipelines you can also pass in the `BusinessCentral.LinterCop.dll` in via the parameter `-CustomCodeCops`. To have the correct compiler dependecies you should also load the latest compiler from the marketplace. Add `-vsixFile (Get-LatestAlLanguageExtensionUrl)` to do so.
 
 Be aware though, the `BusinessCentral.LinterCop.dll` needs to be placed in a folder shared with the container.
 
