@@ -1,10 +1,7 @@
 ﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace BusinessCentral.LinterCop.Design
@@ -92,7 +89,10 @@ namespace BusinessCentral.LinterCop.Design
 
                     if (ctx.Node.GetLocation().SourceSpan.End == parameter.DeclaringSyntaxReference.GetSyntax(CancellationToken.None).Span.End)
                     {
-                        correctName = GetCorrectName(parameter.ParameterType.NavTypeKind.ToString(), parameter.ParameterType.ToString());
+                        if (parameter.ParameterType.NavTypeKind == NavTypeKind.Array)
+                            correctName = ((IArrayTypeSymbol)(parameter.ParameterType)).ElementType.Name.ToString();
+                        else
+                            correctName = GetCorrectName(parameter.ParameterType.NavTypeKind.ToString(), parameter.ParameterType.ToString());
 
                         if (ctx.Node.ToString().Trim('"').ToUpper() != correctName.ToUpper())
                             ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
