@@ -2,16 +2,17 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Immutable;
-using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
 using Microsoft.Dynamics.Nav.Analyzers.Common;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace BusinessCentral.LinterCop.Design {
+namespace BusinessCentral.LinterCop.Design
+{
     [DiagnosticAnalyzer]
-    class Rule0015PermissionSetCoverage : DiagnosticAnalyzer {
+    class Rule0015PermissionSetCoverage : DiagnosticAnalyzer
+    {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0015PermissionSetCoverage);
 
         public override void Initialize(AnalysisContext context)
@@ -39,7 +40,7 @@ namespace BusinessCentral.LinterCop.Design {
             {
                 ISymbol current = enumerator.Current;
                 IApplicationObjectTypeSymbol appObjTypeSymbol = (IApplicationObjectTypeSymbol)current;
-                PermissionObjectKind permObjectKind = PermissionObjectKind.TableData;
+                PermissionObjectKind permObjectKind = PermissionObjectKind.Table;
                 int permObjectId = appObjTypeSymbol.Id;
 
                 switch (appObjTypeSymbol.NavTypeKind)
@@ -57,7 +58,7 @@ namespace BusinessCentral.LinterCop.Design {
                         permObjectKind = PermissionObjectKind.Report;
                         break;
                     case NavTypeKind.Table:
-                        permObjectKind = PermissionObjectKind.TableData;
+                        permObjectKind = PermissionObjectKind.Table;
                         break;
                     case NavTypeKind.XmlPort:
                         permObjectKind = PermissionObjectKind.Xmlport;
@@ -68,12 +69,12 @@ namespace BusinessCentral.LinterCop.Design {
                 {
                     continue;
                 }
-                if (permissionSymbols.Contains((permObjectKind, permObjectId)) || XmlPermissionExistsForObject(permissionSetDocuments, permObjectKind, permObjectId))
+                if (permissionSymbols.Contains((permObjectKind, permObjectId)) || permissionSymbols.Contains((permObjectKind, 0)) || XmlPermissionExistsForObject(permissionSetDocuments, permObjectKind, permObjectId))
                 {
                     continue;
                 }
 
-                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0015PermissionSetCoverage, current.GetLocation(), new Object[] { appObjTypeSymbol.NavTypeKind.ToString(), appObjTypeSymbol.Name }));
+                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0015PermissionSetCoverage, current.GetLocation(), new Object[] { permObjectKind.ToString(), appObjTypeSymbol.Name }));
             }
         }
 
