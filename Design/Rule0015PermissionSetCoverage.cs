@@ -75,10 +75,13 @@ namespace BusinessCentral.LinterCop.Design
 
                 if (appObjTypeSymbol.NavTypeKind == NavTypeKind.Record)
                 {
-                    permObjectKind = PermissionObjectKind.TableData;
+                    if (((ITableTypeSymbol)(appObjTypeSymbol.OriginalDefinition)).TableType == TableTypeKind.Normal)
+                    {
+                        permObjectKind = PermissionObjectKind.TableData;
 
-                    if (!(permissionSymbols.Contains((permObjectKind, permObjectId)) || permissionSymbols.Contains((permObjectKind, 0)) || XmlPermissionExistsForObject(permissionSetDocuments, permObjectKind, permObjectId)))
-                        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0015PermissionSetCoverage, current.GetLocation(), new Object[] { permObjectKind.ToString(), appObjTypeSymbol.Name }));
+                        if (!(permissionSymbols.Contains((permObjectKind, permObjectId)) || permissionSymbols.Contains((permObjectKind, 0)) || XmlPermissionExistsForObject(permissionSetDocuments, permObjectKind, permObjectId)))
+                            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0015PermissionSetCoverage, current.GetLocation(), new Object[] { permObjectKind.ToString(), appObjTypeSymbol.Name }));
+                    }
                 }
 
             }
