@@ -32,7 +32,7 @@ namespace BusinessCentral.LinterCop.Design
                 if (variable.Type.NavTypeKind == NavTypeKind.DotNet) return;
 
                 if (variable.Type.NavTypeKind == NavTypeKind.Array)
-                    correctName = GetCorrectName(ctx.Node.Parent.Parent.ToString().Replace(" temporary", "").Replace(ctx.Node.ToString(), "").Trim(), variable.Type.ToString());
+                    correctName = ((IArrayTypeSymbol)variable.Type).ElementType.Name.ToString();
                 else
                     correctName = GetCorrectName(variable.Type.NavTypeKind.ToString(), variable.Type.ToString());
 
