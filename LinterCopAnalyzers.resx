@@ -287,5 +287,18 @@
   </data>
   <data name="Rule0015PermissionSetCoverageTitle" xml:space="preserve">
     <value>All application objects should be covered by at least one permission set in the extension.</value>
+    <comment/>
+  </data>
+  <data name="Rule0016CheckForMissingCaptionsDescription" xml:space="preserve">
+    <value>Caption is missing.</value>
+    <comment/>
+  </data>
+  <data name="Rule0016CheckForMissingCaptionsFormat" xml:space="preserve">
+    <value>Caption is missing.</value>
+    <comment/>
+  </data>
+  <data name="Rule0016CheckForMissingCaptionsTitle" xml:space="preserve">
+    <value>Caption is missing.</value>
+    <comment/>
   </data>
 </root>
