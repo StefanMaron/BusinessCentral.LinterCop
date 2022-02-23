@@ -301,4 +301,16 @@
     <value>Caption is missing.</value>
     <comment/>
   </data>
+  <data name="Rule0017WriteToFlowFieldFormat" xml:space="preserve">
+    <value>Writing to a FlowField is not common. Add a comment to explain this.</value>
+    <comment/>
+  </data>
+  <data name="Rule0017WriteToFlowFieldDescription" xml:space="preserve">
+    <value>Writing to a FlowField is not common. Add a comment to explain this.</value>
+    <comment/>
+  </data>
+  <data name="Rule0017WriteToFlowFieldTitle" xml:space="preserve">
+    <value>Writing to a FlowField is not common. Add a comment to explain this.</value>
+    <comment/>
+  </data>
 </root>
