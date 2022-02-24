@@ -54,6 +54,9 @@ namespace BusinessCentral.LinterCop.Design
                     case ControlKind.UserControl:
                         break;
 
+                    case ControlKind.SystemPart:
+                        break;
+
                     default:
                         if (CaptionIsMissing(context.Symbol, context))
                             RaiseCaptionWarning(context);
