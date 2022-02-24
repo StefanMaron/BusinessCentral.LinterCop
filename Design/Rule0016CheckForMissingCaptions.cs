@@ -88,7 +88,7 @@ namespace BusinessCentral.LinterCop.Design
         private bool CaptionIsMissing(ISymbol Symbol, SymbolAnalysisContext context)
         {
             if (Symbol.GetBooleanPropertyValue(PropertyKind.ShowCaption) != false)
-                if (Symbol.GetProperty(PropertyKind.Caption) == null)
+                if (Symbol.GetProperty(PropertyKind.Caption) == null && Symbol.GetProperty(PropertyKind.CaptionClass) == null)
                     return true;
             return false;
 
