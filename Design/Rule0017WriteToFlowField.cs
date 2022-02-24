@@ -39,10 +39,15 @@ namespace BusinessCentral.LinterCop.Design
                 IAssignmentStatement operation = (IAssignmentStatement)context.Operation;
                 if (operation.Target.Kind == OperationKind.FieldAccess)
                 {
-                    var FieldClass = ((IFieldAccess)operation.Target).FieldSymbol.FieldClass;
-                    if (FieldClass == FieldClassKind.FlowField)
-                        if (!HasExplainingComment(context.Operation))
-                            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0017WriteToFlowField, context.Operation.Syntax.GetLocation()));
+                    try
+                    {
+                        var FieldClass = ((IFieldAccess)operation.Target).FieldSymbol.FieldClass;
+                        if (FieldClass == FieldClassKind.FlowField)
+                            if (!HasExplainingComment(context.Operation))
+                                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0017WriteToFlowField, context.Operation.Syntax.GetLocation()));
+                    }
+                    catch (InvalidCastException)
+                    { }
                 }
             }
         }
