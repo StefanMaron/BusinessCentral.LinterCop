@@ -25,14 +25,19 @@ namespace BusinessCentral.LinterCop.Design
 
             if (context.Operation.Kind == OperationKind.InvocationExpression)
             {
-                IInvocationExpression operation = (IInvocationExpression)context.Operation;
-                if (operation.TargetMethod.Name == "Validate")
+                try
                 {
-                    var FieldClass = ((IFieldAccess)((IConversionExpression)operation.Arguments[0].Value).Operand).FieldSymbol.FieldClass;
-                    if (FieldClass == FieldClassKind.FlowField)
-                        if (!HasExplainingComment(context.Operation))
-                            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0017WriteToFlowField, context.Operation.Syntax.GetLocation()));
+                    IInvocationExpression operation = (IInvocationExpression)context.Operation;
+                    if (operation.TargetMethod.Name == "Validate")
+                    {
+                        var FieldClass = ((IFieldAccess)((IConversionExpression)operation.Arguments[0].Value).Operand).FieldSymbol.FieldClass;
+                        if (FieldClass == FieldClassKind.FlowField)
+                            if (!HasExplainingComment(context.Operation))
+                                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0017WriteToFlowField, context.Operation.Syntax.GetLocation()));
+                    }
                 }
+                catch (InvalidCastException)
+                { }
             }
             else
             {
