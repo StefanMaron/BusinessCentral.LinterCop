@@ -10,7 +10,7 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     class Rule0017WriteToFlowField : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0017WriteToFlowField);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0017WriteToFlowField, DiagnosticDescriptors.Rule0000ErrorInRule);
 
         public override void Initialize(AnalysisContext context)
             => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForWriteToFlowField),
@@ -37,7 +37,13 @@ namespace BusinessCentral.LinterCop.Design
                     }
                 }
                 catch (InvalidCastException)
-                { }
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, context.Operation.Syntax.GetLocation(), new Object[] { "Rule0017", "InvalidCastException", "at Line 41" }));
+                }
+                catch (ArgumentException)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, context.Operation.Syntax.GetLocation(), new Object[] { "Rule0017", "ArgumentException", "at Line 45" }));
+                }
             }
             else
             {
@@ -52,7 +58,13 @@ namespace BusinessCentral.LinterCop.Design
                                 context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0017WriteToFlowField, context.Operation.Syntax.GetLocation()));
                     }
                     catch (InvalidCastException)
-                    { }
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, context.Operation.Syntax.GetLocation(), new Object[] { "Rule0017", "InvalidCastException", "at Line 62" }));
+                    }
+                    catch (ArgumentException)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, context.Operation.Syntax.GetLocation(), new Object[] { "Rule0017", "ArgumentException", "at Line 66" }));
+                    }
                 }
             }
         }

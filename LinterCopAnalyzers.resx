@@ -313,4 +313,16 @@
     <value>Writing to a FlowField is not common. Add a comment to explain this.</value>
     <comment/>
   </data>
+  <data name="Rule0000ErrorInRuleTitle" xml:space="preserve">
+    <value>There was an error in a Linter Rule</value>
+    <comment/>
+  </data>
+  <data name="Rule0000ErrorInRuleDecription" xml:space="preserve">
+    <value>There was an error in a Linter Rule</value>
+    <comment/>
+  </data>
+  <data name="Rule0000ErrorInRuleFormat" xml:space="preserve">
+    <value>There was an Error in Rule "{0}" of type "{1}" {2}</value>
+    <comment/>
+  </data>
 </root>

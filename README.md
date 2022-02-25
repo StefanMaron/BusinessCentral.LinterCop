@@ -41,6 +41,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 
 |Id| Title|Default Severity|
 |---|---|---|
+|LC0000|An error ocurred in a given rule. Please create an issue on GitHub|Info|
 |LC0001|FlowFields should not be editable.|Warning|
 |LC0002|`Commit()` needs a comment to justify its existence. Either a leading or a trailing comment.|Warning|
 |LC0003|Do not use an Object ID for properties or variable declarations.|Warning|
