@@ -56,6 +56,8 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |LC0013|Any table with a single field in the PK of type code or text, should have set `NotBlank` on the PK field.|Warning|
 |LC0014|The Caption of permissionset objects should not exceed the maximum length.|Warning|
 |LC0015|All application objects should be covered by at least one permission set in the extension.|Warning|
+|LC0016|Caption is missing.|Warning|
+|LC0017|Writing to a FlowField is not common. Add a comment to explain this.|Warning|
 
 ## Configuration
 
