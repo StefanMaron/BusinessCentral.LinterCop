@@ -24,15 +24,17 @@ jobs:
        - $listing = Invoke-WebRequest -Method POST -UseBasicParsing -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 -Body '{"filters":[{"criteria":[{"filterType":8,"value":"Microsoft.VisualStudio.Code"},{"filterType":12,"value":"4096"},{"filterType":7,"value":"ms-dynamics-smb.al"}],"pageNumber":1,"pageSize":50,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":914}' -ContentType application/json | ConvertFrom-Json 
        - $ALVersion = $listing.results | Select-Object -First 1 -ExpandProperty extensions | Select-Object -First 1 -ExpandProperty versions | Select-Object -ExpandProperty version
        - $vsixUrl = $listing.results | Select-Object -First 1 -ExpandProperty extensions | Select-Object -First 1 -ExpandProperty versions | Select-Object -First 1 -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage"} | Select-Object -ExpandProperty source
+       - "::set-output name=AL_VERSION::$ALVersion"
+       - "::set-output name=VSIX_URL::$vsixUrl"
     - name: Cache VSIX
       id: cache-vsix
       uses: actions/cache@v2
       with:
         path: ALLanguage.vsix
-        key: vsix-${{ ALVersion }}
+        key: vsix-${{ steps.get-vsix.outputs.AL_VERSION }}
     - name: Download platform artifact
       if: steps.cache-vsix.outputs.cache-hit != 'true'
-      run: Invoke-WebRequest ${{ vsixUrl }} -OutFile ALLanguage.vsix
+      run: Invoke-WebRequest ${{ steps.get-vsix.outputs.VSIX_URL }} -OutFile ALLanguage.vsix
     - name: Unzip vsix
       run: 7z x "ALLanguage.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r
     - name: Release
