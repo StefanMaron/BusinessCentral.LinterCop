@@ -18,21 +18,21 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.*
+    - name: GetALVsixVersionAndURL
+      id: get-vsix
+      run:
+       - $listing = Invoke-WebRequest -Method POST -UseBasicParsing -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 -Body '{"filters":[{"criteria":[{"filterType":8,"value":"Microsoft.VisualStudio.Code"},{"filterType":12,"value":"4096"},{"filterType":7,"value":"ms-dynamics-smb.al"}],"pageNumber":1,"pageSize":50,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":914}' -ContentType application/json | ConvertFrom-Json 
+       - $ALVersion = $listing.results | Select-Object -First 1 -ExpandProperty extensions | Select-Object -First 1 -ExpandProperty versions | Select-Object -ExpandProperty version
+       - $vsixUrl = $listing.results | Select-Object -First 1 -ExpandProperty extensions | Select-Object -First 1 -ExpandProperty versions | Select-Object -First 1 -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage"} | Select-Object -ExpandProperty source
     - name: Cache VSIX
       id: cache-vsix
       uses: actions/cache@v2
       with:
         path: ALLanguage.vsix
-        key: vsix-19.4.35398.36475
+        key: vsix-${{ ALVersion }}
     - name: Download platform artifact
       if: steps.cache-vsix.outputs.cache-hit != 'true'
-      run: Invoke-WebRequest https://bcartifacts.azureedge.net/sandbox/19.4.35398.36475/platform -OutFile platform.zip
-    - name: Unzip platform
-      if: steps.cache-vsix.outputs.cache-hit != 'true'
-      run: 7z x platform.zip *.vsix -r
-    - name: copy vsix
-      if: steps.cache-vsix.outputs.cache-hit != 'true'
-      run: cp "ModernDev\program files\Microsoft Dynamics NAV\190\AL Development Environment\ALLanguage.vsix" "./ALLanguage.vsix"
+      run: Invoke-WebRequest ${{ vsixUrl }} -OutFile ALLanguage.vsix
     - name: Unzip vsix
       run: 7z x "ALLanguage.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r
     - name: Release
