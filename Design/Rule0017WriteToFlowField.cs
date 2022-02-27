@@ -1,4 +1,4 @@
-using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Semantics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
@@ -52,7 +52,13 @@ namespace BusinessCentral.LinterCop.Design
                 {
                     try
                     {
-                        var FieldClass = ((IFieldAccess)operation.Target).FieldSymbol.FieldClass;
+                        var FieldClass = FieldClassKind.Normal;
+
+                        if (operation.Target.Syntax.Kind == SyntaxKind.ArrayIndexExpression)
+                            FieldClass = ((IFieldAccess)((ITextIndexAccess)operation.Target).TextExpression).FieldSymbol.FieldClass;
+                        else
+                            FieldClass = ((IFieldAccess)operation.Target).FieldSymbol.FieldClass;
+
                         if (FieldClass == FieldClassKind.FlowField)
                             if (!HasExplainingComment(context.Operation))
                                 context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0017WriteToFlowField, context.Operation.Syntax.GetLocation()));
