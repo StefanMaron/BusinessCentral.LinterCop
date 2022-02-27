@@ -1,4 +1,4 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Semantics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
@@ -28,7 +28,7 @@ namespace BusinessCentral.LinterCop.Design
                 try
                 {
                     IInvocationExpression operation = (IInvocationExpression)context.Operation;
-                    if (operation.TargetMethod.Name == "Validate")
+                    if (operation.TargetMethod.Name == "Validate" && operation.TargetMethod.ContainingType.ToString() == "Table")
                     {
                         var FieldClass = ((IFieldAccess)((IConversionExpression)operation.Arguments[0].Value).Operand).FieldSymbol.FieldClass;
                         if (FieldClass == FieldClassKind.FlowField)
