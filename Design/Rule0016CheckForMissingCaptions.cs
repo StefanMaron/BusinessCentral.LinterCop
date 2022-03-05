@@ -34,8 +34,14 @@ namespace BusinessCentral.LinterCop.Design
                     case ControlKind.Field:
                         if (CaptionIsMissing(context.Symbol, context))
                             if (Control.RelatedFieldSymbol != null)
+                            {
                                 if (CaptionIsMissing(Control.RelatedFieldSymbol, context))
                                     RaiseCaptionWarning(context);
+                            }
+                            else
+                            {
+                                RaiseCaptionWarning(context);
+                            }
                         break;
 
                     case ControlKind.Area:
@@ -78,6 +84,12 @@ namespace BusinessCentral.LinterCop.Design
                         break;
                 }
             }
+            if (context.Symbol.Kind == SymbolKind.Page)
+            {
+                if (((IPageTypeSymbol)context.Symbol).PageType != PageTypeKind.API)
+                    if (CaptionIsMissing(context.Symbol, context))
+                        RaiseCaptionWarning(context);
+            }
             else
             {
                 if (CaptionIsMissing(context.Symbol, context))
@@ -87,6 +99,15 @@ namespace BusinessCentral.LinterCop.Design
 
         private bool CaptionIsMissing(ISymbol Symbol, SymbolAnalysisContext context)
         {
+            try
+            {
+                if (Symbol.ContainingType.Kind == SymbolKind.Table)
+                    if (((ITableTypeSymbol)Symbol.ContainingType).Id >= 2000000000)
+                        return false;
+            }
+            catch (NullReferenceException)
+            { }
+
             if (Symbol.GetBooleanPropertyValue(PropertyKind.ShowCaption) != false)
                 if (Symbol.GetProperty(PropertyKind.Caption) == null && Symbol.GetProperty(PropertyKind.CaptionClass) == null)
                     return true;
