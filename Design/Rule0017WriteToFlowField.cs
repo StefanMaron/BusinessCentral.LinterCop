@@ -77,14 +77,14 @@ namespace BusinessCentral.LinterCop.Design
 
         private bool HasExplainingComment(IOperation operation)
         {
-            foreach (SyntaxTrivia trivia in operation.Syntax.Parent.GetLeadingTrivia())
+            foreach (SyntaxTrivia trivia in operation.Syntax.GetLeadingTrivia())
             {
                 if (trivia.IsKind(SyntaxKind.LineCommentTrivia))
                 {
                     return true;
                 }
             }
-            foreach (SyntaxTrivia trivia in operation.Syntax.Parent.GetTrailingTrivia())
+            foreach (SyntaxTrivia trivia in operation.Syntax.GetTrailingTrivia())
             {
                 if (trivia.IsKind(SyntaxKind.LineCommentTrivia))
                 {
