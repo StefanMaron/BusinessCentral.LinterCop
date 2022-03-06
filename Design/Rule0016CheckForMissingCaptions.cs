@@ -84,7 +84,7 @@ namespace BusinessCentral.LinterCop.Design
                         break;
                 }
             }
-            if (context.Symbol.Kind == SymbolKind.Page)
+            else if (context.Symbol.Kind == SymbolKind.Page)
             {
                 if (((IPageTypeSymbol)context.Symbol).PageType != PageTypeKind.API)
                     if (CaptionIsMissing(context.Symbol, context))
