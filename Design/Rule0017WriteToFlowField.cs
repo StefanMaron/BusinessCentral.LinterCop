@@ -48,7 +48,7 @@ namespace BusinessCentral.LinterCop.Design
             else
             {
                 IAssignmentStatement operation = (IAssignmentStatement)context.Operation;
-                if (operation.Target.Kind == OperationKind.FieldAccess)
+                if (operation.Target.Kind == OperationKind.FieldAccess && ((ITextIndexAccess)operation.Target).TextExpression.Kind == OperationKind.FieldAccess)
                 {
                     try
                     {
