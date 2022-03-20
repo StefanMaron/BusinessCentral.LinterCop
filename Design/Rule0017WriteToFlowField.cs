@@ -48,14 +48,19 @@ namespace BusinessCentral.LinterCop.Design
             else
             {
                 IAssignmentStatement operation = (IAssignmentStatement)context.Operation;
-                if (operation.Target.Kind == OperationKind.FieldAccess && ((ITextIndexAccess)operation.Target).TextExpression.Kind == OperationKind.FieldAccess)
+                if (operation.Target.Kind == OperationKind.FieldAccess)
                 {
                     try
                     {
                         var FieldClass = FieldClassKind.Normal;
 
                         if (operation.Target.Syntax.Kind == SyntaxKind.ArrayIndexExpression)
+                        {
+                            if (((ITextIndexAccess)operation.Target).TextExpression.Kind != OperationKind.FieldAccess)
+                                return;
+
                             FieldClass = ((IFieldAccess)((ITextIndexAccess)operation.Target).TextExpression).FieldSymbol.FieldClass;
+                        }
                         else
                             FieldClass = ((IFieldAccess)operation.Target).FieldSymbol.FieldClass;
 
