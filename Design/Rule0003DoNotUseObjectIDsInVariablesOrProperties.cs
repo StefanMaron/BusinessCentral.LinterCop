@@ -135,7 +135,7 @@ namespace BusinessCentral.LinterCop.Design
                 }
                 catch
                 {
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Node.GetLocation(), new Object[] { "Rule0003", "unknown" }));
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Node.GetLocation(), new Object[] { "Rule0003", "unknown", "" }));
                 }
 
             }
