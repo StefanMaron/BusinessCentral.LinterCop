@@ -325,4 +325,16 @@
     <value>There was an Error in Rule "{0}" of type "{1}" {2}</value>
     <comment/>
   </data>
+  <data name="Rule0018NoEventsInInternalCodeunitsDescription" xml:space="preserve">
+    <value>Events in internal codeunits are not accessible to extensions and should therefore be avoided.</value>
+    <comment/>
+  </data>
+  <data name="Rule0018NoEventsInInternalCodeunitsFormat" xml:space="preserve">
+    <value>The event {0} is declared in an internal codeunit {1}. Avoid events in internal codeunits as they are not accessible to extensions.</value>
+    <comment/>
+  </data>
+  <data name="Rule0018NoEventsInInternalCodeunitsTitle" xml:space="preserve">
+    <value>Events in internal codeunits are not accessible to extensions and should therefore be avoided.</value>
+    <comment/>
+  </data>
 </root>
