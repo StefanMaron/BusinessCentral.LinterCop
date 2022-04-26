@@ -1,6 +1,7 @@
 ﻿using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.InternalSyntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using System;
 using System.Collections.Immutable;
@@ -37,15 +38,47 @@ namespace BusinessCentral.LinterCop.Design {
                 ISymbol current = enumerator.Current;
                 SymbolKind kind = current.Kind;
 
-                if (kind == SymbolKind.Method)
+                if (kind != SymbolKind.Method)
                 {
-                    IMethodSymbol methodSymbol = (IMethodSymbol)current;
-                    if (methodSymbol.IsEvent)
-                    {
-                        symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0018NoEventsInInternalCodeunitsAnalyzerDescriptor, methodSymbol.GetLocation(), new Object[] { methodSymbol.Name, codeunitSymbol.Name }));
-                    }
+                    continue;
                 }
+
+                IMethodSymbol methodSymbol = (IMethodSymbol)current;
+                if (!methodSymbol.IsEvent)
+                {
+                    continue;
+                }
+
+                IAttributeSymbol attributeSymbol;
+                if (!TryGetEventAttribute(methodSymbol, out attributeSymbol))
+                {
+                    continue;
+                }
+                if (attributeSymbol.AttributeKind == AttributeKind.InternalEvent)
+                {
+                    continue;
+                }
+
+                symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0018NoEventsInInternalCodeunitsAnalyzerDescriptor, methodSymbol.GetLocation(), new Object[] { methodSymbol.Name, codeunitSymbol.Name }));
             }
+        }
+
+        private bool TryGetEventAttribute(IMethodSymbol method, out IAttributeSymbol attribute)
+        {
+            ImmutableArray<IAttributeSymbol>.Enumerator enumerator = method.Attributes.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                IAttributeSymbol current = enumerator.Current;
+                AttributeKind attributeKind = current.AttributeKind;
+                if (attributeKind != AttributeKind.BusinessEvent && (int)attributeKind - (int)AttributeKind.IntegrationEvent > (int)AttributeKind.Caption)
+                {
+                    continue;
+                }
+                attribute = current;
+                return true;
+            }
+            attribute = null;
+            return false;
         }
     }
 }
