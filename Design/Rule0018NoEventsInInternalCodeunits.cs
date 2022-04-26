@@ -42,7 +42,7 @@ namespace BusinessCentral.LinterCop.Design {
                     IMethodSymbol methodSymbol = (IMethodSymbol)current;
                     if (methodSymbol.IsEvent)
                     {
-                        symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0018NoEventsInInternalCodeunitsAnalyzerDescriptor, methodSymbol.GetLocation(), new Object[] { codeunitSymbol.Name, methodSymbol.Name }));
+                        symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0018NoEventsInInternalCodeunitsAnalyzerDescriptor, methodSymbol.GetLocation(), new Object[] { methodSymbol.Name, codeunitSymbol.Name }));
                     }
                 }
             }
