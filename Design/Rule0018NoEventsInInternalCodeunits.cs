@@ -13,59 +13,55 @@ namespace BusinessCentral.LinterCop.Design {
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(CheckInternalCodeunitForEvents), SymbolKind.Codeunit);
+            context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(CheckPublicEventInInternalCodeunit), SymbolKind.Method);
         }
 
-        private void CheckInternalCodeunitForEvents(SymbolAnalysisContext symbolAnalysisContext)
+        private void CheckPublicEventInInternalCodeunit(SymbolAnalysisContext symbolAnalysisContext)
         {
-            ICodeunitTypeSymbol codeunitSymbol = symbolAnalysisContext.Symbol as ICodeunitTypeSymbol;
-            if (codeunitSymbol == null)
+            IMethodSymbol methodSymbol = symbolAnalysisContext.Symbol as IMethodSymbol;
+            if (methodSymbol == null)
             {
                 return;
             }
-            if (codeunitSymbol.IsObsoleteRemoved || codeunitSymbol.IsObsoletePending)
+            if (methodSymbol.IsObsoleteRemoved || methodSymbol.IsObsoletePending)
             {
                 return;
             }
-            if (codeunitSymbol.DeclaredAccessibility != Accessibility.Internal)
+            if (!methodSymbol.IsEvent)
             {
                 return;
             }
 
-            ImmutableArray<ISymbol>.Enumerator enumerator = codeunitSymbol.GetMembers().GetEnumerator();
-            while (enumerator.MoveNext())
+            IApplicationObjectTypeSymbol applicationObject = methodSymbol.GetContainingApplicationObjectTypeSymbol();
+            if (!(applicationObject is ICodeunitTypeSymbol))
             {
-                ISymbol current = enumerator.Current;
-                SymbolKind kind = current.Kind;
-
-                if (kind != SymbolKind.Method)
-                {
-                    continue;
-                }
-
-                IMethodSymbol methodSymbol = (IMethodSymbol)current;
-                if (!methodSymbol.IsEvent)
-                {
-                    continue;
-                }
-
-                IAttributeSymbol attributeSymbol;
-                if (!TryGetEventAttribute(methodSymbol, out attributeSymbol))
-                {
-                    continue;
-                }
-                if (attributeSymbol.AttributeKind == AttributeKind.InternalEvent)
-                {
-                    continue;
-                }
-
-                symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0018NoEventsInInternalCodeunitsAnalyzerDescriptor, methodSymbol.GetLocation(), new Object[] { methodSymbol.Name, codeunitSymbol.Name }));
+                return;
             }
+            if (applicationObject.IsObsoleteRemoved || applicationObject.IsObsoletePending)
+            {
+                return;
+            }
+            if (applicationObject.DeclaredAccessibility != Accessibility.Internal)
+            {
+                return;
+            }
+
+            IAttributeSymbol attributeSymbol;
+            if (!TryGetEventAttribute(methodSymbol, out attributeSymbol))
+            {
+                return;
+            }
+            if (attributeSymbol.AttributeKind == AttributeKind.InternalEvent)
+            {
+                return;
+            }
+
+            symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0018NoEventsInInternalCodeunitsAnalyzerDescriptor, methodSymbol.GetLocation(), new Object[] { methodSymbol.Name, applicationObject.Name }));
         }
 
-        private bool TryGetEventAttribute(IMethodSymbol method, out IAttributeSymbol attribute)
+        private bool TryGetEventAttribute(IMethodSymbol methodSymbol, out IAttributeSymbol attribute)
         {
-            ImmutableArray<IAttributeSymbol>.Enumerator enumerator = method.Attributes.GetEnumerator();
+            ImmutableArray<IAttributeSymbol>.Enumerator enumerator = methodSymbol.Attributes.GetEnumerator();
             while (enumerator.MoveNext())
             {
                 IAttributeSymbol current = enumerator.Current;
