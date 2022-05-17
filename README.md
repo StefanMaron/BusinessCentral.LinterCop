@@ -77,3 +77,4 @@ Of course you can also use pragmas for disabling a rule just for a certain place
 https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/directives/devenv-directive-pragma-warning
 
 For an example and the default values see: [LinterCop.ruleset.json](LinterCop.ruleset.json)
+
