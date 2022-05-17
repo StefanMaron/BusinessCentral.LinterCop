@@ -1,14 +1,15 @@
-﻿using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
-using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.InternalSyntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using System;
 using System.Collections.Immutable;
 
-namespace BusinessCentral.LinterCop.Design {
+namespace BusinessCentral.LinterCop.Design
+{
     [DiagnosticAnalyzer]
-    class Rule0018NoEventsInInternalCodeunits : DiagnosticAnalyzer {
+    class Rule0018NoEventsInInternalCodeunits : DiagnosticAnalyzer
+    {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0018NoEventsInInternalCodeunitsAnalyzerDescriptor);
 
         public override void Initialize(AnalysisContext context)
@@ -19,42 +20,16 @@ namespace BusinessCentral.LinterCop.Design {
         private void CheckPublicEventInInternalCodeunit(SymbolAnalysisContext symbolAnalysisContext)
         {
             IMethodSymbol methodSymbol = symbolAnalysisContext.Symbol as IMethodSymbol;
-            if (methodSymbol == null)
-            {
+            if (methodSymbol == null || !methodSymbol.IsEvent || methodSymbol.IsObsoleteRemoved || methodSymbol.IsObsoletePending)
                 return;
-            }
-            if (methodSymbol.IsObsoleteRemoved || methodSymbol.IsObsoletePending)
-            {
-                return;
-            }
-            if (!methodSymbol.IsEvent)
-            {
-                return;
-            }
 
             IApplicationObjectTypeSymbol applicationObject = methodSymbol.GetContainingApplicationObjectTypeSymbol();
-            if (!(applicationObject is ICodeunitTypeSymbol))
-            {
+            if (!(applicationObject is ICodeunitTypeSymbol) || applicationObject.DeclaredAccessibility != Accessibility.Internal || applicationObject.IsObsoleteRemoved || applicationObject.IsObsoletePending)
                 return;
-            }
-            if (applicationObject.IsObsoleteRemoved || applicationObject.IsObsoletePending)
-            {
-                return;
-            }
-            if (applicationObject.DeclaredAccessibility != Accessibility.Internal)
-            {
-                return;
-            }
 
             IAttributeSymbol attributeSymbol;
-            if (!TryGetEventAttribute(methodSymbol, out attributeSymbol))
-            {
+            if (!TryGetEventAttribute(methodSymbol, out attributeSymbol) || attributeSymbol.AttributeKind == AttributeKind.InternalEvent)
                 return;
-            }
-            if (attributeSymbol.AttributeKind == AttributeKind.InternalEvent)
-            {
-                return;
-            }
 
             symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0018NoEventsInInternalCodeunitsAnalyzerDescriptor, methodSymbol.GetLocation(), new Object[] { methodSymbol.Name, applicationObject.Name }));
         }
@@ -66,12 +41,11 @@ namespace BusinessCentral.LinterCop.Design {
             {
                 IAttributeSymbol current = enumerator.Current;
                 AttributeKind attributeKind = current.AttributeKind;
-                if (attributeKind != AttributeKind.BusinessEvent && (int)attributeKind - (int)AttributeKind.IntegrationEvent > (int)AttributeKind.Caption)
+                if (attributeKind == AttributeKind.IntegrationEvent)
                 {
-                    continue;
+                    attribute = current;
+                    return true;
                 }
-                attribute = current;
-                return true;
             }
             attribute = null;
             return false;
