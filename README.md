@@ -59,6 +59,9 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0015](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0015)|All application objects should be covered by at least one permission set in the extension.|Warning|
 |[LC0016](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0016)|Caption is missing.|Warning|
 |[LC0017](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0017)|Writing to a FlowField is not common. Add a comment to explain this.|Warning|
+|[LC0018](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0018)|Events in internal codeunits are not accessible to extensions and should therefore be avoided.|Info|
+|[LC0019](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0019)|If Data Classification is set on the Table. Fields do not need the same classification.|Info|
+|[LC0020](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0020)|If Application Area is set on the TablePage. Controls do not need the same classification.|Info|
 
 ## Configuration
 
@@ -76,3 +79,4 @@ Of course you can also use pragmas for disabling a rule just for a certain place
 https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/directives/devenv-directive-pragma-warning
 
 For an example and the default values see: [LinterCop.ruleset.json](LinterCop.ruleset.json)
+
