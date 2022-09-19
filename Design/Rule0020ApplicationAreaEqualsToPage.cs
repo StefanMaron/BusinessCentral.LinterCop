@@ -33,7 +33,7 @@ namespace BusinessCentral.LinterCop.Design
             if (controlApplicationArea == null || pageApplicationArea == null)
                 return;
 
-            if (pageApplicationArea.ValueText.Contains(controlApplicationArea.ValueText))
+            if (pageApplicationArea.ValueText == controlApplicationArea.ValueText)
                 symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0020ApplicationAreaEqualsToPage, controlApplicationArea.GetLocation()));
         }
 
