@@ -337,4 +337,16 @@
     <value>Events in internal codeunits are not accessible to extensions and should therefore be avoided.</value>
     <comment/>
   </data>
+  <data name="Rule0019DataClassificationFieldEqualsTableTitle" xml:space="preserve">
+    <value>Data Classification is equal to the Table. Remove to reduce redundancy.</value>
+    <comment/>
+  </data>
+  <data name="Rule0019DataClassificationFieldEqualsTableDescription" xml:space="preserve">
+    <value>Data Classification is equal to the Table. Remove to reduce redundancy.</value>
+    <comment/>
+  </data>
+  <data name="Rule0019DataClassificationFieldEqualsTableFormat" xml:space="preserve">
+    <value>Data Classification is equal to the Table. Remove to reduce redundancy.</value>
+    <comment/>
+  </data>
 </root>

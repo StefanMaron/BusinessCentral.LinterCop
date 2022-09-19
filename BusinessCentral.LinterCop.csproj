@@ -110,6 +110,7 @@
     <Compile Include="Design\Rule0016CheckForMissingCaptions.cs" />
     <Compile Include="Design\Rule0017WriteToFlowField.cs" />
     <Compile Include="Design\Rule0018NoEventsInInternalCodeunits.cs" />
+    <Compile Include="Design\Rule0019DataClassificationFieldEqualsTable.cs" />
     <Compile Include="Helpers\LinterSettings.cs" />
     <Compile Include="LinterCopAnalyzers.Designer.cs" />
     <Compile Include="LinterCopAnalyzers.Generated.cs" />

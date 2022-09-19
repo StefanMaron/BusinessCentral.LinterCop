@@ -59,7 +59,8 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0015](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0015)|All application objects should be covered by at least one permission set in the extension.|Warning|
 |[LC0016](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0016)|Caption is missing.|Warning|
 |[LC0017](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0017)|Writing to a FlowField is not common. Add a comment to explain this.|Warning|
-|[LC0018](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0018)|Events in internal codeunits are not accessible to extensions and should therefore be avoided.|Warning|
+|[LC0018](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0018)|Events in internal codeunits are not accessible to extensions and should therefore be avoided.|Info|
+|[LC0018](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0019)|If Data Classification is set on the Table. Fields do not need the same classification.|Info|
 
 ## Configuration
 
