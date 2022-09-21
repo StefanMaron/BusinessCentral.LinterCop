@@ -134,15 +134,15 @@
     <comment/>
   </data>
   <data name="Rule0002CommitMustBeExplainedByCommentDescription" xml:space="preserve">
-    <value>Commit() needs a comment to justify its existance. Either a leading or a trailing comment.</value>
+    <value>Commit() needs a comment to justify its existence. Either a leading or a trailing comment.</value>
     <comment/>
   </data>
   <data name="Rule0002CommitMustBeExplainedByCommentFormat" xml:space="preserve">
-    <value>Commit() needs a comment to justify its existance. Either a leading or a trailing comment.</value>
+    <value>Commit() needs a comment to justify its existence. Either a leading or a trailing comment.</value>
     <comment/>
   </data>
   <data name="Rule0002CommitMustBeExplainedByCommentTitle" xml:space="preserve">
-    <value>Commit() needs a comment to justify its existance. Either a leading or a trailing comment.</value>
+    <value>Commit() needs a comment to justify its existence. Either a leading or a trailing comment.</value>
     <comment/>
   </data>
   <data name="Rule0003DoNotUseObjectIDsInVariablesOrPropertiesDescription" xml:space="preserve">
