@@ -112,6 +112,9 @@ namespace BusinessCentral.LinterCop.Design
             catch (NullReferenceException)
             { }
 
+            if (Symbol.GetEnumPropertyValue<ShowAsKind>(PropertyKind.ShowAs) == ShowAsKind.SplitButton)
+                return false;
+
             if (Symbol.GetBooleanPropertyValue(PropertyKind.ShowCaption) != false)
                 if (Symbol.GetProperty(PropertyKind.Caption) == null && Symbol.GetProperty(PropertyKind.CaptionClass) == null)
                     return true;
