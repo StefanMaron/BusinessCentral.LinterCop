@@ -19,6 +19,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckConfirm(OperationAnalysisContext ctx)
         {
+            if (ctx.Operation.Method.MethodKind != MethodKind.BuiltInMethod) return;
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
             if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
 
