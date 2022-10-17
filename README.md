@@ -62,6 +62,8 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0018](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0018)|Events in internal codeunits are not accessible to extensions and should therefore be avoided.|Info|
 |[LC0019](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0019)|If Data Classification is set on the Table. Fields do not need the same classification.|Info|
 |[LC0020](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0020)|If Application Area is set on the TablePage. Controls do not need the same classification.|Info|
+|[LC0020](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0021)|`Confirm()` must be implemented through the `Confirm Management` codeunit from the System Application.|Info|
+
 
 ## Configuration
 
