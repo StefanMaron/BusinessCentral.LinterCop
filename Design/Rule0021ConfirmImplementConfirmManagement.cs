@@ -1,12 +1,7 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -19,16 +14,13 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckConfirm(OperationAnalysisContext ctx)
         {
-            if (ctx.Operation.Method.MethodKind != MethodKind.BuiltInMethod) return;
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
             if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
 
             IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
 
-            if (operation.TargetMethod.Name.ToUpper() == "CONFIRM")
-            {
+            if (operation.TargetMethod.Name.ToUpper() == "CONFIRM" && operation.TargetMethod.MethodKind == MethodKind.BuiltInMethod)
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0021ConfirmImplementConfirmManagement, ctx.Operation.Syntax.GetLocation()));
-            }
         }
     }
 }
