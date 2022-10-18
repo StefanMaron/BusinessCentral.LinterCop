@@ -30,7 +30,13 @@ namespace BusinessCentral.LinterCop.Design
                     IInvocationExpression operation = (IInvocationExpression)context.Operation;
                     if (operation.TargetMethod.Name == "Validate" && operation.TargetMethod.ContainingType.ToString() == "Table")
                     {
-                        var FieldClass = ((IFieldAccess)((IConversionExpression)operation.Arguments[0].Value).Operand).FieldSymbol.FieldClass;
+                        IFieldSymbol field = null;
+                        if (operation.Arguments[0].Value.GetType().GetProperty("Operand") != null)
+                            field = ((IFieldAccess)((IConversionExpression)operation.Arguments[0].Value).Operand).FieldSymbol;
+                        else
+                            field = ((IFieldAccess)operation.Arguments[0].Value).FieldSymbol;
+
+                        var FieldClass = field.FieldClass;
                         if (FieldClass == FieldClassKind.FlowField)
                             if (!HasExplainingComment(context.Operation))
                                 context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0017WriteToFlowField, context.Operation.Syntax.GetLocation()));
