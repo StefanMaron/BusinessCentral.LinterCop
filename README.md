@@ -57,7 +57,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0013](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0013)|Any table with a single field in the PK of type code or text, should have set `NotBlank` on the PK field.|Warning|
 |[LC0014](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0014)|The Caption of permissionset objects should not exceed the maximum length.|Warning|
 |[LC0015](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0015)|All application objects should be covered by at least one permission set in the extension.|Warning|
-|[LC0016](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0016)|Caption is missing.|Warning|
+|[LC0016](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0016)|Caption is missing. Optionally this can also be activated for fields on API objects with the setting `enableRule0016ForApiObjects`.|Warning|
 |[LC0017](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0017)|Writing to a FlowField is not common. Add a comment to explain this.|Warning|
 |[LC0018](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0018)|Events in internal codeunits are not accessible to extensions and should therefore be avoided.|Info|
 |[LC0019](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0019)|If Data Classification is set on the Table. Fields do not need the same classification.|Info|
