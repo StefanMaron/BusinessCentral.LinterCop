@@ -8,6 +8,7 @@ namespace BusinessCentral.LinterCop.Helpers
         public int cyclomaticComplexetyThreshold = 8;
         public int maintainablityIndexThreshold = 20;
         public bool enableRule0011ForTableFields = false;
+        public bool enableRule0016ForApiObjects = false;
         static public LinterSettings instance;
 
         static public void Create()

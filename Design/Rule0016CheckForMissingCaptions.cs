@@ -1,4 +1,5 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using BusinessCentral.LinterCop.Helpers;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Immutable;
@@ -25,6 +26,12 @@ namespace BusinessCentral.LinterCop.Design
         {
             if (context.Symbol.IsObsoletePending || context.Symbol.IsObsoleteRemoved) return;
             if (context.Symbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.Symbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+
+            LinterSettings.Create();
+            if (!(LinterSettings.instance.enableRule0016ForApiObjects))
+            {
+                if (context.Symbol.GetContainingObjectTypeSymbol().GetProperty(PropertyKind.PageType).ValueText == PageTypeKind.API.ToString()) return;
+            }
 
             if (context.Symbol.Kind == SymbolKind.Control)
             {
