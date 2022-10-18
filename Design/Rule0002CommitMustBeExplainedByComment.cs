@@ -19,7 +19,7 @@ namespace BusinessCentral.LinterCop.Design
         if (ctx.ContainingSymbol.IsObsoletePending ||ctx.ContainingSymbol.IsObsoleteRemoved) return;
 
         IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
-        if (operation.TargetMethod.Name.ToUpper() == "COMMIT")
+        if (operation.TargetMethod.Name.ToUpper() == "COMMIT" && operation.TargetMethod.MethodKind == MethodKind.BuiltInMethod)
         {
                 foreach (SyntaxTrivia trivia in operation.Syntax.Parent.GetLeadingTrivia())
                 {
