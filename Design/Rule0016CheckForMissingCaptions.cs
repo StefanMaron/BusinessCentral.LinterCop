@@ -30,7 +30,10 @@ namespace BusinessCentral.LinterCop.Design
             LinterSettings.Create();
             if (!(LinterSettings.instance.enableRule0016ForApiObjects))
             {
-                if (context.Symbol.GetContainingObjectTypeSymbol().GetProperty(PropertyKind.PageType).ValueText == PageTypeKind.API.ToString()) return;
+                if (context.Symbol.GetContainingObjectTypeSymbol().GetProperty(PropertyKind.PageType) != null)
+                {
+                    if (context.Symbol.GetContainingObjectTypeSymbol().GetProperty(PropertyKind.PageType).ValueText == PageTypeKind.API.ToString()) return;
+                }
             }
 
             if (context.Symbol.Kind == SymbolKind.Control)
