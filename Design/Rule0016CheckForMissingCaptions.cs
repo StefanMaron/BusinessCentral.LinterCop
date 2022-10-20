@@ -28,12 +28,9 @@ namespace BusinessCentral.LinterCop.Design
             if (context.Symbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.Symbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
 
             LinterSettings.Create();
-            if (!(LinterSettings.instance.enableRule0016ForApiObjects))
+            if (!(LinterSettings.instance.enableRule0016ForApiObjects) && context.Symbol.GetContainingObjectTypeSymbol().GetProperty(PropertyKind.PageType) != null)
             {
-                if (context.Symbol.GetContainingObjectTypeSymbol().GetProperty(PropertyKind.PageType) != null)
-                {
-                    if (context.Symbol.GetContainingObjectTypeSymbol().GetProperty(PropertyKind.PageType).ValueText == PageTypeKind.API.ToString()) return;
-                }
+                if (context.Symbol.GetContainingObjectTypeSymbol().GetProperty(PropertyKind.PageType).ValueText == PageTypeKind.API.ToString()) return;
             }
 
             if (context.Symbol.Kind == SymbolKind.Control)
