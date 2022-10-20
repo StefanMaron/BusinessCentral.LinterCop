@@ -79,7 +79,7 @@
     },
     {
       "id": "LC0022",
-      "action": "Warning",
+      "action": "Info",
       "justification": "GlobalLanguage() must be implemented through the Translation Helper codeunit from the Base Application."
     }
   ]
