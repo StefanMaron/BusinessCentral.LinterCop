@@ -373,4 +373,13 @@
     <value>Refactor to Confirm Management</value>
     <comment/>
   </data>
+  <data name="Rule0022GlobalLanguageImplementTranslationHelperDescription" xml:space="preserve">
+    <value>GlobalLanguage() must be implemented through the "Translation Helper" codeunit from the Base Application.</value>
+  </data>
+  <data name="Rule0022GlobalLanguageImplementTranslationHelperFormat" xml:space="preserve">
+    <value>GlobalLanguage() must be implemented through the "Translation Helper" codeunit from the Base Application.</value>
+  </data>
+  <data name="Rule0022GlobalLanguageImplementTranslationHelperTitle" xml:space="preserve">
+    <value>GlobalLanguage() must be implemented through the "Translation Helper" codeunit from the Base Application.</value>
+  </data>
 </root>

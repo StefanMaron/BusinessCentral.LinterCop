@@ -76,6 +76,11 @@
       "id": "LC0015",
       "action": "Warning",
       "justification": "All application objects should be covered by at least one permission set in the extension."
+    },
+    {
+      "id": "LC0022",
+      "action": "Info",
+      "justification": "GlobalLanguage() must be implemented through the Translation Helper codeunit from the Base Application."
     }
   ]
 }
