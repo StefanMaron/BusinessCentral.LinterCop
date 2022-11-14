@@ -44,6 +44,7 @@ namespace BusinessCentral.LinterCop.Design
                 SymbolKind.XmlPort
             });
         }
+
         private void CheckForBuiltInTypeCasingMismatch(SymbolAnalysisContext ctx)
         {
             foreach (var node in ctx.Symbol.DeclaringSyntaxReference.GetSyntax().DescendantNodesAndTokens().Where(n => IsValidToken(n)))
