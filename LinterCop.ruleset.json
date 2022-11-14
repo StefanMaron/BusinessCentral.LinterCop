@@ -76,6 +76,36 @@
       "id": "LC0015",
       "action": "Warning",
       "justification": "All application objects should be covered by at least one permission set in the extension."
+    },
+    {
+      "id": "LC0016",
+      "action": "Warning",
+      "justification": "Caption is missing. Optionally this can also be activated for fields on API objects with the setting enableRule0016ForApiObjects"
+    },
+    {
+      "id": "LC0017",
+      "action": "Warning",
+      "justification": "Writing to a FlowField is not common. Add a comment to explain this."
+    },
+    {
+      "id": "LC0018",
+      "action": "Info",
+      "justification": "Events in internal codeunits are not accessible to extensions and should therefore be avoided."
+    },
+    {
+      "id": "LC0019",
+      "action": "Info",
+      "justification": "If Data Classification is set on the Table. Fields do not need the same classification."
+    },
+    {
+      "id": "LC0020",
+      "action": "Info",
+      "justification": "If Application Area is set on the TablePage. Controls do not need the same classification."
+    },
+    {
+      "id": "LC0021",
+      "action": "Info",
+      "justification": "Confirm() must be implemented through the Confirm Management codeunit from the System Application."
     }
   ]
 }
