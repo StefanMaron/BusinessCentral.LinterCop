@@ -8,7 +8,7 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0021BuiltInMethodImplementThroughCodeunit : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0021ConfirmImplementConfirmManagement, DiagnosticDescriptors.Rule0022GlobalLanguageImplementTranslationHelper);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0021ConfirmImplementConfirmManagement, DiagnosticDescriptors.Rule0022GlobalLanguageImplementTranslationHelper, DiagnosticDescriptors.Rule0000ErrorInRule);
 
         public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckConfirm), OperationKind.InvocationExpression);
 
@@ -20,15 +20,31 @@ namespace BusinessCentral.LinterCop.Design
             IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
 
+
             switch (operation.TargetMethod.Name.ToUpper())
             {
                 case "CONFIRM":
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0021ConfirmImplementConfirmManagement, ctx.Operation.Syntax.GetLocation()));
+                    try
+                    {
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0021ConfirmImplementConfirmManagement, ctx.Operation.Syntax.GetLocation()));
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0021", "ArgumentOutOfRangeException", "at Line 29" }));
+                    }
                     break;
                 case "GLOBALLANGUAGE":
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0022GlobalLanguageImplementTranslationHelper, ctx.Operation.Syntax.GetLocation()));
+                    try
+                    {
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0022GlobalLanguageImplementTranslationHelper, ctx.Operation.Syntax.GetLocation()));
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0022", "ArgumentOutOfRangeException", "at Line 39" }));
+                    }
                     break;
             }
+
         }
     }
 }

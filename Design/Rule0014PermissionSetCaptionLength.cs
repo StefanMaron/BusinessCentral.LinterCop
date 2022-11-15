@@ -32,15 +32,21 @@ namespace BusinessCentral.LinterCop.Design
                     return;
 
                 var maxLengthProperty = captionSubProperties.DescendantNodes().FirstOrDefault(e => e.ToString().StartsWith("MaxLength"));
-                if (captionSubProperties.ToString() != "")
-                {
-                    if (Int32.TryParse(maxLengthProperty.DescendantNodes().FirstOrDefault(e => e.Kind == SyntaxKind.Int32SignedLiteralValue).ToString(), out int maxLengthValue))
-                        if (maxLengthValue > MAXCAPTIONLENGTH)
-                            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0014PermissionSetCaptionLength, captionProperty.GetLocation(), new object[] { MAXCAPTIONLENGTH }));
-                }
+                if (maxLengthProperty != null)
+                    if (captionSubProperties.ToString() != "")
+                    {
+                        if (Int32.TryParse(maxLengthProperty.DescendantNodes().FirstOrDefault(e => e.Kind == SyntaxKind.Int32SignedLiteralValue).ToString(), out int maxLengthValue))
+                        {
+                            if (maxLengthValue > MAXCAPTIONLENGTH)
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0014PermissionSetCaptionLength, captionProperty.GetLocation(), new object[] { MAXCAPTIONLENGTH }));
+                            }
+                            return;
+                        }
+                    }
             }
-            else
-                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0014PermissionSetCaptionLength, captionProperty.GetLocation(), new object[] { MAXCAPTIONLENGTH }));
+
+            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0014PermissionSetCaptionLength, captionProperty.GetLocation(), new object[] { MAXCAPTIONLENGTH }));
         }
     }
 }
