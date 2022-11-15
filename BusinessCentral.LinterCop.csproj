@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -59,11 +59,6 @@
     <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Dynamics.Nav.Analyzers.Common">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.Dynamics.Nav.Analyzers.Common.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
