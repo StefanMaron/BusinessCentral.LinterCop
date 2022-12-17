@@ -2,6 +2,7 @@ using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -36,7 +37,7 @@ namespace BusinessCentral.LinterCop.Design
                 case "GLOBALLANGUAGE":
                     try
                     {
-                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0022GlobalLanguageImplementTranslationHelper, ctx.Operation.Syntax.GetLocation()));
+                        if (operation.Arguments.Length != 0) { ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0022GlobalLanguageImplementTranslationHelper, ctx.Operation.Syntax.GetLocation())); }
                     }
                     catch (ArgumentOutOfRangeException)
                     {
@@ -44,7 +45,6 @@ namespace BusinessCentral.LinterCop.Design
                     }
                     break;
             }
-
         }
     }
 }
