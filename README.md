@@ -73,6 +73,8 @@ Some rules can be configured by adding a file named `LinterCop.json` in the root
 
 For an example and the default values see: [LinterCop.json](LinterCop.json)
 
+If you want to use the `LinterCop.json` file in a pipeline, using BcContainerHelper, you need to copy the file to `C:\build\vsix\extension\bin\win32\LinterCop.json` inside the container before calling `Compile-AppInBcContainer`. See [this issue](https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/263) for details on how to accomplish that.
+
 ## Can I disable certain rules?
 
 Since the linter integrates with the AL compiler directly, you can use the custom rule sets like you are used to from the other code cops.
