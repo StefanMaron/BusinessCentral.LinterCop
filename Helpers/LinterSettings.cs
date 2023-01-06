@@ -5,8 +5,8 @@ namespace BusinessCentral.LinterCop.Helpers
 {
     class LinterSettings
     {
-        public int cyclomaticComplexetyThreshold = 8;
-        public int maintainablityIndexThreshold = 20;
+        public int cyclomaticComplexityThreshold = 8;
+        public int maintainabilityIndexThreshold = 20;
         public bool enableRule0011ForTableFields = false;
         static public LinterSettings instance;
 
@@ -19,9 +19,12 @@ namespace BusinessCentral.LinterCop.Helpers
                     StreamReader r = File.OpenText("LinterCop.json");
                     string json = r.ReadToEnd();
                     r.Close();
-                    instance = JsonConvert.DeserializeObject<LinterSettings>(json);
-                    if (instance == null)
-                        instance = new LinterSettings();
+                    instance = new LinterSettings();
+
+                    InternalLinterSettings internalInstance = JsonConvert.DeserializeObject<InternalLinterSettings>(json);
+                    instance.cyclomaticComplexityThreshold = internalInstance.cyclomaticComplexityThreshold ?? internalInstance.cyclomaticComplexetyThreshold ?? instance.cyclomaticComplexityThreshold;
+                    instance.maintainabilityIndexThreshold = internalInstance.maintainabilityIndexThreshold ?? internalInstance.maintainablityIndexThreshold ?? instance.maintainabilityIndexThreshold;
+                    instance.enableRule0011ForTableFields = internalInstance.enableRule0011ForTableFields;
                 }
                 catch
                 {
@@ -29,5 +32,14 @@ namespace BusinessCentral.LinterCop.Helpers
                 }
             }
         }
+    }
+    internal class InternalLinterSettings
+    {
+        public int? cyclomaticComplexityThreshold;
+        public int? maintainabilityIndexThreshold;
+        public int? cyclomaticComplexetyThreshold; // Misspelled, deprecated
+        public int? maintainablityIndexThreshold; // Misspelled, deprecated
+        public bool enableRule0011ForTableFields = false;
+
     }
 }
