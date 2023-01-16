@@ -26,6 +26,7 @@ namespace BusinessCentral.LinterCop.Helpers
                     instance.cyclomaticComplexityThreshold = internalInstance.cyclomaticComplexityThreshold ?? internalInstance.cyclomaticComplexetyThreshold ?? instance.cyclomaticComplexityThreshold;
                     instance.maintainabilityIndexThreshold = internalInstance.maintainabilityIndexThreshold ?? internalInstance.maintainablityIndexThreshold ?? instance.maintainabilityIndexThreshold;
                     instance.enableRule0011ForTableFields = internalInstance.enableRule0011ForTableFields;
+                    instance.enableRule0016ForApiObjects = internalInstance.enableRule0016ForApiObjects;
                 }
                 catch
                 {
@@ -41,6 +42,7 @@ namespace BusinessCentral.LinterCop.Helpers
         public int? cyclomaticComplexetyThreshold; // Misspelled, deprecated
         public int? maintainablityIndexThreshold; // Misspelled, deprecated
         public bool enableRule0011ForTableFields = false;
+        public bool enableRule0016ForApiObjects = false;
 
     }
 }
