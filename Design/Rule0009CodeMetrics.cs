@@ -27,21 +27,21 @@ namespace BusinessCentral.LinterCop.Design
 
             LinterSettings.Create();
             if (LinterSettings.instance != null)
-                if (cyclomaticComplexity >= LinterSettings.instance.cyclomaticComplexetyThreshold || Math.Round(HalsteadVolume) <= LinterSettings.instance.maintainablityIndexThreshold)
+                if (cyclomaticComplexity >= LinterSettings.instance.cyclomaticComplexityThreshold || Math.Round(HalsteadVolume) <= LinterSettings.instance.maintainabilityIndexThreshold)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0010CodeMetricsWarning, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexity, Math.Round(HalsteadVolume) }));
                     return;
                 }
 
-            if (cyclomaticComplexity >= LinterSettings.instance.cyclomaticComplexetyThreshold || Math.Round(HalsteadVolume) <= LinterSettings.instance.maintainablityIndexThreshold)
+            if (cyclomaticComplexity >= LinterSettings.instance.cyclomaticComplexityThreshold || Math.Round(HalsteadVolume) <= LinterSettings.instance.maintainabilityIndexThreshold)
             {
-                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0010CodeMetricsWarning, context.OwningSymbol.GetLocation(), new object[] { LinterSettings.instance.cyclomaticComplexetyThreshold, Math.Round(HalsteadVolume) }));
+                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0010CodeMetricsWarning, context.OwningSymbol.GetLocation(), new object[] { LinterSettings.instance.cyclomaticComplexityThreshold, Math.Round(HalsteadVolume) }));
                 return;
             }
             context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0009CodeMetricsInfo, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexity, Math.Round(HalsteadVolume)}));
         }
 
-        private static double GetHalsteadVolume(SyntaxNode CodeBlock, ref CodeBlockAnalysisContext context,int cyclomaticComplexety)
+        private static double GetHalsteadVolume(SyntaxNode CodeBlock, ref CodeBlockAnalysisContext context,int cyclomaticComplexity)
         {
             try
             {
@@ -65,7 +65,7 @@ namespace BusinessCentral.LinterCop.Design
                 double HalsteadVolume = N * Math.Log(n, 2);
 
                 //171−5.2lnV−0.23G−16.2lnL
-                return Math.Max(0, (171 - 5.2 * Math.Log(HalsteadVolume) - 0.23 * cyclomaticComplexety - 16.2 * Math.Log(triviaLinesCount)) * 100 / 171);
+                return Math.Max(0, (171 - 5.2 * Math.Log(HalsteadVolume) - 0.23 * cyclomaticComplexity - 16.2 * Math.Log(triviaLinesCount)) * 100 / 171);
 
             }
             catch (System.NullReferenceException)
