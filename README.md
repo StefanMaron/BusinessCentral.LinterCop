@@ -63,7 +63,8 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0019](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0019)|If Data Classification is set on the Table. Fields do not need the same classification.|Info|
 |[LC0020](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0020)|If Application Area is set on the TablePage. Controls do not need the same classification.|Info|
 |[LC0021](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0021)|`Confirm()` must be implemented through the `Confirm Management` codeunit from the System Application.|Info|
-
+|[LC0022](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0022)|`GlobalLanguage()` must be implemented through the `Translation Helper` codeunit from the Base Application.|Info|
+|[LC0023](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0023)|Always provide fieldsgroups `DropDown` and `Brick` on tables.|Info|
 
 ## Configuration
 
@@ -71,6 +72,8 @@ Some rules can be configured by adding a file named `LinterCop.json` in the root
 **Important:** The file will only be read on startup of the linter, meaning if you make any changes you need to reload VS Code once.
 
 For an example and the default values see: [LinterCop.json](LinterCop.json)
+
+If you want to use the `LinterCop.json` file in a pipeline, using BcContainerHelper, you need to copy the file to `C:\build\vsix\extension\bin\win32\LinterCop.json` inside the container before calling `Compile-AppInBcContainer`. See [this issue](https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/263) for details on how to accomplish that.
 
 ## Can I disable certain rules?
 

@@ -61,11 +61,6 @@
       <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Microsoft.Dynamics.Nav.Analyzers.Common">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.Dynamics.Nav.Analyzers.Common.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Newtonsoft.Json.dll</HintPath>
@@ -112,7 +107,8 @@
     <Compile Include="Design\Rule0018NoEventsInInternalCodeunits.cs" />
     <Compile Include="Design\Rule0019DataClassificationFieldEqualsTable.cs" />
     <Compile Include="Design\Rule0020ApplicationAreaEqualsToPage.cs" />
-    <Compile Include="Design\Rule0021ConfirmImplementConfirmManagement.cs" />
+    <Compile Include="Design\Rule0021BuiltInMethodImplementThroughCodeunit.cs" />
+    <Compile Include="Design\Rule0023AlwaysSpecifyFieldgroups.cs" />
     <Compile Include="Helpers\LinterSettings.cs" />
     <Compile Include="LinterCopAnalyzers.Designer.cs" />
     <Compile Include="LinterCopAnalyzers.Generated.cs" />
