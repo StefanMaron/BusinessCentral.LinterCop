@@ -98,6 +98,7 @@
     <Compile Include="Design\Rule0008NoFilterOperatorsInSetRange.cs" />
     <Compile Include="Design\Rule0009CodeMetrics.cs" />
     <Compile Include="Design\Rule0011AccessPropertyShouldAlwaysBeSet.cs" />
+    <Compile Include="Design\Rule0026ToolTipPunctuation.cs" />
     <Compile Include="Design\Rule0025InternalProcedureModifier.cs" />
     <Compile Include="Design\Rule0024SemicolonAfterProcedureDeclaration.cs" />
     <Compile Include="Design\Rule0012DoNotUseObjectIdInSystemFunctions.cs" />

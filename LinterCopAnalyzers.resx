@@ -336,4 +336,13 @@
   <data name="Rule0025InternalProcedureModifierTitle" xml:space="preserve">
     <value>Procedure must be either local or internal.</value>
   </data>
+  <data name="Rule0026ToolTipPunctuationDescription" xml:space="preserve">
+    <value>ToolTip must end with a dot.</value>
+  </data>
+  <data name="Rule0026ToolTipPunctuationFormat" xml:space="preserve">
+    <value>ToolTip must end with a dot.</value>
+  </data>
+  <data name="Rule0026ToolTipPunctuationTitle" xml:space="preserve">
+    <value>ToolTip must end with a dot.</value>
+  </data>
 </root>
