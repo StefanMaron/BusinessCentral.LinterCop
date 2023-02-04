@@ -327,4 +327,13 @@
   <data name="Rule0024SemicolonAfterProcedureDeclarationTitle" xml:space="preserve">
     <value>Procedure declaration should not end with semicolon.</value>
   </data>
+  <data name="Rule0025InternalProcedureModifierDescription" xml:space="preserve">
+    <value>Procedure must be either local or internal.</value>
+  </data>
+  <data name="Rule0025InternalProcedureModifierFormat" xml:space="preserve">
+    <value>Procedure must be either local or internal.</value>
+  </data>
+  <data name="Rule0025InternalProcedureModifierTitle" xml:space="preserve">
+    <value>Procedure must be either local or internal.</value>
+  </data>
 </root>
