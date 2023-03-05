@@ -25,11 +25,9 @@ namespace BusinessCentral.LinterCop.Design
             IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
 
-            IBuiltInMethodTypeSymbol builtInMethodType = (IBuiltInMethodTypeSymbol)operation.TargetMethod;
-
-            if (operation.Arguments.Count() > 1 && builtInMethodType.ContainingType.NavTypeKind == NavTypeKind.Page)
+            if (operation.Arguments.Count() > 1 && operation.TargetMethod.ContainingType.NavTypeKind == NavTypeKind.Page)
             {
-                IReturnValueSymbol returnValue = builtInMethodType.ReturnValueSymbol;
+                IReturnValueSymbol returnValue = operation.TargetMethod.ReturnValueSymbol;
                 if (returnValue.ReturnType.NavTypeKind == NavTypeKind.Action) return;               // Page Management Codeunit doesn't support returntype Action
                 if (operation.TargetMethod.Name.ToUpper() == "ENQUEUEBACKGROUNDTASK") return;       // do not execute on CurrPage.EnqueueBackgroundTask
 
