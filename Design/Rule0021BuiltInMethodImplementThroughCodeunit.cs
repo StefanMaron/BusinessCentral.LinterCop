@@ -26,9 +26,8 @@ namespace BusinessCentral.LinterCop.Design
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
 
             IBuiltInMethodTypeSymbol builtInMethodType = (IBuiltInMethodTypeSymbol)operation.TargetMethod;
-            ITypeSymbol typeSymbol = (ITypeSymbol)builtInMethodType.ContainingType;
 
-            if (operation.Arguments.Count() > 1 && typeSymbol.NavTypeKind == NavTypeKind.Page)
+            if (operation.Arguments.Count() > 1 && builtInMethodType.ContainingType.NavTypeKind == NavTypeKind.Page)
             {
                 IReturnValueSymbol returnValue = builtInMethodType.ReturnValueSymbol;
                 if (returnValue.ReturnType.NavTypeKind == NavTypeKind.Action) return;               // Page Management Codeunit doesn't support returntype Action
