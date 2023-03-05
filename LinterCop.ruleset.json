@@ -115,7 +115,7 @@
     {
       "id": "LC0027",
       "action": "Info",
-      "justification": "Page.Run() and Page.RunModal must be implemented through the Page Management codeunit from the Base Application."
+      "justification": "Page.Run(Modal) must be implemented through the Page Management codeunit from the Base Application."
     }
   ]
 }
