@@ -27,10 +27,8 @@ namespace BusinessCentral.LinterCop.Design
 
             if (operation.Arguments.Count() > 1 && operation.TargetMethod.ContainingType.NavTypeKind == NavTypeKind.Page)
             {
-                IReturnValueSymbol returnValue = operation.TargetMethod.ReturnValueSymbol;
-                if (returnValue.ReturnType.NavTypeKind == NavTypeKind.Action) return;               // Page Management Codeunit doesn't support returntype Action
-                if (operation.TargetMethod.Name.ToUpper() == "ENQUEUEBACKGROUNDTASK") return;       // do not execute on CurrPage.EnqueueBackgroundTask
-
+                if (operation.TargetMethod.ReturnValueSymbol.ReturnType.NavTypeKind == NavTypeKind.Action) return; // Page Management Codeunit doesn't support returntype Action
+                if (operation.TargetMethod.Name.ToUpper() == "ENQUEUEBACKGROUNDTASK") return; // do not execute on CurrPage.EnqueueBackgroundTask
                 if (operation.TargetMethod.Parameters[0].ParameterType.NavTypeKind == NavTypeKind.Integer)
                 {
                     if (operation.Arguments[0].Syntax.ToString().ToUpper().Substring(0, 6) != "PAGE::") return; // In case the PageID is set by a field from a (setup) record
