@@ -65,6 +65,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0021](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0021)|`Confirm()` must be implemented through the `Confirm Management` codeunit from the System Application.|Info|
 |[LC0022](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0022)|`GlobalLanguage()` must be implemented through the `Translation Helper` codeunit from the Base Application.|Info|
 |[LC0023](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0023)|Always provide fieldsgroups `DropDown` and `Brick` on tables.|Info|
+|[LC0027](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0027)|`Page.Run()` and `Page.RunModal()` must be implemented through the `Page Management` codeunit from the Base Application.|Info|
 
 ## Configuration
 

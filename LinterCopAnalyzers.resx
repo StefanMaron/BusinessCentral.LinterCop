@@ -382,4 +382,7 @@
   <data name="Rule0022GlobalLanguageImplementTranslationHelperTitle" xml:space="preserve">
     <value>GlobalLanguage() must be implemented through the "Translation Helper" codeunit from the Base Application.</value>
   </data>
+  <data name="Rule0027RunPageImplementPageManagement" xml:space="preserve">
+    <value>Page.Run(Modal) must be implemented through the "Page Management" codeunit from the Base Application.</value>
+  </data>
 </root>

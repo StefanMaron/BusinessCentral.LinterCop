@@ -112,5 +112,10 @@
       "action": "Info",
       "justification": "GlobalLanguage() must be implemented through the Translation Helper codeunit from the Base Application."
     }
+    {
+      "id": "LC0027",
+      "action": "Info",
+      "justification": "Page.Run() and Page.RunModal must be implemented through the Page Management codeunit from the Base Application."
+    }
   ]
 }
