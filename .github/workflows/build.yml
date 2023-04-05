@@ -89,7 +89,7 @@ jobs:
           path: current\
       - name: Unzip vsix
         run: >
-          Remove-Item -Path "dynamics-smb.al-latest" -Force -Recurse -ErrorAction SilentlyContinue;
+          Remove-Item -Path "ms-dynamics-smb.al-latest" -Force -Recurse -ErrorAction SilentlyContinue;
           7z x "ALLanguage_next.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r;
       - name: Build next
         run: dotnet build --no-restore
