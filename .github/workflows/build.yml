@@ -82,7 +82,7 @@ jobs:
       - name: Upload a Build Artifact current
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: current/BusinessCentral.LinterCop.dll
+          name: current\BusinessCentral.LinterCop.dll
           path: bin\Debug\BusinessCentral.LinterCop.dll
       - name: Remove a Release Asset
         uses: flcdrg/remove-release-asset-action@v1.0.13
@@ -90,7 +90,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           release_id: ${{ steps.create_release.outputs.id }}
-          asset_name: current/BusinessCentral.LinterCop.dll
+          asset_name: current\BusinessCentral.LinterCop.dll
       - name: Upload Release Asset current
         id: upload-release-asset-current
         uses: actions/upload-release-asset@v1
@@ -99,7 +99,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: bin\Debug\BusinessCentral.LinterCop.dll
-          asset_name: current/BusinessCentral.LinterCop.dll
+          asset_name: current\BusinessCentral.LinterCop.dll
           asset_content_type: application/octet-stream
       - name: Unzip vsix
         run: >
@@ -110,7 +110,7 @@ jobs:
       - name: Upload a Build Artifact next
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: next/BusinessCentral.LinterCop.dll
+          name: next\BusinessCentral.LinterCop.dll
           path: bin\Debug\BusinessCentral.LinterCop.dll
       - name: Remove a Release Asset
         uses: flcdrg/remove-release-asset-action@v1.0.13
@@ -118,7 +118,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           release_id: ${{ steps.create_release.outputs.id }}
-          asset_name: next/BusinessCentral.LinterCop.dll
+          asset_name: next\BusinessCentral.LinterCop.dll
       - name: Upload Release Asset next
         id: upload-release-asset-next
         uses: actions/upload-release-asset@v1
@@ -127,5 +127,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: bin\Debug\BusinessCentral.LinterCop.dll
-          asset_name: next/BusinessCentral.LinterCop.dll
+          asset_name: next\BusinessCentral.LinterCop.dll
           asset_content_type: application/octet-stream
