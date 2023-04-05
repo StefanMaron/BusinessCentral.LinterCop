@@ -30,9 +30,9 @@ jobs:
 
           $vsixUrl_Current = $listing.results.extensions.versions | where properties -ne $null | Where-Object { $_.properties.key -notcontains 'Microsoft.VisualStudio.Code.PreRelease'} | Select-Object -First 1 -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage"} | Select-Object -ExpandProperty source
 
-          $ALVersion_Next = $listing.results.extensions.versions | where properties -ne $null | Where-Object { $_.properties.key -notcontains 'Microsoft.VisualStudio.Code.PreRelease'} | Select-Object -First 1 -ExpandProperty version
+          $ALVersion_Next = $listing.results.extensions.versions | where properties -ne $null | Where-Object { $_.properties.key -contains 'Microsoft.VisualStudio.Code.PreRelease'} | Select-Object -First 1 -ExpandProperty version
 
-          $vsixUrl_Next = $listing.results.extensions.versions | where properties -ne $null | Where-Object { $_.properties.key -notcontains 'Microsoft.VisualStudio.Code.PreRelease'} | Select-Object -First 1 -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage"} | Select-Object -ExpandProperty source
+          $vsixUrl_Next = $listing.results.extensions.versions | where properties -ne $null | Where-Object { $_.properties.key -contains 'Microsoft.VisualStudio.Code.PreRelease'} | Select-Object -First 1 -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage"} | Select-Object -ExpandProperty source
 
           echo "AL_VERSION_CURRENT=$ALVersion_Current" >> $env:GITHUB_OUTPUT
 
@@ -46,7 +46,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ALLanguage_current.vsix
-          key: vsix-${{ steps.get-vsix.outputs.AL_VERSION_CURRENT }}\
+          key: vsix-${{ steps.get-vsix.outputs.AL_VERSION_CURRENT }}
       - name: Cache VSIX Next
         id: cache-vsix-next
         uses: actions/cache@v2
