@@ -79,10 +79,10 @@ jobs:
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
       - name: Build current
         run: dotnet build --no-restore
-      - name: Upload a Build Artifact
+      - name: Upload a Build Artifact current
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: BusinessCentral.LinterCop.dll
+          name: current/BusinessCentral.LinterCop.dll
           path: bin\Debug\BusinessCentral.LinterCop.dll
       - name: Remove a Release Asset
         uses: flcdrg/remove-release-asset-action@v1.0.13
@@ -107,10 +107,10 @@ jobs:
           7z x "ALLanguage_current.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r
       - name: Build next
         run: dotnet build --no-restore
-      - name: Upload a Build Artifact
+      - name: Upload a Build Artifact next
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: BusinessCentral.LinterCop.dll
+          name: next/BusinessCentral.LinterCop.dll
           path: bin\Debug\BusinessCentral.LinterCop.dll
       - name: Remove a Release Asset
         uses: flcdrg/remove-release-asset-action@v1.0.13
