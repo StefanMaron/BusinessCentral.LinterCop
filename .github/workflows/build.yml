@@ -86,25 +86,7 @@ jobs:
       - name: Upload a Build Artifact current
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: Linter Cop current
           path: current\
-      - name: Remove a Release Asset
-        uses: flcdrg/remove-release-asset-action@v1.0.13
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ steps.create_release.outputs.id }}
-          asset_name: Linter Cop current
-      - name: Upload Release Asset current
-        id: upload-release-asset-current
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: current\BusinessCentral.LinterCop.dll
-          asset_name: Linter Cop current
-          asset_content_type: application/octet-stream
       - name: Unzip vsix
         run: >
           Remove-Item -LiteralPath "dynamics-smb.al-latest" -Force -Recurse -ErrorAction SilentlyContinue;
@@ -118,22 +100,4 @@ jobs:
       - name: Upload a Build Artifact next
         uses: actions/upload-artifact@v2.2.4
         with:          
-          name: Linter Cop next
           path: next\
-      - name: Remove a Release Asset
-        uses: flcdrg/remove-release-asset-action@v1.0.13
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ steps.create_release.outputs.id }}
-          asset_name: Linter Cop next
-      - name: Upload Release Asset next
-        id: upload-release-asset-next
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: next\BusinessCentral.LinterCop.dll
-          asset_name: Linter Cop next
-          asset_content_type: application/octet-stream
