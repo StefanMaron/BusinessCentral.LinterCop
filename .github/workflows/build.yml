@@ -92,7 +92,7 @@ jobs:
           release_id: ${{ steps.create_release.outputs.id }}
           asset_name: current/BusinessCentral.LinterCop.dll
       - name: Upload Release Asset current
-        id: upload-release-asset
+        id: upload-release-asset-current
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -121,7 +121,7 @@ jobs:
           release_id: ${{ steps.create_release.outputs.id }}
           asset_name: next/BusinessCentral.LinterCop.dll
       - name: Upload Release Asset next
-        id: upload-release-asset
+        id: upload-release-asset-next
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
