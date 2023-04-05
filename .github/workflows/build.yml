@@ -79,11 +79,15 @@ jobs:
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
       - name: Build current
         run: dotnet build --no-restore
+      - name: Move dll to current
+        run: >
+          mkdir current
+          Move-Item bin\Debug\BusinessCentral.LinterCop.dll current\BusinessCentral.LinterCop.dll
       - name: Upload a Build Artifact current
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: current\BusinessCentral.LinterCop.dll
-          path: bin\Debug\BusinessCentral.LinterCop.dll
+          name: Linter Cop current
+          path: current\
       - name: Remove a Release Asset
         uses: flcdrg/remove-release-asset-action@v1.0.13
         env:
@@ -107,11 +111,15 @@ jobs:
           7z x "ALLanguage_current.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r
       - name: Build next
         run: dotnet build --no-restore
+      - name: Move dll to next
+        run: >
+          mkdir next
+          Move-Item bin\Debug\BusinessCentral.LinterCop.dll next\BusinessCentral.LinterCop.dll
       - name: Upload a Build Artifact next
         uses: actions/upload-artifact@v2.2.4
-        with:
-          name: next\BusinessCentral.LinterCop.dll
-          path: bin\Debug\BusinessCentral.LinterCop.dll
+        with:          
+          name: Linter Cop next
+          path: next\
       - name: Remove a Release Asset
         uses: flcdrg/remove-release-asset-action@v1.0.13
         env:
