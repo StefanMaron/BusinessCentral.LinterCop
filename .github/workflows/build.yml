@@ -81,8 +81,8 @@ jobs:
         run: dotnet build --no-restore
       - name: Move dll to current
         run: >
-          mkdir current
-          Move-Item bin\Debug\BusinessCentral.LinterCop.dll current\BusinessCentral.LinterCop.dll
+          mkdir current;
+          Move-Item bin\Debug\BusinessCentral.LinterCop.dll current\BusinessCentral.LinterCop.dll;
       - name: Upload a Build Artifact current
         uses: actions/upload-artifact@v2.2.4
         with:
@@ -113,8 +113,8 @@ jobs:
         run: dotnet build --no-restore
       - name: Move dll to next
         run: >
-          mkdir next
-          Move-Item bin\Debug\BusinessCentral.LinterCop.dll next\BusinessCentral.LinterCop.dll
+          mkdir next;
+          Move-Item bin\Debug\BusinessCentral.LinterCop.dll next\BusinessCentral.LinterCop.dll;
       - name: Upload a Build Artifact next
         uses: actions/upload-artifact@v2.2.4
         with:          
