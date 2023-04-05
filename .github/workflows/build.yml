@@ -103,8 +103,7 @@ jobs:
           asset_content_type: application/octet-stream
       - name: Unzip vsix
         run: >
-          Remove-Item -LiteralPath "dynamics-smb.al-latest" -Force -Recurse
-
+          Remove-Item -LiteralPath "dynamics-smb.al-latest" -Force -Recurse -ErrorAction SilentlyContinue
           7z x "ALLanguage_current.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r
       - name: Build next
         run: dotnet build --no-restore
