@@ -21,22 +21,36 @@ jobs:
     - name: GetALVsixVersionAndURL
       id: get-vsix
       run: |
-        $listing = Invoke-WebRequest -Method POST -UseBasicParsing -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 -Body '{"filters":[{"criteria":[{"filterType":8,"value":"Microsoft.VisualStudio.Code"},{"filterType":12,"value":"4096"},{"filterType":7,"value":"ms-dynamics-smb.al"}],"pageNumber":1,"pageSize":50,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":914}' -ContentType application/json | ConvertFrom-Json 
-        $ALVersion = $listing.results | Select-Object -First 1 -ExpandProperty extensions | Select-Object -First 1 -ExpandProperty versions | Select-Object -ExpandProperty version
-        $vsixUrl = $listing.results | Select-Object -First 1 -ExpandProperty extensions | Select-Object -First 1 -ExpandProperty versions | Select-Object -First 1 -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage"} | Select-Object -ExpandProperty source
-        "::set-output name=AL_VERSION::$ALVersion"
-        "::set-output name=VSIX_URL::$vsixUrl"
-    - name: Cache VSIX
-      id: cache-vsix
+        $listing = Invoke-WebRequest -Method POST -UseBasicParsing -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 -Body '{"filters":[{"criteria":[{"filterType":8,"value":"Microsoft.VisualStudio.Code"},{"filterType":12,"value":"4096"},{"filterType":7,"value":"ms-dynamics-smb.al"}],"pageNumber":1,"pageSize":50,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":147}' -ContentType application/json | ConvertFrom-Json 
+        $ALVersion_Current = $listing.results.extensions.versions | where properties -ne $null | Where-Object { $_.properties.key -notcontains 'Microsoft.VisualStudio.Code.PreRelease'} | Select-Object -First 1 -ExpandProperty version
+        $vsixUrl_Current = $listing.results.extensions.versions | where properties -ne $null | Where-Object { $_.properties.key -notcontains 'Microsoft.VisualStudio.Code.PreRelease'} | Select-Object -First 1 -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage"} | Select-Object -ExpandProperty source
+        $ALVersion_Next = $listing.results.extensions.versions | where properties -ne $null | Where-Object { $_.properties.key -notcontains 'Microsoft.VisualStudio.Code.PreRelease'} | Select-Object -First 1 -ExpandProperty version
+        $vsixUrl_Next = $listing.results.extensions.versions | where properties -ne $null | Where-Object { $_.properties.key -notcontains 'Microsoft.VisualStudio.Code.PreRelease'} | Select-Object -First 1 -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage"} | Select-Object -ExpandProperty source
+        echo "AL_VERSION_CURRENT=$ALVersion_Current" >> $env:GITHUB_OUTPUT
+        echo "VSIX_URL_CURRENT=$vsixUrl_Current" >> $env:GITHUB_OUTPUT
+        echo "AL_VERSION_NEXT=$ALVersion_Next" >> $env:GITHUB_OUTPUT
+        echo "VSIX_URL_NEXT=$vsixUrl_Next" >> $env:GITHUB_OUTPUT
+    - name: Cache VSIX Current
+      id: cache-vsix-current
       uses: actions/cache@v2
       with:
-        path: ALLanguage.vsix
-        key: vsix-${{ steps.get-vsix.outputs.AL_VERSION }}
-    - name: Download platform artifact
-      if: steps.cache-vsix.outputs.cache-hit != 'true'
-      run: Invoke-WebRequest ${{ steps.get-vsix.outputs.VSIX_URL }} -OutFile ALLanguage.vsix
-    - name: Unzip vsix
-      run: 7z x "ALLanguage.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r
+        path: ALLanguage_current.vsix
+        key: vsix-${{ steps.get-vsix.outputs.AL_VERSION_CURRENT }}\
+    - name: Cache VSIX Next
+      id: cache-vsix-next
+      uses: actions/cache@v2
+      with:
+        path: ALLanguage_next.vsix
+        key: vsix-${{ steps.get-vsix.outputs.AL_VERSION_NEXT }}
+    - name: Download platform artifact Current
+      if: steps.cache-vsix-current.outputs.cache-hit != 'true'
+      run: Invoke-WebRequest ${{ steps.get-vsix.outputs.VSIX_URL_CURRENT }} -OutFile ALLanguage_current.vsix
+    - name: Download platform artifact Next
+      if: steps.cache-vsix-next.outputs.cache-hit != 'true'
+      run: Invoke-WebRequest ${{ steps.get-vsix.outputs.VSIX_URL_NEXT }} -OutFile ALLanguage_next.vsix
+
+    - name: Unzip vsix current
+      run: 7z x "ALLanguage_current.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r
     - name: Release
       id: create_release
       uses: release-drafter/release-drafter@v5
@@ -48,7 +62,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Set current version
       run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]', ("Version(""" + ('${{ steps.create_release.outputs.tag_name }}' -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
-    - name: Build
+    - name: Build current
       run: dotnet build --no-restore
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.4
@@ -61,8 +75,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         release_id: ${{ steps.create_release.outputs.id }} 
-        asset_name: BusinessCentral.LinterCop.dll
-    - name: Upload Release Asset
+        asset_name: current/BusinessCentral.LinterCop.dll
+    - name: Upload Release Asset current
       id: upload-release-asset 
       uses: actions/upload-release-asset@v1
       env:
@@ -70,5 +84,35 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }} 
         asset_path: bin\Debug\BusinessCentral.LinterCop.dll
-        asset_name: BusinessCentral.LinterCop.dll
+        asset_name: current/BusinessCentral.LinterCop.dll
+        asset_content_type: application/octet-stream
+
+    - name: Unzip vsix
+      run: run: |
+        Remove-Item -LiteralPath "dynamics-smb.al-latest" -Force -Recurse
+        7z x "ALLanguage_current.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r
+    
+    - name: Build next
+      run: dotnet build --no-restore
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.2.4
+      with:
+        name: BusinessCentral.LinterCop.dll
+        path: bin\Debug\BusinessCentral.LinterCop.dll
+    - name: Remove a Release Asset
+      uses: flcdrg/remove-release-asset-action@v1.0.13
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        release_id: ${{ steps.create_release.outputs.id }} 
+        asset_name: next/BusinessCentral.LinterCop.dll
+    - name: Upload Release Asset next
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: bin\Debug\BusinessCentral.LinterCop.dll
+        asset_name: next/BusinessCentral.LinterCop.dll
         asset_content_type: application/octet-stream
