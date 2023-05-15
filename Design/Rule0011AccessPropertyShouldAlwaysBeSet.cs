@@ -1,6 +1,5 @@
 ﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using System;
 using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
@@ -24,16 +23,18 @@ namespace BusinessCentral.LinterCop.Design
             if (context.Symbol.IsObsoletePending || context.Symbol.IsObsoleteRemoved) return;
             if (context.Symbol.Kind == SymbolKind.Field)
             {
+                if (context.Symbol.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.Symbol.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
                 LinterSettings.Create();
                 if (LinterSettings.instance.enableRule0011ForTableFields)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0011AccessPropertyShouldAlwaysBeSet, context.Symbol.GetLocation()));
+                    if (context.Symbol.GetProperty(PropertyKind.Access) == null)
+                        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0011AccessPropertyShouldAlwaysBeSet, context.Symbol.GetLocation()));
                 }
             }
             else
-                if (context.Symbol.GetProperty(PropertyKind.Access) == null)
             {
-                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0011AccessPropertyShouldAlwaysBeSet, context.Symbol.GetLocation()));
+                if (context.Symbol.GetProperty(PropertyKind.Access) == null)
+                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0011AccessPropertyShouldAlwaysBeSet, context.Symbol.GetLocation()));
             }
 
         }
