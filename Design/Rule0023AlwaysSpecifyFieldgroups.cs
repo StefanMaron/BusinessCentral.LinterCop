@@ -21,10 +21,7 @@ namespace BusinessCentral.LinterCop.Design
             try
             {
                 ITableTypeSymbol table = (ITableTypeSymbol)ctx.Symbol;
-                if (table.Length > 0)
-                {
-                    if (IsTableOfTypeSetupTable(table.Fields[0])) return;
-                }
+                if (IsTableOfTypeSetupTable(table)) return;
 
                 Location FieldGroupLocation = table.GetLocation();
                 if (!table.Keys.IsEmpty)
@@ -46,10 +43,18 @@ namespace BusinessCentral.LinterCop.Design
             }
         }
 
-        private static bool IsTableOfTypeSetupTable(IFieldSymbol field)
+        private static bool IsTableOfTypeSetupTable(ITableTypeSymbol table)
         {
-            // The first field of the table should be of type Code and exactly (case sensitive) called 'Primary Key'
-            return (field.GetTypeSymbol().NavTypeKind == NavTypeKind.Code && field.Name == "Primary Key");
+            // Expect Primary Key to contains only one field
+            if (table.PrimaryKey.Fields.Length != 1) return (false);
+
+            // The field should be of type Code
+            if (table.PrimaryKey.Fields[0].GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Code) return (false);
+
+            // The field should be exactly (case sensitive) called 'Primary Key'
+            if (table.PrimaryKey.Fields[0].Name != "Primary Key") return (false);
+
+            return (true);
         }
     }
 }
