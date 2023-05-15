@@ -130,6 +130,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} 
-          asset_path: bin\Debug\BusinessCentral.LinterCop.dll
+          asset_path: bin/Debug/netstandard2.0/BusinessCentral.LinterCop.dll
           asset_name: BusinessCentral.LinterCop.next.dll
           asset_content_type: application/octet-stream
