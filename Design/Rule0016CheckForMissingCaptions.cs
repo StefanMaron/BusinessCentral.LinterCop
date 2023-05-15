@@ -1,6 +1,7 @@
 ﻿using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using System;
 using System.Collections.Immutable;
 
@@ -27,16 +28,6 @@ namespace BusinessCentral.LinterCop.Design
             if (context.Symbol.IsObsoletePending || context.Symbol.IsObsoleteRemoved) return;
             if (context.Symbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.Symbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
 
-            LinterSettings.Create();
-            if (!(LinterSettings.instance.enableRule0016ForApiObjects) && context.Symbol.GetContainingObjectTypeSymbol().GetProperty(PropertyKind.PageType) != null)
-            {
-                if (context.Symbol.Kind == SymbolKind.Page)
-                {
-                    IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)context.Symbol;
-                    if (pageTypeSymbol.PageType == PageTypeKind.API) return;
-                }
-            }
-
             if (context.Symbol.Kind == SymbolKind.Control)
             {
                 var Control = ((IControlSymbol)context.Symbol);
@@ -51,9 +42,14 @@ namespace BusinessCentral.LinterCop.Design
                             }
                             else
                             {
-                                RaiseCaptionWarning(context);
+                                if (IsPageTypeKindAPI(context))
+                                {
+                                    LinterSettings.Create();
+                                    if (LinterSettings.instance.enableRule0016ForApiObjects)
+                                        RaiseCaptionWarning(context);
+                                }
                             }
-                        break;
+                            break;
 
                     case ControlKind.Area:
                         break;
@@ -135,6 +131,18 @@ namespace BusinessCentral.LinterCop.Design
         private void RaiseCaptionWarning(SymbolAnalysisContext context)
         {
             context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0016CheckForMissingCaptions, context.Symbol.GetLocation()));
+        }
+
+        private static bool IsPageTypeKindAPI(SymbolAnalysisContext context)
+        {
+            if (context.Symbol.GetContainingObjectTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Page) return false;
+            foreach (IPropertySymbol property in context.Symbol.GetContainingObjectTypeSymbol().Properties)
+            {
+                IPageTypeSymbol pageType = (IPageTypeSymbol)property.ContainingType;
+
+                if (pageType.PageType == PageTypeKind.API) return true;
+            }
+            return false;
         }
     }
 }
