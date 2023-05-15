@@ -24,7 +24,7 @@ namespace BusinessCentral.LinterCop.Design
             if (context.Symbol.Kind == SymbolKind.Field)
             {
                 if (context.Symbol.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.Symbol.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-                LinterSettings.Create();
+                LinterSettings.Create(context.Compilation.FileSystem.GetDirectoryPath());
                 if (LinterSettings.instance.enableRule0011ForTableFields)
                 {
                     if (context.Symbol.GetProperty(PropertyKind.Access) == null)
