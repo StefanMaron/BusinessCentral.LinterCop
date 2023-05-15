@@ -49,7 +49,7 @@ namespace BusinessCentral.LinterCop.Design
                                         RaiseCaptionWarning(context);
                                 }
                             }
-                            break;
+                        break;
 
                     case ControlKind.Area:
                         break;
