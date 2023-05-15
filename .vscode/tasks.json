@@ -1,0 +1,52 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build_dotnet",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "build",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "group": "build",
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem",
+                "close": true
+            }
+        },
+        {
+            "label": "run_code",
+            "type": "shell",
+            "command": "code",
+            "args": [
+                "C:/Users/Stefan/Documents/AL/ALProject1/"
+            ],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent",
+                "revealProblems": "onProblem",
+                "close": true
+            }
+        },
+        {
+            "label": "build",
+            "dependsOn": [
+                "build_dotnet",
+                "run_code"
+            ],
+            "dependsOrder": "sequence"
+        },
+        {
+            "label": "LoadALLanguageDependency",
+            "type": "shell",
+            "command": "Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process; ./.vscode/LoadALLanguage.ps1",
+            "problemMatcher": []
+        }
+    ]
+}
