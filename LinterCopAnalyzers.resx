@@ -350,15 +350,15 @@
         <comment/>
     </data>
     <data name="Rule0020ApplicationAreaEqualsToPageTitle" xml:space="preserve">
-        <value>Applicatication Area is equal to the Page. Remove to reduce redundancy.</value>
+        <value>Application Area is equal to the Page. Remove to reduce redundancy.</value>
         <comment/>
     </data>
     <data name="Rule0020ApplicationAreaEqualsToPageFormat" xml:space="preserve">
-        <value>Applicatication Area is equal to the Page. Remove to reduce redundancy.</value>
+        <value>Application Area is equal to the Page. Remove to reduce redundancy.</value>
         <comment/>
     </data>
     <data name="Rule0020ApplicationAreaEqualsToPageDescription" xml:space="preserve">
-        <value>Applicatication Area is equal to the Page. Remove to reduce redundancy.</value>
+        <value>Application Area is equal to the Page. Remove to reduce redundancy.</value>
         <comment/>
     </data>
     <data name="Rule0021ConfirmImplementConfirmManagement" xml:space="preserve">
