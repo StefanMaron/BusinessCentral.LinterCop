@@ -1,5 +1,6 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
 using System;
 using System.Collections.Immutable;
@@ -20,6 +21,7 @@ namespace BusinessCentral.LinterCop.Design
             try
             {
                 ITableTypeSymbol table = (ITableTypeSymbol)ctx.Symbol;
+                if (IsTableOfTypeSetupTable(table)) return;
 
                 Location FieldGroupLocation = table.GetLocation();
                 if (!table.Keys.IsEmpty)
@@ -39,6 +41,20 @@ namespace BusinessCentral.LinterCop.Design
             {
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Symbol.GetLocation(), new Object[] { "Rule0023", "ArgumentOutOfRangeException", "" }));
             }
+        }
+
+        private static bool IsTableOfTypeSetupTable(ITableTypeSymbol table)
+        {
+            // Expect Primary Key to contains only one field
+            if (table.PrimaryKey.Fields.Length != 1) return (false);
+
+            // The field should be of type Code
+            if (table.PrimaryKey.Fields[0].GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Code) return (false);
+
+            // The field should be exactly (case sensitive) called 'Primary Key'
+            if (table.PrimaryKey.Fields[0].Name != "Primary Key") return (false);
+
+            return (true);
         }
     }
 }
