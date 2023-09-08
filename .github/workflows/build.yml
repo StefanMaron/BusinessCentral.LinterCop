@@ -89,7 +89,8 @@ jobs:
           asset_path: bin/Debug/netstandard2.0/BusinessCentral.LinterCop.dll
           asset_name: BusinessCentral.LinterCop.current.dll
           asset_content_type: application/octet-stream
-          
+      - name: Clear Build output
+        run: Remove-Item -Path "bin/Debug" -Force -Recurse -ErrorAction SilentlyContinue;
       - name: Unzip vsix next
         run: >
           Remove-Item -Path "ms-dynamics-smb.al-latest" -Force -Recurse -ErrorAction SilentlyContinue;
