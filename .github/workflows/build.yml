@@ -43,24 +43,10 @@ jobs:
           echo "AL_VERSION_NEXT=$ALVersion_Next" >> $env:GITHUB_OUTPUT;
 
           echo "VSIX_URL_NEXT=$vsixUrl_Next" >> $env:GITHUB_OUTPUT;
-      - name: Cache VSIX Current
-        id: cache-vsix-current
-        uses: actions/cache@v2
-        with:
-          path: ALLanguage_current.vsix
-          key: vsix-${{ steps.get-vsix.outputs.AL_VERSION_CURRENT }}
-      - name: Cache VSIX Next
-        id: cache-vsix-next
-        uses: actions/cache@v2
-        with:
-          path: ALLanguage_next.vsix
-          key: vsix-${{ steps.get-vsix.outputs.AL_VERSION_NEXT }}
       - name: Download platform artifact Current
-        if: steps.cache-vsix-current.outputs.cache-hit != 'true'
         run: Invoke-WebRequest ${{ steps.get-vsix.outputs.VSIX_URL_CURRENT }} -OutFile
           ALLanguage_current.vsix
       - name: Download platform artifact Next
-        if: steps.cache-vsix-next.outputs.cache-hit != 'true'
         run: Invoke-WebRequest ${{ steps.get-vsix.outputs.VSIX_URL_NEXT }} -OutFile
           ALLanguage_next.vsix
       - name: Unzip vsix current
@@ -104,7 +90,7 @@ jobs:
           asset_name: BusinessCentral.LinterCop.current.dll
           asset_content_type: application/octet-stream
           
-      - name: Unzip vsix
+      - name: Unzip vsix next
         run: >
           Remove-Item -Path "ms-dynamics-smb.al-latest" -Force -Recurse -ErrorAction SilentlyContinue;
           7z x "ALLanguage_next.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r;
