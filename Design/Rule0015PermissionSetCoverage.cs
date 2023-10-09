@@ -48,6 +48,8 @@ namespace BusinessCentral.LinterCop.Design
                     continue;
                 }
 
+                if(appObjTypeSymbol.Properties.Where(currentProperty => currentProperty.PropertyKind == PropertyKind.InherentPermissions).Any()) continue;
+
                 switch (appObjTypeSymbol.NavTypeKind)
                 {
                     case NavTypeKind.Codeunit:
