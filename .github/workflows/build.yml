@@ -78,7 +78,7 @@ jobs:
           ("Version(""" + ('${{ steps.create_release.outputs.tag_name }}'
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
       - name: Build current
-        run: dotnet build --no-restore
+        run: dotnet build
       - name: Upload a Build current
         uses: actions/upload-artifact@v2.2.4
         with:
@@ -107,7 +107,7 @@ jobs:
           Remove-Item -Path "ms-dynamics-smb.al-latest" -Force -Recurse -ErrorAction SilentlyContinue;
           7z x "ALLanguage_next.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r;
       - name: Build next
-        run: dotnet build --no-restore
+        run: dotnet build
           
       - name: Upload a Build next
         uses: actions/upload-artifact@v2.2.4
