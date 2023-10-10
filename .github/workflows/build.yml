@@ -17,6 +17,8 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 7.0.*
+      - name: Restore dependencies
+        run: dotnet restore
       - name: GetALVsixVersionAndURL
         id: get-vsix
         run: >
@@ -41,24 +43,10 @@ jobs:
           echo "AL_VERSION_NEXT=$ALVersion_Next" >> $env:GITHUB_OUTPUT;
 
           echo "VSIX_URL_NEXT=$vsixUrl_Next" >> $env:GITHUB_OUTPUT;
-      - name: Cache VSIX Current
-        id: cache-vsix-current
-        uses: actions/cache@v2
-        with:
-          path: ALLanguage_current.vsix
-          key: vsix-${{ steps.get-vsix.outputs.AL_VERSION_CURRENT }}
-      - name: Cache VSIX Next
-        id: cache-vsix-next
-        uses: actions/cache@v2
-        with:
-          path: ALLanguage_next.vsix
-          key: vsix-${{ steps.get-vsix.outputs.AL_VERSION_NEXT }}
       - name: Download platform artifact Current
-        if: steps.cache-vsix-current.outputs.cache-hit != 'true'
         run: Invoke-WebRequest ${{ steps.get-vsix.outputs.VSIX_URL_CURRENT }} -OutFile
           ALLanguage_current.vsix
       - name: Download platform artifact Next
-        if: steps.cache-vsix-next.outputs.cache-hit != 'true'
         run: Invoke-WebRequest ${{ steps.get-vsix.outputs.VSIX_URL_NEXT }} -OutFile
           ALLanguage_next.vsix
       - name: Unzip vsix current
@@ -78,12 +66,12 @@ jobs:
           ("Version(""" + ('${{ steps.create_release.outputs.tag_name }}'
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
       - name: Build current
-        run: dotnet build
+        run: dotnet build --no-restore
       - name: Upload a Build current
         uses: actions/upload-artifact@v2.2.4
         with:
           name: BusinessCentral.LinterCop.current.dll
-          path: bin\Debug\BusinessCentral.LinterCop.dll
+          path: bin/Debug/netstandard2.0/BusinessCentral.LinterCop.dll
       - name: Remove a Release Asset current
         uses: flcdrg/remove-release-asset-action@v1.0.13
         env:
@@ -98,22 +86,23 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} 
-          asset_path: bin\Debug\BusinessCentral.LinterCop.dll
+          asset_path: bin/Debug/netstandard2.0/BusinessCentral.LinterCop.dll
           asset_name: BusinessCentral.LinterCop.current.dll
           asset_content_type: application/octet-stream
-          
-      - name: Unzip vsix
+      - name: Clear Build output
+        run: Remove-Item -Path "bin/Debug" -Force -Recurse -Verbose;
+      - name: Unzip vsix next
         run: >
-          Remove-Item -Path "ms-dynamics-smb.al-latest" -Force -Recurse -ErrorAction SilentlyContinue;
+          Remove-Item -Path "ms-dynamics-smb.al-latest" -Force -Recurse -Verbose;
           7z x "ALLanguage_next.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r;
       - name: Build next
-        run: dotnet build
+        run: dotnet build --no-restore
           
       - name: Upload a Build next
         uses: actions/upload-artifact@v2.2.4
         with:
           name: BusinessCentral.LinterCop.next.dll
-          path: bin\Debug\BusinessCentral.LinterCop.dll
+          path: bin/Debug/netstandard2.0/BusinessCentral.LinterCop.dll
       - name: Remove a Release Asset next
         uses: flcdrg/remove-release-asset-action@v1.0.13
         env:
@@ -128,6 +117,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} 
-          asset_path: bin\Debug\BusinessCentral.LinterCop.dll
+          asset_path: bin/Debug/netstandard2.0/BusinessCentral.LinterCop.dll
           asset_name: BusinessCentral.LinterCop.next.dll
           asset_content_type: application/octet-stream
