@@ -22,7 +22,9 @@ namespace BusinessCentral.LinterCop.Design
             if (context.OwningSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.OwningSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
             if (context.OwningSymbol.IsObsoletePending || context.OwningSymbol.IsObsoleteRemoved) return;
 
+            if (!context.CodeBlock.IsKind(SyntaxKind.MethodDeclaration)) return;
             var SyntaxList = ((MethodDeclarationSyntax)context.CodeBlock).Attributes.Where(value => value.GetIdentifierOrLiteralValue().ToUpper() == "EVENTSUBSCRIBER");
+
             foreach (var Syntax in SyntaxList)
             {
                 if (Syntax.ArgumentList.Arguments[2].IsKind(SyntaxKind.LiteralAttributeArgument))
