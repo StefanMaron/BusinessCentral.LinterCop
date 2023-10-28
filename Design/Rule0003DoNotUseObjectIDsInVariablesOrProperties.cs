@@ -36,10 +36,10 @@ namespace BusinessCentral.LinterCop.Design
                 else
                     correctName = variable.Type.Name;
 
-                if (ctx.Node.ToString().Trim('"').ToUpper() != correctName.ToUpper())
+                if (ctx.Node.GetLastToken().ToString().Trim('"').ToUpper() != correctName.ToUpper())
                     ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
 
-                if (ctx.Node.ToString().Trim('"') != correctName)
+                if (ctx.Node.GetLastToken().ToString().Trim('"') != correctName)
                     ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Node.GetLocation(), new object[] { correctName, "" }));
             }
             if (ctx.ContainingSymbol.Kind == SymbolKind.Property)
