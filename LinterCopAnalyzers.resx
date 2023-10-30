@@ -397,4 +397,16 @@
     <value>Event subscriber arguments now use identifier syntax instead of string literals. Convert the argument literal to an identifier.</value>
     <comment/>
   </data>
+  <data name="Rule0029CompareDateTimeThroughCodeunitTitle" xml:space="preserve">
+    <value>Use CompareDateTime method in Type Helper codeunit for DateTime variable comparisons.</value>
+    <comment/>
+  </data>
+  <data name="Rule0029CompareDateTimeThroughCodeunitFormat" xml:space="preserve">
+    <value>Use CompareDateTime method in Type Helper codeunit for DateTime variable comparisons.</value>
+    <comment/>
+  </data>
+  <data name="Rule0029CompareDateTimeThroughCodeunitDescription" xml:space="preserve">
+    <value>Use CompareDateTime method in Type Helper codeunit for DateTime variable comparisons.</value>
+    <comment/>
+  </data>
 </root>
