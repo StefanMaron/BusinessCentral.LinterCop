@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 namespace BusinessCentral.LinterCop.Design
 {
     [DiagnosticAnalyzer]
-    public class RuleXDescription : DiagnosticAnalyzer
+    public class Rule0028CodeNavigabilityOnEventSubscribers : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0028CodeNavigabilityOnEventSubscribers);
 
