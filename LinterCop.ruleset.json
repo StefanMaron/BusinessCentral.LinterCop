@@ -122,5 +122,10 @@
       "action": "Info",
       "justification": "Use CompareDateTime method in Type Helper codeunit for DateTime variable comparisons."
     }
+    {
+      "id": "LC0027",
+      "action": "Info",
+      "justification": "Page.Run(Modal) must be implemented through the Page Management codeunit from the Base Application."
+    }
   ]
 }

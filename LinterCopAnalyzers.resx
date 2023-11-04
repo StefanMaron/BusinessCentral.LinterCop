@@ -436,4 +436,7 @@
   <data name="Rule0026ToolTipPunctuationTitle" xml:space="preserve">
     <value>ToolTip must end with a dot.</value>
   </data>
+  <data name="Rule0027RunPageImplementPageManagement" xml:space="preserve">
+    <value>Page.Run(Modal) must be implemented through the "Page Management" codeunit from the Base Application.</value>
+  </data>
 </root>
