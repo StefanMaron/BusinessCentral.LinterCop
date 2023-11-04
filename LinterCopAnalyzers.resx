@@ -222,7 +222,7 @@
     <comment/>
   </data>
   <data name="Rule0009CodeMetricsInfoFormat" xml:space="preserve">
-    <value>Cyclomatic complexity: {0}, Maintainability index: {1}</value>
+    <value>Cyclomatic complexity: {0}/({1}), Maintainability index: {2}/({3})</value>
     <comment/>
   </data>
   <data name="Rule0009CodeMetricsInfoTitle" xml:space="preserve">
@@ -375,12 +375,39 @@
   </data>
   <data name="Rule0022GlobalLanguageImplementTranslationHelperDescription" xml:space="preserve">
     <value>GlobalLanguage() must be implemented through the "Translation Helper" codeunit from the Base Application.</value>
+    <comment/>
   </data>
   <data name="Rule0022GlobalLanguageImplementTranslationHelperFormat" xml:space="preserve">
     <value>GlobalLanguage() must be implemented through the "Translation Helper" codeunit from the Base Application.</value>
+    <comment/>
   </data>
   <data name="Rule0022GlobalLanguageImplementTranslationHelperTitle" xml:space="preserve">
     <value>GlobalLanguage() must be implemented through the "Translation Helper" codeunit from the Base Application.</value>
+    <comment/>
+  </data>
+  <data name="Rule0028CodeNavigabilityOnEventSubscribersTitle" xml:space="preserve">
+    <value>Event subscriber arguments now use identifier syntax instead of string literals. Convert the argument literal to an identifier.</value>
+    <comment/>
+  </data>
+  <data name="Rule0028CodeNavigabilityOnEventSubscribersFormat" xml:space="preserve">
+    <value>Event subscriber arguments now use identifier syntax instead of string literals. Convert the argument literal to an identifier.</value>
+    <comment/>
+  </data>
+  <data name="Rule0028CodeNavigabilityOnEventSubscribersDescription" xml:space="preserve">
+    <value>Event subscriber arguments now use identifier syntax instead of string literals. Convert the argument literal to an identifier.</value>
+    <comment/>
+  </data>
+  <data name="Rule0029CompareDateTimeThroughCodeunitTitle" xml:space="preserve">
+    <value>Use CompareDateTime method in Type Helper codeunit for DateTime variable comparisons.</value>
+    <comment/>
+  </data>
+  <data name="Rule0029CompareDateTimeThroughCodeunitFormat" xml:space="preserve">
+    <value>Use CompareDateTime method in Type Helper codeunit for DateTime variable comparisons.</value>
+    <comment/>
+  </data>
+  <data name="Rule0029CompareDateTimeThroughCodeunitDescription" xml:space="preserve">
+    <value>Use CompareDateTime method in Type Helper codeunit for DateTime variable comparisons.</value>
+    <comment/>
   </data>
   <data name="Rule0024SemicolonAfterProcedureDeclarationDescription" xml:space="preserve">
     <value>Procedure declaration should not end with semicolon.</value>

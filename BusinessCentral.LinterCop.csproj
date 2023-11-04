@@ -1,135 +1,77 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1EDDEDCF-E158-4AE6-863D-DEA31B895044}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AssemblyName>BusinessCentral.LinterCop</AssemblyName>
-    <ApplicationVersion>7.4.7.37768</ApplicationVersion>
-    <RootNamespace>BusinessCentral.LinterCop</RootNamespace>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <OldToolsVersion>2.0</OldToolsVersion>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DebugType>portable</DebugType>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="netstandard" />
-    <Reference Include="Microsoft.CodeAnalysis">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.CodeAnalysis.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Dynamics.Nav.Analyzers.Common">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.Dynamics.Nav.Analyzers.Common.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Buffers, Version=4.6.28619.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/System.Collections.Immutable.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Memory, Version=4.700.19.56404, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/System.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.6.255193.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/System.Numerics.Vectors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.700.20.12001, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>ms-dynamics-smb.al-latest/extension/bin/Analyzers/System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Design\Rule0001FlowFieldsShouldNotBeEditable.cs" />
-    <Compile Include="Design\Rule0002CommitMustBeExplainedByComment.cs" />
-    <Compile Include="Design\Rule0003DoNotUseObjectIDsInVariablesOrProperties.cs" />
-    <Compile Include="Design\Rule0004LookupPageIdAndDrillDownPageId.cs" />
-    <Compile Include="Design\Rule0005VariableCasingShouldNotDIfferFromDeclaration.cs" />
-    <Compile Include="Design\Rule0006FieldNotAutoIncrementInTemporaryTable.cs" />
-    <Compile Include="Design\Rule0007DataPerCompanyShouldAlwaysBeSet.cs" />
-    <Compile Include="Design\Rule0008NoFilterOperatorsInSetRange.cs" />
-    <Compile Include="Design\Rule0009CodeMetrics.cs" />
-    <Compile Include="Design\Rule0011AccessPropertyShouldAlwaysBeSet.cs" />
-    <Compile Include="Design\Rule0026ToolTipPunctuation.cs" />
-    <Compile Include="Design\Rule0025InternalProcedureModifier.cs" />
-    <Compile Include="Design\Rule0024SemicolonAfterProcedureDeclaration.cs" />
-    <Compile Include="Design\Rule0012DoNotUseObjectIdInSystemFunctions.cs" />
-    <Compile Include="Design\Rule0013CheckForNotBlankOnSingleFieldPrimaryKeys.cs" />
-    <Compile Include="Design\Rule0014PermissionSetCaptionLength.cs" />
-    <Compile Include="Design\Rule0015PermissionSetCoverage.cs" />
-    <Compile Include="Design\Rule0016CheckForMissingCaptions.cs" />
-    <Compile Include="Design\Rule0017WriteToFlowField.cs" />
-    <Compile Include="Design\Rule0018NoEventsInInternalCodeunits.cs" />
-    <Compile Include="Design\Rule0019DataClassificationFieldEqualsTable.cs" />
-    <Compile Include="Design\Rule0020ApplicationAreaEqualsToPage.cs" />
-    <Compile Include="Design\Rule0021BuiltInMethodImplementThroughCodeunit.cs" />
-    <Compile Include="Design\Rule0023AlwaysSpecifyFieldgroups.cs" />
-    <Compile Include="Helpers\LinterSettings.cs" />
-    <Compile Include="LinterCopAnalyzers.Designer.cs" />
-    <Compile Include="LinterCopAnalyzers.Generated.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="LinterCopAnalyzers.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <LangVersion>Latest</LangVersion>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    </PropertyGroup>
+    <ItemGroup>
+
+        <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>ALLanguage/extension/bin/Analyzers/System.Collections.Immutable.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>ALLanguage/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Microsoft.Dynamics.Nav.Analyzers.Common">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>ALLanguage/extension/bin/Analyzers/Microsoft.Dynamics.Nav.Analyzers.Common.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath>ALLanguage/extension/bin/Analyzers/Newtonsoft.Json.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <!-- <Reference Include="Microsoft.CodeAnalysis">
+                                                    <SpecificVersion>False</SpecificVersion>
+                                                    <HintPath>ALLanguage/extension/bin/Analyzers/Microsoft.CodeAnalysis.dll</HintPath>
+                                                    <Private>False</Private>
+                                                </Reference>
+                                                <Reference Include="Microsoft.Dynamics.Nav.Analyzers.Common">
+                                                    <SpecificVersion>False</SpecificVersion>
+                                                    <HintPath>ALLanguage/extension/bin/Analyzers/Microsoft.Dynamics.Nav.Analyzers.Common.dll</HintPath>
+                                                    <Private>False</Private>
+                                                </Reference>
+                                                <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis">
+                                                    <SpecificVersion>False</SpecificVersion>
+                                                    <HintPath>ALLanguage/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
+                                                    <Private>False</Private>
+                                                </Reference>
+                                                <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces">
+                                                    <SpecificVersion>False</SpecificVersion>
+                                                    <HintPath>ALLanguage/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
+                                                    <Private>False</Private>
+                                                </Reference>
+                                                <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+                                                    <SpecificVersion>False</SpecificVersion>
+                                                    <HintPath>ALLanguage/extension/bin/Analyzers/Newtonsoft.Json.dll</HintPath>
+                                                    <Private>False</Private>
+                                                </Reference>
+                                                <Reference Include="System.Buffers, Version=4.6.28619.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+                                                    <HintPath>ALLanguage/extension/bin/Analyzers/System.Buffers.dll</HintPath>
+                                                </Reference>
+                                                <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+                                                    <SpecificVersion>False</SpecificVersion>
+                                                    <HintPath>ALLanguage/extension/bin/Analyzers/System.Collections.Immutable.dll</HintPath>
+                                                    <Private>False</Private>
+                                                </Reference>
+                                                <Reference Include="System.ComponentModel.Composition"/>
+                                                <Reference Include="System.Memory, Version=4.700.19.56404, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+                                                    <HintPath>ALLanguage/extension/bin/Analyzers/System.Memory.dll</HintPath>
+                                                </Reference>
+                                                <Reference Include="System.Numerics"/>
+                                                <Reference Include="System.Numerics.Vectors, Version=4.6.255193.3, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+                                                    <HintPath>ALLanguage/extension/bin/Analyzers/System.Numerics.Vectors.dll</HintPath>
+                                                </Reference>
+                                                <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.700.20.12001, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+                                                    <HintPath>ALLanguage/extension/bin/Analyzers/System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+                                                </Reference>
+                                                <Reference Include="System.Xml.Linq"/> -->
+    </ItemGroup>
 </Project>
