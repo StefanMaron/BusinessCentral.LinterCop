@@ -386,15 +386,15 @@
     <comment/>
   </data>
   <data name="Rule0028CodeNavigabilityOnEventSubscribersTitle" xml:space="preserve">
-    <value>Event subscriber arguments now use identifier syntax instead of string literals. Convert the argument literal to an identifier.</value>
+    <value>Event subscriber arguments now use identifier syntax instead of string literals.</value>
     <comment/>
   </data>
   <data name="Rule0028CodeNavigabilityOnEventSubscribersFormat" xml:space="preserve">
-    <value>Event subscriber arguments now use identifier syntax instead of string literals. Convert the argument literal to an identifier.</value>
+    <value>Event subscriber arguments now use identifier syntax instead of string literals.</value>
     <comment/>
   </data>
   <data name="Rule0028CodeNavigabilityOnEventSubscribersDescription" xml:space="preserve">
-    <value>Event subscriber arguments now use identifier syntax instead of string literals. Convert the argument literal to an identifier.</value>
+    <value>Event subscriber arguments now use identifier syntax instead of string literals.</value>
     <comment/>
   </data>
   <data name="Rule0029CompareDateTimeThroughCodeunitTitle" xml:space="preserve">

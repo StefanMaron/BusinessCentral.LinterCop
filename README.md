@@ -65,6 +65,9 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0021](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0021)|`Confirm()` must be implemented through the `Confirm Management` codeunit from the System Application.|Info|
 |[LC0022](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0022)|`GlobalLanguage()` must be implemented through the `Translation Helper` codeunit from the Base Application.|Info|
 |[LC0023](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0023)|Always provide fieldsgroups `DropDown` and `Brick` on tables.|Info|
+|[LC0024](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0024)|Procedure declaration should not end with semicolon.|Info|
+|[LC0025](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0025)|Procedure must be either local or internal.|Info|
+|[LC0026](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0026)|ToolTip must end with a dot.|Info|
 |[LC0027](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0027)|`Page.Run()` and `Page.RunModal()` must be implemented through the `Page Management` codeunit from the Base Application.|Info|
 |[LC0028](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0028)|Event subscriber arguments now use identifier syntax instead of string literals. Convert the argument literal to an identifier.|Info|
 |[LC0029](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0029)|Use `CompareDateTime` method in `Type Helper` codeunit for DateTime variable comparisons.|Info|
