@@ -111,6 +111,16 @@
       "id": "LC0022",
       "action": "Info",
       "justification": "GlobalLanguage() must be implemented through the Translation Helper codeunit from the Base Application."
+    },
+    {
+      "id": "LC0028",
+      "action": "Info",
+      "justification": "Event subscriber arguments now use identifier syntax instead of string literals. Convert the argument literal to an identifier."
+    },
+    {
+      "id": "LC0029",
+      "action": "Info",
+      "justification": "Use CompareDateTime method in Type Helper codeunit for DateTime variable comparisons."
     }
     {
       "id": "LC0027",
