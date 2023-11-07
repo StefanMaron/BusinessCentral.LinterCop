@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
@@ -18,15 +17,13 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
 
-            PropertySyntax tooltipProperty = ctx.Node.GetProperty("ToolTip");
+            PropertyValueSyntax tooltipProperty = ctx.Node.GetPropertyValue(PropertyKind.ToolTip);
+            if (tooltipProperty == null)
+                return;
 
-            if (tooltipProperty != null)
-            {
-                string tooltipValue = tooltipProperty.Value.GetText().ToString();
-                if (!tooltipValue.EndsWith(".'"))
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0026ToolTipPunctuation, tooltipProperty.GetLocation()));
-            }
-
+            StringLiteralValueSyntax tooltipLabel = ((LabelPropertyValueSyntax)tooltipProperty).Value.LabelText;
+            if (!tooltipLabel.Value.ToString().EndsWith(".'"))
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0026ToolTipPunctuation, tooltipProperty.GetLocation()));
         }
     }
 }
