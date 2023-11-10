@@ -439,4 +439,13 @@
   <data name="Rule0027RunPageImplementPageManagement" xml:space="preserve">
     <value>Page.Run(Modal) must be implemented through the "Page Management" codeunit from the Base Application.</value>
   </data>
+  <data name="Rule0030AccessInternalForInstallAndUpgradeCodeunitsTitle" xml:space="preserve">
+    <value>Set Access property to Internal for Install/Upgrade codeunits.</value>
+  </data>
+  <data name="Rule0030AccessInternalForInstallAndUpgradeCodeunitsFormat" xml:space="preserve">
+    <value>Set Access property to Internal for Install/Upgrade codeunits.</value>
+  </data>
+  <data name="Rule0030AccessInternalForInstallAndUpgradeCodeunitsDescription" xml:space="preserve">
+    <value>Set Access property to Internal for Install/Upgrade codeunits.</value>
+  </data>
 </root>
