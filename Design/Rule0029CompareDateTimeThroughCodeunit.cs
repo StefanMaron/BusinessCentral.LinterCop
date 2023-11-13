@@ -20,13 +20,17 @@ namespace BusinessCentral.LinterCop.Design
 
             IBinaryOperatorExpression operation = (IBinaryOperatorExpression)context.Operation;
 
-            if (operation.LeftOperand.Type.NavTypeKind == NavTypeKind.DateTime && operation.RightOperand.Type.NavTypeKind == NavTypeKind.DateTime &&
-                (operation.Syntax.IsKind(SyntaxKind.EqualsExpression) ||
-                 operation.Syntax.IsKind(SyntaxKind.NotEqualsExpression) ||
-                 operation.Syntax.IsKind(SyntaxKind.GreaterThanExpression) ||
-                 operation.Syntax.IsKind(SyntaxKind.GreaterThanOrEqualExpression) ||
-                 operation.Syntax.IsKind(SyntaxKind.LessThanExpression) ||
-                 operation.Syntax.IsKind(SyntaxKind.LessThanOrEqualExpression)))
+            if (!(operation.LeftOperand.Type.NavTypeKind == NavTypeKind.DateTime && operation.RightOperand.Type.NavTypeKind == NavTypeKind.DateTime)) return;
+            if (operation.LeftOperand.Syntax.IsKind(SyntaxKind.LiteralExpression) && operation.LeftOperand.Syntax.GetIdentifierOrLiteralValue() == "0DT") return;
+            if (operation.RightOperand.Syntax.IsKind(SyntaxKind.LiteralExpression) && operation.RightOperand.Syntax.GetIdentifierOrLiteralValue() == "0DT") return;
+
+            if (operation.Syntax.IsKind(SyntaxKind.EqualsExpression) ||
+                operation.Syntax.IsKind(SyntaxKind.NotEqualsExpression) ||
+                operation.Syntax.IsKind(SyntaxKind.GreaterThanExpression) ||
+                operation.Syntax.IsKind(SyntaxKind.GreaterThanOrEqualExpression) ||
+                operation.Syntax.IsKind(SyntaxKind.LessThanExpression) ||
+                operation.Syntax.IsKind(SyntaxKind.LessThanOrEqualExpression)
+            )
                 context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0029CompareDateTimeThroughCodeunit, context.Operation.Syntax.GetLocation()));
         }
     }
