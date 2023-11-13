@@ -69,7 +69,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0025](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0025)|Procedure must be either local or internal.|Info|
 |[LC0026](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0026)|ToolTip must end with a dot.|Info|
 |[LC0027](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0027)|`Page.Run()` and `Page.RunModal()` must be implemented through the `Page Management` codeunit from the Base Application.|Info|
-|[LC0028](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0028)|Event subscriber arguments now use identifier syntax instead of string literals. Convert the argument literal to an identifier.|Info|
+|[LC0028](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0028)|Event subscriber arguments now use identifier syntax instead of string literals.|Info|
 |[LC0029](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0029)|Use `CompareDateTime` method in `Type Helper` codeunit for DateTime variable comparisons.|Info|
 
 ## Configuration
