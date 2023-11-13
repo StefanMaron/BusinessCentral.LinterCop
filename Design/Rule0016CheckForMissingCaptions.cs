@@ -1,6 +1,7 @@
 ﻿using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
@@ -26,16 +27,6 @@ namespace BusinessCentral.LinterCop.Design
             if (context.Symbol.IsObsoletePending || context.Symbol.IsObsoleteRemoved) return;
             if (context.Symbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.Symbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
 
-            LinterSettings.Create(context.Compilation.FileSystem.GetDirectoryPath());
-            if (!(LinterSettings.instance.enableRule0016ForApiObjects) && context.Symbol.GetContainingObjectTypeSymbol().GetProperty(PropertyKind.PageType) != null)
-            {
-                if (context.Symbol.Kind == SymbolKind.Page)
-                {
-                    IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)context.Symbol;
-                    if (pageTypeSymbol.PageType == PageTypeKind.API) return;
-                }
-            }
-
             if (context.Symbol.Kind == SymbolKind.Control)
             {
                 var Control = ((IControlSymbol)context.Symbol);
@@ -50,7 +41,8 @@ namespace BusinessCentral.LinterCop.Design
                             }
                             else
                             {
-                                RaiseCaptionWarning(context);
+                                if (!SuppressCaptionWarning(context))
+                                    RaiseCaptionWarning(context);
                             }
                         break;
 
@@ -64,7 +56,8 @@ namespace BusinessCentral.LinterCop.Design
                         if (CaptionIsMissing(context.Symbol, context))
                             if (Control.RelatedPartSymbol != null)
                                 if (CaptionIsMissing(Control.RelatedPartSymbol, context))
-                                    RaiseCaptionWarning(context);
+                                    if (!SuppressCaptionWarning(context))
+                                        RaiseCaptionWarning(context);
                         break;
 
                     case ControlKind.UserControl:
@@ -129,8 +122,16 @@ namespace BusinessCentral.LinterCop.Design
                 if (Symbol.GetProperty(PropertyKind.Caption) == null && Symbol.GetProperty(PropertyKind.CaptionClass) == null)
                     return true;
             return false;
-
         }
+
+        private static bool SuppressCaptionWarning(SymbolAnalysisContext context)
+        {
+            IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)context.Symbol.GetContainingObjectTypeSymbol();
+            if (pageTypeSymbol.GetNavTypeKindSafe() != NavTypeKind.Page || pageTypeSymbol.PageType != PageTypeKind.API) return false;
+            LinterSettings.Create(context.Compilation.FileSystem.GetDirectoryPath());
+            return !LinterSettings.instance.enableRule0016ForApiObjects;
+        }
+
         private void RaiseCaptionWarning(SymbolAnalysisContext context)
         {
             context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0016CheckForMissingCaptions, context.Symbol.GetLocation()));
