@@ -68,10 +68,10 @@ namespace BusinessCentral.LinterCop.Design
 
                 if (property.PropertyKind != PropertyKind.Permissions && property.PropertyKind != PropertyKind.AccessByPermission)
                 {
-                    if (ctx.Node.ToString().Trim('"').ToUpper() != property.ValueText.ToUpper())
+                    if (ctx.Node.GetLastToken().ToString().Trim('"').ToUpper() != property.ValueText.ToUpper())
                         ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), property.ValueText }));
 
-                    if (ctx.Node.ToString().Trim('"') != property.ValueText)
+                    if (ctx.Node.GetLastToken().ToString().Trim('"') != property.ValueText)
                         ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Node.GetLocation(), new object[] { property.ValueText, "" }));
                 }
             }
