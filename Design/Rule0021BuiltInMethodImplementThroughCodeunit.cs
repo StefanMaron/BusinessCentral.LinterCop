@@ -1,8 +1,8 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using System;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -25,11 +25,12 @@ namespace BusinessCentral.LinterCop.Design
             IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
 
-            if (operation.Arguments.Count() > 1 && operation.TargetMethod.ContainingType.NavTypeKind == NavTypeKind.Page)
+            if (operation.TargetMethod.ContainingType.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Page && operation.Arguments.Count() > 1)
             {
                 if (operation.TargetMethod.ReturnValueSymbol.ReturnType.NavTypeKind == NavTypeKind.Action) return; // Page Management Codeunit doesn't support returntype Action
+                if (operation.Arguments[0].Syntax.GetIdentifierOrLiteralValue() == "0") return; // Allow zero as input for Page.Run(0, <recordVar>)
+                if (operation.Arguments[0].Syntax.IsKind(SyntaxKind.IdentifierName)) return; // In case the PageID is set by a field from a (setup) record, do not raise diagnostic
                 if (operation.TargetMethod.Name.ToUpper() == "ENQUEUEBACKGROUNDTASK") return; // do not execute on CurrPage.EnqueueBackgroundTask
-                if (operation.Arguments[0].Syntax.ToString().ToUpper().Substring(0, 6) != "PAGE::") return; // In case the PageID is set by a field from a (setup) record
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0027RunPageImplementPageManagement, ctx.Operation.Syntax.GetLocation()));
                 return;
             }
