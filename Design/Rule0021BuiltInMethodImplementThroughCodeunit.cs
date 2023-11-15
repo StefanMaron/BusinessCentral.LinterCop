@@ -28,8 +28,7 @@ namespace BusinessCentral.LinterCop.Design
             if (operation.TargetMethod.ContainingType.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Page && operation.Arguments.Count() > 1)
             {
                 if (operation.TargetMethod.ReturnValueSymbol.ReturnType.NavTypeKind == NavTypeKind.Action) return; // Page Management Codeunit doesn't support returntype Action
-                if (operation.Arguments[0].Syntax.GetIdentifierOrLiteralValue() == "0") return; // Allow zero as input for Page.Run(0, <recordVar>)
-                if (operation.Arguments[0].Syntax.IsKind(SyntaxKind.IdentifierName)) return; // In case the PageID is set by a field from a (setup) record, do not raise diagnostic
+                if (!operation.Arguments[0].Syntax.IsKind(SyntaxKind.OptionAccessExpression)) return; // In case the PageID is set by a field from a (setup) record or a method
                 if (operation.TargetMethod.Name.ToUpper() == "ENQUEUEBACKGROUNDTASK") return; // do not execute on CurrPage.EnqueueBackgroundTask
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0027RunPageImplementPageManagement, ctx.Operation.Syntax.GetLocation()));
                 return;
