@@ -119,295 +119,204 @@
   </resheader>
   <data name="AnalyzerPrefix" xml:space="preserve">
     <value>LC</value>
-    <comment/>
-  </data>
-  <data name="Rule0001FlowFieldsShouldNotBeEditableDescription" xml:space="preserve">
-    <value>FlowFields should not be editable.</value>
-    <comment/>
-  </data>
-  <data name="Rule0001FlowFieldsShouldNotBeEditableFormat" xml:space="preserve">
-    <value>FlowFields should not be editable.</value>
-    <comment/>
-  </data>
-  <data name="Rule0001FlowFieldsShouldNotBeEditableTitle" xml:space="preserve">
-    <value>FlowFields should not be editable.</value>
-    <comment/>
-  </data>
-  <data name="Rule0002CommitMustBeExplainedByCommentDescription" xml:space="preserve">
-    <value>Commit() needs a comment to justify its existence. Either a leading or a trailing comment.</value>
-    <comment/>
-  </data>
-  <data name="Rule0002CommitMustBeExplainedByCommentFormat" xml:space="preserve">
-    <value>Commit() needs a comment to justify its existence. Either a leading or a trailing comment.</value>
-    <comment/>
-  </data>
-  <data name="Rule0002CommitMustBeExplainedByCommentTitle" xml:space="preserve">
-    <value>Commit() needs a comment to justify its existence. Either a leading or a trailing comment.</value>
-    <comment/>
-  </data>
-  <data name="Rule0003DoNotUseObjectIDsInVariablesOrPropertiesDescription" xml:space="preserve">
-    <value>Do not use an Object ID for properties or variables declaration.</value>
-    <comment/>
-  </data>
-  <data name="Rule0003DoNotUseObjectIDsInVariablesOrPropertiesFormat" xml:space="preserve">
-    <value>Do not use an Object ID for properties or variables declaration. Use {1} instead.</value>
-    <comment/>
-  </data>
-  <data name="Rule0003DoNotUseObjectIDsInVariablesOrPropertiesTitle" xml:space="preserve">
-    <value>Do not use an Object ID for properties or variables declaration.</value>
-    <comment/>
-  </data>
-  <data name="Rule0004LookupPageIdAndDrillDownPageIdDescription" xml:space="preserve">
-    <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table because it is used in list page</value>
-    <comment/>
-  </data>
-  <data name="Rule0004LookupPageIdAndDrillDownPageIdFormat" xml:space="preserve">
-    <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table "{1}" because it is used in page "{2}" (list)</value>
-    <comment/>
-  </data>
-  <data name="Rule0004LookupPageIdAndDrillDownPageIdTitle" xml:space="preserve">
-    <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table because it is used in list page</value>
-    <comment/>
-  </data>
-  <data name="Rule0005VariableCasingShouldNotDIfferFromDeclarationDescription" xml:space="preserve">
-    <value>Wrong casing detected!</value>
-    <comment/>
-  </data>
-  <data name="Rule0005VariableCasingShouldNotDIfferFromDeclarationFormat" xml:space="preserve">
-    <value>Wrong casing detected! Use {0} instead.</value>
-    <comment/>
-  </data>
-  <data name="Rule0005VariableCasingShouldNotDIfferFromDeclarationTitle" xml:space="preserve">
-    <value>Wrong casing detected!</value>
-    <comment/>
-  </data>
-  <data name="Rule0006FieldNotAutoIncrementInTemporaryTableDescription" xml:space="preserve">
-    <value>AutoIncrement fields are not possible in temporary tables!</value>
-    <comment/>
-  </data>
-  <data name="Rule0006FieldNotAutoIncrementInTemporaryTableFormat" xml:space="preserve">
-    <value>AutoIncrement fields are not possible in temporary tables!</value>
-    <comment/>
-  </data>
-  <data name="Rule0006FieldNotAutoIncrementInTemporaryTableTitle" xml:space="preserve">
-    <value>AutoIncrement fields are not possible in temporary tables!</value>
-    <comment/>
-  </data>
-  <data name="Rule0007DataPerCompanyShouldAlwaysBeSetDescription" xml:space="preserve">
-    <value>DataPerCompany is missing!</value>
-    <comment/>
-  </data>
-  <data name="Rule0007DataPerCompanyShouldAlwaysBeSetFormat" xml:space="preserve">
-    <value>DataPerCompany is missing!</value>
-    <comment/>
-  </data>
-  <data name="Rule0007DataPerCompanyShouldAlwaysBeSetTitle" xml:space="preserve">
-    <value>DataPerCompany is missing!</value>
-    <comment/>
-  </data>
-  <data name="Rule0008NoFilterOperatorsInSetRangeDescription" xml:space="preserve">
-    <value>Filter operators should not be used in SetRange. Use SetFilter instead.</value>
-    <comment/>
-  </data>
-  <data name="Rule0008NoFilterOperatorsInSetRangeFormat" xml:space="preserve">
-    <value>Filter operators should not be used in SetRange. Use SetFilter instead.</value>
-    <comment/>
-  </data>
-  <data name="Rule0008NoFilterOperatorsInSetRangeTitle" xml:space="preserve">
-    <value>Filter operators should not be used in SetRange. Use SetFilter instead.</value>
-    <comment/>
-  </data>
-  <data name="Rule0009CodeMetricsInfoDescription" xml:space="preserve">
-    <value>Cyclomatic complexity and Maintainability index</value>
-    <comment/>
-  </data>
-  <data name="Rule0009CodeMetricsInfoFormat" xml:space="preserve">
-    <value>Cyclomatic complexity: {0}/({1}), Maintainability index: {2}/({3})</value>
-    <comment/>
-  </data>
-  <data name="Rule0009CodeMetricsInfoTitle" xml:space="preserve">
-    <value>Cyclomatic complexity and Maintainability index</value>
-    <comment/>
-  </data>
-  <data name="Rule0011AccessPropertyShouldAlwaysBeSetDescription" xml:space="preserve">
-    <value>Access property is missing!</value>
-    <comment/>
-  </data>
-  <data name="Rule0011AccessPropertyShouldAlwaysBeSetFormat" xml:space="preserve">
-    <value>Access property is missing!</value>
-    <comment/>
-  </data>
-  <data name="Rule0011AccessPropertyShouldAlwaysBeSetTitle" xml:space="preserve">
-    <value>Access property is missing!</value>
-    <comment/>
-  </data>
-  <data name="Rule0012DoNotUseObjectIdInSystemFunctionsDescription" xml:space="preserve">
-    <value>Wrong Parameter detected.</value>
-    <comment/>
-  </data>
-  <data name="Rule0012DoNotUseObjectIdInSystemFunctionsFormat" xml:space="preserve">
-    <value>Wrong Parameter detected. Select the correct object with "{0}::" instead.</value>
-    <comment/>
-  </data>
-  <data name="Rule0012DoNotUseObjectIdInSystemFunctionsTitle" xml:space="preserve">
-    <value>Wrong Parameter detected.</value>
-    <comment/>
-  </data>
-  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysDescription" xml:space="preserve">
-    <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
-    <comment/>
-  </data>
-  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysTitle" xml:space="preserve">
-    <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
-    <comment/>
-  </data>
-  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysFormat" xml:space="preserve">
-    <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
-    <comment/>
-  </data>
-  <data name="Rule0014PermissionSetCaptionLengthDescription" xml:space="preserve">
-    <value>The Caption of permissionset objects should not exceed the maximum length.</value>
-    <comment/>
-  </data>
-  <data name="Rule0014PermissionSetCaptionLengthFormat" xml:space="preserve">
-    <value>The Caption of permissionset objects should not exceed {0} characters. Use MaxLength={0} or Locked=true to ensure there are no translations that exceed this limit.</value>
-    <comment/>
-  </data>
-  <data name="Rule0014PermissionSetCaptionLengthTitle" xml:space="preserve">
-    <value>The Caption of permissionset objects should not exceed the maximum length.</value>
-    <comment/>
-  </data>
-  <data name="Rule0015PermissionSetCoverageDescription" xml:space="preserve">
-    <value>All application objects should be covered by at least one permission set in the extension.</value>
-    <comment/>
-  </data>
-  <data name="Rule0015PermissionSetCoverageFormat" xml:space="preserve">
-    <value>The application object {0} "{1}" is not covered by any permission set in the extension.</value>
-    <comment/>
-  </data>
-  <data name="Rule0015PermissionSetCoverageTitle" xml:space="preserve">
-    <value>All application objects should be covered by at least one permission set in the extension.</value>
-    <comment/>
-  </data>
-  <data name="Rule0016CheckForMissingCaptionsDescription" xml:space="preserve">
-    <value>Caption is missing.</value>
-    <comment/>
-  </data>
-  <data name="Rule0016CheckForMissingCaptionsFormat" xml:space="preserve">
-    <value>Caption is missing.</value>
-    <comment/>
-  </data>
-  <data name="Rule0016CheckForMissingCaptionsTitle" xml:space="preserve">
-    <value>Caption is missing.</value>
-    <comment/>
-  </data>
-  <data name="Rule0017WriteToFlowFieldFormat" xml:space="preserve">
-    <value>Writing to a FlowField is not common. Add a comment to explain this.</value>
-    <comment/>
-  </data>
-  <data name="Rule0017WriteToFlowFieldDescription" xml:space="preserve">
-    <value>Writing to a FlowField is not common. Add a comment to explain this.</value>
-    <comment/>
-  </data>
-  <data name="Rule0017WriteToFlowFieldTitle" xml:space="preserve">
-    <value>Writing to a FlowField is not common. Add a comment to explain this.</value>
-    <comment/>
-  </data>
-  <data name="Rule0000ErrorInRuleTitle" xml:space="preserve">
-    <value>There was an error in a Linter Rule</value>
-    <comment/>
   </data>
   <data name="Rule0000ErrorInRuleDecription" xml:space="preserve">
     <value>There was an error in a Linter Rule</value>
-    <comment/>
   </data>
   <data name="Rule0000ErrorInRuleFormat" xml:space="preserve">
     <value>There was an Error in Rule "{0}" of type "{1}" {2}</value>
-    <comment/>
+  </data>
+  <data name="Rule0000ErrorInRuleTitle" xml:space="preserve">
+    <value>There was an error in a Linter Rule</value>
+  </data>
+  <data name="Rule0001FlowFieldsShouldNotBeEditableDescription" xml:space="preserve">
+    <value>FlowFields should not be editable.</value>
+  </data>
+  <data name="Rule0001FlowFieldsShouldNotBeEditableFormat" xml:space="preserve">
+    <value>FlowFields should not be editable.</value>
+  </data>
+  <data name="Rule0001FlowFieldsShouldNotBeEditableTitle" xml:space="preserve">
+    <value>FlowFields should not be editable.</value>
+  </data>
+  <data name="Rule0002CommitMustBeExplainedByCommentDescription" xml:space="preserve">
+    <value>Commit() needs a comment to justify its existence. Either a leading or a trailing comment.</value>
+  </data>
+  <data name="Rule0002CommitMustBeExplainedByCommentFormat" xml:space="preserve">
+    <value>Commit() needs a comment to justify its existence. Either a leading or a trailing comment.</value>
+  </data>
+  <data name="Rule0002CommitMustBeExplainedByCommentTitle" xml:space="preserve">
+    <value>Commit() needs a comment to justify its existence. Either a leading or a trailing comment.</value>
+  </data>
+  <data name="Rule0003DoNotUseObjectIDsInVariablesOrPropertiesDescription" xml:space="preserve">
+    <value>Do not use an Object ID for properties or variables declaration.</value>
+  </data>
+  <data name="Rule0003DoNotUseObjectIDsInVariablesOrPropertiesFormat" xml:space="preserve">
+    <value>Do not use an Object ID for properties or variables declaration. Use {1} instead.</value>
+  </data>
+  <data name="Rule0003DoNotUseObjectIDsInVariablesOrPropertiesTitle" xml:space="preserve">
+    <value>Do not use an Object ID for properties or variables declaration.</value>
+  </data>
+  <data name="Rule0004LookupPageIdAndDrillDownPageIdDescription" xml:space="preserve">
+    <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table because it is used in list page</value>
+  </data>
+  <data name="Rule0004LookupPageIdAndDrillDownPageIdFormat" xml:space="preserve">
+    <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table "{1}" because it is used in page "{2}" (list)</value>
+  </data>
+  <data name="Rule0004LookupPageIdAndDrillDownPageIdTitle" xml:space="preserve">
+    <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table because it is used in list page</value>
+  </data>
+  <data name="Rule0005VariableCasingShouldNotDIfferFromDeclarationDescription" xml:space="preserve">
+    <value>Wrong casing detected!</value>
+  </data>
+  <data name="Rule0005VariableCasingShouldNotDIfferFromDeclarationFormat" xml:space="preserve">
+    <value>Wrong casing detected! Use {0} instead.</value>
+  </data>
+  <data name="Rule0005VariableCasingShouldNotDIfferFromDeclarationTitle" xml:space="preserve">
+    <value>Wrong casing detected!</value>
+  </data>
+  <data name="Rule0006FieldNotAutoIncrementInTemporaryTableDescription" xml:space="preserve">
+    <value>AutoIncrement fields are not possible in temporary tables!</value>
+  </data>
+  <data name="Rule0006FieldNotAutoIncrementInTemporaryTableFormat" xml:space="preserve">
+    <value>AutoIncrement fields are not possible in temporary tables!</value>
+  </data>
+  <data name="Rule0006FieldNotAutoIncrementInTemporaryTableTitle" xml:space="preserve">
+    <value>AutoIncrement fields are not possible in temporary tables!</value>
+  </data>
+  <data name="Rule0007DataPerCompanyShouldAlwaysBeSetDescription" xml:space="preserve">
+    <value>DataPerCompany is missing!</value>
+  </data>
+  <data name="Rule0007DataPerCompanyShouldAlwaysBeSetFormat" xml:space="preserve">
+    <value>DataPerCompany is missing!</value>
+  </data>
+  <data name="Rule0007DataPerCompanyShouldAlwaysBeSetTitle" xml:space="preserve">
+    <value>DataPerCompany is missing!</value>
+  </data>
+  <data name="Rule0008NoFilterOperatorsInSetRangeDescription" xml:space="preserve">
+    <value>Filter operators should not be used in SetRange. Use SetFilter instead.</value>
+  </data>
+  <data name="Rule0008NoFilterOperatorsInSetRangeFormat" xml:space="preserve">
+    <value>Filter operators should not be used in SetRange. Use SetFilter instead.</value>
+  </data>
+  <data name="Rule0008NoFilterOperatorsInSetRangeTitle" xml:space="preserve">
+    <value>Filter operators should not be used in SetRange. Use SetFilter instead.</value>
+  </data>
+  <data name="Rule0009CodeMetricsInfoDescription" xml:space="preserve">
+    <value>Cyclomatic complexity and Maintainability index</value>
+  </data>
+  <data name="Rule0009CodeMetricsInfoFormat" xml:space="preserve">
+    <value>Cyclomatic complexity: {0}/({1}), Maintainability index: {2}/({3})</value>
+  </data>
+  <data name="Rule0009CodeMetricsInfoTitle" xml:space="preserve">
+    <value>Cyclomatic complexity and Maintainability index</value>
+  </data>
+  <data name="Rule0011AccessPropertyShouldAlwaysBeSetDescription" xml:space="preserve">
+    <value>Access property is missing!</value>
+  </data>
+  <data name="Rule0011AccessPropertyShouldAlwaysBeSetFormat" xml:space="preserve">
+    <value>Access property is missing!</value>
+  </data>
+  <data name="Rule0011AccessPropertyShouldAlwaysBeSetTitle" xml:space="preserve">
+    <value>Access property is missing!</value>
+  </data>
+  <data name="Rule0012DoNotUseObjectIdInSystemFunctionsDescription" xml:space="preserve">
+    <value>Wrong Parameter detected.</value>
+  </data>
+  <data name="Rule0012DoNotUseObjectIdInSystemFunctionsFormat" xml:space="preserve">
+    <value>Wrong Parameter detected. Select the correct object with "{0}::" instead.</value>
+  </data>
+  <data name="Rule0012DoNotUseObjectIdInSystemFunctionsTitle" xml:space="preserve">
+    <value>Wrong Parameter detected.</value>
+  </data>
+  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysDescription" xml:space="preserve">
+    <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
+  </data>
+  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysFormat" xml:space="preserve">
+    <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
+  </data>
+  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysTitle" xml:space="preserve">
+    <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
+  </data>
+  <data name="Rule0014PermissionSetCaptionLengthDescription" xml:space="preserve">
+    <value>The Caption of permissionset objects should not exceed the maximum length.</value>
+  </data>
+  <data name="Rule0014PermissionSetCaptionLengthFormat" xml:space="preserve">
+    <value>The Caption of permissionset objects should not exceed {0} characters. Use MaxLength={0} or Locked=true to ensure there are no translations that exceed this limit.</value>
+  </data>
+  <data name="Rule0014PermissionSetCaptionLengthTitle" xml:space="preserve">
+    <value>The Caption of permissionset objects should not exceed the maximum length.</value>
+  </data>
+  <data name="Rule0015PermissionSetCoverageDescription" xml:space="preserve">
+    <value>All application objects should be covered by at least one permission set in the extension.</value>
+  </data>
+  <data name="Rule0015PermissionSetCoverageFormat" xml:space="preserve">
+    <value>The application object {0} "{1}" is not covered by any permission set in the extension.</value>
+  </data>
+  <data name="Rule0015PermissionSetCoverageTitle" xml:space="preserve">
+    <value>All application objects should be covered by at least one permission set in the extension.</value>
+  </data>
+  <data name="Rule0016CheckForMissingCaptionsDescription" xml:space="preserve">
+    <value>Caption is missing.</value>
+  </data>
+  <data name="Rule0016CheckForMissingCaptionsFormat" xml:space="preserve">
+    <value>Caption is missing.</value>
+  </data>
+  <data name="Rule0016CheckForMissingCaptionsTitle" xml:space="preserve">
+    <value>Caption is missing.</value>
+  </data>
+  <data name="Rule0017WriteToFlowFieldDescription" xml:space="preserve">
+    <value>Writing to a FlowField is not common. Add a comment to explain this.</value>
+  </data>
+  <data name="Rule0017WriteToFlowFieldFormat" xml:space="preserve">
+    <value>Writing to a FlowField is not common. Add a comment to explain this.</value>
+  </data>
+  <data name="Rule0017WriteToFlowFieldTitle" xml:space="preserve">
+    <value>Writing to a FlowField is not common. Add a comment to explain this.</value>
   </data>
   <data name="Rule0018NoEventsInInternalCodeunitsDescription" xml:space="preserve">
     <value>Events in internal codeunits are not accessible to extensions and should therefore be avoided.</value>
-    <comment/>
   </data>
   <data name="Rule0018NoEventsInInternalCodeunitsFormat" xml:space="preserve">
     <value>The event {0} is declared in an internal codeunit {1}. Avoid events in internal codeunits as they are not accessible to extensions.</value>
-    <comment/>
   </data>
   <data name="Rule0018NoEventsInInternalCodeunitsTitle" xml:space="preserve">
     <value>Events in internal codeunits are not accessible to extensions and should therefore be avoided.</value>
-    <comment/>
-  </data>
-  <data name="Rule0019DataClassificationFieldEqualsTableTitle" xml:space="preserve">
-    <value>Data Classification is equal to the Table. Remove to reduce redundancy.</value>
-    <comment/>
   </data>
   <data name="Rule0019DataClassificationFieldEqualsTableDescription" xml:space="preserve">
     <value>Data Classification is equal to the Table. Remove to reduce redundancy.</value>
-    <comment/>
   </data>
   <data name="Rule0019DataClassificationFieldEqualsTableFormat" xml:space="preserve">
     <value>Data Classification is equal to the Table. Remove to reduce redundancy.</value>
-    <comment/>
   </data>
-  <data name="Rule0020ApplicationAreaEqualsToPageTitle" xml:space="preserve">
-    <value>Applicatication Area is equal to the Page. Remove to reduce redundancy.</value>
-    <comment/>
-  </data>
-  <data name="Rule0020ApplicationAreaEqualsToPageFormat" xml:space="preserve">
-    <value>Applicatication Area is equal to the Page. Remove to reduce redundancy.</value>
-    <comment/>
+  <data name="Rule0019DataClassificationFieldEqualsTableTitle" xml:space="preserve">
+    <value>Data Classification is equal to the Table. Remove to reduce redundancy.</value>
   </data>
   <data name="Rule0020ApplicationAreaEqualsToPageDescription" xml:space="preserve">
     <value>Applicatication Area is equal to the Page. Remove to reduce redundancy.</value>
-    <comment/>
+  </data>
+  <data name="Rule0020ApplicationAreaEqualsToPageFormat" xml:space="preserve">
+    <value>Applicatication Area is equal to the Page. Remove to reduce redundancy.</value>
+  </data>
+  <data name="Rule0020ApplicationAreaEqualsToPageTitle" xml:space="preserve">
+    <value>Applicatication Area is equal to the Page. Remove to reduce redundancy.</value>
   </data>
   <data name="Rule0021ConfirmImplementConfirmManagement" xml:space="preserve">
     <value>Confirm() must be implemented through the "Confirm Management" codeunit from the System Application.</value>
-    <comment/>
   </data>
-  <data name="Rule0023AlwaysSpecifyFieldgroups" xml:space="preserve">
-    <value>Fieldgroup "{0}" is missing on table "{1}".</value>
-    <comment/>
-  </data>
-  <data name="Fix0021ConfirmImplementConfirmManagementMessage" xml:space="preserve">
+    <data name="Fix0021ConfirmImplementConfirmManagementMessage" xml:space="preserve">
     <value>Refactor to Confirm Management</value>
-    <comment/>
   </data>
   <data name="Rule0022GlobalLanguageImplementTranslationHelperDescription" xml:space="preserve">
     <value>GlobalLanguage() must be implemented through the "Translation Helper" codeunit from the Base Application.</value>
-    <comment/>
   </data>
   <data name="Rule0022GlobalLanguageImplementTranslationHelperFormat" xml:space="preserve">
     <value>GlobalLanguage() must be implemented through the "Translation Helper" codeunit from the Base Application.</value>
-    <comment/>
   </data>
   <data name="Rule0022GlobalLanguageImplementTranslationHelperTitle" xml:space="preserve">
     <value>GlobalLanguage() must be implemented through the "Translation Helper" codeunit from the Base Application.</value>
-    <comment/>
   </data>
-  <data name="Rule0028CodeNavigabilityOnEventSubscribersTitle" xml:space="preserve">
-    <value>Event subscriber arguments now use identifier syntax instead of string literals.</value>
-    <comment/>
-  </data>
-  <data name="Rule0028CodeNavigabilityOnEventSubscribersFormat" xml:space="preserve">
-    <value>Event subscriber arguments now use identifier syntax instead of string literals.</value>
-    <comment/>
-  </data>
-  <data name="Rule0028CodeNavigabilityOnEventSubscribersDescription" xml:space="preserve">
-    <value>Event subscriber arguments now use identifier syntax instead of string literals.</value>
-    <comment/>
-  </data>
-  <data name="Rule0029CompareDateTimeThroughCodeunitTitle" xml:space="preserve">
-    <value>Use CompareDateTime method in Type Helper codeunit for DateTime variable comparisons.</value>
-    <comment/>
-  </data>
-  <data name="Rule0029CompareDateTimeThroughCodeunitFormat" xml:space="preserve">
-    <value>Use CompareDateTime method in Type Helper codeunit for DateTime variable comparisons.</value>
-    <comment/>
-  </data>
-  <data name="Rule0029CompareDateTimeThroughCodeunitDescription" xml:space="preserve">
-    <value>Use CompareDateTime method in Type Helper codeunit for DateTime variable comparisons.</value>
-    <comment/>
+  <data name="Rule0023AlwaysSpecifyFieldgroups" xml:space="preserve">
+    <value>Fieldgroup "{0}" is missing on table "{1}".</value>
   </data>
   <data name="Rule0024SemicolonAfterProcedureDeclarationDescription" xml:space="preserve">
     <value>Procedure declaration should not end with semicolon.</value>
@@ -437,15 +346,33 @@
     <value>ToolTip must end with a dot.</value>
   </data>
   <data name="Rule0027RunPageImplementPageManagement" xml:space="preserve">
-    <value>Page.Run(Modal) must be implemented through the "Page Management" codeunit from the Base Application.</value>
+    <value>Utilize the "Page Management" codeunit for launching page.</value>
   </data>
-  <data name="Rule0030AccessInternalForInstallAndUpgradeCodeunitsTitle" xml:space="preserve">
+  <data name="Rule0028CodeNavigabilityOnEventSubscribersDescription" xml:space="preserve">
+    <value>Event subscriber arguments now use identifier syntax instead of string literals.</value>
+  </data>
+  <data name="Rule0028CodeNavigabilityOnEventSubscribersFormat" xml:space="preserve">
+    <value>Event subscriber arguments now use identifier syntax instead of string literals.</value>
+  </data>
+  <data name="Rule0028CodeNavigabilityOnEventSubscribersTitle" xml:space="preserve">
+    <value>Event subscriber arguments now use identifier syntax instead of string literals.</value>
+  </data>
+  <data name="Rule0029CompareDateTimeThroughCodeunitDescription" xml:space="preserve">
+    <value>Use CompareDateTime method in Type Helper codeunit for DateTime variable comparisons.</value>
+  </data>
+  <data name="Rule0029CompareDateTimeThroughCodeunitFormat" xml:space="preserve">
+    <value>Use CompareDateTime method in Type Helper codeunit for DateTime variable comparisons.</value>
+  </data>
+  <data name="Rule0029CompareDateTimeThroughCodeunitTitle" xml:space="preserve">
+    <value>Use CompareDateTime method in Type Helper codeunit for DateTime variable comparisons.</value>
+  </data>
+  <data name="Rule0030AccessInternalForInstallAndUpgradeCodeunitsDescription" xml:space="preserve">
     <value>Set Access property to Internal for Install/Upgrade codeunits.</value>
   </data>
   <data name="Rule0030AccessInternalForInstallAndUpgradeCodeunitsFormat" xml:space="preserve">
     <value>Set Access property to Internal for Install/Upgrade codeunits.</value>
   </data>
-  <data name="Rule0030AccessInternalForInstallAndUpgradeCodeunitsDescription" xml:space="preserve">
+  <data name="Rule0030AccessInternalForInstallAndUpgradeCodeunitsTitle" xml:space="preserve">
     <value>Set Access property to Internal for Install/Upgrade codeunits.</value>
   </data>
   <data name="Rule0031RecordInstanceIsolationLevelTitle" xml:space="preserve">
