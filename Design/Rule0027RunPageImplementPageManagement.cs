@@ -1,6 +1,7 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
@@ -29,11 +30,21 @@ namespace BusinessCentral.LinterCop.Design
             // Page Management Codeunit doesn't support returntype Action
             if (operation.TargetMethod.ReturnValueSymbol.ReturnType.GetNavTypeKindSafe() == NavTypeKind.Action) return;
 
-            // In case the PageID is set by a field from a (setup) record or a method
-            if (!operation.Arguments[0].Syntax.IsKind(SyntaxKind.OptionAccessExpression)) return;
+            switch (operation.Arguments[0].Syntax.Kind)
+            {
+                case SyntaxKind.LiteralExpression:
+                    if (operation.Arguments[0].Syntax.GetIdentifierOrLiteralValue() == "0")
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0027RunPageImplementPageManagement, ctx.Operation.Syntax.GetLocation()));
+                    break;
 
-            if (IsSupportedRecord(((IConversionExpression)operation.Arguments[1].Value).Operand))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0027RunPageImplementPageManagement, ctx.Operation.Syntax.GetLocation()));
+                case SyntaxKind.OptionAccessExpression:
+                    if (IsSupportedRecord(((IConversionExpression)operation.Arguments[1].Value).Operand))
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0027RunPageImplementPageManagement, ctx.Operation.Syntax.GetLocation()));
+                    break;
+
+                default:
+                    return;
+            }
         }
 
         private static bool IsSupportedRecord(IOperation operation)
