@@ -1,18 +1,15 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
 {
     [DiagnosticAnalyzer]
-    public class Rule0021BuiltInMethodImplementThroughCodeunit : DiagnosticAnalyzer
+    public class BuiltInMethodImplementThroughCodeunit : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(
             DiagnosticDescriptors.Rule0021ConfirmImplementConfirmManagement,
             DiagnosticDescriptors.Rule0022GlobalLanguageImplementTranslationHelper,
-            DiagnosticDescriptors.Rule0027RunPageImplementPageManagement,
             DiagnosticDescriptors.Rule0000ErrorInRule);
 
         public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckBuiltInMethod), OperationKind.InvocationExpression);
@@ -24,15 +21,6 @@ namespace BusinessCentral.LinterCop.Design
 
             IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
-
-            if (operation.TargetMethod.ContainingType.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Page && operation.Arguments.Count() > 1)
-            {
-                if (operation.TargetMethod.ReturnValueSymbol.ReturnType.NavTypeKind == NavTypeKind.Action) return; // Page Management Codeunit doesn't support returntype Action
-                if (!operation.Arguments[0].Syntax.IsKind(SyntaxKind.OptionAccessExpression)) return; // In case the PageID is set by a field from a (setup) record or a method
-                if (operation.TargetMethod.Name.ToUpper() == "ENQUEUEBACKGROUNDTASK") return; // do not execute on CurrPage.EnqueueBackgroundTask
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0027RunPageImplementPageManagement, ctx.Operation.Syntax.GetLocation()));
-                return;
-            }
 
             switch (operation.TargetMethod.Name.ToUpper())
             {
