@@ -151,6 +151,11 @@
       "id": "LC0030",
       "action": "Info",
       "justification": "Set Access property to Internal for Install/Upgrade codeunits."
+    },
+    {
+      "id": "LC0031",
+      "action": "Info",
+      "justification": "Set the ReadIsolation property instead of the LockTable method."
     }
   ]
 }

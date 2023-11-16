@@ -375,4 +375,13 @@
   <data name="Rule0030AccessInternalForInstallAndUpgradeCodeunitsTitle" xml:space="preserve">
     <value>Set Access property to Internal for Install/Upgrade codeunits.</value>
   </data>
+  <data name="Rule0031RecordInstanceIsolationLevelTitle" xml:space="preserve">
+    <value>Set the ReadIsolation property instead of the LockTable method.</value>
+  </data>
+  <data name="Rule0031RecordInstanceIsolationLevelFormat" xml:space="preserve">
+    <value>Set the ReadIsolation property instead of the LockTable method.</value>
+  </data>
+  <data name="Rule0031RecordInstanceIsolationLevelDescription" xml:space="preserve">
+    <value>Set the ReadIsolation property instead of the LockTable method.</value>
+  </data>
 </root>
