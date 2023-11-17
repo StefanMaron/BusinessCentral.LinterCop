@@ -156,6 +156,11 @@
       "id": "LC0031",
       "action": "Info",
       "justification": "Set ReadIsolation property instead of LockTable method."
+    },
+    {
+      "id": "LC0032",
+      "action": "Warning",
+      "justification": "Clear(All) does not affect or change values for global variables in single instance codeunits."
     }
   ]
 }

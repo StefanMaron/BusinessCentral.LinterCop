@@ -383,5 +383,13 @@
   </data>
   <data name="Rule0031RecordInstanceIsolationLevelDescription" xml:space="preserve">
     <value>Set ReadIsolation property instead of LockTable method.</value>
+  <data name="Rule0032ClearCodeunitSingleInstanceTitle" xml:space="preserve">
+    <value>Clear(All) does not affect or change values for global variables in '{0}: Codeunit {1}'.</value>
+  </data>
+  <data name="Rule0032ClearCodeunitSingleInstanceFormat" xml:space="preserve">
+    <value>Clear(All) does not affect or change values for global variables in '{0}: Codeunit {1}'.</value>
+  </data>
+  <data name="Rule0032ClearCodeunitSingleInstanceDescription" xml:space="preserve">
+    <value>Clear(All) does not affect or change values for global variables in '{0}: Codeunit {1}'.</value>
   </data>
 </root>
