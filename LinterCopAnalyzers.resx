@@ -448,4 +448,13 @@
   <data name="Rule0030AccessInternalForInstallAndUpgradeCodeunitsDescription" xml:space="preserve">
     <value>Set Access property to Internal for Install/Upgrade codeunits.</value>
   </data>
+  <data name="Rule0032ClearCodeunitSingleInstanceTitle" xml:space="preserve">
+    <value>Clear(All) does not affect or change values for global variables in '{0}: Codeunit {1}'.</value>
+  </data>
+  <data name="Rule0032ClearCodeunitSingleInstanceFormat" xml:space="preserve">
+    <value>Clear(All) does not affect or change values for global variables in '{0}: Codeunit {1}'.</value>
+  </data>
+  <data name="Rule0032ClearCodeunitSingleInstanceDescription" xml:space="preserve">
+    <value>Clear(All) does not affect or change values for global variables in '{0}: Codeunit {1}'.</value>
+  </data>
 </root>
