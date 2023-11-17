@@ -75,7 +75,6 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0031](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0031)|Set ReadIsolation property instead of LockTable method.|Info|
 |[LC0032](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0032)|Clear(All) does not affect or change values for global variables in single instance codeunits.|Warning|
 
-
 ## Configuration
 
 Some rules can be configured by adding a file named `LinterCop.json` in the root of your project.
