@@ -46,11 +46,13 @@ namespace BusinessCentral.LinterCop.Design
             if (!SemanticFacts.IsSameName(operation.TargetMethod.Name, "ClearAll")) return;
 
             IEnumerable<ISymbol> localVariables = ((IMethodSymbol)ctx.ContainingSymbol.OriginalDefinition).LocalVariables
-                                                            .Where(var => var.OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Codeunit);
+                                                            .Where(var => var.OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Codeunit)
+                                                            .Where(var => var.OriginalDefinition.GetTypeSymbol().OriginalDefinition != ctx.ContainingSymbol.GetContainingObjectTypeSymbol().OriginalDefinition);
             IEnumerable<ISymbol> globalVariables = ctx.ContainingSymbol.GetContainingObjectTypeSymbol()
                                                             .GetMembers()
                                                             .Where(members => members.Kind == SymbolKind.GlobalVariable)
-                                                            .Where(var => var.OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Codeunit);
+                                                            .Where(var => var.OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Codeunit)
+                                                            .Where(var => var.OriginalDefinition.GetTypeSymbol().OriginalDefinition != ctx.ContainingSymbol.GetContainingObjectTypeSymbol().OriginalDefinition);
 
             if (HasSingleInstanceCodeunitWithGlobalVars(localVariables, out ISymbol codeunit) || HasSingleInstanceCodeunitWithGlobalVars(globalVariables, out codeunit))
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0032ClearCodeunitSingleInstance, ctx.Operation.Syntax.GetLocation(), new Object[] { codeunit.Name, codeunit.GetTypeSymbol().Name }));
