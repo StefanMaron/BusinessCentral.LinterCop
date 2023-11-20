@@ -73,6 +73,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private static bool IsSingleInstanceCodeunitWithGlobalVars(ICodeunitTypeSymbol codeunitTypeSymbol)
         {
+            if (codeunitTypeSymbol == null) return false;
             IPropertySymbol singleInstanceProperty = codeunitTypeSymbol.GetProperty(PropertyKind.SingleInstance);
             if (!(bool)singleInstanceProperty.Value) return false;
 
