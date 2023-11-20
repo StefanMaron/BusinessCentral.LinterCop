@@ -29,7 +29,7 @@ namespace BusinessCentral.LinterCop.Design
             if (operation.Arguments.Count() < 1) return;
 
             IOperation operand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
-            if (operand.GetSymbol().GetTypeSymbol().Kind != SymbolKind.Codeunit) return;
+            if (operand.GetSymbol().GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Codeunit) return;
 
             if (IsSingleInstanceCodeunitWithGlobalVars((ICodeunitTypeSymbol)operand.GetSymbol().GetTypeSymbol()))
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0032ClearCodeunitSingleInstance, ctx.Operation.Syntax.GetLocation(), new Object[] { operand.GetSymbol().Name, operand.GetSymbol().GetTypeSymbol().Name }));
@@ -59,8 +59,6 @@ namespace BusinessCentral.LinterCop.Design
 
         private static bool HasSingleInstanceCodeunitWithGlobalVars(IEnumerable<ISymbol> variables, out ISymbol codeunit)
         {
-            codeunit = null;
-
             foreach (ISymbol variable in variables.Where(var => var.OriginalDefinition.ContainingType.GetNavTypeKindSafe() == NavTypeKind.Codeunit))
                 if (IsSingleInstanceCodeunitWithGlobalVars((ICodeunitTypeSymbol)variable.OriginalDefinition.GetTypeSymbol()))
                 {
@@ -68,12 +66,12 @@ namespace BusinessCentral.LinterCop.Design
                     return true;
                 }
 
+            codeunit = null;
             return false;
         }
 
         private static bool IsSingleInstanceCodeunitWithGlobalVars(ICodeunitTypeSymbol codeunitTypeSymbol)
         {
-            if (codeunitTypeSymbol == null) return false;
             IPropertySymbol singleInstanceProperty = codeunitTypeSymbol.GetProperty(PropertyKind.SingleInstance);
             if (!(bool)singleInstanceProperty.Value) return false;
 
