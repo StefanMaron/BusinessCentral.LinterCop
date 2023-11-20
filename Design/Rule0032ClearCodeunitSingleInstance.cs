@@ -1,7 +1,6 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
@@ -73,7 +72,7 @@ namespace BusinessCentral.LinterCop.Design
         private static bool IsSingleInstanceCodeunitWithGlobalVars(ICodeunitTypeSymbol codeunitTypeSymbol)
         {
             IPropertySymbol singleInstanceProperty = codeunitTypeSymbol.GetProperty(PropertyKind.SingleInstance);
-            if (!(bool)singleInstanceProperty.Value) return false;
+            if (singleInstanceProperty == null || !(bool)singleInstanceProperty.Value) return false;
 
             var globalVariables = codeunitTypeSymbol.GetMembers().Where(members => members.Kind == SymbolKind.GlobalVariable);
             var globalVariablesNonRecordTypes = globalVariables.Where(vars => vars.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Record);
