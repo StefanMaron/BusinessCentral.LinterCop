@@ -161,6 +161,11 @@
       "id": "LC0032",
       "action": "Warning",
       "justification": "Clear(All) does not affect or change values for global variables in single instance codeunits."
+    },
+    {
+      "id": "LC0033",
+      "action": "Info",
+      "justification": "The specified runtime version in app.json is falling behind."
     }
   ]
 }
