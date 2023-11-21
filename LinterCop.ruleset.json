@@ -165,7 +165,7 @@
     {
       "id": "LC0033",
       "action": "Info",
-      "justification": "The specified `runtime` version in app.json is falling behind."
+      "justification": "The specified runtime version in app.json is falling behind."
     }
   ]
 }
