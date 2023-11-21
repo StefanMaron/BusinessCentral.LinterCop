@@ -46,13 +46,13 @@ namespace BusinessCentral.LinterCop.Design
         private static bool IsTableOfTypeSetupTable(ITableTypeSymbol table)
         {
             // Expect Primary Key to contains only one field
-            if (table.PrimaryKey.Fields.Length != 1) return (false);
+            if (table.PrimaryKey is null || table.PrimaryKey.Fields.Length != 1) return false;
 
             // The field should be of type Code
-            if (table.PrimaryKey.Fields[0].GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Code) return (false);
+            if (table.PrimaryKey.Fields[0].GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Code) return false;
 
             // The field should be exactly (case sensitive) called 'Primary Key'
-            if (table.PrimaryKey.Fields[0].Name != "Primary Key") return (false);
+            if (table.PrimaryKey.Fields[0].Name != "Primary Key") return false;
 
             return (true);
         }
