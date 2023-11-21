@@ -75,6 +75,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0031](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0031)|Set ReadIsolation property instead of LockTable method.|Info|
 |[LC0032](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0032)|Clear(All) does not affect or change values for global variables in single instance codeunits.|Warning|
 |[LC0033](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0033)|The specified runtime version in app.json is falling behind.|Info|
+|[LC0034](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0034)|The property `Extensible` should be explicitly set for public objects.|Disabled|
 
 ## Configuration
 

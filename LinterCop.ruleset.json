@@ -166,6 +166,11 @@
       "id": "LC0033",
       "action": "Info",
       "justification": "The specified runtime version in app.json is falling behind."
+    },
+    {
+      "id": "LC0034",
+      "action": "Hidden",
+      "justification": "The property Extensible should be explicitly set for public objects."
     }
   ]
 }
