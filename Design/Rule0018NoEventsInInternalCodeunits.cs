@@ -2,7 +2,6 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.InternalSyntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
-using System;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
