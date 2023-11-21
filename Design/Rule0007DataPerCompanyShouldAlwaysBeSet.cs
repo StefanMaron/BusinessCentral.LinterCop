@@ -10,9 +10,9 @@ namespace BusinessCentral.LinterCop.Design
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0007DataPerCompanyShouldAlwaysBeSet);
 
         public override void Initialize(AnalysisContext context)
-            => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckforMissingDataPerCompanyOnTables), SymbolKind.Table);
+            => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForMissingDataPerCompanyOnTables), SymbolKind.Table);
 
-        private void CheckforMissingDataPerCompanyOnTables(SymbolAnalysisContext context)
+        private void CheckForMissingDataPerCompanyOnTables(SymbolAnalysisContext context)
         {
             if (context.Symbol.IsObsoletePending || context.Symbol.IsObsoleteRemoved) return;
             ITableTypeSymbol table = (ITableTypeSymbol)context.Symbol;
