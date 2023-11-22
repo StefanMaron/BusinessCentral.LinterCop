@@ -1,10 +1,7 @@
 ﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using System;
 using System.Collections.Immutable;
 using Microsoft.Dynamics.Nav.Analyzers.Common;
-using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
@@ -48,7 +45,7 @@ namespace BusinessCentral.LinterCop.Design
                     continue;
                 }
 
-                if(appObjTypeSymbol.Properties.Where(currentProperty => currentProperty.PropertyKind == PropertyKind.InherentPermissions).Any()) continue;
+                if (appObjTypeSymbol.Properties.Where(currentProperty => currentProperty.PropertyKind == PropertyKind.InherentPermissions).Any()) continue;
 
                 switch (appObjTypeSymbol.NavTypeKind)
                 {

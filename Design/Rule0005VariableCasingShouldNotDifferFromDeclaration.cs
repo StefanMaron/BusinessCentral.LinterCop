@@ -1,13 +1,11 @@
 ﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using System;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace BusinessCentral.LinterCop.Design
 {
     [DiagnosticAnalyzer]
-    public class Rule0005VariableCasingShouldNotDIfferFromDeclaration : DiagnosticAnalyzer
+    public class Rule0005VariableCasingShouldNotDifferFromDeclaration : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration);
 

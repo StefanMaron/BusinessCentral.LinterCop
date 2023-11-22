@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Immutable;
-using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
+using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -18,12 +18,16 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
 
-            MethodDeclarationSyntax syntax = ctx.Node as MethodDeclarationSyntax;
-            SyntaxNodeOrToken accessModifier = syntax.ProcedureKeyword.GetPreviousToken();
+            if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().DeclaredAccessibility != Accessibility.Public) return;
 
-            if (accessModifier.Kind != SyntaxKind.LocalKeyword && accessModifier.Kind != SyntaxKind.InternalKeyword)
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0025InternalProcedureModifier, syntax.ProcedureKeyword.GetLocation()));
+            MethodDeclarationSyntax methodDeclarationSyntax = (MethodDeclarationSyntax)ctx.Node;
+            SyntaxNodeOrToken accessModifier = methodDeclarationSyntax.ProcedureKeyword.GetPreviousToken();
 
+            if (accessModifier.Kind == SyntaxKind.LocalKeyword || accessModifier.Kind == SyntaxKind.InternalKeyword) return;
+
+            if (methodDeclarationSyntax.GetLeadingTrivia().Where(x => x.Kind == SyntaxKind.SingleLineDocumentationCommentTrivia).Any()) return;
+
+            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0025InternalProcedureModifier, methodDeclarationSyntax.ProcedureKeyword.GetLocation()));
         }
     }
 }
