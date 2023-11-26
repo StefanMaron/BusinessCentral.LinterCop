@@ -1,12 +1,7 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
-
-using System;
 using System.Collections.Immutable;
-using System.Linq;
-
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -20,17 +15,18 @@ namespace BusinessCentral.LinterCop.Design
         private void AnalyzeInvocation(OperationAnalysisContext context)
         {
             if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-            if (context.ContainingSymbol.IsObsoletePending ||context.ContainingSymbol.IsObsoleteRemoved) return;
+            if (context.ContainingSymbol.IsObsoletePending || context.ContainingSymbol.IsObsoleteRemoved) return;
             IInvocationExpression operation = (IInvocationExpression)context.Operation;
-            if (!SemanticFacts.IsSameName(operation.TargetMethod.Name,"setrange") || operation.TargetMethod == null || operation.Arguments.Count() < 2)
+            if (!SemanticFacts.IsSameName(operation.TargetMethod.Name, "setrange") || operation.TargetMethod == null || operation.Arguments.Count() < 2)
                 return;
 
             CheckParameter(operation.Arguments[1].Value, ref operation, ref context);
-            if(operation.Arguments.Count() == 3)
+            if (operation.Arguments.Count() == 3)
                 CheckParameter(operation.Arguments[2].Value, ref operation, ref context);
         }
 
-        private void CheckParameter(Microsoft.Dynamics.Nav.CodeAnalysis.IOperation operand, ref IInvocationExpression operation, ref OperationAnalysisContext context) {
+        private void CheckParameter(Microsoft.Dynamics.Nav.CodeAnalysis.IOperation operand, ref IInvocationExpression operation, ref OperationAnalysisContext context)
+        {
             if (operand.Type.GetNavTypeKindSafe() != NavTypeKind.String && operand.Type.GetNavTypeKindSafe() != NavTypeKind.Joker)
                 return;
 
@@ -40,15 +36,16 @@ namespace BusinessCentral.LinterCop.Design
             string parameterString = operand.Syntax.ToFullString();
             if (!(parameterString.Contains('<') || parameterString.Contains('>') ||
                 parameterString.Contains("..") || parameterString.Contains('*') ||
-                parameterString.Contains('&') || parameterString.Contains('|'))) {
+                parameterString.Contains('&') || parameterString.Contains('|')))
+            {
                 return;
             }
-                
+
             context.ReportDiagnostic(
                 Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics.Diagnostic.Create(
                     DiagnosticDescriptors.Rule0008NoFilterOperatorsInSetRange,
                     operation.Syntax.GetLocation()));
         }
     }
-    
+
 }

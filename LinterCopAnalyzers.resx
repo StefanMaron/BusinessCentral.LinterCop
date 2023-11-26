@@ -165,13 +165,13 @@
   <data name="Rule0004LookupPageIdAndDrillDownPageIdTitle" xml:space="preserve">
     <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table because it is used in list page</value>
   </data>
-  <data name="Rule0005VariableCasingShouldNotDIfferFromDeclarationDescription" xml:space="preserve">
+  <data name="Rule0005VariableCasingShouldNotDifferFromDeclarationDescription" xml:space="preserve">
     <value>Wrong casing detected!</value>
   </data>
-  <data name="Rule0005VariableCasingShouldNotDIfferFromDeclarationFormat" xml:space="preserve">
+  <data name="Rule0005VariableCasingShouldNotDifferFromDeclarationFormat" xml:space="preserve">
     <value>Wrong casing detected! Use {0} instead.</value>
   </data>
-  <data name="Rule0005VariableCasingShouldNotDIfferFromDeclarationTitle" xml:space="preserve">
+  <data name="Rule0005VariableCasingShouldNotDifferFromDeclarationTitle" xml:space="preserve">
     <value>Wrong casing detected!</value>
   </data>
   <data name="Rule0006FieldNotAutoIncrementInTemporaryTableDescription" xml:space="preserve">
@@ -392,5 +392,23 @@
   </data>
   <data name="Rule0032ClearCodeunitSingleInstanceDescription" xml:space="preserve">
     <value>Clear(All) does not affect or change values for global variables in '{0}: Codeunit {1}'.</value>
+  </data>
+  <data name="Rule0033AppManifestRuntimeBehindTitle" xml:space="preserve">
+    <value>The specified runtime version in app.json is falling behind. The project targets {0} version {1}, but the current runtime is {2}. Update the runtime to {3} for compatibility with the latest runtime features.</value>
+  </data>
+  <data name="Rule0033AppManifestRuntimeBehindFormat" xml:space="preserve">
+    <value>The specified runtime version in app.json is falling behind. The project targets {0} version {1}, but the current runtime is {2}. Update the runtime to {3} for compatibility with the latest runtime features.</value>
+  </data>
+  <data name="Rule0033AppManifestRuntimeBehindDescription" xml:space="preserve">
+    <value>The specified runtime version in app.json is falling behind. The project targets {0} version {1}, but the current runtime is {2}. Update the runtime to {3} for compatibility with the latest runtime features.</value>
+  </data>
+  <data name="Rule0034ExtensiblePropertyShouldAlwaysBeSetTitle" xml:space="preserve">
+    <value>The property Extensible should be explicitly set for {0} objects.</value>
+  </data>
+  <data name="Rule0034ExtensiblePropertyShouldAlwaysBeSetFormat" xml:space="preserve">
+    <value>The property Extensible should be explicitly set for {0} objects.</value>
+  </data>
+  <data name="Rule0034ExtensiblePropertyShouldAlwaysBeSetDescription" xml:space="preserve">
+    <value>The property Extensible should be explicitly set for {0} objects.</value>
   </data>
 </root>

@@ -1,15 +1,13 @@
 ﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using System;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace BusinessCentral.LinterCop.Design
 {
     [DiagnosticAnalyzer]
-    public class Rule0005VariableCasingShouldNotDIfferFromDeclaration : DiagnosticAnalyzer
+    public class Rule0005VariableCasingShouldNotDifferFromDeclaration : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -56,21 +54,21 @@ namespace BusinessCentral.LinterCop.Design
 
                 if (node.IsToken)
                     if (SyntaxFactory.Token(node.Kind).ToString() != node.ToString())
-                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, node.GetLocation(), new object[] { SyntaxFactory.Token(node.Kind), "" }));
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.GetLocation(), new object[] { SyntaxFactory.Token(node.Kind), "" }));
                 if (node.IsNode && !node.AsNode().ToString().StartsWith("array"))
                 {
                     if ((node.AsNode().IsKind(SyntaxKind.SimpleTypeReference) || node.Kind.ToString().Contains("DataType")) && !node.Kind.ToString().StartsWith("Codeunit") && !node.Kind.ToString().StartsWith("Enum") && !node.Kind.ToString().StartsWith("Label"))
                     {
                         var targetName = Enum.GetValues(typeof(NavTypeKind)).Cast<NavTypeKind>().FirstOrDefault(Kind => Kind.ToString().ToUpper() == node.AsNode().ToString().ToUpper() && Kind.ToString() != node.AsNode().ToString());
                         if (targetName != NavTypeKind.None)
-                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, node.GetLocation(), new object[] { targetName, "" }));
+                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.GetLocation(), new object[] { targetName, "" }));
                     }
                     if (node.AsNode().IsKind(SyntaxKind.SubtypedDataType) || node.AsNode().IsKind(SyntaxKind.GenericDataType) || node.AsNode().IsKind(SyntaxKind.OptionAccessExpression) ||
                        (node.AsNode().IsKind(SyntaxKind.SimpleTypeReference) && (node.Kind.ToString().StartsWith("Codeunit") || !node.Kind.ToString().StartsWith("Enum") || !node.Kind.ToString().StartsWith("Label"))))
                     {
                         var targetName = Enum.GetValues(typeof(NavTypeKind)).Cast<NavTypeKind>().FirstOrDefault(Kind => node.AsNode().ToString().ToUpper().StartsWith(Kind.ToString().ToUpper()) && !node.AsNode().ToString().StartsWith(Kind.ToString()));
                         if (targetName != NavTypeKind.None)
-                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, node.GetLocation(), new object[] { targetName, "" }));
+                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.GetLocation(), new object[] { targetName, "" }));
                     }
                 }
             }
@@ -152,13 +150,13 @@ namespace BusinessCentral.LinterCop.Design
 
             if (OnlyDiffersInCasing(ctx.Operation.Syntax.ToString(), targetName))
             {
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Operation.Syntax.GetLocation(), new object[] { targetName, "" }));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, ctx.Operation.Syntax.GetLocation(), new object[] { targetName, "" }));
                 return;
             }
 
             var nodes = Array.Find(ctx.Operation.Syntax.DescendantNodes((SyntaxNode e) => true).ToArray(), element => OnlyDiffersInCasing(element.ToString(), targetName));
             if (nodes != null)
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDIfferFromDeclaration, ctx.Operation.Syntax.GetLocation(), new object[] { targetName, "" }));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, ctx.Operation.Syntax.GetLocation(), new object[] { targetName, "" }));
         }
         private bool OnlyDiffersInCasing(string left, string right)
         {

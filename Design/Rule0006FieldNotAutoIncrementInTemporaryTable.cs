@@ -1,11 +1,6 @@
 ﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
-using System;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -19,7 +14,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckTablePrimaryKeyIsNotAutoIncrement(SymbolAnalysisContext context)
         {
-            if (context.Symbol.IsObsoletePending ||context.Symbol.IsObsoleteRemoved) return;
+            if (context.Symbol.IsObsoletePending || context.Symbol.IsObsoleteRemoved) return;
             ITableTypeSymbol tableTypeSymbol = (ITableTypeSymbol)context.Symbol;
             if (!IsSymbolAccessible(tableTypeSymbol))
                 return;
@@ -27,16 +22,19 @@ namespace BusinessCentral.LinterCop.Design
             CheckTable(tableTypeSymbol, ref context);
         }
 
-        private void CheckTable(ITableTypeSymbol table, ref SymbolAnalysisContext context) {
+        private void CheckTable(ITableTypeSymbol table, ref SymbolAnalysisContext context)
+        {
             if (table.TableType != TableTypeKind.Temporary)
                 return;
 
-            foreach (var field in table.Fields) {
+            foreach (var field in table.Fields)
+            {
                 IPropertySymbol propertySymbol = field.GetProperty(PropertyKind.AutoIncrement);
-                if(propertySymbol == null)
+                if (propertySymbol == null)
                     continue;
 
-                if (propertySymbol?.ValueText != "0") {
+                if (propertySymbol?.ValueText != "0")
+                {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             DiagnosticDescriptors.Rule0006FieldNotAutoIncrementInTemporaryTable,
@@ -48,14 +46,18 @@ namespace BusinessCentral.LinterCop.Design
         private static string GetDeclaration(ISymbol symbol)
             => symbol.Location.SourceTree.GetText(CancellationToken.None).GetSubText(symbol.DeclaringSyntaxReference.Span).ToString();
 
-        private static bool IsSymbolAccessible(ISymbol symbol) {
-            try {
+        private static bool IsSymbolAccessible(ISymbol symbol)
+        {
+            try
+            {
                 GetDeclaration(symbol);
                 return true;
-            } catch(Exception) {
+            }
+            catch (Exception)
+            {
                 return false;
             }
         }
     }
-    
+
 }

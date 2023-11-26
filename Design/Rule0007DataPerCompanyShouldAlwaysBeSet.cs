@@ -1,11 +1,6 @@
 ﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
-using System;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -15,11 +10,11 @@ namespace BusinessCentral.LinterCop.Design
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0007DataPerCompanyShouldAlwaysBeSet);
 
         public override void Initialize(AnalysisContext context)
-            => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckforMissingDataPerCompanyOnTables), SymbolKind.Table);
+            => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForMissingDataPerCompanyOnTables), SymbolKind.Table);
 
-        private void CheckforMissingDataPerCompanyOnTables(SymbolAnalysisContext context)
+        private void CheckForMissingDataPerCompanyOnTables(SymbolAnalysisContext context)
         {
-            if (context.Symbol.IsObsoletePending ||context.Symbol.IsObsoleteRemoved) return;
+            if (context.Symbol.IsObsoletePending || context.Symbol.IsObsoleteRemoved) return;
             ITableTypeSymbol table = (ITableTypeSymbol)context.Symbol;
             if (table.TableType == TableTypeKind.Temporary)
                 return;
@@ -33,11 +28,15 @@ namespace BusinessCentral.LinterCop.Design
             }
         }
 
-        private static bool IsSymbolAccessible(ISymbol symbol) {
-            try {
+        private static bool IsSymbolAccessible(ISymbol symbol)
+        {
+            try
+            {
                 GetDeclaration(symbol);
                 return true;
-            } catch(Exception) {
+            }
+            catch (Exception)
+            {
                 return false;
             }
         }
@@ -45,5 +44,4 @@ namespace BusinessCentral.LinterCop.Design
         private static string GetDeclaration(ISymbol symbol)
             => symbol.Location.SourceTree.GetText(CancellationToken.None).GetSubText(symbol.DeclaringSyntaxReference.Span).ToString();
     }
-    
 }

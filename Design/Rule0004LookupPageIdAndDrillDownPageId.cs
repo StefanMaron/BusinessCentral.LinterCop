@@ -1,11 +1,6 @@
 ﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
-using System;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -25,7 +20,8 @@ namespace BusinessCentral.LinterCop.Design
                 CheckTable(pageTypeSymbol.RelatedTable, ref context);
         }
 
-        private void CheckTable(ITableTypeSymbol table, ref SymbolAnalysisContext context) {
+        private void CheckTable(ITableTypeSymbol table, ref SymbolAnalysisContext context)
+        {
             if (table.IsObsoletePending || table.IsObsoleteRemoved) return;
             if (!IsSymbolAccessible(table)) return;
             if (table.TableType == TableTypeKind.Temporary) return;
@@ -43,14 +39,18 @@ namespace BusinessCentral.LinterCop.Design
         private static string GetDeclaration(ISymbol symbol)
             => symbol.Location.SourceTree.GetText(CancellationToken.None).GetSubText(symbol.DeclaringSyntaxReference.Span).ToString();
 
-        private static bool IsSymbolAccessible(ISymbol symbol) {
-            try {
+        private static bool IsSymbolAccessible(ISymbol symbol)
+        {
+            try
+            {
                 GetDeclaration(symbol);
                 return true;
-            } catch(Exception) {
+            }
+            catch (Exception)
+            {
                 return false;
             }
         }
     }
-    
+
 }
