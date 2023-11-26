@@ -411,4 +411,13 @@
   <data name="Rule0034ExtensiblePropertyShouldAlwaysBeSetDescription" xml:space="preserve">
     <value>The property Extensible should be explicitly set for {0} objects.</value>
   </data>
+  <data name="Rule0035ExplicitSetAllowInCustomizationsTitle" xml:space="preserve">
+    <value>Explicitly set AllowInCustomizations for fields omitted on pages.</value>
+  </data>
+  <data name="Rule0035ExplicitSetAllowInCustomizationsFormat" xml:space="preserve">
+    <value>Explicitly set AllowInCustomizations for fields omitted on pages.</value>
+  </data>
+  <data name="Rule0035ExplicitSetAllowInCustomizationsDescription" xml:space="preserve">
+    <value>Explicitly set AllowInCustomizations for fields omitted on pages.</value>
+  </data>
 </root>
