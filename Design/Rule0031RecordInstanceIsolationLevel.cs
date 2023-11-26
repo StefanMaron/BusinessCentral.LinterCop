@@ -14,18 +14,19 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckLockTable(OperationAnalysisContext ctx)
         {
-            // ReadIsolation is supported from runtime versions 11.0 or greater.
-            var manifest = AppSourceCopConfigurationProvider.GetManifest(ctx.Compilation);
-            if (manifest.Runtime < RuntimeVersion.Spring2023) return;
-
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
             if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
 
             IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
 
-            if (SemanticFacts.IsSameName(operation.TargetMethod.Name, "LockTable"))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0031RecordInstanceIsolationLevel, ctx.Operation.Syntax.GetLocation()));
+            if (!SemanticFacts.IsSameName(operation.TargetMethod.Name, "LockTable")) return;
+
+            // ReadIsolation is supported from runtime versions 11.0 or greater.
+            var manifest = AppSourceCopConfigurationProvider.GetManifest(ctx.Compilation);
+            if (manifest.Runtime < RuntimeVersion.Spring2023) return;
+
+            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0031RecordInstanceIsolationLevel, ctx.Operation.Syntax.GetLocation()));
         }
     }
 }

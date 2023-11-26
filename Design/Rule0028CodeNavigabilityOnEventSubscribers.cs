@@ -15,21 +15,20 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CodeNavigabilityOnEventSubscribers(CodeBlockAnalysisContext context)
         {
-            // Support for using Identifiers instead of Literals in event subscribers is supported from runtime versions: '11.0' or greater.
-            var manifest = AppSourceCopConfigurationProvider.GetManifest(context.SemanticModel.Compilation);
-            if (manifest.Runtime < RuntimeVersion.Spring2023) return;
-
             if (context.OwningSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.OwningSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
             if (context.OwningSymbol.IsObsoletePending || context.OwningSymbol.IsObsoleteRemoved) return;
 
             if (!context.CodeBlock.IsKind(SyntaxKind.MethodDeclaration)) return;
-            var SyntaxList = ((MethodDeclarationSyntax)context.CodeBlock).Attributes.Where(value => value.GetIdentifierOrLiteralValue().ToUpper() == "EVENTSUBSCRIBER");
 
-            foreach (var Syntax in SyntaxList)
-            {
-                if (Syntax.ArgumentList.Arguments[2].IsKind(SyntaxKind.LiteralAttributeArgument))
-                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0028CodeNavigabilityOnEventSubscribers, context.OwningSymbol.GetLocation()));
-            }
+            IEnumerable<MemberAttributeSyntax> MemberAttributeSyntaxList = ((MethodDeclarationSyntax)context.CodeBlock).Attributes.Where(value => SemanticFacts.IsSameName(value.GetIdentifierOrLiteralValue(), "EventSubscriber"));
+            if (!MemberAttributeSyntaxList.Select(value => value.ArgumentList.Arguments[2]).Where(syntax => syntax.IsKind(SyntaxKind.LiteralAttributeArgument)).Any() &&
+            !MemberAttributeSyntaxList.Select(value => value.ArgumentList.Arguments[3]).Where(syntax => syntax.IsKind(SyntaxKind.LiteralAttributeArgument)).Any()) return;
+
+            // Support for using Identifiers instead of Literals in event subscribers is supported from runtime versions: '11.0' or greater.
+            var manifest = AppSourceCopConfigurationProvider.GetManifest(context.SemanticModel.Compilation);
+            if (manifest.Runtime < RuntimeVersion.Spring2023) return;
+
+            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0028CodeNavigabilityOnEventSubscribers, context.OwningSymbol.GetLocation()));
         }
     }
 }
