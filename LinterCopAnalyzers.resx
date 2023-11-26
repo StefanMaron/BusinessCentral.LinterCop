@@ -336,14 +336,41 @@
   <data name="Rule0025InternalProcedureModifierTitle" xml:space="preserve">
     <value>Procedure must be either local or internal.</value>
   </data>
-  <data name="Rule0026ToolTipPunctuationDescription" xml:space="preserve">
+  <data name="Rule0026ToolTipMustEndWithDotDescription" xml:space="preserve">
     <value>ToolTip must end with a dot.</value>
   </data>
-  <data name="Rule0026ToolTipPunctuationFormat" xml:space="preserve">
+  <data name="Rule0026ToolTipMustEndWithDotFormat" xml:space="preserve">
     <value>ToolTip must end with a dot.</value>
   </data>
-  <data name="Rule0026ToolTipPunctuationTitle" xml:space="preserve">
+  <data name="Rule0026ToolTipMustEndWithDotTitle" xml:space="preserve">
     <value>ToolTip must end with a dot.</value>
+  </data>
+  <data name="Rule0026ToolTipMaximumLengthDescription" xml:space="preserve">
+    <value>Try to not exceed 200 characters including spaces.</value>
+  </data>
+  <data name="Rule0026ToolTipMaximumLengthFormat" xml:space="preserve">
+    <value>Try to not exceed 200 characters including spaces.</value>
+  </data>
+  <data name="Rule0026ToolTipMaximumLengthTitle" xml:space="preserve">
+    <value>Try to not exceed 200 characters including spaces.</value>
+  </data>
+  <data name="Rule0026ToolTipDoNotUseLineBreaksDescription" xml:space="preserve">
+    <value>Do not use line breaks in ToolTip.</value>
+  </data>
+  <data name="Rule0026ToolTipDoNotUseLineBreaksFormat" xml:space="preserve">
+    <value>Do not use line breaks in ToolTip.</value>
+  </data>
+  <data name="Rule0026ToolTipDoNotUseLineBreaksTitle" xml:space="preserve">
+    <value>Do not use line breaks in ToolTip.</value>
+  </data>
+  <data name="Rule0026ToolTipShouldStartWithSpecifiesDescription" xml:space="preserve">
+    <value>For fields specifically, the ToolTip must start with the verb "Specifies".</value>
+  </data>
+  <data name="Rule0026ToolTipShouldStartWithSpecifiesFormat" xml:space="preserve">
+    <value>For fields specifically, the ToolTip must start with the verb "Specifies".</value>
+  </data>
+  <data name="Rule0026ToolTipShouldStartWithSpecifiesTitle" xml:space="preserve">
+    <value>For fields specifically, the ToolTip must start with the verb "Specifies".</value>
   </data>
   <data name="Rule0027RunPageImplementPageManagement" xml:space="preserve">
     <value>Utilize the "Page Management" codeunit for launching page.</value>
