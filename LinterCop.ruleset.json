@@ -171,6 +171,11 @@
       "id": "LC0034",
       "action": "Hidden",
       "justification": "The property Extensible should be explicitly set for public objects."
+    },
+    {
+      "id": "LC0035",
+      "action": "Info",
+      "justification": "Explicitly set AllowInCustomizations for fields omitted on pages."
     }
   ]
 }
