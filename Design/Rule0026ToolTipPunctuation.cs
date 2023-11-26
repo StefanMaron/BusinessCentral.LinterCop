@@ -31,8 +31,8 @@ namespace BusinessCentral.LinterCop.Design
             if (tooltipLabel.Value.ToString().Contains("\\"))
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0026ToolTipDoNotUseLineBreaks, tooltipProperty.GetLocation()));
 
-            if (((IControlSymbol)ctx.ContainingSymbol).ControlKind == ControlKind.Field)
-                if (!tooltipLabel.Value.ToString().StartsWith("Specifies"))
+            if (ctx.ContainingSymbol.Kind == SymbolKind.Control && ((IControlSymbol)ctx.ContainingSymbol).ControlKind == ControlKind.Field)
+                if (!tooltipLabel.Value.ToString().StartsWith("'Specifies"))
                     ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0026ToolTipShouldStartWithSpecifies, tooltipProperty.GetLocation()));
         }
     }
