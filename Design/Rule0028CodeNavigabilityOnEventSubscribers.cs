@@ -30,7 +30,7 @@ namespace BusinessCentral.LinterCop.Design
 
             // Support for using Identifiers instead of Literals in event subscribers is supported from runtime versions: '11.0' or greater.
             var manifest = AppSourceCopConfigurationProvider.GetManifest(context.SemanticModel.Compilation);
-            if (manifest.Runtime < RuntimeVersion.Spring2023) return;
+            if (manifest is null || manifest.Runtime < RuntimeVersion.Spring2023) return;
 
             context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0028CodeNavigabilityOnEventSubscribers, context.OwningSymbol.GetLocation()));
         }
