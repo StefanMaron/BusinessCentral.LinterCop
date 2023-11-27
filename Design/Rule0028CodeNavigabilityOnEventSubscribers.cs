@@ -21,8 +21,12 @@ namespace BusinessCentral.LinterCop.Design
             if (!context.CodeBlock.IsKind(SyntaxKind.MethodDeclaration)) return;
 
             IEnumerable<MemberAttributeSyntax> MemberAttributeSyntaxList = ((MethodDeclarationSyntax)context.CodeBlock).Attributes.Where(value => SemanticFacts.IsSameName(value.GetIdentifierOrLiteralValue(), "EventSubscriber"));
-            if (!MemberAttributeSyntaxList.Select(value => value.ArgumentList.Arguments[2]).Where(syntax => syntax.IsKind(SyntaxKind.LiteralAttributeArgument)).Any() &&
-            !MemberAttributeSyntaxList.Select(value => value.ArgumentList.Arguments[3]).Where(syntax => syntax.IsKind(SyntaxKind.LiteralAttributeArgument)).Any()) return;
+
+            AttributeArgumentSyntax eventName = MemberAttributeSyntaxList.Select(value => value.ArgumentList.Arguments[2]).FirstOrDefault();
+            AttributeArgumentSyntax eventElement = MemberAttributeSyntaxList.Select(value => value.ArgumentList.Arguments[3]).FirstOrDefault();
+            bool isEventNameStringLiteral = eventName.IsKind(SyntaxKind.LiteralAttributeArgument);
+            bool isEventElementStringLiteral = !(eventElement.GetIdentifierOrLiteralValue() == "") && eventElement.IsKind(SyntaxKind.LiteralAttributeArgument);
+            if (!isEventNameStringLiteral && !isEventElementStringLiteral) return;
 
             // Support for using Identifiers instead of Literals in event subscribers is supported from runtime versions: '11.0' or greater.
             var manifest = AppSourceCopConfigurationProvider.GetManifest(context.SemanticModel.Compilation);
