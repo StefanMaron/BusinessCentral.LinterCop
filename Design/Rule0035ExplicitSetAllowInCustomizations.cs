@@ -28,7 +28,9 @@ namespace BusinessCentral.LinterCop.Design
             if (manifest.Runtime < RuntimeVersion.Fall2023) return;
 
             ICollection<IFieldSymbol> tableFields = GetTableFields(ctx.Symbol).Where(x => x.Id > 0 && x.Id < 2000000000)
+                                                                .Where(x => x.GetBooleanPropertyValue(PropertyKind.Enabled) != false)
                                                                 .Where(x => x.GetProperty(PropertyKind.AllowInCustomizations) is null)
+                                                                .Where(x => x.GetProperty(PropertyKind.ObsoleteState) is null)
                                                                 .ToList();
             if (!tableFields.Any()) return;
 
@@ -46,7 +48,7 @@ namespace BusinessCentral.LinterCop.Design
         {
             switch (symbol.GetContainingObjectTypeSymbol().GetNavTypeKindSafe())
             {
-                case NavTypeKind.Table:
+                case NavTypeKind.Record:
                     return ((ITableTypeSymbol)symbol).Fields;
                 case NavTypeKind.TableExtension:
                     return ((ITableExtensionTypeSymbol)symbol).AddedFields;
@@ -60,7 +62,7 @@ namespace BusinessCentral.LinterCop.Design
             ICollection<IFieldSymbol> pageFields = new Collection<IFieldSymbol>();
             switch (navTypeKind)
             {
-                case NavTypeKind.Table:
+                case NavTypeKind.Record:
                     foreach (IPageTypeSymbol page in relatedPages.Cast<IPageTypeSymbol>())
                     {
                         IEnumerable<IFieldSymbol> fields = page.FlattenedControls.Where(x => x.ControlKind == ControlKind.Field && x.RelatedFieldSymbol != null)
@@ -87,7 +89,7 @@ namespace BusinessCentral.LinterCop.Design
         {
             switch (ctx.Symbol.GetContainingObjectTypeSymbol().GetNavTypeKindSafe())
             {
-                case NavTypeKind.Table:
+                case NavTypeKind.Record:
                     return ctx.Compilation.GetDeclaredApplicationObjectSymbols()
                                             .Where(x => x.GetNavTypeKindSafe() == NavTypeKind.Page)
                                             .Where(x => ((IPageTypeSymbol)x.GetTypeSymbol()).PageType != PageTypeKind.API)
