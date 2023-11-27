@@ -31,6 +31,8 @@ namespace BusinessCentral.LinterCop.Design
                                                                 .Where(x => x.GetBooleanPropertyValue(PropertyKind.Enabled) != false)
                                                                 .Where(x => x.GetProperty(PropertyKind.AllowInCustomizations) is null)
                                                                 .Where(x => x.GetProperty(PropertyKind.ObsoleteState) is null)
+                                                                .Where(x => x.FieldClass != FieldClassKind.FlowFilter)
+                                                                .Where(x => IsSupportedType(x.OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe()))
                                                                 .ToList();
             if (!tableFields.Any()) return;
 
@@ -100,6 +102,22 @@ namespace BusinessCentral.LinterCop.Design
                                             .Where(x => ((IPageTypeSymbol)((IApplicationObjectExtensionTypeSymbol)x).Target.GetTypeSymbol()).RelatedTable == ((IApplicationObjectExtensionTypeSymbol)ctx.Symbol).Target);
                 default:
                     return null;
+            }
+        }
+
+        private static bool IsSupportedType(NavTypeKind navTypeKind)
+        {
+            switch (navTypeKind)
+            {
+                case NavTypeKind.Blob:
+                case NavTypeKind.Media:
+                case NavTypeKind.MediaSet:
+                case NavTypeKind.RecordId:
+                case NavTypeKind.TableFilter:
+                    return false;
+
+                default:
+                    return true;
             }
         }
     }
