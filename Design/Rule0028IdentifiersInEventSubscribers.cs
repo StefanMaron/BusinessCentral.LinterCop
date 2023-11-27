@@ -1,4 +1,3 @@
-using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
@@ -11,28 +10,30 @@ namespace BusinessCentral.LinterCop.Design
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0028IdentifiersInEventSubscribers);
 
-        public override void Initialize(AnalysisContext context) => context.RegisterCodeBlockAction(new Action<CodeBlockAnalysisContext>(this.CodeNavigabilityOnEventSubscribers));
+        public override void Initialize(AnalysisContext context) => context.RegisterCodeBlockAction(new Action<CodeBlockAnalysisContext>(this.AnalyzeIdentifiersInEventSubscribers));
 
-        private void CodeNavigabilityOnEventSubscribers(CodeBlockAnalysisContext context)
+        private void AnalyzeIdentifiersInEventSubscribers(CodeBlockAnalysisContext context)
         {
+            if (!VersionChecker.IsSupported(context.OwningSymbol, Feature.IdentifiersInEventSubscribers)) return;
+
             if (context.OwningSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.OwningSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
             if (context.OwningSymbol.IsObsoletePending || context.OwningSymbol.IsObsoleteRemoved) return;
 
             if (!context.CodeBlock.IsKind(SyntaxKind.MethodDeclaration)) return;
 
-            IEnumerable<MemberAttributeSyntax> MemberAttributeSyntaxList = ((MethodDeclarationSyntax)context.CodeBlock).Attributes.Where(value => SemanticFacts.IsSameName(value.GetIdentifierOrLiteralValue(), "EventSubscriber"));
+            var SyntaxList = ((MethodDeclarationSyntax)context.CodeBlock).Attributes.Where(value => SemanticFacts.IsSameName(value.GetIdentifierOrLiteralValue(), "EventSubscriber"));
 
-            AttributeArgumentSyntax eventName = MemberAttributeSyntaxList.Select(value => value.ArgumentList.Arguments[2]).FirstOrDefault();
-            AttributeArgumentSyntax eventElement = MemberAttributeSyntaxList.Select(value => value.ArgumentList.Arguments[3]).FirstOrDefault();
-            bool isEventNameStringLiteral = eventName.IsKind(SyntaxKind.LiteralAttributeArgument);
-            bool isEventElementStringLiteral = !(eventElement.GetIdentifierOrLiteralValue() == "") && eventElement.IsKind(SyntaxKind.LiteralAttributeArgument);
-            if (!isEventNameStringLiteral && !isEventElementStringLiteral) return;
+            if (SyntaxList.Where(value => value.ArgumentList.Arguments[2].IsKind(SyntaxKind.LiteralAttributeArgument)).Any())
+            {
+                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0028IdentifiersInEventSubscribers, context.OwningSymbol.GetLocation()));
+                return;
+            }
 
-            // Support for using Identifiers instead of Literals in event subscribers is supported from runtime versions: '11.0' or greater.
-            var manifest = AppSourceCopConfigurationProvider.GetManifest(context.SemanticModel.Compilation);
-            if (manifest is null || manifest.Runtime < RuntimeVersion.Spring2023) return;
-
-            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0028IdentifiersInEventSubscribers, context.OwningSymbol.GetLocation()));
+            if (SyntaxList.Where(value => !(value.ArgumentList.Arguments[3].GetIdentifierOrLiteralValue() == "") && value.ArgumentList.Arguments[3].IsKind(SyntaxKind.LiteralAttributeArgument)).Any())
+            {
+                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0028IdentifiersInEventSubscribers, context.OwningSymbol.GetLocation()));
+                return;
+            }
         }
     }
 }
