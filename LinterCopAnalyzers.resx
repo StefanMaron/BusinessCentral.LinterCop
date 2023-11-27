@@ -375,13 +375,13 @@
   <data name="Rule0027RunPageImplementPageManagement" xml:space="preserve">
     <value>Utilize the "Page Management" codeunit for launching page.</value>
   </data>
-  <data name="Rule0028CodeNavigabilityOnEventSubscribersDescription" xml:space="preserve">
+  <data name="Rule0028IdentifiersInEventSubscribersDescription" xml:space="preserve">
     <value>Event subscriber arguments now use identifier syntax instead of string literals.</value>
   </data>
-  <data name="Rule0028CodeNavigabilityOnEventSubscribersFormat" xml:space="preserve">
+  <data name="Rule0028IdentifiersInEventSubscribersFormat" xml:space="preserve">
     <value>Event subscriber arguments now use identifier syntax instead of string literals.</value>
   </data>
-  <data name="Rule0028CodeNavigabilityOnEventSubscribersTitle" xml:space="preserve">
+  <data name="Rule0028IdentifiersInEventSubscribersTitle" xml:space="preserve">
     <value>Event subscriber arguments now use identifier syntax instead of string literals.</value>
   </data>
   <data name="Rule0029CompareDateTimeThroughCodeunitDescription" xml:space="preserve">

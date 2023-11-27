@@ -9,7 +9,7 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0028CodeNavigabilityOnEventSubscribers : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0028CodeNavigabilityOnEventSubscribers);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0028IdentifiersInEventSubscribers);
 
         public override void Initialize(AnalysisContext context) => context.RegisterCodeBlockAction(new Action<CodeBlockAnalysisContext>(this.CodeNavigabilityOnEventSubscribers));
 
@@ -32,7 +32,7 @@ namespace BusinessCentral.LinterCop.Design
             var manifest = AppSourceCopConfigurationProvider.GetManifest(context.SemanticModel.Compilation);
             if (manifest is null || manifest.Runtime < RuntimeVersion.Spring2023) return;
 
-            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0028CodeNavigabilityOnEventSubscribers, context.OwningSymbol.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0028IdentifiersInEventSubscribers, context.OwningSymbol.GetLocation()));
         }
     }
 }
