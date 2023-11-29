@@ -447,4 +447,13 @@
   <data name="Rule0038ToolTipMaximumLengthTitle" xml:space="preserve">
     <value>Try to not exceed 200 characters (including spaces).</value>
   </data>
+  <data name="Rule0039ArgumentDifferentTypeThenExpectedDescription" xml:space="preserve">
+    <value>Argument {0}: cannot convert from '{1}' to '{2}'.</value>
+  </data>
+  <data name="Rule0039ArgumentDifferentTypeThenExpectedFormat" xml:space="preserve">
+    <value>Argument {0}: cannot convert from '{1}' to '{2}'.</value>
+  </data>
+  <data name="Rule0039ArgumentDifferentTypeThenExpectedTitle" xml:space="preserve">
+    <value>Argument {0}: cannot convert from '{1}' to '{2}'.</value>
+  </data>
 </root>

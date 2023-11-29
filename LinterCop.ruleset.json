@@ -191,6 +191,11 @@
       "id": "LC0038",
       "action": "Info",
       "justification": "Try to not exceed 200 characters (including spaces)."
+    },
+    {
+      "id": "LC0039",
+      "action": "Warning",
+      "justification": "The given argument has a different type from the one expected."
     }
   ]
 }

@@ -80,6 +80,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0036](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0036)|For fields specifically, the ToolTip must start with the verb Specifies.|Info|
 |[LC0037](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0037)|Do not use line breaks in ToolTip.|Info|
 |[LC0038](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0038)|Try to not exceed 200 characters (including spaces).|Info|
+|[LC0039](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0039)|The given argument has a different type from the one expected.|Warning|
 
 
 ## Configuration
