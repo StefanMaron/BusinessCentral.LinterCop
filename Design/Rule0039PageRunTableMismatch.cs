@@ -58,6 +58,7 @@ namespace BusinessCentral.LinterCop.Design
             if (operation.Arguments.Count() != 1) return;
 
             if (operation.Arguments[0].Syntax.Kind != SyntaxKind.IdentifierName) return;
+            if (operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression) return;
 
             IOperation pageReference = ctx.Operation.DescendantsAndSelf().Where(x => x.GetSymbol() != null)
                                                         .Where(x => x.Type.GetNavTypeKindSafe() == NavTypeKind.Page)
