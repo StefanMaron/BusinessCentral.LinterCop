@@ -429,4 +429,13 @@
   <data name="Rule0036EmptyCaptionLockedTitle" xml:space="preserve">
     <value>Empty captions should be locked.</value>
   </data>
+  <data name="Rule0037AutoCalcFieldsOnNormalFieldsDescription" xml:space="preserve">
+    <value>SetAutoCalcFields must not be invoked on Normal fields.</value>
+  </data>
+  <data name="Rule0037AutoCalcFieldsOnNormalFieldsFormat" xml:space="preserve">
+    <value>SetAutoCalcFields must not be invoked on Normal fields.</value>
+  </data>
+  <data name="Rule0037AutoCalcFieldsOnNormalFieldsTitle" xml:space="preserve">
+    <value>SetAutoCalcFields must not be invoked on Normal fields.</value>
+  </data>  
 </root>
