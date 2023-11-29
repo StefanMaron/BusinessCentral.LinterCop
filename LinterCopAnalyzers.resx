@@ -411,4 +411,13 @@
   <data name="Rule0034ExtensiblePropertyShouldAlwaysBeSetDescription" xml:space="preserve">
     <value>The property Extensible should be explicitly set for {0} objects.</value>
   </data>
+  <data name="Rule0035BuiltInMethodsMustHaveExplicitParametersDescription" xml:space="preserve">
+    <value>Built-In Methods must be invoked with explicit parameters.</value>
+  </data>
+  <data name="Rule0035BuiltInMethodsMustHaveExplicitParametersFormat" xml:space="preserve">
+    <value>Built-In Methods must be invoked with explicit parameters.</value>
+  </data>
+  <data name="Rule0035BuiltInMethodsMustHaveExplicitParametersTitle" xml:space="preserve">
+    <value>Built-In Methods must be invoked with explicit parameters.</value>
+  </data>
 </root>
