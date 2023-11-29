@@ -420,4 +420,13 @@
   <data name="Rule0035BuiltInMethodsMustHaveExplicitParametersTitle" xml:space="preserve">
     <value>Built-In Methods must be invoked with explicit parameters.</value>
   </data>
+  <data name="Rule0036EmptyCaptionLockedDescription" xml:space="preserve">
+    <value>Empty captions should be locked.</value>
+  </data>
+  <data name="Rule0036EmptyCaptionLockedFormat" xml:space="preserve">
+    <value>Empty captions should be locked.</value>
+  </data>
+  <data name="Rule0036EmptyCaptionLockedTitle" xml:space="preserve">
+    <value>Empty captions should be locked.</value>
+  </data>
 </root>
