@@ -419,5 +419,23 @@
   </data>
   <data name="Rule0040ZeroEnumValueReservedForEmptyDescription" xml:space="preserve">
     <value>Zero (0) Enum value should be reserved for Empty Value.</value>
+  </data>  
+  <data name="Rule0041TokLabelsLockedTitle" xml:space="preserve">
+    <value>Label with suffix Tok must be locked.</value>
+  </data>
+  <data name="Rule0041TokLabelsLockedFormat" xml:space="preserve">
+    <value>Label with suffix Tok must be locked.</value>
+  </data>
+  <data name="Rule0041TokLabelsLockedDescription" xml:space="preserve">
+    <value>Label with suffix Tok must be locked.</value>
+  </data>   
+  <data name="Rule0041LockedLabelsTokTitle" xml:space="preserve">
+    <value>Locked Label must have a suffix Tok.</value>
+  </data>
+  <data name="Rule0041LockedLabelsTokFormat" xml:space="preserve">
+    <value>Locked Label must have a suffix Tok.</value>
+  </data>
+  <data name="Rule0041LockedLabelsTokDescription" xml:space="preserve">
+    <value>Locked Label must have a suffix Tok.</value>
   </data>
 </root>
