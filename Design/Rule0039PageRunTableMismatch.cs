@@ -25,7 +25,7 @@ namespace BusinessCentral.LinterCop.Design
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
 
             if (operation.TargetMethod.ContainingType.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Page) return;
-            string[] procedureNames = ["Run", "RunModal"];
+            string[] procedureNames = { "Run", "RunModal" };
             if (!procedureNames.Contains(operation.TargetMethod.Name)) return;
             if (operation.Arguments.Count() < 2) return;
 
@@ -53,7 +53,7 @@ namespace BusinessCentral.LinterCop.Design
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
 
             if (operation.TargetMethod.ContainingType.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Page) return;
-            string[] procedureNames = ["GetRecord", "SetRecord", "SetSelectionFilter", "SetTableView"];
+            string[] procedureNames = { "GetRecord", "SetRecord", "SetSelectionFilter", "SetTableView" };
             if (!procedureNames.Contains(operation.TargetMethod.Name)) return;
             if (operation.Arguments.Count() != 1) return;
 
