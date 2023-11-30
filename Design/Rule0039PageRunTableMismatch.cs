@@ -1,9 +1,7 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
-using System.Reflection;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -27,11 +25,12 @@ namespace BusinessCentral.LinterCop.Design
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
 
             if (operation.TargetMethod.ContainingType.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Page) return;
-            if (!SemanticFacts.IsSameName(operation.TargetMethod.Name, "Run") && !SemanticFacts.IsSameName(operation.TargetMethod.Name, "RunModal")) return;
+            string[] procedureNames = ["Run", "RunModal"];
+            if (!procedureNames.Contains(operation.TargetMethod.Name)) return;
             if (operation.Arguments.Count() < 2) return;
 
             if (operation.Arguments[0].Syntax.Kind != SyntaxKind.OptionAccessExpression) return;
-            if (operation.Arguments[1].Syntax.Kind != SyntaxKind.IdentifierName) return;
+            if (operation.Arguments[1].Syntax.Kind != SyntaxKind.IdentifierName || operation.Arguments[1].Value.Kind != OperationKind.ConversionExpression) return;
 
             IApplicationObjectTypeSymbol applicationObjectTypeSymbol = ((IApplicationObjectAccess)operation.Arguments[0].Value).ApplicationObjectTypeSymbol;
             if (applicationObjectTypeSymbol.GetNavTypeKindSafe() != NavTypeKind.Page) return;
@@ -41,8 +40,8 @@ namespace BusinessCentral.LinterCop.Design
             IOperation operand = ((IConversionExpression)operation.Arguments[1].Value).Operand;
             ITableTypeSymbol recordArgument = ((IRecordTypeSymbol)operand.GetSymbol().GetTypeSymbol()).BaseTable;
 
-            if (recordArgument != pageSourceTable)
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, ctx.Operation.Syntax.GetLocation(), new object[] { 2, operand.GetSymbol().GetTypeSymbol().ToString(), "Record \"" + pageSourceTable.Name + "\"" }));
+            if (!AreTheSameNavObjects(recordArgument, pageSourceTable))
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, ctx.Operation.Syntax.GetLocation(), new object[] { 2, operand.GetSymbol().GetTypeSymbol().ToString(), pageSourceTable.GetNavTypeKindSafe() + " \"" + pageSourceTable.Name + "\"" }));
         }
 
         private void AnalyzeSetRecordArgument(OperationAnalysisContext ctx)
@@ -54,11 +53,11 @@ namespace BusinessCentral.LinterCop.Design
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
 
             if (operation.TargetMethod.ContainingType.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Page) return;
-            if (!SemanticFacts.IsSameName(operation.TargetMethod.Name, "SetRecord")) return;
+            string[] procedureNames = ["GetRecord", "SetRecord", "SetSelectionFilter", "SetTableView"];
+            if (!procedureNames.Contains(operation.TargetMethod.Name)) return;
             if (operation.Arguments.Count() != 1) return;
 
-            if (operation.Arguments[0].Syntax.Kind != SyntaxKind.IdentifierName) return;
-            if (operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression) return;
+            if (operation.Arguments[0].Syntax.Kind != SyntaxKind.IdentifierName || operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression) return;
 
             IOperation pageReference = ctx.Operation.DescendantsAndSelf().Where(x => x.GetSymbol() != null)
                                                         .Where(x => x.Type.GetNavTypeKindSafe() == NavTypeKind.Page)
@@ -70,8 +69,16 @@ namespace BusinessCentral.LinterCop.Design
             IOperation operand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
             ITableTypeSymbol recordArgument = ((IRecordTypeSymbol)operand.GetSymbol().GetTypeSymbol()).BaseTable;
 
-            if (recordArgument != pageSourceTable)
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, ctx.Operation.Syntax.GetLocation(), new object[] { 1, operand.GetSymbol().GetTypeSymbol().ToString(), "Record \"" + pageSourceTable.Name + "\"" }));
+            if (!AreTheSameNavObjects(recordArgument, pageSourceTable))
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, ctx.Operation.Syntax.GetLocation(), new object[] { 1, operand.GetSymbol().GetTypeSymbol().ToString(), pageSourceTable.GetNavTypeKindSafe() + " \"" + pageSourceTable.Name + "\"" }));
+        }
+
+        private static bool AreTheSameNavObjects(ITableTypeSymbol left, ITableTypeSymbol right)
+        {
+            if (left.GetNavTypeKindSafe() != right.GetNavTypeKindSafe()) return false;
+            if (((INamespaceSymbol)left.ContainingSymbol).QualifiedName != ((INamespaceSymbol)right.ContainingSymbol).QualifiedName) return false;
+            if (left.Name != right.Name) return false;
+            return true;
         }
     }
 }
