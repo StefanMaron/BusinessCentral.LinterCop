@@ -411,4 +411,13 @@
   <data name="Rule0034ExtensiblePropertyShouldAlwaysBeSetDescription" xml:space="preserve">
     <value>The property Extensible should be explicitly set for {0} objects.</value>
   </data>
+  <data name="Rule0040ZeroEnumValueReservedForEmptyTitle" xml:space="preserve">
+    <value>Zero (0) Enum value should be reserved for Empty Value.</value>
+  </data>
+  <data name="Rule0040ZeroEnumValueReservedForEmptyFormat" xml:space="preserve">
+    <value>Zero (0) Enum value should be reserved for Empty Value.</value>
+  </data>
+  <data name="Rule0040ZeroEnumValueReservedForEmptyDescription" xml:space="preserve">
+    <value>Zero (0) Enum value should be reserved for Empty Value.</value>
+  </data>
 </root>
