@@ -421,13 +421,13 @@
     <value>Explicitly set AllowInCustomizations for fields omitted on pages.</value>
   </data>
   <data name="Rule0036ToolTipShouldStartWithSpecifiesDescription" xml:space="preserve">
-    <value>For fields specifically, the ToolTip must start with the verb "Specifies".</value>
+    <value>ToolTip must start with the verb "Specifies".</value>
   </data>
   <data name="Rule0036ToolTipShouldStartWithSpecifiesFormat" xml:space="preserve">
-    <value>For fields specifically, the ToolTip must start with the verb "Specifies".</value>
+    <value>ToolTip must start with the verb "Specifies".</value>
   </data>
   <data name="Rule0036ToolTipShouldStartWithSpecifiesTitle" xml:space="preserve">
-    <value>For fields specifically, the ToolTip must start with the verb "Specifies".</value>
+    <value>ToolTip must start with the verb "Specifies".</value>
   </data>
   <data name="Rule0037ToolTipDoNotUseLineBreaksDescription" xml:space="preserve">
     <value>Do not use line breaks in ToolTip.</value>

@@ -180,7 +180,7 @@
     {
       "id": "LC0036",
       "action": "Info",
-      "justification": "For fields specifically, the ToolTip must start with the verb Specifies."
+      "justification": "ToolTip must start with the verb Specifies."
     },
     {
       "id": "LC0037",
