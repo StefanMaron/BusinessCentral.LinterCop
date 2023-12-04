@@ -394,13 +394,13 @@
     <value>Clear(All) does not affect or change values for global variables in '{0}: Codeunit {1}'.</value>
   </data>
   <data name="Rule0033AppManifestRuntimeBehindTitle" xml:space="preserve">
-    <value>The specified runtime version in app.json is falling behind. The project targets {0} version {1}, but the current runtime is {2}. Update the runtime to {3} for compatibility with the latest runtime features.</value>
+    <value>The specified runtime version in app.json is falling behind. The project targets {0} version {1} and the current runtime is {2}. Update the runtime to {3} for compatibility with the latest runtime features.</value>
   </data>
   <data name="Rule0033AppManifestRuntimeBehindFormat" xml:space="preserve">
-    <value>The specified runtime version in app.json is falling behind. The project targets {0} version {1}, but the current runtime is {2}. Update the runtime to {3} for compatibility with the latest runtime features.</value>
+    <value>The specified runtime version in app.json is falling behind. The project targets {0} version {1} and the current runtime is {2}. Update the runtime to {3} for compatibility with the latest runtime features.</value>
   </data>
   <data name="Rule0033AppManifestRuntimeBehindDescription" xml:space="preserve">
-    <value>The specified runtime version in app.json is falling behind. The project targets {0} version {1}, but the current runtime is {2}. Update the runtime to {3} for compatibility with the latest runtime features.</value>
+    <value>The specified runtime version in app.json is falling behind. The project targets {0} version {1} and the current runtime is {2}. Update the runtime to {3} for compatibility with the latest runtime features.</value>
   </data>
   <data name="Rule0034ExtensiblePropertyShouldAlwaysBeSetTitle" xml:space="preserve">
     <value>The property Extensible should be explicitly set for {0} objects.</value>
