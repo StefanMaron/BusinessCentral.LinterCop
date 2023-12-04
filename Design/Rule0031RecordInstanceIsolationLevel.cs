@@ -1,4 +1,3 @@
-using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
@@ -14,9 +13,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckLockTable(OperationAnalysisContext ctx)
         {
-            // ReadIsolation is supported from runtime versions 11.0 or greater.
-            var manifest = AppSourceCopConfigurationProvider.GetManifest(ctx.Compilation);
-            if (manifest.Runtime < RuntimeVersion.Spring2023) return;
+            if (!VersionChecker.IsSupported(ctx.ContainingSymbol, VersionCompatibility.Spring2023OrGreater)) return;
 
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
             if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
@@ -24,8 +21,9 @@ namespace BusinessCentral.LinterCop.Design
             IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
 
-            if (SemanticFacts.IsSameName(operation.TargetMethod.Name, "LockTable"))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0031RecordInstanceIsolationLevel, ctx.Operation.Syntax.GetLocation()));
+            if (!SemanticFacts.IsSameName(operation.TargetMethod.Name, "LockTable")) return;
+
+            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0031RecordInstanceIsolationLevel, ctx.Operation.Syntax.GetLocation()));
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
-using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
@@ -16,8 +15,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckForMissingAccessProperty(SymbolAnalysisContext context)
         {
-            var manifest = AppSourceCopConfigurationProvider.GetManifest(context.Compilation);
-            if (manifest.Runtime < RuntimeVersion.Spring2021 && (context.Symbol.Kind == SymbolKind.Enum || context.Symbol.Kind == SymbolKind.Interface))
+            if (!VersionChecker.IsSupported(context.Symbol, VersionCompatibility.Spring2021OrGreater) && (context.Symbol.Kind == SymbolKind.Enum || context.Symbol.Kind == SymbolKind.Interface))
                 return;
 
             if (context.Symbol.IsObsoletePending || context.Symbol.IsObsoleteRemoved) return;

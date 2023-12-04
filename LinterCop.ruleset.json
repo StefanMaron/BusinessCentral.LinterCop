@@ -171,6 +171,31 @@
       "id": "LC0034",
       "action": "Hidden",
       "justification": "The property Extensible should be explicitly set for public objects."
+    },
+    {
+      "id": "LC0035",
+      "action": "Info",
+      "justification": "Explicitly set AllowInCustomizations for fields omitted on pages."
+    },
+    {
+      "id": "LC0036",
+      "action": "Info",
+      "justification": "ToolTip must start with the verb Specifies."
+    },
+    {
+      "id": "LC0037",
+      "action": "Info",
+      "justification": "Do not use line breaks in ToolTip."
+    },
+    {
+      "id": "LC0038",
+      "action": "Info",
+      "justification": "Try to not exceed 200 characters (including spaces)."
+    },
+    {
+      "id": "LC0039",
+      "action": "Warning",
+      "justification": "The given argument has a different type from the one expected."
     }
   ]
 }

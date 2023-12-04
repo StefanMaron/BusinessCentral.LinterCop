@@ -126,6 +126,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private static bool SuppressCaptionWarning(SymbolAnalysisContext context)
         {
+            if (context.Symbol.GetContainingObjectTypeSymbol().GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Page) return false;
             IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)context.Symbol.GetContainingObjectTypeSymbol();
             if (pageTypeSymbol.GetNavTypeKindSafe() != NavTypeKind.Page || pageTypeSymbol.PageType != PageTypeKind.API) return false;
             LinterSettings.Create(context.Compilation.FileSystem.GetDirectoryPath());
