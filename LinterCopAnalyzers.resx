@@ -336,25 +336,25 @@
   <data name="Rule0025InternalProcedureModifierTitle" xml:space="preserve">
     <value>Procedure must be either local or internal.</value>
   </data>
-  <data name="Rule0026ToolTipPunctuationDescription" xml:space="preserve">
+  <data name="Rule0026ToolTipMustEndWithDotDescription" xml:space="preserve">
     <value>ToolTip must end with a dot.</value>
   </data>
-  <data name="Rule0026ToolTipPunctuationFormat" xml:space="preserve">
+  <data name="Rule0026ToolTipMustEndWithDotFormat" xml:space="preserve">
     <value>ToolTip must end with a dot.</value>
   </data>
-  <data name="Rule0026ToolTipPunctuationTitle" xml:space="preserve">
+  <data name="Rule0026ToolTipMustEndWithDotTitle" xml:space="preserve">
     <value>ToolTip must end with a dot.</value>
   </data>
   <data name="Rule0027RunPageImplementPageManagement" xml:space="preserve">
     <value>Utilize the "Page Management" codeunit for launching page.</value>
   </data>
-  <data name="Rule0028CodeNavigabilityOnEventSubscribersDescription" xml:space="preserve">
+  <data name="Rule0028IdentifiersInEventSubscribersDescription" xml:space="preserve">
     <value>Event subscriber arguments now use identifier syntax instead of string literals.</value>
   </data>
-  <data name="Rule0028CodeNavigabilityOnEventSubscribersFormat" xml:space="preserve">
+  <data name="Rule0028IdentifiersInEventSubscribersFormat" xml:space="preserve">
     <value>Event subscriber arguments now use identifier syntax instead of string literals.</value>
   </data>
-  <data name="Rule0028CodeNavigabilityOnEventSubscribersTitle" xml:space="preserve">
+  <data name="Rule0028IdentifiersInEventSubscribersTitle" xml:space="preserve">
     <value>Event subscriber arguments now use identifier syntax instead of string literals.</value>
   </data>
   <data name="Rule0029CompareDateTimeThroughCodeunitDescription" xml:space="preserve">
@@ -394,13 +394,13 @@
     <value>Clear(All) does not affect or change values for global variables in '{0}: Codeunit {1}'.</value>
   </data>
   <data name="Rule0033AppManifestRuntimeBehindTitle" xml:space="preserve">
-    <value>The specified runtime version in app.json is falling behind. The project targets {0} version {1}, but the current runtime is {2}. Update the runtime to {3} for compatibility with the latest runtime features.</value>
+    <value>The specified runtime version in app.json is falling behind. The project targets {0} version {1} and the current runtime is {2}. Update the runtime to {3} for compatibility with the latest runtime features.</value>
   </data>
   <data name="Rule0033AppManifestRuntimeBehindFormat" xml:space="preserve">
-    <value>The specified runtime version in app.json is falling behind. The project targets {0} version {1}, but the current runtime is {2}. Update the runtime to {3} for compatibility with the latest runtime features.</value>
+    <value>The specified runtime version in app.json is falling behind. The project targets {0} version {1} and the current runtime is {2}. Update the runtime to {3} for compatibility with the latest runtime features.</value>
   </data>
   <data name="Rule0033AppManifestRuntimeBehindDescription" xml:space="preserve">
-    <value>The specified runtime version in app.json is falling behind. The project targets {0} version {1}, but the current runtime is {2}. Update the runtime to {3} for compatibility with the latest runtime features.</value>
+    <value>The specified runtime version in app.json is falling behind. The project targets {0} version {1} and the current runtime is {2}. Update the runtime to {3} for compatibility with the latest runtime features.</value>
   </data>
   <data name="Rule0034ExtensiblePropertyShouldAlwaysBeSetTitle" xml:space="preserve">
     <value>The property Extensible should be explicitly set for {0} objects.</value>
@@ -410,5 +410,50 @@
   </data>
   <data name="Rule0034ExtensiblePropertyShouldAlwaysBeSetDescription" xml:space="preserve">
     <value>The property Extensible should be explicitly set for {0} objects.</value>
+  </data>
+  <data name="Rule0035ExplicitSetAllowInCustomizationsTitle" xml:space="preserve">
+    <value>Explicitly set AllowInCustomizations for fields omitted on pages.</value>
+  </data>
+  <data name="Rule0035ExplicitSetAllowInCustomizationsFormat" xml:space="preserve">
+    <value>Explicitly set AllowInCustomizations for fields omitted on pages.</value>
+  </data>
+  <data name="Rule0035ExplicitSetAllowInCustomizationsDescription" xml:space="preserve">
+    <value>Explicitly set AllowInCustomizations for fields omitted on pages.</value>
+  </data>
+  <data name="Rule0036ToolTipShouldStartWithSpecifiesDescription" xml:space="preserve">
+    <value>ToolTip must start with the verb "Specifies".</value>
+  </data>
+  <data name="Rule0036ToolTipShouldStartWithSpecifiesFormat" xml:space="preserve">
+    <value>ToolTip must start with the verb "Specifies".</value>
+  </data>
+  <data name="Rule0036ToolTipShouldStartWithSpecifiesTitle" xml:space="preserve">
+    <value>ToolTip must start with the verb "Specifies".</value>
+  </data>
+  <data name="Rule0037ToolTipDoNotUseLineBreaksDescription" xml:space="preserve">
+    <value>Do not use line breaks in ToolTip.</value>
+  </data>
+  <data name="Rule0037ToolTipDoNotUseLineBreaksFormat" xml:space="preserve">
+    <value>Do not use line breaks in ToolTip.</value>
+  </data>
+  <data name="Rule0037ToolTipDoNotUseLineBreaksTitle" xml:space="preserve">
+    <value>Do not use line breaks in ToolTip.</value>
+  </data>
+  <data name="Rule0038ToolTipMaximumLengthDescription" xml:space="preserve">
+    <value>Try to not exceed 200 characters (including spaces).</value>
+  </data>
+  <data name="Rule0038ToolTipMaximumLengthFormat" xml:space="preserve">
+    <value>Try to not exceed 200 characters (including spaces).</value>
+  </data>
+  <data name="Rule0038ToolTipMaximumLengthTitle" xml:space="preserve">
+    <value>Try to not exceed 200 characters (including spaces).</value>
+  </data>
+  <data name="Rule0039ArgumentDifferentTypeThenExpectedDescription" xml:space="preserve">
+    <value>Argument {0}: cannot convert from '{1}' to '{2}'.</value>
+  </data>
+  <data name="Rule0039ArgumentDifferentTypeThenExpectedFormat" xml:space="preserve">
+    <value>Argument {0}: cannot convert from '{1}' to '{2}'.</value>
+  </data>
+  <data name="Rule0039ArgumentDifferentTypeThenExpectedTitle" xml:space="preserve">
+    <value>Argument {0}: cannot convert from '{1}' to '{2}'.</value>
   </data>
 </root>

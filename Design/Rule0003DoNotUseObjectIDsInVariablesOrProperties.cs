@@ -111,10 +111,10 @@ namespace BusinessCentral.LinterCop.Design
                     {
                         correctName = returnValue.ReturnType.Name;
 
-                        if (ctx.Node.ToString().Trim('"').ToUpper() != correctName.ToUpper())
+                        if (ctx.Node.GetLastToken().ToString().Trim('"').ToUpper() != correctName.ToUpper())
                             ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
 
-                        if (ctx.Node.ToString().Trim('"') != correctName)
+                        if (ctx.Node.GetLastToken().ToString().Trim('"') != correctName)
                             ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, ctx.Node.GetLocation(), new object[] { correctName, "" }));
                     }
                 }

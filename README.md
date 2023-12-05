@@ -67,7 +67,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0023](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0023)|Always provide fieldsgroups `DropDown` and `Brick` on tables.|Info|
 |[LC0024](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0024)|Procedure declaration should not end with semicolon.|Info|
 |[LC0025](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0025)|Procedure must be either local or internal.|Info|
-|[LC0026](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0026)|ToolTip must end with a dot.|Info|
+|[LC0026](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0026)|Guidelines for ToolTip text.|Info|
 |[LC0027](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0027)|Utilize the `Page Management` codeunit for launching page.|Info|
 |[LC0028](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0028)|Event subscriber arguments now use identifier syntax instead of string literals.|Info|
 |[LC0029](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0029)|Use `CompareDateTime` method in `Type Helper` codeunit for DateTime variable comparisons.|Info|
@@ -76,6 +76,12 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0032](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0032)|Clear(All) does not affect or change values for global variables in single instance codeunits.|Warning|
 |[LC0033](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0033)|The specified runtime version in app.json is falling behind.|Info|
 |[LC0034](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0034)|The property `Extensible` should be explicitly set for public objects.|Disabled|
+|[LC0035](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0036)|Explicitly set `AllowInCustomizations` for fields omitted on pages.|Info|
+|[LC0036](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0036)|ToolTip must start with the verb "Specifies".|Info|
+|[LC0037](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0037)|Do not use line breaks in ToolTip.|Info|
+|[LC0038](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0038)|Try to not exceed 200 characters (including spaces).|Info|
+|[LC0039](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0039)|The given argument has a different type from the one expected.|Warning|
+
 
 ## Configuration
 
