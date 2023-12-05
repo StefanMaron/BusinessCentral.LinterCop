@@ -119,18 +119,6 @@ namespace BusinessCentral.LinterCop.Design
             }
         }
 
-        private void AnalyzeTableReferencePageProviderProperty(SymbolAnalysisContext ctx, ITableTypeSymbol table, PropertyKind propertyKind)
-        {
-            IPropertySymbol pageReference = table.GetProperty(propertyKind);
-            if (pageReference == null) return;
-            IPageTypeSymbol page = (IPageTypeSymbol)pageReference.Value;
-            ITableTypeSymbol pageSourceTable = page.RelatedTable;
-            if (pageSourceTable == null) return;
-
-            if (!AreTheSameNavObjects(table, pageSourceTable))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, pageReference.GetLocation(), new object[] { 1, table.GetTypeSymbol().ToString(), pageSourceTable.GetNavTypeKindSafe() + " \"" + pageSourceTable.Name + "\"" }));
-        }
-
         private static bool AreTheSameNavObjects(ITableTypeSymbol left, ITableTypeSymbol right)
         {
             if (left.GetNavTypeKindSafe() != right.GetNavTypeKindSafe()) return false;
