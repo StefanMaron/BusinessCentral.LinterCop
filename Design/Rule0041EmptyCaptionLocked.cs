@@ -7,9 +7,9 @@ using System.Collections.Immutable;
 namespace BusinessCentral.LinterCop.Design
 {
     [DiagnosticAnalyzer]
-    public class Rule0036EmptyCaptionLocked : DiagnosticAnalyzer
+    public class Rule0041EmptyCaptionLocked : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0036EmptyCaptionLocked);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0041EmptyCaptionLocked);
 
         public override void Initialize(AnalysisContext context) => context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(AnalyzeCaptionProperty), SyntaxKind.EnumValue);
 
@@ -35,7 +35,7 @@ namespace BusinessCentral.LinterCop.Design
                 }
 
             if (!labelLocked)
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0036EmptyCaptionLocked, captionProperty.GetLocation()));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0041EmptyCaptionLocked, captionProperty.GetLocation()));
         }
     }
 }

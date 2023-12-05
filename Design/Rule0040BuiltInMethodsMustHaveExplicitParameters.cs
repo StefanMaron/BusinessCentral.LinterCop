@@ -5,9 +5,9 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 namespace BusinessCentral.LinterCop.Design
 {
     [DiagnosticAnalyzer]
-    public class Rule0035BuiltInMethodsMustHaveExplicitParameters : DiagnosticAnalyzer
+    public class Rule0040BuiltInMethodsMustHaveExplicitParameters : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0035BuiltInMethodsMustHaveExplicitParameters);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0040BuiltInMethodsMustHaveExplicitParameters);
 
         public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckCommitForExplainingComment), OperationKind.InvocationExpression);
 
@@ -25,7 +25,7 @@ namespace BusinessCentral.LinterCop.Design
 
             if (methodsToCheck.Contains(targetMethod.Name.ToUpper()))
                 if (operation.Arguments.Length == 0)
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0035BuiltInMethodsMustHaveExplicitParameters, ctx.Operation.Syntax.GetLocation()));
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0040BuiltInMethodsMustHaveExplicitParameters, ctx.Operation.Syntax.GetLocation()));
         }
     }
 }

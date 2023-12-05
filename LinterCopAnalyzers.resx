@@ -411,33 +411,6 @@
   <data name="Rule0034ExtensiblePropertyShouldAlwaysBeSetDescription" xml:space="preserve">
     <value>The property Extensible should be explicitly set for {0} objects.</value>
   </data>
-  <data name="Rule0035BuiltInMethodsMustHaveExplicitParametersDescription" xml:space="preserve">
-    <value>Built-In Methods must be invoked with explicit parameters.</value>
-  </data>
-  <data name="Rule0035BuiltInMethodsMustHaveExplicitParametersFormat" xml:space="preserve">
-    <value>Built-In Methods must be invoked with explicit parameters.</value>
-  </data>
-  <data name="Rule0035BuiltInMethodsMustHaveExplicitParametersTitle" xml:space="preserve">
-    <value>Built-In Methods must be invoked with explicit parameters.</value>
-  </data>
-  <data name="Rule0036EmptyCaptionLockedDescription" xml:space="preserve">
-    <value>Empty captions should be locked.</value>
-  </data>
-  <data name="Rule0036EmptyCaptionLockedFormat" xml:space="preserve">
-    <value>Empty captions should be locked.</value>
-  </data>
-  <data name="Rule0036EmptyCaptionLockedTitle" xml:space="preserve">
-    <value>Empty captions should be locked.</value>
-  </data>
-  <data name="Rule0037AutoCalcFieldsOnNormalFieldsDescription" xml:space="preserve">
-    <value>SetAutoCalcFields must not be invoked on Normal fields.</value>
-  </data>
-  <data name="Rule0037AutoCalcFieldsOnNormalFieldsFormat" xml:space="preserve">
-    <value>SetAutoCalcFields must not be invoked on Normal fields.</value>
-  </data>
-  <data name="Rule0037AutoCalcFieldsOnNormalFieldsTitle" xml:space="preserve">
-    <value>SetAutoCalcFields must not be invoked on Normal fields.</value>
-  </data>
   <data name="Rule0035ExplicitSetAllowInCustomizationsTitle" xml:space="preserve">
     <value>Explicitly set AllowInCustomizations for fields omitted on pages.</value>
   </data>
@@ -482,5 +455,32 @@
   </data>
   <data name="Rule0039ArgumentDifferentTypeThenExpectedTitle" xml:space="preserve">
     <value>Argument {0}: cannot convert from '{1}' to '{2}'.</value>
+  </data>
+  <data name="Rule0040BuiltInMethodsMustHaveExplicitParametersTitle" xml:space="preserve">
+    <value>Built-In Methods must be invoked with explicit parameters.</value>
+  </data>
+  <data name="Rule0040BuiltInMethodsMustHaveExplicitParametersFormat" xml:space="preserve">
+    <value>Built-In Methods must be invoked with explicit parameters.</value>
+  </data>
+  <data name="Rule0040BuiltInMethodsMustHaveExplicitParametersDescription" xml:space="preserve">
+    <value>Built-In Methods must be invoked with explicit parameters.</value>
+  </data>
+  <data name="Rule0041EmptyCaptionLockedTitle" xml:space="preserve">
+    <value>Empty captions should be locked.</value>
+  </data>
+  <data name="Rule0041EmptyCaptionLockedFormat" xml:space="preserve">
+    <value>Empty captions should be locked.</value>
+  </data>
+  <data name="Rule0041EmptyCaptionLockedDescription" xml:space="preserve">
+    <value>Empty captions should be locked.</value>
+  </data>
+  <data name="Rule0042AutoCalcFieldsOnNormalFieldsTitle" xml:space="preserve">
+    <value>SetAutoCalcFields must not be invoked on Normal fields.</value>
+  </data>
+  <data name="Rule0042AutoCalcFieldsOnNormalFieldsFormat" xml:space="preserve">
+    <value>SetAutoCalcFields must not be invoked on Normal fields.</value>
+  </data>
+  <data name="Rule0042AutoCalcFieldsOnNormalFieldsDescription" xml:space="preserve">
+    <value>SetAutoCalcFields must not be invoked on Normal fields.</value>
   </data>
 </root>
