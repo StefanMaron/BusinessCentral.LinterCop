@@ -1,19 +1,27 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
+using System.Collections;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
 {
     [DiagnosticAnalyzer]
-    public class Rule0039PageRunTableMismatch : DiagnosticAnalyzer
+    public class Rule0039ArgumentDifferentTypeThenExpected : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected);
+        private static readonly List<PropertyKind> referencePageProviders = new List<PropertyKind>
+        {
+            PropertyKind.LookupPageId,
+            PropertyKind.DrillDownPageId
+        };
 
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeRunPageArguments), OperationKind.InvocationExpression);
             context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeSetRecordArgument), OperationKind.InvocationExpression);
+            context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.AnalyzeTableReferencePageProvider), SymbolKind.Table);
+            context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.AnalyzeTableExtensionReferencePageProvider), SymbolKind.TableExtension);
         }
 
         private void AnalyzeRunPageArguments(OperationAnalysisContext ctx)
@@ -72,6 +80,55 @@ namespace BusinessCentral.LinterCop.Design
 
             if (!AreTheSameNavObjects(recordArgument, pageSourceTable))
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, ctx.Operation.Syntax.GetLocation(), new object[] { 1, operand.GetSymbol().GetTypeSymbol().ToString(), pageSourceTable.GetNavTypeKindSafe() + " \"" + pageSourceTable.Name + "\"" }));
+        }
+
+        private void AnalyzeTableReferencePageProvider(SymbolAnalysisContext ctx)
+        {
+            if (ctx.Symbol.IsObsoletePending || ctx.Symbol.IsObsoleteRemoved) return;
+
+            ITableTypeSymbol table = (ITableTypeSymbol)ctx.Symbol;
+            foreach (PropertyKind propertyKind in referencePageProviders)
+            {
+                IPropertySymbol pageReference = table.GetProperty(propertyKind);
+                if (pageReference == null) continue;
+                IPageTypeSymbol page = (IPageTypeSymbol)pageReference.Value;
+                ITableTypeSymbol pageSourceTable = page.RelatedTable;
+                if (pageSourceTable == null) continue;
+
+                if (!AreTheSameNavObjects(table, pageSourceTable))
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, pageReference.GetLocation(), new object[] { 1, table.GetTypeSymbol().ToString(), pageSourceTable.GetNavTypeKindSafe() + " \"" + pageSourceTable.Name + "\"" }));
+            }
+        }
+
+        private void AnalyzeTableExtensionReferencePageProvider(SymbolAnalysisContext ctx)
+        {
+            if (ctx.Symbol.IsObsoletePending || ctx.Symbol.IsObsoleteRemoved) return;
+
+            ITableExtensionTypeSymbol tableExtension = (ITableExtensionTypeSymbol)ctx.Symbol;
+            ITableTypeSymbol table = (ITableTypeSymbol)tableExtension.Target;
+            foreach (PropertyKind propertyKind in referencePageProviders)
+            {
+                IPropertySymbol pageReference = tableExtension.GetProperty(propertyKind);
+                if (pageReference == null) continue;
+                IPageTypeSymbol page = (IPageTypeSymbol)pageReference.Value;
+                ITableTypeSymbol pageSourceTable = page.RelatedTable;
+                if (pageSourceTable == null) continue;
+
+                if (!AreTheSameNavObjects(table, pageSourceTable))
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, pageReference.GetLocation(), new object[] { 1, table.GetTypeSymbol().GetNavTypeKindSafe() + " \"" + table.Name + "\"", pageSourceTable.GetNavTypeKindSafe() + " \"" + pageSourceTable.Name + "\"" }));
+            }
+        }
+
+        private void AnalyzeTableReferencePageProviderProperty(SymbolAnalysisContext ctx, ITableTypeSymbol table, PropertyKind propertyKind)
+        {
+            IPropertySymbol pageReference = table.GetProperty(propertyKind);
+            if (pageReference == null) return;
+            IPageTypeSymbol page = (IPageTypeSymbol)pageReference.Value;
+            ITableTypeSymbol pageSourceTable = page.RelatedTable;
+            if (pageSourceTable == null) return;
+
+            if (!AreTheSameNavObjects(table, pageSourceTable))
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, pageReference.GetLocation(), new object[] { 1, table.GetTypeSymbol().ToString(), pageSourceTable.GetNavTypeKindSafe() + " \"" + pageSourceTable.Name + "\"" }));
         }
 
         private static bool AreTheSameNavObjects(ITableTypeSymbol left, ITableTypeSymbol right)
