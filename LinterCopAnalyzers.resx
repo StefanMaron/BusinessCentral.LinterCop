@@ -475,12 +475,12 @@
     <value>Empty captions should be locked.</value>
   </data>
   <data name="Rule0042AutoCalcFieldsOnNormalFieldsTitle" xml:space="preserve">
-    <value>SetAutoCalcFields must not be invoked on Normal fields.</value>
+    <value>The SetAutoCalcFields method should only be used with FlowFields or fields of type Blob. The field {0} is not a FlowField or of type Blob.</value>
   </data>
   <data name="Rule0042AutoCalcFieldsOnNormalFieldsFormat" xml:space="preserve">
-    <value>SetAutoCalcFields must not be invoked on Normal fields.</value>
+    <value>The SetAutoCalcFields method should only be used with FlowFields or fields of type Blob. The field {0} is not a FlowField or of type Blob.</value>
   </data>
   <data name="Rule0042AutoCalcFieldsOnNormalFieldsDescription" xml:space="preserve">
-    <value>SetAutoCalcFields must not be invoked on Normal fields.</value>
+    <value>The SetAutoCalcFields method should only be used with FlowFields or fields of type Blob. The field {0} is not a FlowField or of type Blob.</value>
   </data>
 </root>
