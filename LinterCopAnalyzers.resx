@@ -456,14 +456,14 @@
   <data name="Rule0039ArgumentDifferentTypeThenExpectedTitle" xml:space="preserve">
     <value>Argument {0}: cannot convert from '{1}' to '{2}'.</value>
   </data>
-  <data name="Rule0040BuiltInMethodsMustHaveExplicitParametersTitle" xml:space="preserve">
-    <value>Built-In Methods must be invoked with explicit parameters.</value>
+  <data name="Rule0040ExplicitlySetRunTriggerTitle" xml:space="preserve">
+    <value>Explicitly set the RunTigger parameter on build-in methods.</value>
   </data>
-  <data name="Rule0040BuiltInMethodsMustHaveExplicitParametersFormat" xml:space="preserve">
-    <value>Built-In Methods must be invoked with explicit parameters.</value>
+  <data name="Rule0040ExplicitlySetRunTriggerFormat" xml:space="preserve">
+    <value>Explicitly set the RunTigger parameter on build-in methods.</value>
   </data>
-  <data name="Rule0040BuiltInMethodsMustHaveExplicitParametersDescription" xml:space="preserve">
-    <value>Built-In Methods must be invoked with explicit parameters.</value>
+  <data name="Rule0040ExplicitlySetRunTriggerDescription" xml:space="preserve">
+    <value>Explicitly set the RunTigger parameter on build-in methods.</value>
   </data>
   <data name="Rule0041EmptyCaptionLockedTitle" xml:space="preserve">
     <value>Empty captions should be locked.</value>
