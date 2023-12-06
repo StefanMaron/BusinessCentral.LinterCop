@@ -29,7 +29,7 @@ namespace BusinessCentral.LinterCop.Design
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
             if (!buildInMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant())) return;
 
-            if (operation.Arguments.Where(args => args.Parameter.Name.ToLowerInvariant() == "runtrigger").SingleOrDefault() == null)
+            if (operation.Arguments.Where(args => SemanticFacts.IsSameName(args.Parameter.Name, "RunTrigger")).SingleOrDefault() == null)
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0040ExplicitlySetRunTrigger, ctx.Operation.Syntax.GetLocation()));
         }
     }
