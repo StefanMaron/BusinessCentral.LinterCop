@@ -1,7 +1,6 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
-using System.Collections;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
@@ -10,6 +9,7 @@ namespace BusinessCentral.LinterCop.Design
     public class Rule0039ArgumentDifferentTypeThenExpected : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected);
+
         private static readonly List<PropertyKind> referencePageProviders = new List<PropertyKind>
         {
             PropertyKind.LookupPageId,
