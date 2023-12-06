@@ -81,6 +81,9 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0037](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0037)|Do not use line breaks in ToolTip.|Info|
 |[LC0038](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0038)|Try to not exceed 200 characters (including spaces).|Info|
 |[LC0039](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0039)|The given argument has a different type from the one expected.|Warning|
+|[LC0040](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0040)|Explicitly set the `RunTrigger` parameter on build-in methods.|Info|
+|[LC0041](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0041)|Empty Captions should be `Locked`.|Info|
+|[LC0042](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0042)|`AutoCalcFields` should only be used for FlowFields or Blob fields.|Warning|
 
 
 ## Configuration
