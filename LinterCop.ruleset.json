@@ -196,6 +196,21 @@
       "id": "LC0039",
       "action": "Warning",
       "justification": "The given argument has a different type from the one expected."
+    },
+    {
+      "id": "LC0040",
+      "action": "Info",
+      "justification": "Explicitly set the RunTrigger parameter on build-in methods."
+    },
+    {
+      "id": "LC0041",
+      "action": "Info",
+      "justification": "Empty Captions should be Locked."
+    },
+    {
+      "id": "LC0042",
+      "action": "Warning",
+      "justification": "AutoCalcFields should only be used for FlowFields or Blob fields."
     }
   ]
 }

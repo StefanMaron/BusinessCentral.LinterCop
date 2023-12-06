@@ -456,4 +456,31 @@
   <data name="Rule0039ArgumentDifferentTypeThenExpectedTitle" xml:space="preserve">
     <value>Argument {0}: cannot convert from '{1}' to '{2}'.</value>
   </data>
+  <data name="Rule0040ExplicitlySetRunTriggerTitle" xml:space="preserve">
+    <value>Explicitly set the RunTigger parameter on build-in methods.</value>
+  </data>
+  <data name="Rule0040ExplicitlySetRunTriggerFormat" xml:space="preserve">
+    <value>Explicitly set the RunTigger parameter on build-in methods.</value>
+  </data>
+  <data name="Rule0040ExplicitlySetRunTriggerDescription" xml:space="preserve">
+    <value>Explicitly set the RunTigger parameter on build-in methods.</value>
+  </data>
+  <data name="Rule0041EmptyCaptionLockedTitle" xml:space="preserve">
+    <value>Empty captions should be locked.</value>
+  </data>
+  <data name="Rule0041EmptyCaptionLockedFormat" xml:space="preserve">
+    <value>Empty captions should be locked.</value>
+  </data>
+  <data name="Rule0041EmptyCaptionLockedDescription" xml:space="preserve">
+    <value>Empty captions should be locked.</value>
+  </data>
+  <data name="Rule0042AutoCalcFieldsOnNormalFieldsTitle" xml:space="preserve">
+    <value>The SetAutoCalcFields method should only be used with FlowFields or fields of type Blob. The field {0} is not a FlowField or of type Blob.</value>
+  </data>
+  <data name="Rule0042AutoCalcFieldsOnNormalFieldsFormat" xml:space="preserve">
+    <value>The SetAutoCalcFields method should only be used with FlowFields or fields of type Blob. The field {0} is not a FlowField or of type Blob.</value>
+  </data>
+  <data name="Rule0042AutoCalcFieldsOnNormalFieldsDescription" xml:space="preserve">
+    <value>The SetAutoCalcFields method should only be used with FlowFields or fields of type Blob. The field {0} is not a FlowField or of type Blob.</value>
+  </data>
 </root>
