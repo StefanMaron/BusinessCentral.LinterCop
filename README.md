@@ -84,7 +84,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0040](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0040)|Explicitly set the `RunTrigger` parameter on build-in methods.|Info|
 |[LC0041](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0041)|Empty Captions should be `Locked`.|Info|
 |[LC0042](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0042)|`AutoCalcFields` should only be used for FlowFields or Blob fields.|Warning|
-
+|[LC0043](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0043)|Use `SecretText` type to protect credentials and sensitive textual values from being revealed.|Info|
 
 ## Configuration
 

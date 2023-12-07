@@ -211,6 +211,11 @@
       "id": "LC0042",
       "action": "Warning",
       "justification": "AutoCalcFields should only be used for FlowFields or Blob fields."
+    },
+    {
+      "id": "LC0043",
+      "action": "Info",
+      "justification": "Use SecretText type to protect credentials and sensitive textual values from being revealed."
     }
   ]
 }

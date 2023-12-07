@@ -483,4 +483,13 @@
   <data name="Rule0042AutoCalcFieldsOnNormalFieldsDescription" xml:space="preserve">
     <value>The SetAutoCalcFields method should only be used with FlowFields or fields of type Blob. The field {0} is not a FlowField or of type Blob.</value>
   </data>
+  <data name="Rule0043SecretTextTitle" xml:space="preserve">
+    <value>Use SecretText type to protect credentials and sensitive textual values from being revealed.</value>
+  </data>
+  <data name="Rule0043SecretTextFormat" xml:space="preserve">
+    <value>Use SecretText type to protect credentials and sensitive textual values from being revealed.</value>
+  </data>
+  <data name="Rule0043SecretTextDescription" xml:space="preserve">
+    <value>Use SecretText type to protect credentials and sensitive textual values from being revealed.</value>
+  </data>
 </root>
