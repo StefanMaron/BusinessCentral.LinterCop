@@ -28,12 +28,8 @@ namespace BusinessCentral.LinterCop.Design
 
             IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
+            if (operation.Instance?.GetSymbol().GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Record) return;
             if (!buildInMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant())) return;
-
-            // We need to verify that the method is called from Record variable to exclude cases like IsolatedStorage.Delete()
-            if (!ctx.Operation.DescendantsAndSelf().Where(x => x.GetSymbol() != null)
-                                                        .Where(x => x.Type.GetNavTypeKindSafe() == NavTypeKind.Record)
-                                                        .Any()) return;
 
             if (operation.Arguments.Where(args => SemanticFacts.IsSameName(args.Parameter.Name, "RunTrigger")).SingleOrDefault() == null)
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0040ExplicitlySetRunTrigger, ctx.Operation.Syntax.GetLocation()));
