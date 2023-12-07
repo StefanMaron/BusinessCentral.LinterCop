@@ -67,6 +67,7 @@ namespace BusinessCentral.LinterCop.Design
                     return SemanticFacts.IsSameName(argument.Value.ConstantValue.Value.ToString(), authorization);
                 case SyntaxKind.IdentifierName:
                     IOperation operand = ((IConversionExpression)argument.Value).Operand;
+                    if (operand.GetSymbol().OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Label) return false;
                     ILabelTypeSymbol label = (ILabelTypeSymbol)operand.GetSymbol().OriginalDefinition.GetTypeSymbol();
                     return SemanticFacts.IsSameName(label.GetLabelText(), authorization);
                 default:
