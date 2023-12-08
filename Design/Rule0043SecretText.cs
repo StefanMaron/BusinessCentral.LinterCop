@@ -36,11 +36,7 @@ namespace BusinessCentral.LinterCop.Design
             {
                 case MethodKind.BuiltInMethod:
                     if (!buildInMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant())) return;
-
-                    // We need to verify that the method is called from a HttpHeaders or HttpClient object
-                    if (!ctx.Operation.DescendantsAndSelf().Where(x => x.GetSymbol() != null)
-                                                                .Where(x => x.Type.GetNavTypeKindSafe() == NavTypeKind.HttpHeaders || x.Type.GetNavTypeKindSafe() == NavTypeKind.HttpClient)
-                                                                .Any()) return;
+                    if (!(operation.Instance?.GetSymbol().GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.HttpHeaders || operation.Instance?.GetSymbol().GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.HttpClient)) return;
                     break;
                 case MethodKind.Method:
                     if (operation.TargetMethod.ContainingType.GetNavTypeKindSafe() != NavTypeKind.Codeunit) return;
