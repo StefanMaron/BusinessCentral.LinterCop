@@ -457,13 +457,13 @@
     <value>Argument {0}: cannot convert from '{1}' to '{2}'.</value>
   </data>
   <data name="Rule0040ExplicitlySetRunTriggerTitle" xml:space="preserve">
-    <value>Explicitly set the RunTigger parameter on build-in methods.</value>
+    <value>Explicitly set the RunTrigger parameter on build-in methods.</value>
   </data>
   <data name="Rule0040ExplicitlySetRunTriggerFormat" xml:space="preserve">
-    <value>Explicitly set the RunTigger parameter on build-in methods.</value>
+    <value>Explicitly set the RunTrigger parameter on build-in methods.</value>
   </data>
   <data name="Rule0040ExplicitlySetRunTriggerDescription" xml:space="preserve">
-    <value>Explicitly set the RunTigger parameter on build-in methods.</value>
+    <value>Explicitly set the RunTrigger parameter on build-in methods.</value>
   </data>
   <data name="Rule0041EmptyCaptionLockedTitle" xml:space="preserve">
     <value>Empty captions should be locked.</value>
