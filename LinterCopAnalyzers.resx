@@ -492,4 +492,22 @@
   <data name="Rule0043SecretTextDescription" xml:space="preserve">
     <value>Use SecretText type to protect credentials and sensitive textual values from being revealed.</value>
   </data>
+  <data name="Rule0044AnalyzeTableExtensionTitle" xml:space="preserve">
+    <value>Conflicting ID, Name or Type with Table '{0}'</value>
+  </data>
+  <data name="Rule0044AnalyzeTableExtensionFormat" xml:space="preserve">
+    <value>Conflicting ID, Name or Type with Table '{0}'</value>
+  </data>
+  <data name="Rule0044AnalyzeTableExtensionDescription" xml:space="preserve">
+    <value>Conflicting ID, Name or Type with Table '{0}'</value>
+  </data>
+  <data name="Rule0044AnalyzeTransferFieldsTitle" xml:space="preserve">
+    <value>Records '{0}' and '{1}' have conflicting fields with the same ID</value>
+  </data>
+  <data name="Rule0044AnalyzeTransferFieldsFormat" xml:space="preserve">
+    <value>Records '{0}' and '{1}' have conflicting fields with the same ID</value>
+  </data>
+  <data name="Rule0044AnalyzeTransferFieldsDescription" xml:space="preserve">
+    <value>Records '{0}' and '{1}' have conflicting fields with the same ID</value>
+  </data>
 </root>
