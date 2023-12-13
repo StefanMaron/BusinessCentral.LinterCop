@@ -492,4 +492,49 @@
   <data name="Rule0043SecretTextDescription" xml:space="preserve">
     <value>Use SecretText type to protect credentials and sensitive textual values from being revealed.</value>
   </data>
+  <data name="Rule0044AnalyzeTableExtensionTitle" xml:space="preserve">
+    <value>Conflicting ID, Name or Type with Table '{0}'</value>
+  </data>
+  <data name="Rule0044AnalyzeTableExtensionFormat" xml:space="preserve">
+    <value>Conflicting ID, Name or Type with Table '{0}'</value>
+  </data>
+  <data name="Rule0044AnalyzeTableExtensionDescription" xml:space="preserve">
+    <value>Conflicting ID, Name or Type with Table '{0}'</value>
+  </data>
+  <data name="Rule0044AnalyzeTransferFieldsTitle" xml:space="preserve">
+    <value>Records '{0}' and '{1}' have conflicting fields with the same ID</value>
+  </data>
+  <data name="Rule0044AnalyzeTransferFieldsFormat" xml:space="preserve">
+    <value>Records '{0}' and '{1}' have conflicting fields with the same ID</value>
+  </data>
+  <data name="Rule0044AnalyzeTransferFieldsDescription" xml:space="preserve">
+    <value>Records '{0}' and '{1}' have conflicting fields with the same ID</value>
+  </data>
+  <data name="Rule0045ZeroEnumValueReservedForEmptyTitle" xml:space="preserve">
+    <value>Zero (0) Enum value should be reserved for Empty Value.</value>
+  </data>
+  <data name="Rule0045ZeroEnumValueReservedForEmptyFormat" xml:space="preserve">
+    <value>Zero (0) Enum value should be reserved for Empty Value.</value>
+  </data>
+  <data name="Rule0045ZeroEnumValueReservedForEmptyDescription" xml:space="preserve">
+    <value>Zero (0) Enum value should be reserved for Empty Value.</value>
+  </data>  
+  <data name="Rule0046TokLabelsLockedTitle" xml:space="preserve">
+    <value>Label with suffix Tok must be locked.</value>
+  </data>
+  <data name="Rule0046TokLabelsLockedFormat" xml:space="preserve">
+    <value>Label with suffix Tok must be locked.</value>
+  </data>
+  <data name="Rule0046TokLabelsLockedDescription" xml:space="preserve">
+    <value>Label with suffix Tok must be locked.</value>
+  </data>   
+  <data name="Rule0047LockedLabelsTokTitle" xml:space="preserve">
+    <value>Locked Label must have a suffix Tok.</value>
+  </data>
+  <data name="Rule0047LockedLabelsTokFormat" xml:space="preserve">
+    <value>Locked Label must have a suffix Tok.</value>
+  </data>
+  <data name="Rule0047LockedLabelsTokDescription" xml:space="preserve">
+    <value>Locked Label must have a suffix Tok.</value>
+  </data>
 </root>
