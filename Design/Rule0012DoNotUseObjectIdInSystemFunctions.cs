@@ -47,7 +47,7 @@ namespace BusinessCentral.LinterCop.Design
             catch (System.InvalidOperationException)
             { }
 
-            SyntaxKind[] AllowedParameterKinds = { SyntaxKind.MemberAccessExpression, SyntaxKind.IdentifierName, SyntaxKind.InvocationExpression };
+            SyntaxKind[] AllowedParameterKinds = { SyntaxKind.MemberAccessExpression, SyntaxKind.IdentifierName, SyntaxKind.InvocationExpression, SyntaxKind.QualifiedName };
 
             if (CurrentFunction != null && operation.TargetMethod.Parameters.Length != 0 && !AllowedParameterKinds.Contains(operation.Arguments[0].Syntax.Kind) && (operation.Arguments[0].Syntax.ToString() != "0" || !CurrentFunction.ZeroIDAllowed))
             {
