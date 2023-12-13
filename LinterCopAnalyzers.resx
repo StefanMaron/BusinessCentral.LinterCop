@@ -411,6 +411,32 @@
   <data name="Rule0034ExtensiblePropertyShouldAlwaysBeSetDescription" xml:space="preserve">
     <value>The property Extensible should be explicitly set for {0} objects.</value>
   </data>
+  <data name="Rule0040ZeroEnumValueReservedForEmptyTitle" xml:space="preserve">
+    <value>Zero (0) Enum value should be reserved for Empty Value.</value>
+  </data>
+  <data name="Rule0040ZeroEnumValueReservedForEmptyFormat" xml:space="preserve">
+    <value>Zero (0) Enum value should be reserved for Empty Value.</value>
+  </data>
+  <data name="Rule0040ZeroEnumValueReservedForEmptyDescription" xml:space="preserve">
+    <value>Zero (0) Enum value should be reserved for Empty Value.</value>
+  </data>  
+  <data name="Rule0041TokLabelsLockedTitle" xml:space="preserve">
+    <value>Label with suffix Tok must be locked.</value>
+  </data>
+  <data name="Rule0041TokLabelsLockedFormat" xml:space="preserve">
+    <value>Label with suffix Tok must be locked.</value>
+  </data>
+  <data name="Rule0041TokLabelsLockedDescription" xml:space="preserve">
+    <value>Label with suffix Tok must be locked.</value>
+  </data>   
+  <data name="Rule0041LockedLabelsTokTitle" xml:space="preserve">
+    <value>Locked Label must have a suffix Tok.</value>
+  </data>
+  <data name="Rule0041LockedLabelsTokFormat" xml:space="preserve">
+    <value>Locked Label must have a suffix Tok.</value>
+  </data>
+  <data name="Rule0041LockedLabelsTokDescription" xml:space="preserve">
+    <value>Locked Label must have a suffix Tok.</value>
   <data name="Rule0035ExplicitSetAllowInCustomizationsTitle" xml:space="preserve">
     <value>Explicitly set AllowInCustomizations for fields omitted on pages.</value>
   </data>
