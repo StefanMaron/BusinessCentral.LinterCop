@@ -718,7 +718,7 @@ namespace BusinessCentral.LinterCop.Design
 
             public void PopulateFields(FieldExtensionListSyntax fieldList)
             {
-                foreach (FieldSyntax field in fieldList.Fields)
+                foreach (FieldSyntax field in fieldList.Fields.Where(fld => fld.IsKind(SyntaxKind.Field)))
                 {
                     if (!FieldIsObsolete(field))
                         Fields.Add(new Field((int)field.No.Value, field.Name.Identifier.ToString().Replace("\"", ""), field.Type.ToString(), field.GetLocation(), this));
