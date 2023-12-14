@@ -4,6 +4,7 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 using System.Reflection;
 
+#nullable enable
 namespace BusinessCentral.LinterCop.Design
 {
     public delegate bool Filter(IGrouping<int, Rule0044AnalyzeTransferFields.Field> fieldGroup);
@@ -64,8 +65,10 @@ namespace BusinessCentral.LinterCop.Design
             if (records == null)
                 return;
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             Task<SyntaxNode> localVariablesTask = ctx.ContainingSymbol.DeclaringSyntaxReference.GetSyntaxAsync();
             Task<SyntaxNode> globalVariablesTask = ctx.ContainingSymbol.ContainingSymbol.DeclaringSyntaxReference.GetSyntaxAsync();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             List<VariableDeclarationBaseSyntax> variables = new List<VariableDeclarationBaseSyntax>();
 
@@ -152,7 +155,7 @@ namespace BusinessCentral.LinterCop.Design
                 if (field.Location == null)
                     continue;
 
-                foreach(Field fieldGroupValue in fieldGroupValues)
+                foreach (Field fieldGroupValue in fieldGroupValues)
                 {
                     if (fieldGroupValue.Equals(field))
                         continue;
@@ -166,25 +169,25 @@ namespace BusinessCentral.LinterCop.Design
         {
             Type nodeType = node.GetType();
 
-            if(nodeType == typeof(TableSyntax))
+            if (nodeType == typeof(TableSyntax))
             {
                 TableSyntax tableSyntax = (TableSyntax)node;
 
                 return tableSyntax.Name.Identifier.ToString().Replace("\"", "");
             }
 
-            if(nodeType == typeof(TableExtensionSyntax))
+            if (nodeType == typeof(TableExtensionSyntax))
             {
                 TableExtensionSyntax tableExtensionSyntax = (TableExtensionSyntax)node;
 
                 return GetIdentifierName(tableExtensionSyntax.BaseObject.Identifier);
             }
 
-            if(nodeType == typeof(PageSyntax))
+            if (nodeType == typeof(PageSyntax))
             {
                 PageSyntax pageSyntax = (PageSyntax)node;
 
-                foreach(PropertySyntaxOrEmpty property in  pageSyntax.PropertyList.Properties)
+                foreach (PropertySyntaxOrEmpty property in pageSyntax.PropertyList.Properties)
                 {
                     if (property.GetType() != typeof(PropertySyntax))
                         continue;
@@ -197,7 +200,7 @@ namespace BusinessCentral.LinterCop.Design
                     if (propertySyntax.Value.GetType() != typeof(ObjectReferencePropertyValueSyntax))
                         continue;
 
-                    ObjectReferencePropertyValueSyntax objectReferencePropertyValueSyntax = (ObjectReferencePropertyValueSyntax) propertySyntax.Value;
+                    ObjectReferencePropertyValueSyntax objectReferencePropertyValueSyntax = (ObjectReferencePropertyValueSyntax)propertySyntax.Value;
 
                     return GetIdentifierName(objectReferencePropertyValueSyntax.ObjectNameOrId.Identifier);
                 }
@@ -205,9 +208,9 @@ namespace BusinessCentral.LinterCop.Design
                 return null;
             }
 
-            if(nodeType == typeof(PageExtensionSyntax))
+            if (nodeType == typeof(PageExtensionSyntax))
             {
-                PageExtensionSyntax pageExtensionSyntax = (PageExtensionSyntax) node;
+                PageExtensionSyntax pageExtensionSyntax = (PageExtensionSyntax)node;
 
                 string? pageExtensionName = GetIdentifierName(pageExtensionSyntax.BaseObject.Identifier);
 
@@ -242,10 +245,10 @@ namespace BusinessCentral.LinterCop.Design
                 if (!memberAccessExpression.Name.ToString().Equals("TransferFields"))
                     return null;
 
-                return new Tuple<string, string>(memberAccessExpression.Expression.ToString(), invocationExpression.ArgumentList.Arguments[0].ToString()); 
+                return new Tuple<string, string>(memberAccessExpression.Expression.ToString(), invocationExpression.ArgumentList.Arguments[0].ToString());
             }
-                    
-            if(invocationExpression.Expression.GetType() ==  typeof(IdentifierNameSyntax))
+
+            if (invocationExpression.Expression.GetType() == typeof(IdentifierNameSyntax))
             {
                 IdentifierNameSyntax identifierNameSyntax = (IdentifierNameSyntax)invocationExpression.Expression;
 
@@ -264,12 +267,12 @@ namespace BusinessCentral.LinterCop.Design
 
             foreach (SyntaxTree syntaxTree in compilation.SyntaxTrees)
             {
-                foreach(SyntaxNode node in syntaxTree.GetRoot().ChildNodes())
+                foreach (SyntaxNode node in syntaxTree.GetRoot().ChildNodes())
                 {
                     if (node.GetType() != typeof(TableExtensionSyntax))
                         continue;
 
-                    TableExtensionSyntax tableExtension = (TableExtensionSyntax) node;
+                    TableExtensionSyntax tableExtension = (TableExtensionSyntax)node;
 
                     string? extendedTable = GetIdentifierName(tableExtension.BaseObject.Identifier);
 
@@ -293,13 +296,13 @@ namespace BusinessCentral.LinterCop.Design
 
             Table table = new Table(tableName);
 
-            if(tableSymbol != null)
+            if (tableSymbol != null)
             {
                 SyntaxReference? syntaxReference = tableSymbol.DeclaringSyntaxReference;
 
                 if (syntaxReference != null)
                 {
-                    TableSyntax tableSyntax = (TableSyntax) syntaxReference.GetSyntax();
+                    TableSyntax tableSyntax = (TableSyntax)syntaxReference.GetSyntax();
 
                     table.PopulateFields(tableSyntax.Fields);
                 }
@@ -366,7 +369,7 @@ namespace BusinessCentral.LinterCop.Design
 
                     method = type.GetMethod("get_Name", BindingFlags.Public | BindingFlags.Instance);
 
-                    return (string) method.Invoke(obj, null);
+                    return (string)method.Invoke(obj, null);
                 }
             }
 
@@ -386,7 +389,8 @@ namespace BusinessCentral.LinterCop.Design
             string name = fieldGroup.First().Name;
             string type = fieldGroup.First().Type;
 
-            foreach(Field field in fieldGroup) {
+            foreach (Field field in fieldGroup)
+            {
                 if (!(name.Equals(field.Name) && type.Equals(field.Type)))
                     return true;
             }
@@ -399,13 +403,13 @@ namespace BusinessCentral.LinterCop.Design
             if (variable == null)
                 return null;
 
-            SubtypedDataTypeSyntax subtypedData = (SubtypedDataTypeSyntax) variable.Type.DataType;
+            SubtypedDataTypeSyntax subtypedData = (SubtypedDataTypeSyntax)variable.Type.DataType;
             return GetIdentifierName(subtypedData.Subtype.Identifier);
         }
 
         private List<VariableDeclarationBaseSyntax> FindLocalVariables(SyntaxNode node)
         {
-            VarSectionSyntax varSection = (VarSectionSyntax) node.DescendantNodes().FirstOrDefault(x => x.Kind == SyntaxKind.VarSection);
+            VarSectionSyntax varSection = (VarSectionSyntax)node.DescendantNodes().FirstOrDefault(x => x.Kind == SyntaxKind.VarSection);
 
             if (varSection == null)
                 return new List<VariableDeclarationBaseSyntax>();
@@ -448,7 +452,7 @@ namespace BusinessCentral.LinterCop.Design
                 new Tuple<string, string>("Item Reference", "Item Cross Reference"),
                 new Tuple<string, string>("Price List Line", "Price Worksheet Line"),
                 new Tuple<string, string>("Copy Item Buffer", "Copy Item Parameters"),
-                new Tuple<string, string>("Item Templ.", "Item"),                                
+                new Tuple<string, string>("Item Templ.", "Item"),
 
                 new Tuple<string, string>("Whse. Item Tracking Line", "Tracking Specification"),
                 new Tuple<string, string>("Whse. Item Tracking Line", "Reservation Entry"),
@@ -459,7 +463,7 @@ namespace BusinessCentral.LinterCop.Design
                 new Tuple<string, string>("Detailed CV Ledg. Entry Buffer", "Detailed Employee Ledger Entry"),
                 new Tuple<string, string>("CV Ledger Entry Buffer", "Cust. Ledger Entry"),
                 new Tuple<string, string>("Vendor Ledger Entry", "Vendor Ledger Entry Buffer"),
-                new Tuple<string, string>("Vendor Payment Buffer", "Payment Buffer"),                
+                new Tuple<string, string>("Vendor Payment Buffer", "Payment Buffer"),
 
                 new Tuple<string, string>("Tracking Specification", "Reservation Entry"),
                 new Tuple<string, string>("Assembly Line", "Posted Assembly Line"),
@@ -524,7 +528,7 @@ namespace BusinessCentral.LinterCop.Design
                 new Tuple<string, string>("VAT Business Posting Group", "Tax Area Buffer"),
                 new Tuple<string, string>("Tax Area", "Tax Area Buffer"),
                 new Tuple<string, string>("VAT Product Posting Group", "Tax Group Buffer"),
-                new Tuple<string, string>("Tax Group", "Tax Group Buffer"),                
+                new Tuple<string, string>("Tax Group", "Tax Group Buffer"),
 
                 new Tuple<string, string>("Phys. Invt. Order Header", "Pstd. Phys. Invt. Order Hdr"),
                 new Tuple<string, string>("Pstd. Phys. Invt. Order Line", "Phys. Invt. Comment Line"),
@@ -535,13 +539,13 @@ namespace BusinessCentral.LinterCop.Design
                 new Tuple<string, string>("Invt. Document Header", "Invt. Receipt Header"),
                 new Tuple<string, string>("Invt. Document Header", "Invt. Shipment Header"),
                 new Tuple<string, string>("Invt. Document Line", "Invt. Receipt Line"),
-                new Tuple<string, string>("Invt. Document Line", "Invt. Shipment Line"),                
+                new Tuple<string, string>("Invt. Document Line", "Invt. Shipment Line"),
 
                 new Tuple<string, string>("Prod. Order Rtng Comment Line", "Routing Comment Line"),
                 new Tuple<string, string>("Prod. Order Routing Personnel", "Routing Personnel"),
                 new Tuple<string, string>("Prod. Order Rtng Qlty Meas.", "Routing Quality Measure"),
                 new Tuple<string, string>("Prod. Order Routing Tool", "Routing Tool"),
-                new Tuple<string, string>("Prod. Order Comp. Cmt Line", "Production BOM Comment Line"),                                                
+                new Tuple<string, string>("Prod. Order Comp. Cmt Line", "Production BOM Comment Line"),
 
                 new Tuple<string, string>("Warehouse Activity Header", "Registered Whse. Activity Hdr."),
                 new Tuple<string, string>("Warehouse Activity Header", "Registered Invt. Movement Hdr."),
@@ -555,7 +559,7 @@ namespace BusinessCentral.LinterCop.Design
 
                 new Tuple<string, string>("Posted Whse. Receipt Header", "Warehouse Receipt Header"),
                 new Tuple<string, string>("Posted Whse. Shipment Line", "Warehouse Shipment Line"),
-                new Tuple<string, string>("Whse. Item Entry Relation", "Item Entry Relation"),                
+                new Tuple<string, string>("Whse. Item Entry Relation", "Item Entry Relation"),
 
                 new Tuple<string, string>("Time Sheet Header", "Time Sheet Header Archive"),
                 new Tuple<string, string>("Time Sheet Line", "Time Sheet Line Archive"),
@@ -571,11 +575,11 @@ namespace BusinessCentral.LinterCop.Design
                 new Tuple<string, string>("Service Cr.Memo Header", "Service Header"),
                 new Tuple<string, string>("Service Cr.Memo Line", "Service Line"),
                 new Tuple<string, string>("Filed Service Contract Header", "Service Contract Header"),
-                new Tuple<string, string>("Filed Contract Line", "Service Contract Line"),                
+                new Tuple<string, string>("Filed Contract Line", "Service Contract Line"),
 
                 new Tuple<string, string>("Workflow Step Instance Archive", "Workflow Step Instance"),
                 new Tuple<string, string>("Workflow Record Change Archive", "Workflow - Record Change"),
-                new Tuple<string, string>("Workflow Step Argument Archive", "Workflow Step Argument"),    
+                new Tuple<string, string>("Workflow Step Argument Archive", "Workflow Step Argument"),
 
                 new Tuple<string, string>("Purchase Header", "Purch. Inv. Entity Aggregate"),
                 new Tuple<string, string>("Purch. Inv. Header", "Purch. Inv. Entity Aggregate"),
@@ -595,7 +599,7 @@ namespace BusinessCentral.LinterCop.Design
                 new Tuple<string, string>("Sales Cr. Memo Entity Buffer", "Sales Header"),
                 new Tuple<string, string>("Sales Cr. Memo Entity Buffer", "Sales Cr.Memo Header"),
                 new Tuple<string, string>("Sales Order Entity Buffer", "Sales Header"),
-                new Tuple<string, string>("Sales Quote Entity Buffer", "Sales Header"),                                            
+                new Tuple<string, string>("Sales Quote Entity Buffer", "Sales Header"),
 
                 new Tuple<string, string>("IC Outbox Sales Header", "Sales Header"),
                 new Tuple<string, string>("IC Outbox Sales Line", "Sales Line"),
@@ -632,16 +636,16 @@ namespace BusinessCentral.LinterCop.Design
                 new Tuple<string, string>("IC Inbox Sales Line", "Buffer IC Inbox Sales Line"),
                 new Tuple<string, string>("IC Inbox/Outbox Jnl. Line Dim.", "Buffer IC InOut Jnl. Line Dim."),
                 new Tuple<string, string>("IC Document Dimension", "Buffer IC Document Dimension"),
-                new Tuple<string, string>("IC Comment Line", "Buffer IC Comment Line"), 
+                new Tuple<string, string>("IC Comment Line", "Buffer IC Comment Line"),
 
                 new Tuple<string, string>("Config. Setup", "Company Information"),
                 new Tuple<string, string>("Object Options", "Report Settings"),
-                
-                
+
+
                 new Tuple<string, string>("Analysis by Dim. Parameters", "Analysis by Dim. User Param."),
                 new Tuple<string, string>("G/L Account (Analysis View)", "G/L Account"),
                 new Tuple<string, string>("Acc. Schedule Line", "Acc. Sched. KPI Buffer"),
-                new Tuple<string, string>("G/L Entry Posting Preview", "G/L Entry"),                
+                new Tuple<string, string>("G/L Entry Posting Preview", "G/L Entry"),
 
                 new Tuple<string, string>("Sales Invoice Header", "O365 Sales Document"),
                 new Tuple<string, string>("Sales Header", "O365 Sales Document"),
@@ -649,7 +653,7 @@ namespace BusinessCentral.LinterCop.Design
                 new Tuple<string, string>("Incoming Document Attachment", "Inc. Doc. Attachment Overview"),
                 new Tuple<string, string>("Config. Field Mapping", "Config. Field Map"),
 
-                new Tuple<string, string>("Onboarding Signal", "Onboarding Signal Buffer")                               
+                new Tuple<string, string>("Onboarding Signal", "Onboarding Signal Buffer")
             };
         }
 
@@ -716,7 +720,7 @@ namespace BusinessCentral.LinterCop.Design
             {
                 foreach (FieldSyntax field in fieldList.Fields)
                 {
-                    if(!FieldIsObsolete(field))
+                    if (!FieldIsObsolete(field))
                         Fields.Add(new Field((int)field.No.Value, field.Name.Identifier.ToString().Replace("\"", ""), field.Type.ToString(), field.GetLocation(), this));
                 }
             }
@@ -726,14 +730,14 @@ namespace BusinessCentral.LinterCop.Design
 
                 foreach (FieldSyntax field in fieldList.Fields)
                 {
-                    if(!FieldIsObsolete(field))
+                    if (!FieldIsObsolete(field))
                         Fields.Add(new Field((int)field.No.Value, field.Name.Identifier.ToString().Replace("\"", ""), field.Type.ToString(), field.GetLocation(), this));
                 }
             }
 
             private bool FieldIsObsolete(FieldSyntax field)
             {
-                foreach(PropertySyntax property in field.PropertyList.Properties)
+                foreach (PropertySyntax property in field.PropertyList.Properties)
                 {
                     if (!property.Name.Identifier.ToString().Equals("ObsoleteState"))
                         continue;
