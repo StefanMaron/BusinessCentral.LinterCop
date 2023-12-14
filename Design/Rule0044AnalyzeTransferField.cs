@@ -718,6 +718,8 @@ namespace BusinessCentral.LinterCop.Design
 
             public void PopulateFields(FieldExtensionListSyntax fieldList)
             {
+                if (fieldList == null) return;
+
                 foreach (FieldSyntax field in fieldList.Fields.Where(fld => fld.IsKind(SyntaxKind.Field)))
                 {
                     if (!FieldIsObsolete(field))
@@ -727,6 +729,7 @@ namespace BusinessCentral.LinterCop.Design
 
             public void PopulateFields(FieldListSyntax fieldList)
             {
+                if (fieldList == null) return;
 
                 foreach (FieldSyntax field in fieldList.Fields)
                 {
