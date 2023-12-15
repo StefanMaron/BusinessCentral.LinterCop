@@ -706,10 +706,16 @@ namespace BusinessCentral.LinterCop.Design
                     PropertyInfo idprop = type.GetProperty("Id", BindingFlags.Instance | BindingFlags.Public);
                     PropertyInfo nameprop = type.GetProperty("Name", BindingFlags.Instance | BindingFlags.Public);
                     PropertyInfo typeprop = type.GetProperty("Type", BindingFlags.Instance | BindingFlags.Public);
+                    PropertyInfo namespaceProp = type.GetProperty("ContainingNamespace", BindingFlags.Instance | BindingFlags.Public);
 
                     int id = (int)idprop.GetValue(field);
                     string name = (string)nameprop.GetValue(field);
                     string objtype = typeprop.GetValue(field).ToString();
+                    string objNamespace = namespaceProp.GetValue(field).ToString();
+
+                    int namespaceIndex = objtype.IndexOf(objNamespace + '.');
+                    if (namespaceIndex != -1)
+                        objtype = objtype.Remove(namespaceIndex, objNamespace.Length + 1);
 
                     if (id < 2000000000)
                         Fields.Add(new Field(id, name, objtype, null, this));
