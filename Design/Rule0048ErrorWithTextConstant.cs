@@ -22,11 +22,12 @@ namespace BusinessCentral.LinterCop.Design
             if (!SemanticFacts.IsSameName(operation.TargetMethod.Name, "Error")) return;
             if (operation.Arguments.Length == 0) return;
 
-            if (operation.Arguments[0].Syntax.Kind != SyntaxKind.IdentifierName) return;
             if (operation.Arguments[0].Value.Type.GetNavTypeKindSafe() == NavTypeKind.ErrorInfo) return;
-
-            IOperation operand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
-            if (operand.GetSymbol().OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Label) return;
+            if (operation.Arguments[0].Syntax.Kind == SyntaxKind.IdentifierName)
+            {
+                IOperation operand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
+                if (operand.GetSymbol().OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Label) return;
+            }
 
             ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0048ErrorWithTextConstant, ctx.Operation.Syntax.GetLocation()));
         }
