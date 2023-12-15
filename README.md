@@ -89,6 +89,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0045](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0045)|Zero (0) `Enum` value should be reserved for Empty Value.|Info|
 |[LC0046](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0046)|`Label` with suffix Tok must be locked.|Info|
 |[LC0047](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0047)|Locked `Label` must have a suffix Tok.|Info|
+|[LC0048](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0048)|Use Error with a `ErrorInfo` or `Label` variable to improve telemetry details.|Info|
 
 
 ## Configuration

@@ -236,6 +236,11 @@
       "id": "LC0047",
       "action": "Info",
       "justification": "Locked Label must have a suffix Tok."
+    },
+    {
+      "id": "LC0048",
+      "action": "Info",
+      "justification": "Use Error with a ErrorInfo or Label variable to improve telemetry details."
     }
   ]
 }
