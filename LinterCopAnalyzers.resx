@@ -537,4 +537,13 @@
   <data name="Rule0047LockedLabelsTokDescription" xml:space="preserve">
     <value>Locked Label must have a suffix Tok.</value>
   </data>
+  <data name="Rule0048ErrorWithTextConstantTitle" xml:space="preserve">
+    <value>Use Error with a ErrorInfo or Label variable to improve telemetry details.</value>
+  </data>
+  <data name="Rule0048ErrorWithTextConstantFormat" xml:space="preserve">
+    <value>Use Error with a ErrorInfo or Label variable to improve telemetry details.</value>
+  </data>
+  <data name="Rule0048ErrorWithTextConstantDescription" xml:space="preserve">
+    <value>Use Error with a ErrorInfo or Label variable to improve telemetry details.</value>
+  </data>
 </root>
