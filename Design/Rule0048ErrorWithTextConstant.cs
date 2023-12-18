@@ -25,14 +25,14 @@ namespace BusinessCentral.LinterCop.Design
 
             if (operation.Arguments[0].Value.Type.GetNavTypeKindSafe() == NavTypeKind.ErrorInfo) return;
 
-            switch(operation.Arguments[0].Syntax.Kind)
+            switch (operation.Arguments[0].Syntax.Kind)
             {
                 case SyntaxKind.IdentifierName:
                     IOperation operand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
                     if (operand.GetSymbol().OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Label) return;
                     break;
                 case SyntaxKind.LiteralExpression:
-                    if(operation.Arguments[0].Syntax.GetIdentifierOrLiteralValue() == "") return;
+                    if (operation.Arguments[0].Syntax.GetIdentifierOrLiteralValue() == "") return;
                     break;
             }
 
