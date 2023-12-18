@@ -746,7 +746,7 @@ namespace BusinessCentral.LinterCop.Design
 
             private bool FieldIsObsolete(FieldSyntax field)
             {
-                foreach (PropertySyntax property in field.PropertyList.Properties)
+                foreach (PropertySyntax property in field.PropertyList.Properties.Where(prop => !prop.IsKind(SyntaxKind.EmptyProperty)))
                 {
                     if (!property.Name.Identifier.ToString().Equals("ObsoleteState"))
                         continue;
