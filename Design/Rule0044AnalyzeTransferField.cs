@@ -58,6 +58,10 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.Operation.Syntax.GetType() != typeof(InvocationExpressionSyntax))
                 return;
 
+            IArgument? skipFieldsNotMatchingTypeParam = ((IInvocationExpression)ctx.Operation).Arguments.Where(args => SemanticFacts.IsSameName(args.Parameter.Name, "SkipFieldsNotMatchingType")).SingleOrDefault() as IArgument;
+            if (skipFieldsNotMatchingTypeParam != null)
+                if (skipFieldsNotMatchingTypeParam.Value.ConstantValue.HasValue && (bool)skipFieldsNotMatchingTypeParam.Value.ConstantValue.Value) return;
+
             InvocationExpressionSyntax invocationExpression = (InvocationExpressionSyntax)ctx.Operation.Syntax;
 
             Tuple<string, string>? records = GetInvokingRecordNames(invocationExpression);
