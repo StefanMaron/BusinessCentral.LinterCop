@@ -219,7 +219,7 @@
     },
     {
       "id": "LC0044",
-      "action": "Info",
+      "action": "Warning",
       "justification": "TransferFields consistency between records."
     },
     {
