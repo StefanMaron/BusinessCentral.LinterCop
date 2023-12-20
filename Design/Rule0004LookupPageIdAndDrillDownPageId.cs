@@ -10,14 +10,15 @@ namespace BusinessCentral.LinterCop.Design
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0004LookupPageIdAndDrillDownPageId);
 
         public override void Initialize(AnalysisContext context)
-            => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForLookupPageIdAndDrilldownPageId), SymbolKind.Page);
+            => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForLookupPageIdAndDrillDownPageId), SymbolKind.Page);
 
-        private void CheckForLookupPageIdAndDrilldownPageId(SymbolAnalysisContext context)
+        private void CheckForLookupPageIdAndDrillDownPageId(SymbolAnalysisContext context)
         {
             if (context.Symbol.IsObsoletePending || context.Symbol.IsObsoleteRemoved) return;
             IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)context.Symbol;
-            if (pageTypeSymbol.PageType == PageTypeKind.List && pageTypeSymbol.RelatedTable != null)
-                CheckTable(pageTypeSymbol.RelatedTable, ref context);
+            if (pageTypeSymbol.PageType != PageTypeKind.List || pageTypeSymbol.RelatedTable == null) return;
+            if (pageTypeSymbol.RelatedTable.ContainingModule != context.Symbol.ContainingModule) return;
+            CheckTable(pageTypeSymbol.RelatedTable, ref context);
         }
 
         private void CheckTable(ITableTypeSymbol table, ref SymbolAnalysisContext context)

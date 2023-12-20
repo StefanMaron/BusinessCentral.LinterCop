@@ -85,6 +85,12 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0041](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0041)|Empty Captions should be `Locked`.|Info|
 |[LC0042](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0042)|`AutoCalcFields` should only be used for FlowFields or Blob fields.|Warning|
 |[LC0043](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0043)|Use `SecretText` type to protect credentials and sensitive textual values from being revealed.|Info|
+|[LC0044](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0044)|TransferFields consistency between records.|Warning|
+|[LC0045](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0045)|Zero (0) `Enum` value should be reserved for Empty Value.|Info|
+|[LC0046](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0046)|`Label` with suffix Tok must be locked.|Info|
+|[LC0047](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0047)|Locked `Label` must have a suffix Tok.|Info|
+|[LC0048](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0048)|Use Error with a `ErrorInfo` or `Label` variable to improve telemetry details.|Info|
+
 
 ## Configuration
 

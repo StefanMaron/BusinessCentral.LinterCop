@@ -216,6 +216,31 @@
       "id": "LC0043",
       "action": "Info",
       "justification": "Use SecretText type to protect credentials and sensitive textual values from being revealed."
+    },
+    {
+      "id": "LC0044",
+      "action": "Warning",
+      "justification": "TransferFields consistency between records."
+    },
+    {
+      "id": "LC0045",
+      "action": "Info",
+      "justification": "Zero (0) Enum value should be reserved for Empty Value."
+    },
+    {
+      "id": "LC0046",
+      "action": "Info",
+      "justification": "Label with suffix Tok must be locked."
+    },
+    {
+      "id": "LC0047",
+      "action": "Info",
+      "justification": "Locked Label must have a suffix Tok."
+    },
+    {
+      "id": "LC0048",
+      "action": "Info",
+      "justification": "Use Error with a ErrorInfo or Label variable to improve telemetry details."
     }
   ]
 }

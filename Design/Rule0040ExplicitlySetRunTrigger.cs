@@ -28,8 +28,8 @@ namespace BusinessCentral.LinterCop.Design
 
             IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
-            if (!(operation.Instance?.GetSymbol().GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Record || operation.Instance?.GetSymbol().GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.RecordRef)) return;
             if (!buildInMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant())) return;
+            if (!(operation.Instance?.GetSymbol().GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Record || operation.Instance?.GetSymbol().GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.RecordRef)) return;
 
             if (operation.Arguments.Where(args => SemanticFacts.IsSameName(args.Parameter.Name, "RunTrigger")).SingleOrDefault() == null)
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0040ExplicitlySetRunTrigger, ctx.Operation.Syntax.GetLocation()));
