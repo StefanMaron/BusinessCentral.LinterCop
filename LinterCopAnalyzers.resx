@@ -205,7 +205,7 @@
     <value>Cyclomatic complexity and Maintainability index</value>
   </data>
   <data name="Rule0009CodeMetricsInfoFormat" xml:space="preserve">
-    <value>Cyclomatic complexity: {0}/({1}), Maintainability index: {2}/({3})</value>
+    <value>Cyclomatic complexity: {0} (threshold &gt;={1}), Maintainability index: {2} of 100 (threshold &lt;={3})</value>
   </data>
   <data name="Rule0009CodeMetricsInfoTitle" xml:space="preserve">
     <value>Cyclomatic complexity and Maintainability index</value>
