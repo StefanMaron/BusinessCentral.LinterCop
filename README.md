@@ -67,7 +67,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0023](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0023)|Always provide fieldsgroups `DropDown` and `Brick` on tables.|Info|
 |[LC0024](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0024)|Procedure declaration should not end with semicolon.|Info|
 |[LC0025](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0025)|Procedure must be either local or internal.|Info|
-|[LC0026](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0026)|Guidelines for ToolTip text.|Info|
+|[LC0026](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0026)|ToolTip must end with a dot.|Info|
 |[LC0027](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0027)|Utilize the `Page Management` codeunit for launching page.|Info|
 |[LC0028](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0028)|Event subscriber arguments now use identifier syntax instead of string literals.|Info|
 |[LC0029](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0029)|Use `CompareDateTime` method in `Type Helper` codeunit for DateTime variable comparisons.|Info|
@@ -85,7 +85,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0041](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0041)|Empty Captions should be `Locked`.|Info|
 |[LC0042](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0042)|`AutoCalcFields` should only be used for FlowFields or Blob fields.|Warning|
 |[LC0043](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0043)|Use `SecretText` type to protect credentials and sensitive textual values from being revealed.|Info|
-|[LC0044](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0044)|TransferFields consistency between records.|Warning|
+|[LC0044](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0044)|Tables coupled with `TransferFields` must have matching fields.|Warning|
 |[LC0045](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0045)|Zero (0) `Enum` value should be reserved for Empty Value.|Info|
 |[LC0046](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0046)|`Label` with suffix Tok must be locked.|Info|
 |[LC0047](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0047)|Locked `Label` must have a suffix Tok.|Info|
