@@ -220,7 +220,7 @@
     {
       "id": "LC0044",
       "action": "Warning",
-      "justification": "TransferFields consistency between records."
+      "justification": "Tables coupled with TransferFields must have matching fields."
     },
     {
       "id": "LC0045",
