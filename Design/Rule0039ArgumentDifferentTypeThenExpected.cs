@@ -8,7 +8,7 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0039ArgumentDifferentTypeThenExpected : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, DiagnosticDescriptors.Rule0000ErrorInRule);
 
         private static readonly List<PropertyKind> referencePageProviders = new List<PropertyKind>
         {
@@ -54,32 +54,39 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeSetRecordArgument(OperationAnalysisContext ctx)
         {
-            if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-            if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
+            try
+            {
+                if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+                if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
 
-            IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
-            if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
+                IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
+                if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
 
-            if (operation.TargetMethod.ContainingType.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Page) return;
-            string[] procedureNames = { "GetRecord", "SetRecord", "SetSelectionFilter", "SetTableView" };
-            if (!procedureNames.Contains(operation.TargetMethod.Name)) return;
-            if (operation.Arguments.Count() != 1) return;
+                if (operation.TargetMethod.ContainingType.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Page) return;
+                string[] procedureNames = { "GetRecord", "SetRecord", "SetSelectionFilter", "SetTableView" };
+                if (!procedureNames.Contains(operation.TargetMethod.Name)) return;
+                if (operation.Arguments.Count() != 1) return;
 
-            if (operation.Arguments[0].Syntax.Kind != SyntaxKind.IdentifierName || operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression) return;
+                if (operation.Arguments[0].Syntax.Kind != SyntaxKind.IdentifierName || operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression) return;
 
-            IOperation pageReference = ctx.Operation.DescendantsAndSelf().Where(x => x.GetSymbol() != null)
-                                                        .Where(x => x.Type.GetNavTypeKindSafe() == NavTypeKind.Page)
-                                                        .SingleOrDefault();
-            if (pageReference == null) return;
-            IVariableSymbol variableSymbol = (IVariableSymbol)pageReference.GetSymbol().OriginalDefinition;
-            IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)variableSymbol.GetTypeSymbol().OriginalDefinition;
-            ITableTypeSymbol pageSourceTable = pageTypeSymbol.RelatedTable;
+                IOperation pageReference = ctx.Operation.DescendantsAndSelf().Where(x => x.GetSymbol() != null)
+                                                            .Where(x => x.Type.GetNavTypeKindSafe() == NavTypeKind.Page)
+                                                            .SingleOrDefault();
+                if (pageReference == null) return;
+                IVariableSymbol variableSymbol = (IVariableSymbol)pageReference.GetSymbol().OriginalDefinition;
+                IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)variableSymbol.GetTypeSymbol().OriginalDefinition;
+                ITableTypeSymbol pageSourceTable = pageTypeSymbol.RelatedTable;
 
-            IOperation operand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
-            ITableTypeSymbol recordArgument = ((IRecordTypeSymbol)operand.GetSymbol().GetTypeSymbol()).BaseTable;
+                IOperation operand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
+                ITableTypeSymbol recordArgument = ((IRecordTypeSymbol)operand.GetSymbol().GetTypeSymbol()).BaseTable;
 
-            if (!AreTheSameNavObjects(recordArgument, pageSourceTable))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, ctx.Operation.Syntax.GetLocation(), new object[] { 1, operand.GetSymbol().GetTypeSymbol().ToString(), pageSourceTable.GetNavTypeKindSafe() + " \"" + pageSourceTable.Name + "\"" }));
+                if (!AreTheSameNavObjects(recordArgument, pageSourceTable))
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, ctx.Operation.Syntax.GetLocation(), new object[] { 1, operand.GetSymbol().GetTypeSymbol().ToString(), pageSourceTable.GetNavTypeKindSafe() + " \"" + pageSourceTable.Name + "\"" }));
+            }
+            catch (NullReferenceException)
+            {
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0039", "NullReferenceException" }));
+            }
         }
 
         private void AnalyzeTableReferencePageProvider(SymbolAnalysisContext ctx)
