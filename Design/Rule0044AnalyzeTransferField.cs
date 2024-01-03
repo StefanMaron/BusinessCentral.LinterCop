@@ -58,6 +58,9 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.Operation.Syntax.GetType() != typeof(InvocationExpressionSyntax))
                 return;
 
+            if (((IInvocationExpression)ctx.Operation).TargetMethod.MethodKind != MethodKind.BuiltInMethod)
+                return;
+
             InvocationExpressionSyntax invocationExpression = (InvocationExpressionSyntax)ctx.Operation.Syntax;
 
             Tuple<string, string>? records = GetInvokingRecordNames(invocationExpression);
