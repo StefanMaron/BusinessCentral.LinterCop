@@ -402,9 +402,9 @@ namespace BusinessCentral.LinterCop.Design
 
         private string? GetObjectName(VariableDeclarationBaseSyntax variable)
         {
-            if (variable == null)
+            if (variable == null || variable.Type.DataType.GetType() == typeof(SimpleNamedDataTypeSyntax))
                 return null;
-
+                
             SubtypedDataTypeSyntax subtypedData = (SubtypedDataTypeSyntax)variable.Type.DataType;
             return GetIdentifierName(subtypedData.Subtype.Identifier);
         }
