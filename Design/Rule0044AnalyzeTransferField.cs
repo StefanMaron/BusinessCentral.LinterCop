@@ -404,7 +404,7 @@ namespace BusinessCentral.LinterCop.Design
         {
             if (variable == null || variable.Type.DataType.GetType() == typeof(SimpleNamedDataTypeSyntax))
                 return null;
-                
+
             SubtypedDataTypeSyntax subtypedData = (SubtypedDataTypeSyntax)variable.Type.DataType;
             return GetIdentifierName(subtypedData.Subtype.Identifier);
         }
