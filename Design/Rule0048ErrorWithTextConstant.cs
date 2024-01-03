@@ -9,34 +9,41 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0048ErrorWithTextConstant : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0048ErrorWithTextConstant);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0048ErrorWithTextConstant, DiagnosticDescriptors.Rule0000ErrorInRule);
 
         public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeErrorMethod), OperationKind.InvocationExpression);
 
         private void AnalyzeErrorMethod(OperationAnalysisContext ctx)
         {
-            if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-            if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
-
-            IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
-            if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
-            if (!SemanticFacts.IsSameName(operation.TargetMethod.Name, "Error")) return;
-            if (operation.Arguments.Length == 0) return;
-
-            if (operation.Arguments[0].Value.Type.GetNavTypeKindSafe() == NavTypeKind.ErrorInfo) return;
-
-            switch (operation.Arguments[0].Syntax.Kind)
+            try
             {
-                case SyntaxKind.IdentifierName:
-                    IOperation operand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
-                    if (operand.GetSymbol().OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Label) return;
-                    break;
-                case SyntaxKind.LiteralExpression:
-                    if (operation.Arguments[0].Syntax.GetIdentifierOrLiteralValue() == "") return;
-                    break;
-            }
+                if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+                if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
 
-            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0048ErrorWithTextConstant, ctx.Operation.Syntax.GetLocation()));
+                IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
+                if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
+                if (!SemanticFacts.IsSameName(operation.TargetMethod.Name, "Error")) return;
+                if (operation.Arguments.Length == 0) return;
+
+                if (operation.Arguments[0].Value.Type.GetNavTypeKindSafe() == NavTypeKind.ErrorInfo) return;
+
+                switch (operation.Arguments[0].Syntax.Kind)
+                {
+                    case SyntaxKind.IdentifierName:
+                        IOperation operand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
+                        if (operand.GetSymbol().OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Label) return;
+                        break;
+                    case SyntaxKind.LiteralExpression:
+                        if (operation.Arguments[0].Syntax.GetIdentifierOrLiteralValue() == "") return;
+                        break;
+                }
+
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0048ErrorWithTextConstant, ctx.Operation.Syntax.GetLocation()));
+            }
+            catch (InvalidCastException)
+            {
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0048", "InvalidCastException" }));
+            }
         }
     }
 }
