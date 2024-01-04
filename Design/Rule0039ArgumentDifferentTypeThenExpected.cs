@@ -8,7 +8,7 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0039ArgumentDifferentTypeThenExpected : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, DiagnosticDescriptors.Rule0000ErrorInRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, DiagnosticDescriptors.Rule0049PageWithoutSourceTable);
 
         private static readonly List<PropertyKind> referencePageProviders = new List<PropertyKind>
         {
@@ -73,7 +73,11 @@ namespace BusinessCentral.LinterCop.Design
             if (pageReference == null) return;
             IVariableSymbol variableSymbol = (IVariableSymbol)pageReference.GetSymbol().OriginalDefinition;
             IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)variableSymbol.GetTypeSymbol().OriginalDefinition;
-            if (pageTypeSymbol.RelatedTable == null) return;
+            if (pageTypeSymbol.RelatedTable == null)
+            {
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0049PageWithoutSourceTable, ctx.Operation.Syntax.GetLocation(), new object[] { NavTypeKind.Page, GetFullyQualifiedObjectName(pageTypeSymbol) }));
+                return;
+            }
             ITableTypeSymbol pageSourceTable = pageTypeSymbol.RelatedTable;
 
             IOperation operand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
@@ -126,6 +130,14 @@ namespace BusinessCentral.LinterCop.Design
             if (((INamespaceSymbol)left.ContainingSymbol).QualifiedName != ((INamespaceSymbol)right.ContainingSymbol).QualifiedName) return false;
             if (left.Name != right.Name) return false;
             return true;
+        }
+
+        private static string GetFullyQualifiedObjectName(IPageTypeSymbol page)
+        {
+            if (page.ContainingNamespace.QualifiedName != "")
+                return page.ContainingNamespace.QualifiedName + "." + "\"" + page.Name + "\"";
+
+            return page.Name;
         }
     }
 }
