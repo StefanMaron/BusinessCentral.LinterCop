@@ -328,13 +328,13 @@
     <value>Procedure declaration should not end with semicolon.</value>
   </data>
   <data name="Rule0025InternalProcedureModifierDescription" xml:space="preserve">
-    <value>Procedure must be either local or internal.</value>
+    <value>Procedure must be either local, internal or define a documentation comment.</value>
   </data>
   <data name="Rule0025InternalProcedureModifierFormat" xml:space="preserve">
-    <value>Procedure must be either local or internal.</value>
+    <value>Procedure must be either local, internal or define a documentation comment.</value>
   </data>
   <data name="Rule0025InternalProcedureModifierTitle" xml:space="preserve">
-    <value>Procedure must be either local or internal.</value>
+    <value>Procedure must be either local, internal or define a documentation comment.</value>
   </data>
   <data name="Rule0026ToolTipMustEndWithDotDescription" xml:space="preserve">
     <value>ToolTip must end with a dot.</value>
