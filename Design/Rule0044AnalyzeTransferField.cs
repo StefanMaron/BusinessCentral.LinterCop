@@ -582,6 +582,10 @@ namespace BusinessCentral.LinterCop.Design
                 new Tuple<string, string>("Filed Service Contract Header", "Service Contract Header"),
                 new Tuple<string, string>("Filed Contract Line", "Service Contract Line"),
 
+                new Tuple<string, string>("Job", "Job Archive"),
+                new Tuple<string, string>("Job Task", "Job Task Archive"),
+                new Tuple<string, string>("Job Planning Line", "Job Planning Line Archive"),
+
                 new Tuple<string, string>("Workflow Step Instance Archive", "Workflow Step Instance"),
                 new Tuple<string, string>("Workflow Record Change Archive", "Workflow - Record Change"),
                 new Tuple<string, string>("Workflow Step Argument Archive", "Workflow Step Argument"),
@@ -643,9 +647,9 @@ namespace BusinessCentral.LinterCop.Design
                 new Tuple<string, string>("IC Document Dimension", "Buffer IC Document Dimension"),
                 new Tuple<string, string>("IC Comment Line", "Buffer IC Comment Line"),
 
+                new Tuple<string, string>("Comment Line", "Comment Line Archive"),
                 new Tuple<string, string>("Config. Setup", "Company Information"),
                 new Tuple<string, string>("Object Options", "Report Settings"),
-
 
                 new Tuple<string, string>("Analysis by Dim. Parameters", "Analysis by Dim. User Param."),
                 new Tuple<string, string>("G/L Account (Analysis View)", "G/L Account"),
