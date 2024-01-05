@@ -125,7 +125,7 @@
     {
       "id": "LC0025",
       "action": "Info",
-      "justification": "Procedure must be either local or internal."
+      "justification": "Procedure must be either local, internal or define a documentation comment."
     },
     {
       "id": "LC0026",
