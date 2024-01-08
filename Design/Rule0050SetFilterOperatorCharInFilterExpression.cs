@@ -49,7 +49,6 @@ namespace BusinessCentral.LinterCop.Design
                         Diagnostic.Create(
                             DiagnosticDescriptors.Rule0050SetFilterOperatorCharInFilterExpression,
                             operation.Syntax.GetLocation(), new object[] { unsupportedOperator }));
-                    break;
                 }
             }
         }
