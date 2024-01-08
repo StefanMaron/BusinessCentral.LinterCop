@@ -556,12 +556,12 @@
     <value>SourceTable property not defined on {0} '{1}'.</value>
   </data>
   <data name="Rule0050SetFilterOperatorCharInFilterExpressionTitle" xml:space="preserve">
-    <value>Operator '{0}' found in filter expression, currently treated as a literal character. Implement StrSubstNo() to apply '{0}' as operator.</value>
+    <value>Operator '{0}' found in filter expression, currently treated as a literal character. Implement StrSubstNo() to apply as operator.</value>
   </data>
   <data name="Rule0050SetFilterOperatorCharInFilterExpressionFormat" xml:space="preserve">
-    <value>Operator '{0}' found in filter expression, currently treated as a literal character. Implement StrSubstNo() to apply '{0}' as operator.</value>
+    <value>Operator '{0}' found in filter expression, currently treated as a literal character. Implement StrSubstNo() to apply as operator.</value>
   </data>
   <data name="Rule0050SetFilterOperatorCharInFilterExpressionDescription" xml:space="preserve">
-    <value>Operator '{0}' found in filter expression, currently treated as a literal character. Implement StrSubstNo() to apply '{0}' as operator.</value>
+    <value>Operator '{0}' found in filter expression, currently treated as a literal character. Implement StrSubstNo() to apply as operator.</value>
   </data>
 </root>
