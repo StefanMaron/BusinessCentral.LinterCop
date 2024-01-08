@@ -2,6 +2,7 @@ using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using System.Collections.Immutable;
+using System.Text.RegularExpressions;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -39,6 +40,11 @@ namespace BusinessCentral.LinterCop.Design
                 return;
 
             string parameterString = operand.Syntax.ToFullString();
+
+            string pattern = @"%\d+"; // Only when a %1 is used in the filter expression the unsupported operators are threaded as a literal character
+            Regex regex = new Regex(pattern);
+            if (!regex.IsMatch(parameterString)) return;
+
             foreach (char unsupportedOperator in unsupportedOperators)
             {
                 ctx.CancellationToken.ThrowIfCancellationRequested();
