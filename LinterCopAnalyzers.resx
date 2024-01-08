@@ -547,12 +547,12 @@
     <value>Use Error with a ErrorInfo or Label variable to improve telemetry details.</value>
   </data>
   <data name="Rule0049PageWithoutSourceTableTitle" xml:space="preserve">
-    <value>"SourceTable property not defined on {0} '{1}'.</value>
+    <value>SourceTable property not defined on {0} '{1}'.</value>
   </data>
   <data name="Rule0049PageWithoutSourceTableFormat" xml:space="preserve">
-    <value>"SourceTable property not defined on {0} '{1}'.</value>
+    <value>SourceTable property not defined on {0} '{1}'.</value>
   </data>
   <data name="Rule0049PageWithoutSourceTableDescription" xml:space="preserve">
-    <value>"SourceTable property not defined on {0} '{1}'.</value>
+    <value>SourceTable property not defined on {0} '{1}'.</value>
   </data>
 </root>
