@@ -547,12 +547,21 @@
     <value>Use Error with a ErrorInfo or Label variable to improve telemetry details.</value>
   </data>
   <data name="Rule0049PageWithoutSourceTableTitle" xml:space="preserve">
-    <value>"SourceTable property not defined on {0} '{1}'.</value>
+    <value>SourceTable property not defined on {0} '{1}'.</value>
   </data>
   <data name="Rule0049PageWithoutSourceTableFormat" xml:space="preserve">
-    <value>"SourceTable property not defined on {0} '{1}'.</value>
+    <value>SourceTable property not defined on {0} '{1}'.</value>
   </data>
   <data name="Rule0049PageWithoutSourceTableDescription" xml:space="preserve">
-    <value>"SourceTable property not defined on {0} '{1}'.</value>
+    <value>SourceTable property not defined on {0} '{1}'.</value>
+  </data>
+  <data name="Rule0050SetFilterOperatorCharInFilterExpressionTitle" xml:space="preserve">
+    <value>Operator '{0}' found in filter expression, currently treated as a literal character. Implement StrSubstNo() to apply '{0}' as operator.</value>
+  </data>
+  <data name="Rule0050SetFilterOperatorCharInFilterExpressionFormat" xml:space="preserve">
+    <value>Operator '{0}' found in filter expression, currently treated as a literal character. Implement StrSubstNo() to apply '{0}' as operator.</value>
+  </data>
+  <data name="Rule0050SetFilterOperatorCharInFilterExpressionDescription" xml:space="preserve">
+    <value>Operator '{0}' found in filter expression, currently treated as a literal character. Implement StrSubstNo() to apply '{0}' as operator.</value>
   </data>
 </root>

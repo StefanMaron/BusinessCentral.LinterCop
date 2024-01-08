@@ -246,6 +246,11 @@
       "id": "LC0049",
       "action": "Info",
       "justification": "SourceTable property not defined on Page."
+    },
+    {
+      "id": "LC0050",
+      "action": "Info",
+      "justification": "SetFilter with unsupported operator in filter expression."
     }
   ]
 }
