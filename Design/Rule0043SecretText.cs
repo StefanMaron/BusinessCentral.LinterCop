@@ -56,7 +56,7 @@ namespace BusinessCentral.LinterCop.Design
                     break;
             }
 
-            if (argumentIndex == -1 && operation.Arguments[argumentIndex].Parameter == null) return;
+            if (argumentIndex == -1 || operation.Arguments[argumentIndex].Parameter == null) return;
 
             if (!IsArgumentOfTypeSecretText(operation.Arguments[argumentIndex]))
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0043SecretText, ctx.Operation.Syntax.GetLocation()));
