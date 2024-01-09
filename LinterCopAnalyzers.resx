@@ -205,7 +205,7 @@
     <value>Cyclomatic complexity and Maintainability index</value>
   </data>
   <data name="Rule0009CodeMetricsInfoFormat" xml:space="preserve">
-    <value>Cyclomatic complexity: {0}/({1}), Maintainability index: {2}/({3})</value>
+    <value>Cyclomatic complexity: {0} (threshold &gt;={1}), Maintainability index: {2} of 100 (threshold &lt;={3})</value>
   </data>
   <data name="Rule0009CodeMetricsInfoTitle" xml:space="preserve">
     <value>Cyclomatic complexity and Maintainability index</value>
@@ -328,13 +328,13 @@
     <value>Procedure declaration should not end with semicolon.</value>
   </data>
   <data name="Rule0025InternalProcedureModifierDescription" xml:space="preserve">
-    <value>Procedure must be either local or internal.</value>
+    <value>Procedure must be either local, internal or define a documentation comment.</value>
   </data>
   <data name="Rule0025InternalProcedureModifierFormat" xml:space="preserve">
-    <value>Procedure must be either local or internal.</value>
+    <value>Procedure must be either local, internal or define a documentation comment.</value>
   </data>
   <data name="Rule0025InternalProcedureModifierTitle" xml:space="preserve">
-    <value>Procedure must be either local or internal.</value>
+    <value>Procedure must be either local, internal or define a documentation comment.</value>
   </data>
   <data name="Rule0026ToolTipMustEndWithDotDescription" xml:space="preserve">
     <value>ToolTip must end with a dot.</value>
@@ -545,5 +545,23 @@
   </data>
   <data name="Rule0048ErrorWithTextConstantDescription" xml:space="preserve">
     <value>Use Error with a ErrorInfo or Label variable to improve telemetry details.</value>
+  </data>
+  <data name="Rule0049PageWithoutSourceTableTitle" xml:space="preserve">
+    <value>SourceTable property not defined on {0} '{1}'.</value>
+  </data>
+  <data name="Rule0049PageWithoutSourceTableFormat" xml:space="preserve">
+    <value>SourceTable property not defined on {0} '{1}'.</value>
+  </data>
+  <data name="Rule0049PageWithoutSourceTableDescription" xml:space="preserve">
+    <value>SourceTable property not defined on {0} '{1}'.</value>
+  </data>
+  <data name="Rule0050SetFilterOperatorCharInFilterExpressionTitle" xml:space="preserve">
+    <value>Operator '{0}' found in filter expression, currently treated as a literal character. Implement StrSubstNo() to apply as operator.</value>
+  </data>
+  <data name="Rule0050SetFilterOperatorCharInFilterExpressionFormat" xml:space="preserve">
+    <value>Operator '{0}' found in filter expression, currently treated as a literal character. Implement StrSubstNo() to apply as operator.</value>
+  </data>
+  <data name="Rule0050SetFilterOperatorCharInFilterExpressionDescription" xml:space="preserve">
+    <value>Operator '{0}' found in filter expression, currently treated as a literal character. Implement StrSubstNo() to apply as operator.</value>
   </data>
 </root>

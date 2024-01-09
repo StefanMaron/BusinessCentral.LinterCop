@@ -125,7 +125,7 @@
     {
       "id": "LC0025",
       "action": "Info",
-      "justification": "Procedure must be either local or internal."
+      "justification": "Procedure must be either local, internal or define a documentation comment."
     },
     {
       "id": "LC0026",
@@ -220,7 +220,7 @@
     {
       "id": "LC0044",
       "action": "Warning",
-      "justification": "TransferFields consistency between records."
+      "justification": "Tables coupled with TransferFields must have matching fields."
     },
     {
       "id": "LC0045",
@@ -241,6 +241,16 @@
       "id": "LC0048",
       "action": "Info",
       "justification": "Use Error with a ErrorInfo or Label variable to improve telemetry details."
+    },
+    {
+      "id": "LC0049",
+      "action": "Info",
+      "justification": "SourceTable property not defined on Page."
+    },
+    {
+      "id": "LC0050",
+      "action": "Info",
+      "justification": "SetFilter with unsupported operator in filter expression."
     }
   ]
 }

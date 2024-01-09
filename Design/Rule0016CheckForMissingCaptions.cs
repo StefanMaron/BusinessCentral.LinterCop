@@ -19,7 +19,8 @@ namespace BusinessCentral.LinterCop.Design
                 SymbolKind.Field,
                 SymbolKind.Action,
                 SymbolKind.EnumValue,
-                SymbolKind.Control
+                SymbolKind.Control,
+                SymbolKind.PermissionSet
             );
 
         private void CheckForMissingCaptions(SymbolAnalysisContext context)
@@ -90,6 +91,13 @@ namespace BusinessCentral.LinterCop.Design
             else if (context.Symbol.Kind == SymbolKind.Page)
             {
                 if (((IPageTypeSymbol)context.Symbol).PageType != PageTypeKind.API)
+                    if (CaptionIsMissing(context.Symbol, context))
+                        RaiseCaptionWarning(context);
+            }
+            else if (context.Symbol.Kind == SymbolKind.PermissionSet)
+            {
+                IPropertySymbol assignableProperty = context.Symbol.GetProperty(PropertyKind.Assignable);
+                if (assignableProperty == null || (bool)assignableProperty.Value)
                     if (CaptionIsMissing(context.Symbol, context))
                         RaiseCaptionWarning(context);
             }

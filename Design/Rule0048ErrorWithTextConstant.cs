@@ -28,6 +28,7 @@ namespace BusinessCentral.LinterCop.Design
             switch (operation.Arguments[0].Syntax.Kind)
             {
                 case SyntaxKind.IdentifierName:
+                    if (operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression) break;
                     IOperation operand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
                     if (operand.GetSymbol().OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Label) return;
                     break;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
 using System.Collections.Immutable;
 using System.Reflection;
 
@@ -56,6 +57,9 @@ namespace BusinessCentral.LinterCop.Design
         private async void AnalyzeTransferFields(OperationAnalysisContext ctx)
         {
             if (ctx.Operation.Syntax.GetType() != typeof(InvocationExpressionSyntax))
+                return;
+
+            if (((IInvocationExpression)ctx.Operation).TargetMethod.MethodKind != MethodKind.BuiltInMethod)
                 return;
 
             InvocationExpressionSyntax invocationExpression = (InvocationExpressionSyntax)ctx.Operation.Syntax;
@@ -390,11 +394,13 @@ namespace BusinessCentral.LinterCop.Design
         {
             string name = fieldGroup.First().Name;
             string type = fieldGroup.First().Type;
+            FieldClassKind fieldClass = fieldGroup.First().FieldClass;
 
-            foreach (Field field in fieldGroup)
+            foreach (Field field in fieldGroup.Where(fld => fld.FieldClass == FieldClassKind.Normal))
             {
-                if (!(name.Equals(field.Name) && type.Equals(field.Type)))
-                    return true;
+                if (fieldClass == FieldClassKind.Normal && field.FieldClass == FieldClassKind.Normal)
+                    if (!(name.Equals(field.Name) && type.Equals(field.Type)))
+                        return true;
             }
 
             return false;
@@ -402,7 +408,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private string? GetObjectName(VariableDeclarationBaseSyntax variable)
         {
-            if (variable == null)
+            if (variable == null || variable.Type.DataType.GetType() == typeof(SimpleNamedDataTypeSyntax))
                 return null;
 
             SubtypedDataTypeSyntax subtypedData = (SubtypedDataTypeSyntax)variable.Type.DataType;
@@ -579,6 +585,10 @@ namespace BusinessCentral.LinterCop.Design
                 new Tuple<string, string>("Filed Service Contract Header", "Service Contract Header"),
                 new Tuple<string, string>("Filed Contract Line", "Service Contract Line"),
 
+                new Tuple<string, string>("Job", "Job Archive"),
+                new Tuple<string, string>("Job Task", "Job Task Archive"),
+                new Tuple<string, string>("Job Planning Line", "Job Planning Line Archive"),
+
                 new Tuple<string, string>("Workflow Step Instance Archive", "Workflow Step Instance"),
                 new Tuple<string, string>("Workflow Record Change Archive", "Workflow - Record Change"),
                 new Tuple<string, string>("Workflow Step Argument Archive", "Workflow Step Argument"),
@@ -640,9 +650,9 @@ namespace BusinessCentral.LinterCop.Design
                 new Tuple<string, string>("IC Document Dimension", "Buffer IC Document Dimension"),
                 new Tuple<string, string>("IC Comment Line", "Buffer IC Comment Line"),
 
+                new Tuple<string, string>("Comment Line", "Comment Line Archive"),
                 new Tuple<string, string>("Config. Setup", "Company Information"),
                 new Tuple<string, string>("Object Options", "Report Settings"),
-
 
                 new Tuple<string, string>("Analysis by Dim. Parameters", "Analysis by Dim. User Param."),
                 new Tuple<string, string>("G/L Account (Analysis View)", "G/L Account"),
@@ -666,14 +676,16 @@ namespace BusinessCentral.LinterCop.Design
             public string Type { get; }
             public Microsoft.Dynamics.Nav.CodeAnalysis.Text.Location? Location { get; }
             public Table Table { get; }
+            public FieldClassKind FieldClass { get; }
 
-            public Field(int id, string name, string type, Microsoft.Dynamics.Nav.CodeAnalysis.Text.Location? location, Table table)
+            public Field(int id, string name, string type, Microsoft.Dynamics.Nav.CodeAnalysis.Text.Location? location, Table table, FieldClassKind fieldClass)
             {
                 Id = id;
                 Name = name;
                 Type = type;
                 Location = location;
                 Table = table;
+                FieldClass = fieldClass;
             }
         }
 
@@ -708,19 +720,25 @@ namespace BusinessCentral.LinterCop.Design
                     PropertyInfo idprop = type.GetProperty("Id", BindingFlags.Instance | BindingFlags.Public);
                     PropertyInfo nameprop = type.GetProperty("Name", BindingFlags.Instance | BindingFlags.Public);
                     PropertyInfo typeprop = type.GetProperty("Type", BindingFlags.Instance | BindingFlags.Public);
-                    PropertyInfo namespaceProp = type.GetProperty("ContainingNamespace", BindingFlags.Instance | BindingFlags.Public);
+                    PropertyInfo fieldClassProp = type.GetProperty("FieldClass", BindingFlags.Instance | BindingFlags.Public);
 
                     int id = (int)idprop.GetValue(field);
                     string name = (string)nameprop.GetValue(field);
                     string objtype = typeprop.GetValue(field).ToString();
-                    string objNamespace = namespaceProp.GetValue(field).ToString();
+                    string fieldClass = fieldClassProp.GetValue(field).ToString();
 
-                    int namespaceIndex = objtype.IndexOf(objNamespace + '.');
-                    if (namespaceIndex != -1)
-                        objtype = objtype.Remove(namespaceIndex, objNamespace.Length + 1);
+                    // Remove the QualifiedName from the Enum for now.
+                    // In the future refactor this to support Enums with the same object name cross different namespaces
+                    IEnumBaseTypeSymbol? enumBaseTypeSymbol = typeprop.GetValue(field) as IEnumBaseTypeSymbol;
+                    if (enumBaseTypeSymbol != null)
+                    {
+                        INamespaceSymbol? namespaceSymbol = enumBaseTypeSymbol.ContainingSymbol as INamespaceSymbol;
+                        if (namespaceSymbol != null)
+                            objtype = objtype.Replace(namespaceSymbol.QualifiedName + '.', "");
+                    }
 
                     if (id < 2000000000)
-                        Fields.Add(new Field(id, name, objtype, null, this));
+                        Fields.Add(new Field(id, name, objtype, null, this, GetFieldClass(fieldClass)));
                 }
             }
 
@@ -731,7 +749,7 @@ namespace BusinessCentral.LinterCop.Design
                 foreach (FieldSyntax field in fieldList.Fields.Where(fld => fld.IsKind(SyntaxKind.Field)))
                 {
                     if (!FieldIsObsolete(field))
-                        Fields.Add(new Field((int)field.No.Value, field.Name.Identifier.ToString().Replace("\"", ""), field.Type.ToString(), field.GetLocation(), this));
+                        Fields.Add(new Field((int)field.No.Value, field.Name.Identifier.ValueText.UnquoteIdentifier(), field.Type.ToString(), field.GetLocation(), this, GetFieldClass(field)));
                 }
             }
 
@@ -742,7 +760,7 @@ namespace BusinessCentral.LinterCop.Design
                 foreach (FieldSyntax field in fieldList.Fields)
                 {
                     if (!FieldIsObsolete(field))
-                        Fields.Add(new Field((int)field.No.Value, field.Name.Identifier.ToString().Replace("\"", ""), field.Type.ToString(), field.GetLocation(), this));
+                        Fields.Add(new Field((int)field.No.Value, field.Name.Identifier.ValueText.UnquoteIdentifier(), field.Type.ToString(), field.GetLocation(), this, GetFieldClass(field)));
                 }
             }
 
@@ -763,6 +781,32 @@ namespace BusinessCentral.LinterCop.Design
                 }
 
                 return false;
+            }
+
+            private FieldClassKind GetFieldClass(FieldSyntax field)
+            {
+                PropertySyntax fieldClassProperty = (PropertySyntax)field.PropertyList.Properties.Where(prop => !prop.IsKind(SyntaxKind.EmptyProperty))
+                                                                                                 .Where(prop => ((PropertySyntax)prop).Name.Identifier.ToString().Equals("FieldClass"))
+                                                                                                 .Where(prop => ((PropertySyntax)prop).Value.GetType() == typeof(EnumPropertyValueSyntax))
+                                                                                                 .SingleOrDefault();
+                if (fieldClassProperty == null)
+                    return FieldClassKind.Normal;
+
+                EnumPropertyValueSyntax fieldClassPropertyValue = (EnumPropertyValueSyntax)fieldClassProperty.Value;
+                return GetFieldClass(fieldClassPropertyValue.Value.Identifier.ValueText.UnquoteIdentifier());
+            }
+
+            private FieldClassKind GetFieldClass(string fieldClass)
+            {
+                switch (fieldClass)
+                {
+                    case "FlowField":
+                        return FieldClassKind.FlowField;
+                    case "FlowFilter":
+                        return FieldClassKind.FlowFilter;
+                    default:
+                        return FieldClassKind.Normal;
+                }
             }
         }
     }

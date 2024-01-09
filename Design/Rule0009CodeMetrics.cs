@@ -10,27 +10,52 @@ namespace BusinessCentral.LinterCop.Design
     public class Rule0009CodeMetrics : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0009CodeMetricsInfo, DiagnosticDescriptors.Rule0010CodeMetricsWarning);
+        
+        private static readonly HashSet<SyntaxKind> OperatorAndOperandKinds = 
+            Enum.GetValues(typeof(SyntaxKind))
+                .Cast<SyntaxKind>()
+                .Where(value => 
+                    (value.ToString().Contains("Keyword") ||
+                     value.ToString().Contains("Token")) ||
+                    IsOperandKind(value))
+                .ToHashSet();
 
         public override void Initialize(AnalysisContext context)
             => context.RegisterCodeBlockAction(new Action<CodeBlockAnalysisContext>(this.CheckCodeMetrics));
 
         private void CheckCodeMetrics(CodeBlockAnalysisContext context)
         {
-            if (context.OwningSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.OwningSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-            if (context.OwningSymbol.IsObsoletePending || context.OwningSymbol.IsObsoleteRemoved) return;
-            if (context.OwningSymbol.GetContainingObjectTypeSymbol().NavTypeKind == NavTypeKind.Interface || context.OwningSymbol.GetContainingObjectTypeSymbol().NavTypeKind == NavTypeKind.ControlAddIn) return;
+            if ((context.CodeBlock.Kind != SyntaxKind.MethodDeclaration) &&
+                (context.CodeBlock.Kind != SyntaxKind.TriggerDeclaration))
+                return;
+                
+            if (context.OwningSymbol.IsObsoletePending || context.OwningSymbol.IsObsoleteRemoved) 
+                return;
 
-            int cyclomaticComplexity = GetCyclomaticComplexity(context.CodeBlock);
-            double HalsteadVolume = GetHalsteadVolume(context.CodeBlock, ref context, cyclomaticComplexity);
+            var containingObjectTypeSymbol = context.OwningSymbol.GetContainingObjectTypeSymbol();
+            if (containingObjectTypeSymbol.IsObsoletePending || 
+                containingObjectTypeSymbol.IsObsoleteRemoved)
+                return;
+            
+            if (containingObjectTypeSymbol.NavTypeKind == NavTypeKind.Interface ||
+                containingObjectTypeSymbol.NavTypeKind == NavTypeKind.ControlAddIn) 
+                return;
 
-            LinterSettings.Create(context.SemanticModel.Compilation.FileSystem.GetDirectoryPath());
-            if (LinterSettings.instance != null)
-                if (cyclomaticComplexity >= LinterSettings.instance.cyclomaticComplexityThreshold || Math.Round(HalsteadVolume) <= LinterSettings.instance.maintainabilityIndexThreshold)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0010CodeMetricsWarning, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexity, LinterSettings.instance.cyclomaticComplexityThreshold, Math.Round(HalsteadVolume), LinterSettings.instance.maintainabilityIndexThreshold }));
-                    return;
-                }
+            SyntaxNode bodyNode = context.CodeBlock.Kind == SyntaxKind.MethodDeclaration
+                ? (context.CodeBlock as MethodDeclarationSyntax)?.Body
+                : (context.CodeBlock as TriggerDeclarationSyntax)?.Body;
 
+            if (bodyNode is null)
+                return;
+
+            var descendants = bodyNode.DescendantNodesAndTokens(e => true).ToArray();
+
+            int cyclomaticComplexity = GetCyclomaticComplexity(descendants);
+            double HalsteadVolume = GetHalsteadVolume(context, bodyNode, descendants, cyclomaticComplexity);
+
+            if (LinterSettings.instance == null)
+                LinterSettings.Create(context.SemanticModel.Compilation.FileSystem.GetDirectoryPath());
+           
             if (cyclomaticComplexity >= LinterSettings.instance.cyclomaticComplexityThreshold || Math.Round(HalsteadVolume) <= LinterSettings.instance.maintainabilityIndexThreshold)
             {
                 context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0010CodeMetricsWarning, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexity, LinterSettings.instance.cyclomaticComplexityThreshold, Math.Round(HalsteadVolume), LinterSettings.instance.maintainabilityIndexThreshold }));
@@ -39,58 +64,81 @@ namespace BusinessCentral.LinterCop.Design
             context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0009CodeMetricsInfo, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexity, LinterSettings.instance.cyclomaticComplexityThreshold, Math.Round(HalsteadVolume), LinterSettings.instance.maintainabilityIndexThreshold }));
         }
 
-        private static double GetHalsteadVolume(SyntaxNode CodeBlock, ref CodeBlockAnalysisContext context, int cyclomaticComplexity)
+        private static double GetHalsteadVolume(CodeBlockAnalysisContext context, SyntaxNode methodBodyNode,
+            SyntaxNodeOrToken[] descendantNodesAndTokens, int cyclomaticComplexity)
         {
             try
             {
-                var Syntax = CodeBlock.DescendantNodesAndTokens(e => true).ToList();
-                var methodBody = Syntax.Find(node => node.Kind == SyntaxKind.Block && (node.Parent.Kind == SyntaxKind.MethodDeclaration || node.Parent.Kind == SyntaxKind.TriggerDeclaration));
+                var triviaLinesCount = methodBodyNode
+                    .DescendantTrivia(e => true, true)
+                    .Count(node =>
+                        node.Kind == SyntaxKind.EndOfLineTrivia &&
+                        node.GetLocation().GetLineSpan().StartLinePosition.Line ==
+                        node.Token.GetLocation().GetLineSpan().StartLinePosition.Line) - 2; //Minus 2 for Begin end of function
 
-                var OperandKinds = new object[] { SyntaxKind.IdentifierToken, SyntaxKind.Int32LiteralToken, SyntaxKind.StringLiteralToken, SyntaxKind.BooleanLiteralValue, SyntaxKind.TrueKeyword, SyntaxKind.FalseKeyword };
-                var OperatorKinds = Enum.GetValues(typeof(SyntaxKind)).Cast<SyntaxKind>().Where(value => (value.ToString().Contains("Keyword") || value.ToString().Contains("Token")) && !OperandKinds.Contains(value)).ToList();
-                var TriviaKinds = Enum.GetValues(typeof(SyntaxKind)).Cast<SyntaxKind>().Where(value => (value.ToString().Contains("Trivia"))).ToList();
+                context.CancellationToken.ThrowIfCancellationRequested();
+                var N = 0;
+                using var hashSet = PooledHashSet<SyntaxNodeOrToken>.GetInstance();
+                foreach (var nodeOrToken in descendantNodesAndTokens)
+                {
+                    if (OperatorAndOperandKinds.Contains(nodeOrToken.Kind))
+                    {
+                        N++;
+                        hashSet.Add(nodeOrToken);
+                    }
+                }
 
-                var triviaLines = methodBody.AsNode().DescendantTrivia(e => true, true).Where(node => node.Kind == SyntaxKind.EndOfLineTrivia);
-                triviaLines = triviaLines.Where(node => node.GetLocation().GetLineSpan().StartLinePosition.Line == node.Token.GetLocation().GetLineSpan().StartLinePosition.Line);
-                var triviaLinesCount = triviaLines.Count() - 2;//Minus 2 for Begin end of function
-
-
-                var Operands = methodBody.AsNode().DescendantNodesAndTokens(e => true).Where(node => OperandKinds.Contains(node.Kind));
-                var Operators = methodBody.AsNode().DescendantNodesAndTokens(e => true).Where(node => OperatorKinds.Contains(node.Kind));
-
-                double N = (double)(Operators.Count() + Operands.Count());
-                double n = (double)Operators.Distinct().Count() + Operands.Distinct().Count();
-                double HalsteadVolume = N * Math.Log(n, 2);
+                double HalsteadVolume = N * Math.Log(hashSet.Count, 2);
 
                 //171−5.2lnV−0.23G−16.2lnL
                 return Math.Max(0, (171 - 5.2 * Math.Log(HalsteadVolume) - 0.23 * cyclomaticComplexity - 16.2 * Math.Log(triviaLinesCount)) * 100 / 171);
-
             }
             catch (System.NullReferenceException)
             {
                 return 0.0;
             }
         }
-        private static int GetCyclomaticComplexity(SyntaxNode CodeBlock)
+
+        private static int GetCyclomaticComplexity(SyntaxNodeOrToken[] nodesAndTokens)
         {
-            var Syntax = CodeBlock.DescendantNodesAndTokens(e => true).ToList();
-            var ComplexKinds = new object[] { SyntaxKind.IfKeyword, SyntaxKind.ElifKeyword, SyntaxKind.LogicalAndExpression, SyntaxKind.LogicalOrExpression, SyntaxKind.CaseLine, SyntaxKind.ForKeyword, SyntaxKind.ForEachKeyword, SyntaxKind.WhileKeyword, SyntaxKind.UntilKeyword };
-            var nodes = Syntax.Count(node =>
-            {
-                if (node.IsNode)
-                {
-                    return ComplexKinds.Contains(
-                    node.AsNode().Kind);
-                }
-                if (node.IsToken)
-                {
-                    return ComplexKinds.Contains(
-                    node.AsToken().Kind);
-                }
-                else return false;
-            });
-            return nodes + 1;
+            return nodesAndTokens.Count(syntaxNodeOrToken => IsComplexKind(syntaxNodeOrToken.Kind)) + 1;
         }
+
+        private static bool IsOperandKind(SyntaxKind kind)
+        {
+            switch (kind)
+            {
+                case SyntaxKind.IdentifierToken:
+                case SyntaxKind.Int32LiteralToken:
+                case SyntaxKind.StringLiteralToken:
+                case SyntaxKind.BooleanLiteralValue:
+                case SyntaxKind.TrueKeyword:
+                case SyntaxKind.FalseKeyword:
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsComplexKind(SyntaxKind kind)
+        {
+            switch (kind)
+            {
+                case SyntaxKind.IfKeyword:
+                case SyntaxKind.ElifKeyword:
+                case SyntaxKind.LogicalAndExpression:
+                case SyntaxKind.LogicalOrExpression:
+                case SyntaxKind.CaseLine:
+                case SyntaxKind.ForKeyword:
+                case SyntaxKind.ForEachKeyword:
+                case SyntaxKind.WhileKeyword:
+                case SyntaxKind.UntilKeyword:
+                    return true;
+            }
+
+            return false;
+        }
+
     }
 }
 
