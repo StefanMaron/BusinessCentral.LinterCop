@@ -41,7 +41,7 @@ namespace BusinessCentral.LinterCop.Design
 
             string parameterString = operand.Syntax.ToFullString();
 
-            string pattern = @"%\d+"; // Only when a %1 is used in the filter expression the unsupported operators are threaded as a literal character
+            string pattern = @"%\d+"; // Only when a %1 is used in the filter expression the unsupported operators are treated as a literal character
             Regex regex = new Regex(pattern);
             if (!regex.IsMatch(parameterString)) return;
 

@@ -11,6 +11,7 @@ namespace BusinessCentral.LinterCop.Design
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0043SecretText);
 
         private static readonly string authorization = "Authorization";
+
         private static readonly List<string> buildInMethodNames = new List<string>
         {
             "add",
@@ -18,7 +19,48 @@ namespace BusinessCentral.LinterCop.Design
             "tryaddwithoutvalidation"
         };
 
-        public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeHttpObjects), OperationKind.InvocationExpression);
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeHttpObjects), OperationKind.InvocationExpression);
+            // TODO: enable after Spring2024OrGreater release
+            // context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeIsolatedStorage), OperationKind.InvocationExpression);
+        }
+
+        private void AnalyzeIsolatedStorage(OperationAnalysisContext ctx)
+        {
+            // TODO: enable after Spring2024OrGreater release
+            // if (!VersionChecker.IsSupported(ctx.ContainingSymbol, VersionCompatibility.Spring2024OrGreater)) return;
+
+            if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+            if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
+
+            IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
+            if (operation.Arguments.Count() < 3) return;
+
+            IMethodSymbol targetMethod = operation.TargetMethod;
+            if (targetMethod == null || targetMethod.ContainingSymbol.Kind != SymbolKind.Class) return;
+            if (!SemanticFacts.IsSameName(targetMethod.ContainingSymbol.Name, "IsolatedStorage")) return;
+
+            int argumentIndex;
+            switch (operation.TargetMethod.Name.ToLowerInvariant())
+            {
+                case "get":
+                    argumentIndex = 2;
+                    break;
+                case "set":
+                case "setencrypted":
+                    argumentIndex = 1;
+                    break;
+                default:
+                    argumentIndex = -1;
+                    break;
+            }
+
+            if (argumentIndex == -1) return;
+
+            if (!IsArgumentOfTypeSecretText(operation.Arguments[argumentIndex]))
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0043SecretText, ctx.Operation.Syntax.GetLocation()));
+        }
 
         private void AnalyzeHttpObjects(OperationAnalysisContext ctx)
         {
@@ -51,8 +93,13 @@ namespace BusinessCentral.LinterCop.Design
 
             if (!IsAuthorizationArgument(operation.Arguments[0])) return;
 
-            if (operation.Arguments[1].Parameter.OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.SecretText)
+            if (!IsArgumentOfTypeSecretText(operation.Arguments[1]))
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0043SecretText, ctx.Operation.Syntax.GetLocation()));
+        }
+
+        private bool IsArgumentOfTypeSecretText(IArgument argument)
+        {
+            return argument.Parameter.OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.SecretText;
         }
 
         private static bool IsAuthorizationArgument(IArgument argument)
