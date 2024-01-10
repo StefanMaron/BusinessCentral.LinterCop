@@ -564,4 +564,13 @@
   <data name="Rule0050SetFilterOperatorCharInFilterExpressionDescription" xml:space="preserve">
     <value>Operator '{0}' found in filter expression, currently treated as a literal character. Implement StrSubstNo() to apply as operator.</value>
   </data>
+  <data name="Rule0051SetFilterPossibleOverflowTitle" xml:space="preserve">
+    <value>Do not assign a text to a target with smaller size.</value>
+  </data>
+  <data name="Rule0051SetFilterPossibleOverflowFormat" xml:space="preserve">
+    <value>Possible overflow assigning '{0}' to '{1}'.</value>
+  </data>
+  <data name="Rule0051SetFilterPossibleOverflowDescription" xml:space="preserve">
+    <value>Do not assign a text to a target with smaller size.</value>
+  </data>
 </root>

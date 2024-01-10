@@ -91,7 +91,8 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0047](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0047)|Locked `Label` must have a suffix Tok.|Info|
 |[LC0048](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0048)|Use Error with a `ErrorInfo` or `Label` variable to improve telemetry details.|Info|
 |[LC0049](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0049)|`SourceTable` property not defined on Page.|Info|
-|[LC0050](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0050)| `SetFilter` with unsupported operator in filter expression.|Info|
+|[LC0050](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0050)|`SetFilter` with unsupported operator in filter expression.|Info|
+|[LC0051](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0050)|Do not assign a text to a target with smaller size.|Warning|
 
 
 ## Configuration
