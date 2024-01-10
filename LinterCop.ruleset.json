@@ -251,6 +251,11 @@
       "id": "LC0050",
       "action": "Info",
       "justification": "SetFilter with unsupported operator in filter expression."
+    },
+    {
+      "id": "LC0051",
+      "action": "Warning",
+      "justification": "Do not assign a text to a target with smaller size."
     }
   ]
 }
