@@ -41,7 +41,6 @@ namespace BusinessCentral.LinterCop.Design
             IInvocationExpression operation = (IInvocationExpression)context.Operation;
 
             RelevantFuntion CurrentFunction = FunctionCallsWithIDParamaters.RelevantFunctions.FirstOrDefault(o => (o.ObjectType.ToString().ToUpper() == operation.TargetMethod.ContainingSymbol.Name.ToUpper() && o.FunctionName == operation.TargetMethod.Name));
-            if (CurrentFunction == null) return;
 
             SyntaxKind[] AllowedParameterKinds = { SyntaxKind.MemberAccessExpression, SyntaxKind.IdentifierName, SyntaxKind.InvocationExpression, SyntaxKind.QualifiedName };
             if (operation.TargetMethod.Parameters.Length != 0 && !AllowedParameterKinds.Contains(operation.Arguments[0].Syntax.Kind) && (operation.Arguments[0].Syntax.ToString() != "0" || !CurrentFunction.ZeroIDAllowed))
