@@ -134,18 +134,13 @@ namespace BusinessCentral.LinterCop.Design
 
         private bool CaptionIsMissing(ISymbol Symbol, SymbolAnalysisContext context)
         {
-            try
+            if (Symbol.ContainingType?.Kind == SymbolKind.Table)
             {
-                if (Symbol.ContainingType.Kind == SymbolKind.Table)
-                {
-                    if (((ITableTypeSymbol)Symbol.ContainingType).Id >= 2000000000)
-                        return false;
-                    if (((IFieldSymbol)Symbol).Id >= 2000000000)
-                        return false;
-                }
+                if (((ITableTypeSymbol)Symbol.ContainingType).Id >= 2000000000)
+                    return false;
+                if (((IFieldSymbol)Symbol).Id >= 2000000000)
+                    return false;
             }
-            catch (NullReferenceException)
-            { }
 
             if (Symbol.GetEnumPropertyValue<ShowAsKind>(PropertyKind.ShowAs) == ShowAsKind.SplitButton)
                 return false;

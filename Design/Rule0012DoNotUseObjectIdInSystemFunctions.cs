@@ -39,17 +39,12 @@ namespace BusinessCentral.LinterCop.Design
             if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
             if (context.ContainingSymbol.IsObsoletePending || context.ContainingSymbol.IsObsoleteRemoved) return;
             IInvocationExpression operation = (IInvocationExpression)context.Operation;
-            RelevantFuntion CurrentFunction = null;
-            try
-            {
-                CurrentFunction = FunctionCallsWithIDParamaters.RelevantFunctions.First(o => (o.ObjectType.ToString().ToUpper() == operation.TargetMethod.ContainingSymbol.Name.ToUpper() && o.FunctionName == operation.TargetMethod.Name));
-            }
-            catch (System.InvalidOperationException)
-            { }
+
+            RelevantFuntion CurrentFunction = FunctionCallsWithIDParamaters.RelevantFunctions.FirstOrDefault(o => (o.ObjectType.ToString().ToUpper() == operation.TargetMethod.ContainingSymbol.Name.ToUpper() && o.FunctionName == operation.TargetMethod.Name));
+            if (CurrentFunction == null) return;
 
             SyntaxKind[] AllowedParameterKinds = { SyntaxKind.MemberAccessExpression, SyntaxKind.IdentifierName, SyntaxKind.InvocationExpression, SyntaxKind.QualifiedName };
-
-            if (CurrentFunction != null && operation.TargetMethod.Parameters.Length != 0 && !AllowedParameterKinds.Contains(operation.Arguments[0].Syntax.Kind) && (operation.Arguments[0].Syntax.ToString() != "0" || !CurrentFunction.ZeroIDAllowed))
+            if (operation.TargetMethod.Parameters.Length != 0 && !AllowedParameterKinds.Contains(operation.Arguments[0].Syntax.Kind) && (operation.Arguments[0].Syntax.ToString() != "0" || !CurrentFunction.ZeroIDAllowed))
             {
                 if (operation.TargetMethod.Parameters[0].ParameterType.NavTypeKind == NavTypeKind.Integer)
                 {
