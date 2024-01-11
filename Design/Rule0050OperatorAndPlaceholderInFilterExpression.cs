@@ -7,13 +7,9 @@ using System.Text.RegularExpressions;
 namespace BusinessCentral.LinterCop.Design
 {
     [DiagnosticAnalyzer]
-    public class Rule0050SetFilterOperatorCharInFilterExpression : DiagnosticAnalyzer
+    public class Rule0050OperatorAndPlaceholderInFilterExpression : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0050SetFilterOperatorCharInFilterExpression);
-        private static readonly List<char> unsupportedOperators = new List<char>
-        {
-            '*', '?', '@'
-        };
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0050OperatorAndPlaceholderInFilterExpression);
 
         public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeInvocation), OperationKind.InvocationExpression);
 
@@ -41,22 +37,18 @@ namespace BusinessCentral.LinterCop.Design
 
             string parameterString = operand.Syntax.ToFullString();
 
-            string pattern = @"%\d+"; // Only when a %1 is used in the filter expression the unsupported operators are treated as a literal character
+            string pattern = @"%\d+"; // Only when a placeholders (%1) is used in the filter expression we need to raise the rule that the placeholders won't work as expected
             Regex regex = new Regex(pattern);
-            if (!regex.IsMatch(parameterString)) return;
+            Match match = regex.Match(parameterString);
+            if (!match.Success) return;
 
-            foreach (char unsupportedOperator in unsupportedOperators)
-            {
-                ctx.CancellationToken.ThrowIfCancellationRequested();
+            int operatorIndex = parameterString.IndexOfAny("*?@".ToCharArray()); // Only the *, ? and @ operator changes the behavior of the placeholder
+            if (operatorIndex == -1) return;
 
-                if (parameterString.Contains(unsupportedOperator))
-                {
-                    ctx.ReportDiagnostic(
-                        Diagnostic.Create(
-                            DiagnosticDescriptors.Rule0050SetFilterOperatorCharInFilterExpression,
-                            operation.Syntax.GetLocation(), new object[] { unsupportedOperator }));
-                }
-            }
+            ctx.ReportDiagnostic(
+               Diagnostic.Create(
+                   DiagnosticDescriptors.Rule0050OperatorAndPlaceholderInFilterExpression,
+                   operation.Syntax.GetLocation(), new object[] { parameterString.Substring(operatorIndex, 1), match.Value }));
         }
     }
 }
