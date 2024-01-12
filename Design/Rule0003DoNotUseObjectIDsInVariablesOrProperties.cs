@@ -8,7 +8,7 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0003DoNotUseObjectIDsInVariablesOrProperties : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, DiagnosticDescriptors.Rule0000ErrorInRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration);
 
         public override void Initialize(AnalysisContext context)
         {
