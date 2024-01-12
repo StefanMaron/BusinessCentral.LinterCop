@@ -51,12 +51,11 @@ namespace BusinessCentral.LinterCop.Design
             {
                 if (operation.TargetMethod.Parameters[0].ParameterType.NavTypeKind == NavTypeKind.Integer)
                 {
-                    int tempint = 0;
-                    if (int.TryParse(operation.Arguments[0].Syntax.ToString(), out tempint))
-                        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, context.Operation.Syntax.GetLocation(), new object[] { "CurrentFunction.CorrectAccessSymbol", "" }));
+                    if (int.TryParse(operation.Arguments[0].Syntax.ToString(), out int tempint))
+                        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, context.Operation.Syntax.GetLocation(), new object[] { CurrentFunction.CorrectAccessSymbol, "" }));
                     else
                         if (!operation.Arguments[0].Syntax.ToString().ToUpper().StartsWith(CurrentFunction.CorrectAccessSymbol.ToUpper()))
-                        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, context.Operation.Syntax.GetLocation(), new object[] { "CurrentFunction.CorrectAccessSymbol", "" }));
+                        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, context.Operation.Syntax.GetLocation(), new object[] { CurrentFunction.CorrectAccessSymbol, "" }));
                 }
             }
         }
