@@ -80,7 +80,7 @@ namespace BusinessCentral.LinterCop.Design
                 {
                     if (parameter.ParameterType.GetNavTypeKindSafe() == NavTypeKind.DotNet) continue;
 
-                    if (ctx.Node.GetLocation().SourceSpan.End == parameter.DeclaringSyntaxReference.GetSyntax(CancellationToken.None).Span.End)
+                    if (ctx.Node.GetLocation().SourceSpan.End == parameter.DeclaringSyntaxReference.GetSyntax(ctx.CancellationToken).Span.End)
                     {
                         if (parameter.ParameterType.GetNavTypeKindSafe() == NavTypeKind.Array)
                             correctName = ((IArrayTypeSymbol)parameter.ParameterType).ElementType.Name.ToString();
@@ -94,25 +94,18 @@ namespace BusinessCentral.LinterCop.Design
                             ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, ctx.Node.GetLocation(), new object[] { correctName, "" }));
                     }
                 }
-                try
+                IReturnValueSymbol returnValue = method.ReturnValueSymbol;
+                if (returnValue?.DeclaringSyntaxReference == null || returnValue.ReturnType.GetNavTypeKindSafe() == NavTypeKind.DotNet) return;
+
+                if (ctx.Node.GetLocation().SourceSpan.End == returnValue.DeclaringSyntaxReference.GetSyntax(ctx.CancellationToken).Span.End)
                 {
-                    IReturnValueSymbol returnValue = method.ReturnValueSymbol;
-                    if (returnValue == null || returnValue.ReturnType.GetNavTypeKindSafe() == NavTypeKind.DotNet) return;
+                    correctName = returnValue.ReturnType.Name;
 
-                    if (ctx.Node.GetLocation().SourceSpan.End == returnValue.DeclaringSyntaxReference.GetSyntax(CancellationToken.None).Span.End)
-                    {
-                        correctName = returnValue.ReturnType.Name;
+                    if (ctx.Node.GetLastToken().ToString().Trim('"').ToUpper() != correctName.ToUpper())
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
 
-                        if (ctx.Node.GetLastToken().ToString().Trim('"').ToUpper() != correctName.ToUpper())
-                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
-
-                        if (ctx.Node.GetLastToken().ToString().Trim('"') != correctName)
-                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, ctx.Node.GetLocation(), new object[] { correctName, "" }));
-                    }
-                }
-                catch (NullReferenceException)
-                {
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Node.GetLocation(), new Object[] { "Rule0003/Rule0005", "NullReferenceException", "" }));
+                    if (ctx.Node.GetLastToken().ToString().Trim('"') != correctName)
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, ctx.Node.GetLocation(), new object[] { correctName, "" }));
                 }
             }
         }
