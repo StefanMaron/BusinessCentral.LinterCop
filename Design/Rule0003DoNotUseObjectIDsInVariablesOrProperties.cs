@@ -1,5 +1,6 @@
 ﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
@@ -15,21 +16,20 @@ namespace BusinessCentral.LinterCop.Design
                 SyntaxKind.ObjectReference,
                 SyntaxKind.PermissionValue
             });
-
         }
+
         private void CheckForObjectIDsInVariablesOrProperties(SyntaxNodeAnalysisContext ctx)
         {
             if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
 
-            var correctName = "";
-
+            string correctName;
             if (ctx.ContainingSymbol.Kind == SymbolKind.LocalVariable || ctx.ContainingSymbol.Kind == SymbolKind.GlobalVariable)
             {
                 IVariableSymbol variable = (IVariableSymbol)ctx.ContainingSymbol;
-                if (variable.Type.NavTypeKind == NavTypeKind.DotNet) return;
+                if (variable.Type.GetNavTypeKindSafe() == NavTypeKind.DotNet) return;
 
-                if (variable.Type.NavTypeKind == NavTypeKind.Array)
+                if (variable.Type.GetNavTypeKindSafe() == NavTypeKind.Array)
                     correctName = ((IArrayTypeSymbol)variable.Type).ElementType.Name.ToString();
                 else
                     correctName = variable.Type.Name;
@@ -43,7 +43,6 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.ContainingSymbol.Kind == SymbolKind.Property)
             {
                 IPropertySymbol property = (IPropertySymbol)ctx.ContainingSymbol;
-
                 if (ctx.Node.Kind == SyntaxKind.PermissionValue)
                 {
                     var nodes = ctx.Node.ChildNodesAndTokens().GetEnumerator();
@@ -60,7 +59,6 @@ namespace BusinessCentral.LinterCop.Design
                                     ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, nodes.Current.GetLocation(), new object[] { "", "the object name" }));
                             };
                         }
-
                     };
                 }
 
@@ -80,15 +78,12 @@ namespace BusinessCentral.LinterCop.Design
 
                 foreach (IParameterSymbol parameter in method.Parameters)
                 {
-                    if (parameter.ParameterType.NavTypeKind == NavTypeKind.DotNet)
-                    {
-                        continue;
-                    }
+                    if (parameter.ParameterType.GetNavTypeKindSafe() == NavTypeKind.DotNet) continue;
 
-                    if (ctx.Node.GetLocation().SourceSpan.End == parameter.DeclaringSyntaxReference.GetSyntax(CancellationToken.None).Span.End)
+                    if (ctx.Node.GetLocation().SourceSpan.End == parameter.DeclaringSyntaxReference.GetSyntax(ctx.CancellationToken).Span.End)
                     {
-                        if (parameter.ParameterType.NavTypeKind == NavTypeKind.Array)
-                            correctName = ((IArrayTypeSymbol)(parameter.ParameterType)).ElementType.Name.ToString();
+                        if (parameter.ParameterType.GetNavTypeKindSafe() == NavTypeKind.Array)
+                            correctName = ((IArrayTypeSymbol)parameter.ParameterType).ElementType.Name.ToString();
                         else
                             correctName = parameter.ParameterType.Name;
 
@@ -99,27 +94,19 @@ namespace BusinessCentral.LinterCop.Design
                             ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, ctx.Node.GetLocation(), new object[] { correctName, "" }));
                     }
                 }
-                try
+                IReturnValueSymbol returnValue = method.ReturnValueSymbol;
+                if (returnValue?.DeclaringSyntaxReference == null || returnValue.ReturnType.GetNavTypeKindSafe() == NavTypeKind.DotNet) return;
+
+                if (ctx.Node.GetLocation().SourceSpan.End == returnValue.DeclaringSyntaxReference.GetSyntax(ctx.CancellationToken).Span.End)
                 {
-                    IReturnValueSymbol returnValue = method.ReturnValueSymbol;
-                    if (returnValue.ReturnType.NavTypeKind == NavTypeKind.DotNet)
-                    {
-                        return;
-                    }
+                    correctName = returnValue.ReturnType.Name;
 
-                    if (ctx.Node.GetLocation().SourceSpan.End == returnValue.DeclaringSyntaxReference.GetSyntax(CancellationToken.None).Span.End)
-                    {
-                        correctName = returnValue.ReturnType.Name;
+                    if (ctx.Node.GetLastToken().ToString().Trim('"').ToUpper() != correctName.ToUpper())
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
 
-                        if (ctx.Node.GetLastToken().ToString().Trim('"').ToUpper() != correctName.ToUpper())
-                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
-
-                        if (ctx.Node.GetLastToken().ToString().Trim('"') != correctName)
-                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, ctx.Node.GetLocation(), new object[] { correctName, "" }));
-                    }
+                    if (ctx.Node.GetLastToken().ToString().Trim('"') != correctName)
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, ctx.Node.GetLocation(), new object[] { correctName, "" }));
                 }
-                catch (System.NullReferenceException)
-                { }
             }
         }
     }

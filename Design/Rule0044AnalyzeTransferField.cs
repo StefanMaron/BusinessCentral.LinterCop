@@ -748,7 +748,7 @@ namespace BusinessCentral.LinterCop.Design
 
                 foreach (FieldSyntax field in fieldList.Fields.Where(fld => fld.IsKind(SyntaxKind.Field)))
                 {
-                    if (!FieldIsObsolete(field))
+                    if (!FieldIsObsolete(field) && !IsRuleDisabledWithPragma(field))
                         Fields.Add(new Field((int)field.No.Value, field.Name.Identifier.ValueText.UnquoteIdentifier(), field.Type.ToString(), field.GetLocation(), this, GetFieldClass(field)));
                 }
             }
@@ -759,7 +759,7 @@ namespace BusinessCentral.LinterCop.Design
 
                 foreach (FieldSyntax field in fieldList.Fields)
                 {
-                    if (!FieldIsObsolete(field))
+                    if (!FieldIsObsolete(field) && !IsRuleDisabledWithPragma(field))
                         Fields.Add(new Field((int)field.No.Value, field.Name.Identifier.ValueText.UnquoteIdentifier(), field.Type.ToString(), field.GetLocation(), this, GetFieldClass(field)));
                 }
             }
@@ -777,6 +777,24 @@ namespace BusinessCentral.LinterCop.Design
                     EnumPropertyValueSyntax enumPropertyValueSyntax = (EnumPropertyValueSyntax)property.Value;
 
                     if (enumPropertyValueSyntax.Value.Identifier.ToString().Equals("Removed"))
+                        return true;
+                }
+
+                return false;
+            }
+
+            private static bool IsRuleDisabledWithPragma(FieldSyntax field)
+            {
+                IList<PragmaWarningDirectiveTriviaSyntax> pragmaWarningDirectives = field.GetDirectives()
+                                                                                    .Where(directive => directive.IsKind(SyntaxKind.PragmaWarningDirectiveTrivia))
+                                                                                    .OfType<PragmaWarningDirectiveTriviaSyntax>()
+                                                                                    .ToList();
+
+                foreach (PragmaWarningDirectiveTriviaSyntax pragmaWarningDirective in pragmaWarningDirectives)
+                {
+                    if (pragmaWarningDirective.ErrorCodes.OfType<IdentifierNameSyntax>()
+                                                         .Where(i => i.Identifier.Text.Contains(DiagnosticDescriptors.Rule0044AnalyzeTransferFields.Id))
+                                                         .Any())
                         return true;
                 }
 
