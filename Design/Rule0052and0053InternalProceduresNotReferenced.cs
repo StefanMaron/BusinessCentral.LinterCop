@@ -1,9 +1,13 @@
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.InternalSyntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace BusinessCentral.LinterCop.Design {
     [DiagnosticAnalyzer]
@@ -15,6 +19,8 @@ namespace BusinessCentral.LinterCop.Design {
             private readonly PooledDictionary<IMethodSymbol, string> internalMethodsUnused = PooledDictionary<IMethodSymbol, string>.GetInstance();
             private readonly PooledDictionary<IMethodSymbol, string> internalMethodsUsedInCurrentObject = PooledDictionary<IMethodSymbol, string>.GetInstance();
             private readonly PooledDictionary<IMethodSymbol, string> internalMethodsUsedInOtherObjects = PooledDictionary<IMethodSymbol, string>.GetInstance();
+
+            private readonly AttributeKind[] attributeKindsOfMethodsToSkip = new AttributeKind[] { AttributeKind.ConfirmHandler, AttributeKind.FilterPageHandler, AttributeKind.HyperlinkHandler, AttributeKind.MessageHandler, AttributeKind.ModalPageHandler, AttributeKind.PageHandler, AttributeKind.RecallNotificationHandler, AttributeKind.ReportHandler, AttributeKind.RequestPageHandler, AttributeKind.SendNotificationHandler, AttributeKind.SessionSettingsHandler, AttributeKind.StrMenuHandler, AttributeKind.Test };
 
             public MethodSymbolAnalyzer(CompilationAnalysisContext compilationAnalysisContext)
             {
@@ -49,6 +55,10 @@ namespace BusinessCentral.LinterCop.Design {
                 {
                     return false;
                 }
+                if (methodSymbol.Attributes.Any(attr => attributeKindsOfMethodsToSkip.Contains(attr.AttributeKind)))
+                {
+                    return false;
+                }
                 if (!methodSymbol.IsInternal)
                 {
                     // Check if public procedure in internal object
@@ -73,11 +83,11 @@ namespace BusinessCentral.LinterCop.Design {
                     }
                 }
 
-                // If the procedure has signature ProcedureName(HostNotification: Notification), then the procedure does not need a reference check
+                // If the procedure has signature ProcedureName(HostNotification: Notification) or ProcedureName(ErrorInfo: ErrorInfo), then the procedure does not need a reference check
                 if (methodSymbol.Parameters.Length == 1)
                 {
                     ITypeSymbol firstParameterTypeSymbol = methodSymbol.Parameters[0].ParameterType;
-                    if (firstParameterTypeSymbol.GetNavTypeKindSafe() == NavTypeKind.Notification)
+                    if (firstParameterTypeSymbol.GetNavTypeKindSafe() == NavTypeKind.Notification || firstParameterTypeSymbol.GetNavTypeKindSafe() == NavTypeKind.ErrorInfo)
                     {
                         return false;
                     }
