@@ -518,7 +518,7 @@
   </data>
   <data name="Rule0045ZeroEnumValueReservedForEmptyDescription" xml:space="preserve">
     <value>Zero (0) Enum value should be reserved for Empty Value.</value>
-  </data>  
+  </data>
   <data name="Rule0046TokLabelsLockedTitle" xml:space="preserve">
     <value>Label with suffix Tok must be locked.</value>
   </data>
@@ -527,7 +527,7 @@
   </data>
   <data name="Rule0046TokLabelsLockedDescription" xml:space="preserve">
     <value>Label with suffix Tok must be locked.</value>
-  </data>   
+  </data>
   <data name="Rule0047LockedLabelsTokTitle" xml:space="preserve">
     <value>Locked Label must have a suffix Tok.</value>
   </data>
@@ -572,5 +572,23 @@
   </data>
   <data name="Rule0051SetFilterPossibleOverflowDescription" xml:space="preserve">
     <value>Do not assign a text to a target with smaller size.</value>
+  </data>
+  <data name="Rule0052InternalProceduresNotReferencedAnalyzerDescription" xml:space="preserve">
+    <value>The internal method is declared but never used.</value>
+  </data>
+  <data name="Rule0052InternalProceduresNotReferencedAnalyzerFormat" xml:space="preserve">
+    <value>The {0} method {1} in {2} {3} (Access = {4}) is declared but never used.</value>
+  </data>
+  <data name="Rule0052InternalProceduresNotReferencedAnalyzerTitle" xml:space="preserve">
+    <value>The internal method is declared but never used.</value>
+  </data>
+  <data name="Rule0053InternalProcedureOnlyUsedInCurrentObjectAnalyzerDescription" xml:space="preserve">
+    <value>The internal method is only used in the object in which it is declared.</value>
+  </data>
+  <data name="Rule0053InternalProcedureOnlyUsedInCurrentObjectAnalyzerFormat" xml:space="preserve">
+    <value>The {0} method {1} is only used in the object {2} {3} (Access = {4}) in which it is declared. Consider making the procedure local.</value>
+  </data>
+  <data name="Rule0053InternalProcedureOnlyUsedInCurrentObjectAnalyzerTitle" xml:space="preserve">
+    <value>The internal method is only used in the object in which it is declared.</value>
   </data>
 </root>
