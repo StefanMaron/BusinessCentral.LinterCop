@@ -17,11 +17,14 @@ namespace BusinessCentral.LinterCop.Design
         {
             NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(ctx.Compilation);
             if (manifest == null) return;
-            if (manifest.Runtime == (Version)null) return;
+            if (manifest.Runtime == null) return;
+            if (manifest.Application == null && manifest.Platform == null) return;
 
             GetTargetProperty(manifest, out string propertyName, out Version propertyVersion);
 
             Version supportedRuntime = FindValueOfFirstValueLessThan(GetSupportedRuntimeVersions(), propertyVersion);
+            if (supportedRuntime == null) return;
+
             if (manifest.Runtime < supportedRuntime)
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0033AppManifestRuntimeBehind, manifest.GetDiagnosticLocation("runtime"), new object[] { propertyName, propertyVersion, manifest.Runtime, supportedRuntime }));
         }
@@ -60,7 +63,7 @@ namespace BusinessCentral.LinterCop.Design
         private static Version FindValueOfFirstValueLessThan(SortedList<Version, Version> sortedList, Version version)
         {
             int index = FindIndexOfFirstValueLessThan(sortedList.Keys.ToList(), version);
-            return sortedList.ElementAt(index).Value;
+            return sortedList.ElementAtOrDefault(index).Value;
         }
 
         private static int FindIndexOfFirstValueLessThan<T>(List<T> sortedList, T value, IComparer<T> comparer = null)
