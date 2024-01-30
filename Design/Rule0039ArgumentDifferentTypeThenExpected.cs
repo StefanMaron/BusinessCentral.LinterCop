@@ -71,7 +71,7 @@ namespace BusinessCentral.LinterCop.Design
                                                         .Where(x => x.Type.GetNavTypeKindSafe() == NavTypeKind.Page)
                                                         .SingleOrDefault();
             if (pageReference == null) return;
-            IVariableSymbol variableSymbol = (IVariableSymbol)pageReference.GetSymbol().OriginalDefinition;
+            ISymbol variableSymbol = pageReference.GetSymbol().OriginalDefinition;
             IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)variableSymbol.GetTypeSymbol().OriginalDefinition;
             if (pageTypeSymbol.RelatedTable == null)
             {
