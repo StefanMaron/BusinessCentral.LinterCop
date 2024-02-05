@@ -4,10 +4,9 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.InternalSyntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
-using System;
-using System.Collections.Generic;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
+using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace BusinessCentral.LinterCop.Design {
     [DiagnosticAnalyzer]
@@ -24,6 +23,11 @@ namespace BusinessCentral.LinterCop.Design {
 
             public MethodSymbolAnalyzer(CompilationAnalysisContext compilationAnalysisContext)
             {
+                NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(compilationAnalysisContext.Compilation);
+                if(manifest.InternalsVisibleTo != null && manifest.InternalsVisibleTo.Any()) {
+                    return;
+                }
+
                 ImmutableArray<IApplicationObjectTypeSymbol>.Enumerator objectEnumerator = compilationAnalysisContext.Compilation.GetDeclaredApplicationObjectSymbols().GetEnumerator();
                 while (objectEnumerator.MoveNext())
                 {
