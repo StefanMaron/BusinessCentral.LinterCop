@@ -96,7 +96,7 @@ jobs:
           Remove-Item -Path "ms-dynamics-smb.al-latest" -Force -Recurse -Verbose;
           7z x "ALLanguage_next.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r;
       - name: Build next
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build /p:DefineConstants=PreRelease --no-restore --configuration Release
           
       - name: Upload a Build next
         uses: actions/upload-artifact@v2.2.4
