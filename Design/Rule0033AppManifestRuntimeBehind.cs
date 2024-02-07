@@ -1,4 +1,5 @@
-using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
+//using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration; // AL Language v12
+using Microsoft.Dynamics.Nav.Analyzers.Common; // AL Language v13
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
@@ -15,7 +16,8 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckAppManifestRuntime(CompilationAnalysisContext ctx)
         {
-            NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(ctx.Compilation);
+            //NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(ctx.Compilation);  // AL Language v12
+            NavAppManifest manifest = ManifestHelper.GetManifest(ctx.Compilation); // AL Language v13
             if (manifest == null) return;
             if (manifest.Runtime == null) return;
             if (manifest.Application == null && manifest.Platform == null) return;

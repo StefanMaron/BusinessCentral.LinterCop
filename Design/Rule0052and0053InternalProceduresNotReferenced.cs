@@ -5,14 +5,18 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.InternalSyntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
-using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
+//using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration; // AL Language v12
+using Microsoft.Dynamics.Nav.Analyzers.Common; // AL Language v13
 using System.Collections.Immutable;
 
-namespace BusinessCentral.LinterCop.Design {
+namespace BusinessCentral.LinterCop.Design
+{
     [DiagnosticAnalyzer]
-    public class Rule0052InternalProceduresNotReferencedAnalyzer : DiagnosticAnalyzer {
+    public class Rule0052InternalProceduresNotReferencedAnalyzer : DiagnosticAnalyzer
+    {
 
-        private class MethodSymbolAnalyzer : IDisposable {
+        private class MethodSymbolAnalyzer : IDisposable
+        {
             private readonly PooledDictionary<IMethodSymbol, string> methodSymbols = PooledDictionary<IMethodSymbol, string>.GetInstance();
 
             private readonly PooledDictionary<IMethodSymbol, string> internalMethodsUnused = PooledDictionary<IMethodSymbol, string>.GetInstance();
@@ -23,8 +27,10 @@ namespace BusinessCentral.LinterCop.Design {
 
             public MethodSymbolAnalyzer(CompilationAnalysisContext compilationAnalysisContext)
             {
-                NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(compilationAnalysisContext.Compilation);
-                if(manifest.InternalsVisibleTo != null && manifest.InternalsVisibleTo.Any()) {
+                //NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(compilationAnalysisContext.Compilation);  // AL Language v12
+                NavAppManifest manifest = ManifestHelper.GetManifest(compilationAnalysisContext.Compilation); // AL Language v13
+                if (manifest.InternalsVisibleTo != null && manifest.InternalsVisibleTo.Any())
+                {
                     return;
                 }
 
