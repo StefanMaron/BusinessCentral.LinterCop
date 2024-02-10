@@ -591,13 +591,13 @@
   <data name="Rule0053InternalProcedureOnlyUsedInCurrentObjectAnalyzerTitle" xml:space="preserve">
     <value>The internal method is only used in the object in which it is declared.</value>
   </data>
-  <data name="Rule0054DatabaseReadInTryFunctionsDescription" xml:space="preserve">
+  <data name="Rule0054DatabaseOperationInTryFunctionsDescription" xml:space="preserve">
     <value>Do not call write operations in try Functions</value>
   </data>
-  <data name="Rule0054DatabaseReadInTryFunctionsFormat" xml:space="preserve">
+  <data name="Rule0054DatabaseOperationInTryFunctionsFormat" xml:space="preserve">
     <value>Do not call write operations in try Functions</value>
   </data>
-  <data name="Rule0054DatabaseReadInTryFunctionsTitle" xml:space="preserve">
+  <data name="Rule0054DatabaseOperationInTryFunctionsTitle" xml:space="preserve">
     <value>Do not call write operations in try Functions</value>
   </data>
 </root>

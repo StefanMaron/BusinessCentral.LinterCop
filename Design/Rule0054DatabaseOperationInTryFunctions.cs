@@ -11,18 +11,18 @@ using System.Collections.Immutable;
 namespace BusinessCentral.LinterCop.Design
 {
     [DiagnosticAnalyzer]
-    public class Rule0054DatabaseReadInTryFunctions : DiagnosticAnalyzer
+    public class Rule0054DatabaseOperationInTryFunctions : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0054DatabaseReadInTryFunctions);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0054DatabaseOperationInTryFunctions);
 
         private static readonly List<string> databaseInvocations = new List<string>
         {
             "insert", "delete", "modify", "modifyall", "rename", "addlink", "deletelink", "deletelinks", "commit"
         };
 
-        public override void Initialize(AnalysisContext context) => context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.FindDatabaseReadInTryFunctions), SyntaxKind.InvocationExpression);
+        public override void Initialize(AnalysisContext context) => context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.FindDatabaseOperationInTryFunctions), SyntaxKind.InvocationExpression);
 
-        private void FindDatabaseReadInTryFunctions(SyntaxNodeAnalysisContext ctx)
+        private void FindDatabaseOperationInTryFunctions(SyntaxNodeAnalysisContext ctx)
         {
             if (ctx.ContainingSymbol.Kind != SymbolKind.Method) return;
             IMethodSymbol symbol = (IMethodSymbol)ctx.ContainingSymbol;
@@ -37,7 +37,7 @@ namespace BusinessCentral.LinterCop.Design
 
             if (databaseInvocations.Contains(expression.Name.Identifier.ValueText.ToLowerInvariant()))
             {
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0054DatabaseReadInTryFunctions, ctx.Node.GetLocation()));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0054DatabaseOperationInTryFunctions, ctx.Node.GetLocation()));
             }
         }
     }
