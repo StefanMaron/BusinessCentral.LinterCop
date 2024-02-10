@@ -14,21 +14,30 @@ namespace BusinessCentral.LinterCop.Design
     public class Rule0054DatabaseReadInTryFunctions : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0054DatabaseReadInTryFunctions);
+
+        private static readonly List<string> databaseInvocations = new List<string>
+        {
+            "insert", "delete", "modify", "modifyall", "rename", "addlink", "deletelink", "deletelinks", "commit"
+        };
+
         public override void Initialize(AnalysisContext context) => context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.FindDatabaseReadInTryFunctions), SyntaxKind.InvocationExpression);
 
         private void FindDatabaseReadInTryFunctions(SyntaxNodeAnalysisContext ctx)
         {
             if (ctx.ContainingSymbol.Kind != SymbolKind.Method) return;
-
             IMethodSymbol symbol = (IMethodSymbol)ctx.ContainingSymbol;
-            if (symbol.Attributes.Any(a => a.AttributeKind == AttributeKind.TryFunction))
+
+            if (!symbol.Attributes.Any(a => a.AttributeKind == AttributeKind.TryFunction)) return;
+
+            InvocationExpressionSyntax invocation = ctx.Node as InvocationExpressionSyntax;
+            if (invocation == null) return;
+
+            MemberAccessExpressionSyntax expression = invocation.Expression as MemberAccessExpressionSyntax;
+            if (expression == null) return;
+
+            if (databaseInvocations.Contains(expression.Name.Identifier.ValueText.ToLowerInvariant()))
             {
-                String[] databaseInvocations = { "INSERT", "DELETE", "MODIFY", "MODIFYALL", "RENAME", "ADDLINK", "DELETELINK", "DELETELINKS", "COMMIT" };
-                string currentInvocation = ((IdentifierNameSyntax)((InvocationExpressionSyntax)ctx.Node).Expression).Identifier.ValueText;
-                if (databaseInvocations.Contains(currentInvocation.ToUpper()))
-                {
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0054DatabaseReadInTryFunctions, ctx.Node.GetLocation()));
-                }
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0054DatabaseReadInTryFunctions, ctx.Node.GetLocation()));
             }
         }
     }
