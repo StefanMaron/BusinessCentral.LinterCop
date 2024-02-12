@@ -1,7 +1,11 @@
-using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
+#if PreRelease
+using Microsoft.Dynamics.Nav.Analyzers.Common;  // AL Language v13
+#else
+using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration; // AL Language v12
+#endif
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
@@ -15,13 +19,21 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckAppManifestRuntime(CompilationAnalysisContext ctx)
         {
-            NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(ctx.Compilation);
+#if PreRelease
+            NavAppManifest manifest = ManifestHelper.GetManifest(ctx.Compilation); // AL Language v13
+#else
+            NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(ctx.Compilation);  // AL Language v12
+#endif
+
             if (manifest == null) return;
-            if (manifest.Runtime == (Version)null) return;
+            if (manifest.Runtime == null) return;
+            if (manifest.Application == null && manifest.Platform == null) return;
 
             GetTargetProperty(manifest, out string propertyName, out Version propertyVersion);
 
             Version supportedRuntime = FindValueOfFirstValueLessThan(GetSupportedRuntimeVersions(), propertyVersion);
+            if (supportedRuntime == null) return;
+
             if (manifest.Runtime < supportedRuntime)
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0033AppManifestRuntimeBehind, manifest.GetDiagnosticLocation("runtime"), new object[] { propertyName, propertyVersion, manifest.Runtime, supportedRuntime }));
         }
@@ -60,7 +72,7 @@ namespace BusinessCentral.LinterCop.Design
         private static Version FindValueOfFirstValueLessThan(SortedList<Version, Version> sortedList, Version version)
         {
             int index = FindIndexOfFirstValueLessThan(sortedList.Keys.ToList(), version);
-            return sortedList.ElementAt(index).Value;
+            return sortedList.ElementAtOrDefault(index).Value;
         }
 
         private static int FindIndexOfFirstValueLessThan<T>(List<T> sortedList, T value, IComparer<T> comparer = null)
