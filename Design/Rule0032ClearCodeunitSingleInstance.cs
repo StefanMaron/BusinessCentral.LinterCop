@@ -8,7 +8,7 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0032ClearCodeunitSingleInstance : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0032ClearCodeunitSingleInstance);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0032ClearCodeunitSingleInstance, DiagnosticDescriptors.Rule0000ErrorInRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -30,8 +30,15 @@ namespace BusinessCentral.LinterCop.Design
             IOperation operand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
             if (operand.GetSymbol().GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Codeunit) return;
 
-            if (IsSingleInstanceCodeunitWithGlobalVars((ICodeunitTypeSymbol)operand.GetSymbol().GetTypeSymbol()))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0032ClearCodeunitSingleInstance, ctx.Operation.Syntax.GetLocation(), new Object[] { operand.GetSymbol().Name, operand.GetSymbol().GetTypeSymbol().Name }));
+            try // temporary add an Try/Catch to investigate issue https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/523
+            {
+                if (IsSingleInstanceCodeunitWithGlobalVars((ICodeunitTypeSymbol)operand.GetSymbol().GetTypeSymbol()))
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0032ClearCodeunitSingleInstance, ctx.Operation.Syntax.GetLocation(), new Object[] { operand.GetSymbol().Name, operand.GetSymbol().GetTypeSymbol().Name }));
+            }
+            catch
+            {
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0032", "Exception", "at Line 35" }));
+            }
         }
 
         private void ClearAllCodeunit(OperationAnalysisContext ctx)
