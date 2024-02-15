@@ -97,6 +97,7 @@ namespace BusinessCentral.LinterCop.Design
                 IPropertySymbol pageReference = table.GetProperty(propertyKind);
                 if (pageReference == null) continue;
                 IPageTypeSymbol page = (IPageTypeSymbol)pageReference.Value;
+                if (page == null) continue;
                 ITableTypeSymbol pageSourceTable = page.RelatedTable;
                 if (pageSourceTable == null) continue;
 
