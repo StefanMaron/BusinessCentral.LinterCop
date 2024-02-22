@@ -234,7 +234,7 @@
     },
     {
       "id": "LC0047",
-      "action": "Info",
+      "action": "None",
       "justification": "Locked Label must have a suffix Tok."
     },
     {
