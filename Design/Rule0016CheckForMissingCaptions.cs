@@ -74,6 +74,9 @@ namespace BusinessCentral.LinterCop.Design
                     case ControlKind.Area:
                         break;
 
+                    case ControlKind.Grid:
+                        break;
+
                     case ControlKind.Repeater:
                         break;
 
