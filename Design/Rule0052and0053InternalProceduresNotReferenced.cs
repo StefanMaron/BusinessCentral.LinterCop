@@ -235,7 +235,7 @@ namespace BusinessCentral.LinterCop.Design
             }
         }
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0052InternalProceduresNotReferencedAnalyzerDescriptor, DiagnosticDescriptors.Rule0053InternalProcedureOnlyUsedInCurrentObjectAnalyzerDescriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0052InternalProceduresNotReferencedAnalyzerDescriptor, DiagnosticDescriptors.Rule0053InternalProcedureOnlyUsedInCurrentObjectAnalyzerDescriptor, DiagnosticDescriptors.Rule0000ErrorInRule);
 
 
         public override void Initialize(AnalysisContext context)
