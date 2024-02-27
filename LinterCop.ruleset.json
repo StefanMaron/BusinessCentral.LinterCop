@@ -120,7 +120,7 @@
     {
       "id": "LC0024",
       "action": "Info",
-      "justification": "Procedure declaration should not end with semicolon."
+      "justification": "Procedure or Trigger declaration should not end with semicolon."
     },
     {
       "id": "LC0025",

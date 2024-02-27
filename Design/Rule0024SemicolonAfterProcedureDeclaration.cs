@@ -6,13 +6,13 @@ using System.Collections.Immutable;
 namespace BusinessCentral.LinterCop.Design
 {
     [DiagnosticAnalyzer]
-    public class Rule0024SemicolonAfterProcedureDeclaration : DiagnosticAnalyzer
+    public class Rule0024SemicolonAfterMethodOrTriggerDeclaration : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0024SemicolonAfterProcedureDeclaration);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0024SemicolonAfterMethodOrTriggerDeclaration);
 
-        public override void Initialize(AnalysisContext context) => context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeSemicolonAfterProcedureDeclaration), SyntaxKind.MethodDeclaration, SyntaxKind.TriggerDeclaration);
+        public override void Initialize(AnalysisContext context) => context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeSemicolonAfterMethodOrTriggerDeclaration), SyntaxKind.MethodDeclaration, SyntaxKind.TriggerDeclaration);
 
-        private void AnalyzeSemicolonAfterProcedureDeclaration(SyntaxNodeAnalysisContext ctx)
+        private void AnalyzeSemicolonAfterMethodOrTriggerDeclaration(SyntaxNodeAnalysisContext ctx)
         {
             if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
@@ -21,7 +21,7 @@ namespace BusinessCentral.LinterCop.Design
 
             if (syntax.SemicolonToken.Kind != SyntaxKind.None)
             {
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0024SemicolonAfterProcedureDeclaration, syntax.SemicolonToken.GetLocation()));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0024SemicolonAfterMethodOrTriggerDeclaration, syntax.SemicolonToken.GetLocation()));
             }
         }
     }
