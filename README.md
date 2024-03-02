@@ -95,6 +95,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0051](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0051)|Do not assign a text to a target with smaller size.|Warning|
 |[LC0052](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0052)|The internal procedure is declared but never used.|Info|
 |[LC0053](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0053)|The internal procedure is only used in the object in which it is declared. Consider making the procedure local.|Info|
+|[LC0055](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0055)|The suffix `Tok` is meant to be used when the value of the label matches the name.|Info|
 
 ## Configuration
 
