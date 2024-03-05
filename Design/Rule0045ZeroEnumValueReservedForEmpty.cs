@@ -17,6 +17,9 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
             if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
 
+            IEnumTypeSymbol enumTypeSymbol = ctx.ContainingSymbol.GetContainingObjectTypeSymbol() as IEnumTypeSymbol;
+            if (enumTypeSymbol != null && enumTypeSymbol.ImplementedInterfaces.Any()) return;
+
             LabelPropertyValueSyntax captionProperty = ctx.Node?.GetProperty("Caption")?.Value as LabelPropertyValueSyntax;
             EnumValueSyntax enumValue = ctx.Node as EnumValueSyntax;
 

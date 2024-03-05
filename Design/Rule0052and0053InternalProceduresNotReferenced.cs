@@ -5,6 +5,7 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.InternalSyntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
+
 #if PreRelease
 using Microsoft.Dynamics.Nav.Analyzers.Common;  // AL Language v13
 #else
@@ -132,41 +133,50 @@ namespace BusinessCentral.LinterCop.Design
 
                     SyntaxTree syntaxTree = enumerator.Current;
                     SemanticModel semanticModel = compilation.GetSemanticModel(syntaxTree);
+
                     syntaxTree.GetRoot().WalkDescendantsAndPerformAction(delegate (SyntaxNode syntaxNode)
                     {
-                        if (methodSymbols.Count == 0)
+                        try // temporary add an Try/Catch to investigate issue https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/517
                         {
-                            return;
-                        }
-                        if (syntaxNode.Parent.IsKind(SyntaxKind.MethodDeclaration) || !syntaxNode.IsKind(SyntaxKind.IdentifierName))
-                        {
-                            return;
-                        }
-                        IdentifierNameSyntax identifierNameSyntax = (IdentifierNameSyntax)syntaxNode;
-                        if (methodSymbols.ContainsValue(identifierNameSyntax.Identifier.ValueText.ToLowerInvariant()) && TryGetSymbolFromIdentifier(semanticModel, (IdentifierNameSyntax)syntaxNode, SymbolKind.Method, out var methodSymbol))
-                        {
-                            if (methodSymbol.IsInternal)
+                            if (methodSymbols.Count == 0)
                             {
-                                var objectSyntax = syntaxNode.GetContainingObjectSyntax();
-                                var objectSyntaxName = objectSyntax.Name.Identifier.ValueText.ToLowerInvariant();
-
-                                var methodObjectSymbol = methodSymbol.GetContainingApplicationObjectTypeSymbol();
-                                var methodObjectSymbolName = methodObjectSymbol.Name.ToLowerInvariant();
-
-                                if (
-                                    (methodObjectSymbolName == objectSyntaxName) &&
-                                    (objectSyntax.Kind.ToString().Replace("Object", "").ToLowerInvariant() == methodObjectSymbol.Kind.ToString().ToLowerInvariant())
-                                )
-                                {
-                                    internalMethodsUsedInCurrentObject[methodSymbol] = methodSymbol.Name.ToLowerInvariant();
-                                }
-                                else
-                                {
-                                    internalMethodsUsedInOtherObjects[methodSymbol] = methodSymbol.Name.ToLowerInvariant();
-                                }
+                                return;
                             }
+                            if (syntaxNode.Parent.IsKind(SyntaxKind.MethodDeclaration) || !syntaxNode.IsKind(SyntaxKind.IdentifierName))
+                            {
+                                return;
+                            }
+                            IdentifierNameSyntax identifierNameSyntax = (IdentifierNameSyntax)syntaxNode;
+                            if (methodSymbols.ContainsValue(identifierNameSyntax.Identifier.ValueText.ToLowerInvariant()) && TryGetSymbolFromIdentifier(semanticModel, (IdentifierNameSyntax)syntaxNode, SymbolKind.Method, out var methodSymbol))
+                            {
+                                if (methodSymbol.IsInternal)
+                                {
+                                    var objectSyntax = syntaxNode.GetContainingObjectSyntax();
+                                    var objectSyntaxName = objectSyntax.Name.Identifier.ValueText.ToLowerInvariant();
 
-                            internalMethodsUnused.Remove(methodSymbol);
+                                    var methodObjectSymbol = methodSymbol.GetContainingApplicationObjectTypeSymbol();
+                                    var methodObjectSymbolName = methodObjectSymbol.Name.ToLowerInvariant();
+
+                                    if (
+                                        (methodObjectSymbolName == objectSyntaxName) &&
+                                        (objectSyntax.Kind.ToString().Replace("Object", "").ToLowerInvariant() == methodObjectSymbol.Kind.ToString().ToLowerInvariant())
+                                    )
+                                    {
+                                        internalMethodsUsedInCurrentObject[methodSymbol] = methodSymbol.Name.ToLowerInvariant();
+                                    }
+                                    else
+                                    {
+                                        internalMethodsUsedInOtherObjects[methodSymbol] = methodSymbol.Name.ToLowerInvariant();
+                                    }
+                                }
+
+                                internalMethodsUnused.Remove(methodSymbol);
+                            }
+                        }
+                        catch (NullReferenceException)
+                        {
+                            Diagnostic diagnostic = Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, syntaxNode.GetLocation(), new Object[] { "Rule0052", "Exception", "at Line 140" });
+                            compilationAnalysisContext.ReportDiagnostic(diagnostic);
                         }
                     });
                 }
@@ -225,7 +235,7 @@ namespace BusinessCentral.LinterCop.Design
             }
         }
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0052InternalProceduresNotReferencedAnalyzerDescriptor, DiagnosticDescriptors.Rule0053InternalProcedureOnlyUsedInCurrentObjectAnalyzerDescriptor);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0052InternalProceduresNotReferencedAnalyzerDescriptor, DiagnosticDescriptors.Rule0053InternalProcedureOnlyUsedInCurrentObjectAnalyzerDescriptor, DiagnosticDescriptors.Rule0000ErrorInRule);
 
 
         public override void Initialize(AnalysisContext context)

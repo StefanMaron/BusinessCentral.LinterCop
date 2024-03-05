@@ -292,13 +292,13 @@
     <value>Data Classification is equal to the Table. Remove to reduce redundancy.</value>
   </data>
   <data name="Rule0020ApplicationAreaEqualsToPageDescription" xml:space="preserve">
-    <value>Applicatication Area is equal to the Page. Remove to reduce redundancy.</value>
+    <value>Application Area is equal to the Page. Remove to reduce redundancy.</value>
   </data>
   <data name="Rule0020ApplicationAreaEqualsToPageFormat" xml:space="preserve">
-    <value>Applicatication Area is equal to the Page. Remove to reduce redundancy.</value>
+    <value>Application Area is equal to the Page. Remove to reduce redundancy.</value>
   </data>
   <data name="Rule0020ApplicationAreaEqualsToPageTitle" xml:space="preserve">
-    <value>Applicatication Area is equal to the Page. Remove to reduce redundancy.</value>
+    <value>Application Area is equal to the Page. Remove to reduce redundancy.</value>
   </data>
   <data name="Rule0021ConfirmImplementConfirmManagement" xml:space="preserve">
     <value>Confirm() must be implemented through the "Confirm Management" codeunit from the System Application.</value>
@@ -318,14 +318,14 @@
   <data name="Rule0023AlwaysSpecifyFieldgroups" xml:space="preserve">
     <value>Fieldgroup "{0}" is missing on table "{1}".</value>
   </data>
-  <data name="Rule0024SemicolonAfterProcedureDeclarationDescription" xml:space="preserve">
-    <value>Procedure declaration should not end with semicolon.</value>
+  <data name="Rule0024SemicolonAfterMethodOrTriggerDeclarationDescription" xml:space="preserve">
+    <value>Procedure or Trigger declaration should not end with semicolon.</value>
   </data>
-  <data name="Rule0024SemicolonAfterProcedureDeclarationFormat" xml:space="preserve">
-    <value>Procedure declaration should not end with semicolon.</value>
+  <data name="Rule0024SemicolonAfterMethodOrTriggerDeclarationFormat" xml:space="preserve">
+    <value>Procedure or Trigger declaration should not end with semicolon.</value>
   </data>
-  <data name="Rule0024SemicolonAfterProcedureDeclarationTitle" xml:space="preserve">
-    <value>Procedure declaration should not end with semicolon.</value>
+  <data name="Rule0024SemicolonAfterMethodOrTriggerDeclarationTitle" xml:space="preserve">
+    <value>Procedure or Trigger declaration should not end with semicolon.</value>
   </data>
   <data name="Rule0025InternalProcedureModifierDescription" xml:space="preserve">
     <value>Procedure must be either local, internal or define a documentation comment.</value>

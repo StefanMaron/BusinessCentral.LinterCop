@@ -31,6 +31,8 @@ namespace BusinessCentral.LinterCop.Design
             if (operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression) return;
             IOperation fieldOperand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
             ITypeSymbol fieldType = fieldOperand.Type;
+            if (fieldType.GetNavTypeKindSafe() == NavTypeKind.Text) return;
+
             bool isError = false;
             int typeLength = GetTypeLength(fieldType, ref isError);
             if (isError || typeLength == int.MaxValue)
