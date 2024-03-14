@@ -47,6 +47,13 @@ namespace BusinessCentral.LinterCop.Design
                 while (objectEnumerator.MoveNext())
                 {
                     IApplicationObjectTypeSymbol applicationSymbol = objectEnumerator.Current;
+
+                    if (applicationSymbol.GetNavTypeKindSafe() == NavTypeKind.Codeunit)
+                    {
+                        // If the containing object is an codeunit and implements an interface, then we do not need to check for references for this procedure.
+                        ICodeunitTypeSymbol codeunitSymbol = applicationSymbol as ICodeunitTypeSymbol;
+                        if (codeunitSymbol != null && codeunitSymbol.ImplementedInterfaces.Any()) continue;
+                    }
                     ImmutableArray<ISymbol>.Enumerator objectMemberEnumerator = applicationSymbol.GetMembers().GetEnumerator();
                     while (objectMemberEnumerator.MoveNext())
                     {
