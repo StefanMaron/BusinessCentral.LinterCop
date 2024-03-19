@@ -1,11 +1,7 @@
+using Microsoft.Dynamics.Nav.Analyzers.Common;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
-#if PreRelease
-using Microsoft.Dynamics.Nav.Analyzers.Common;  // AL Language v13
-#else
-using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration; // AL Language v12
-#endif
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
@@ -19,11 +15,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckAppManifestRuntime(CompilationAnalysisContext ctx)
         {
-#if PreRelease
-            NavAppManifest manifest = ManifestHelper.GetManifest(ctx.Compilation); // AL Language v13
-#else
-            NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(ctx.Compilation);  // AL Language v12
-#endif
+            NavAppManifest manifest = ManifestHelper.GetManifest(ctx.Compilation);
 
             if (manifest == null) return;
             if (manifest.Runtime == null) return;
