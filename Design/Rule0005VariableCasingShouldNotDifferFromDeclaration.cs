@@ -7,17 +7,17 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0005VariableCasingShouldNotDifferFromDeclaration : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } 
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; }
             = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration);
-        
+
         private static readonly HashSet<SyntaxKind> _validTokens = new();
-        private static string[] _navTypeKindStrings; 
+        private static string[] _navTypeKindStrings;
 
         public override void Initialize(AnalysisContext context)
         {
             GenerateNavTypeKindArray();
             GenerateValidTokenArray();
-           
+
             context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForBuiltInMethodsWithCasingMismatch), new OperationKind[] {
                 OperationKind.InvocationExpression,
                 OperationKind.FieldAccess,
@@ -64,25 +64,26 @@ namespace BusinessCentral.LinterCop.Design
             foreach (var kind in allKinds)
             {
                 var kindSpan = kind.ToString().AsSpan();
-              
+
                 if ((kindSpan.Contains("Keyword", StringComparison.Ordinal) &&
-                    !kindSpan.StartsWith("Codeunit") &&
-                    !kindSpan.StartsWith("Enum") &&
-                    !kindSpan.StartsWith("Label") &&
                     !kindSpan.StartsWith("Action") &&
-                    !kindSpan.StartsWith("Page") &&
+                    !kindSpan.StartsWith("Codeunit") &&
+                    !kindSpan.StartsWith("ControlAddIn") &&
+                    !kindSpan.StartsWith("DotNet") &&
+                    !kindSpan.StartsWith("Enum") &&
                     !kindSpan.StartsWith("Interface") &&
-                    !kindSpan.StartsWith("Report") &&
+                    !kindSpan.StartsWith("Label") &&
+                    !kindSpan.StartsWith("Page") &&
                     !kindSpan.StartsWith("Query") &&
-                    !kindSpan.StartsWith("XmlPort") &&
-                    !kindSpan.StartsWith("DotNet")) ||
+                    !kindSpan.StartsWith("Report") &&
+                    !kindSpan.StartsWith("XmlPort")) ||
                     kindSpan.Contains("DataType", StringComparison.Ordinal)
                    )
                 {
                     _validTokens.Add(kind);
                     continue;
                 }
-                
+
                 switch (kind)
                 {
                     case SyntaxKind.SimpleTypeReference:
@@ -90,7 +91,7 @@ namespace BusinessCentral.LinterCop.Design
                         _validTokens.Add(kind);
                         continue;
                 }
-                
+
             }
         }
 
@@ -118,7 +119,7 @@ namespace BusinessCentral.LinterCop.Design
 
                 if (!node.IsNode)
                     continue;
-                
+
                 var syntaxNodeAsString = syntaxNode.ToString();
                 if (!syntaxNodeAsString.StartsWith("array"))
                 {
@@ -163,7 +164,7 @@ namespace BusinessCentral.LinterCop.Design
                                 ctx.ReportDiagnostic(Diagnostic.Create(
                                     DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration,
                                     firstToken.GetLocation(), new object[] { targetName, "" }));
-                                
+
                             }
                         }
                     }
@@ -187,16 +188,16 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckForBuiltInMethodsWithCasingMismatch(OperationAnalysisContext ctx)
         {
-            if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || 
-                ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) 
+            if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending ||
+                ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved)
                 return;
-            
-            if (ctx.ContainingSymbol.IsObsoletePending || 
-                ctx.ContainingSymbol.IsObsoleteRemoved) 
+
+            if (ctx.ContainingSymbol.IsObsoletePending ||
+                ctx.ContainingSymbol.IsObsoleteRemoved)
                 return;
 
             var targetName = "";
-        
+
             switch (ctx.Operation.Kind)
             {
                 case OperationKind.InvocationExpression:
@@ -222,7 +223,7 @@ namespace BusinessCentral.LinterCop.Design
                 default:
                     return;
             }
-           
+
 
             if (OnlyDiffersInCasing(ctx.Operation.Syntax.ToString().AsSpan(), targetName.AsSpan()))
             {
@@ -235,12 +236,12 @@ namespace BusinessCentral.LinterCop.Design
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, ctx.Operation.Syntax.GetLocation(), new object[] { targetName, "" }));
         }
 
-        private bool OnlyDiffersInCasing(ReadOnlySpan<char> left,ReadOnlySpan<char> right)
+        private bool OnlyDiffersInCasing(ReadOnlySpan<char> left, ReadOnlySpan<char> right)
         {
             var leftSpan = left.Trim('"');
             var rightSpan = right.Trim('"');
             return leftSpan.Equals(rightSpan, StringComparison.OrdinalIgnoreCase) &&
                    !leftSpan.Equals(rightSpan, StringComparison.Ordinal);
-       }
+        }
     }
 }
