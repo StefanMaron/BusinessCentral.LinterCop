@@ -6,9 +6,6 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.InternalSyntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
-
-
-
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
@@ -16,37 +13,24 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0052InternalProceduresNotReferencedAnalyzer : DiagnosticAnalyzer
     {
-
         private class MethodSymbolAnalyzer : IDisposable
         {
             private readonly PooledDictionary<IMethodSymbol, string> methodSymbols = PooledDictionary<IMethodSymbol, string>.GetInstance();
-
             private readonly PooledDictionary<IMethodSymbol, string> internalMethodsUnused = PooledDictionary<IMethodSymbol, string>.GetInstance();
             private readonly PooledDictionary<IMethodSymbol, string> internalMethodsUsedInCurrentObject = PooledDictionary<IMethodSymbol, string>.GetInstance();
             private readonly PooledDictionary<IMethodSymbol, string> internalMethodsUsedInOtherObjects = PooledDictionary<IMethodSymbol, string>.GetInstance();
-
             private readonly AttributeKind[] attributeKindsOfMethodsToSkip = new AttributeKind[] { AttributeKind.ConfirmHandler, AttributeKind.FilterPageHandler, AttributeKind.HyperlinkHandler, AttributeKind.MessageHandler, AttributeKind.ModalPageHandler, AttributeKind.PageHandler, AttributeKind.RecallNotificationHandler, AttributeKind.ReportHandler, AttributeKind.RequestPageHandler, AttributeKind.SendNotificationHandler, AttributeKind.SessionSettingsHandler, AttributeKind.StrMenuHandler, AttributeKind.Test };
-
             public MethodSymbolAnalyzer(CompilationAnalysisContext compilationAnalysisContext)
             {
                 NavAppManifest manifest = ManifestHelper.GetManifest(compilationAnalysisContext.Compilation);
 
                 if (manifest.InternalsVisibleTo != null && manifest.InternalsVisibleTo.Any())
-                {
                     return;
-                }
 
                 ImmutableArray<IApplicationObjectTypeSymbol>.Enumerator objectEnumerator = compilationAnalysisContext.Compilation.GetDeclaredApplicationObjectSymbols().GetEnumerator();
                 while (objectEnumerator.MoveNext())
                 {
                     IApplicationObjectTypeSymbol applicationSymbol = objectEnumerator.Current;
-
-                    if (applicationSymbol.GetNavTypeKindSafe() == NavTypeKind.Codeunit)
-                    {
-                        // If the containing object is an codeunit and implements an interface, then we do not need to check for references for this procedure.
-                        ICodeunitTypeSymbol codeunitSymbol = applicationSymbol as ICodeunitTypeSymbol;
-                        if (codeunitSymbol != null && codeunitSymbol.ImplementedInterfaces.Any()) continue;
-                    }
                     ImmutableArray<ISymbol>.Enumerator objectMemberEnumerator = applicationSymbol.GetMembers().GetEnumerator();
                     while (objectMemberEnumerator.MoveNext())
                     {
@@ -67,39 +51,29 @@ namespace BusinessCentral.LinterCop.Design
             private bool MethodNeedsReferenceCheck(IMethodSymbol methodSymbol)
             {
                 if (methodSymbol.MethodKind != MethodKind.Method)
-                {
                     return false;
-                }
+
                 if (methodSymbol.IsObsoletePending)
-                {
                     return false;
-                }
+
                 if (methodSymbol.Attributes.Any(attr => attributeKindsOfMethodsToSkip.Contains(attr.AttributeKind)))
-                {
                     return false;
-                }
+
+                IApplicationObjectTypeSymbol objectSymbol = methodSymbol.GetContainingApplicationObjectTypeSymbol();
+                if (HelperFunctions.MethodImplementsInterfaceMethod(objectSymbol, methodSymbol))
+                    return false;
+
                 if (!methodSymbol.IsInternal)
                 {
                     // Check if public procedure in internal object
                     if (methodSymbol.DeclaredAccessibility == Accessibility.Public && methodSymbol.ContainingSymbol is IApplicationObjectTypeSymbol)
                     {
-                        var objectSymbol = methodSymbol.GetContainingApplicationObjectTypeSymbol();
-
                         // If the containing object is not an internal object, then we do not need to check for references for this public procedure.
                         if (objectSymbol.DeclaredAccessibility != Accessibility.Internal)
-                        {
                             return false;
-                        }
-
-                        if (HelperFunctions.MethodImplementsInterfaceMethod(objectSymbol, methodSymbol))
-                        {
-                            return false;
-                        }
                     }
                     else
-                    {
                         return false;
-                    }
                 }
 
                 // If the procedure has signature ProcedureName(HostNotification: Notification) or ProcedureName(ErrorInfo: ErrorInfo), then the procedure does not need a reference check
@@ -107,29 +81,22 @@ namespace BusinessCentral.LinterCop.Design
                 {
                     ITypeSymbol firstParameterTypeSymbol = methodSymbol.Parameters[0].ParameterType;
                     if (firstParameterTypeSymbol.GetNavTypeKindSafe() == NavTypeKind.Notification || firstParameterTypeSymbol.GetNavTypeKindSafe() == NavTypeKind.ErrorInfo)
-                    {
                         return false;
-                    }
                 }
-
                 return true;
             }
 
             public void AnalyzeObjectSyntax(CompilationAnalysisContext compilationAnalysisContext)
             {
                 if (methodSymbols.Count == 0)
-                {
                     return;
-                }
 
                 Compilation compilation = compilationAnalysisContext.Compilation;
                 ImmutableArray<SyntaxTree>.Enumerator enumerator = compilation.SyntaxTrees.GetEnumerator();
                 while (enumerator.MoveNext())
                 {
                     if (methodSymbols.Count == 0)
-                    {
                         break;
-                    }
 
                     SyntaxTree syntaxTree = enumerator.Current;
                     SemanticModel semanticModel = compilation.GetSemanticModel(syntaxTree);
@@ -137,13 +104,11 @@ namespace BusinessCentral.LinterCop.Design
                     syntaxTree.GetRoot().WalkDescendantsAndPerformAction(delegate (SyntaxNode syntaxNode)
                     {
                         if (methodSymbols.Count == 0)
-                        {
                             return;
-                        }
+
                         if (syntaxNode.Parent.IsKind(SyntaxKind.MethodDeclaration) || !syntaxNode.IsKind(SyntaxKind.IdentifierName))
-                        {
                             return;
-                        }
+
                         IdentifierNameSyntax identifierNameSyntax = (IdentifierNameSyntax)syntaxNode;
                         if (methodSymbols.ContainsValue(identifierNameSyntax.Identifier.ValueText.ToLowerInvariant()) && TryGetSymbolFromIdentifier(semanticModel, (IdentifierNameSyntax)syntaxNode, SymbolKind.Method, out var methodSymbol))
                         {
@@ -179,23 +144,20 @@ namespace BusinessCentral.LinterCop.Design
                 SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(identifierName);
                 ISymbol symbol = symbolInfo.Symbol;
                 if (symbol == null || symbol.Kind != symbolKind)
-                {
                     return false;
-                }
+
                 methodSymbol = symbolInfo.Symbol as IMethodSymbol;
                 if (methodSymbol == null)
-                {
                     return false;
-                }
+
                 return true;
             }
 
             public void ReportUnchangedReferencePassedParameters(Action<Diagnostic> action)
             {
                 if (internalMethodsUnused.Count == 0)
-                {
                     return;
-                }
+
                 foreach (KeyValuePair<IMethodSymbol, string> unusedInternalMethod in internalMethodsUnused)
                 {
                     IMethodSymbol methodSymbol = unusedInternalMethod.Key;
