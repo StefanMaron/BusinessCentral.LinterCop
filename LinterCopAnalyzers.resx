@@ -591,4 +591,13 @@
   <data name="Rule0053InternalProcedureOnlyUsedInCurrentObjectAnalyzerTitle" xml:space="preserve">
     <value>The internal method is only used in the object in which it is declared.</value>
   </data>
+  <data name="Rule0055TokSuffixForTokenLabelsTitle" xml:space="preserve">
+    <value>The suffix 'Tok' is meant to be used when the value of the label matches the name.</value>
+  </data>
+  <data name="Rule0055TokSuffixForTokenLabelsFormat" xml:space="preserve">
+    <value>The suffix 'Tok' is meant to be used when the value of the label matches the name.</value>
+  </data>
+  <data name="Rule0055TokSuffixForTokenLabelsDescription" xml:space="preserve">
+    <value>The suffix 'Tok' is meant to be used when the value of the label matches the name.</value>
+  </data>
 </root>
