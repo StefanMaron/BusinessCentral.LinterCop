@@ -2,14 +2,16 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using System.Collections.Immutable;
+using System.Text.RegularExpressions;
 
 namespace BusinessCentral.LinterCop.Design
 {
     [DiagnosticAnalyzer]
     public class Rule0008NoFilterOperatorsInSetRange : DiagnosticAnalyzer
     {
-        public override ImmutableArray<Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics.DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics.DiagnosticDescriptor>(DiagnosticDescriptors.Rule0008NoFilterOperatorsInSetRange);
-
+        private readonly Lazy<Regex> replacementFieldPatternLazy = new Lazy<Regex>((Func<Regex>)(() => new Regex(@"%\d+", RegexOptions.Compiled)));
+        private Regex ReplacementFieldPatternLazy => this.replacementFieldPatternLazy.Value;
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics.DiagnosticDescriptor>(DiagnosticDescriptors.Rule0008NoFilterOperatorsInSetRange);
         public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeInvocation), Microsoft.Dynamics.Nav.CodeAnalysis.OperationKind.InvocationExpression);
 
         private void AnalyzeInvocation(OperationAnalysisContext context)
@@ -25,7 +27,7 @@ namespace BusinessCentral.LinterCop.Design
                 CheckParameter(operation.Arguments[2].Value, ref operation, ref context);
         }
 
-        private void CheckParameter(Microsoft.Dynamics.Nav.CodeAnalysis.IOperation operand, ref IInvocationExpression operation, ref OperationAnalysisContext context)
+        private void CheckParameter(IOperation operand, ref IInvocationExpression operation, ref OperationAnalysisContext context)
         {
             if (operand.Type.GetNavTypeKindSafe() != NavTypeKind.String && operand.Type.GetNavTypeKindSafe() != NavTypeKind.Joker)
                 return;
@@ -34,18 +36,26 @@ namespace BusinessCentral.LinterCop.Design
                 return;
 
             string parameterString = operand.Syntax.ToFullString();
-            if (!(parameterString.Contains('<') || parameterString.Contains('>') ||
+
+            if ((parameterString.Contains('<') || parameterString.Contains('>') ||
                 parameterString.Contains("..") || parameterString.Contains('*') ||
                 parameterString.Contains('&') || parameterString.Contains('|')))
             {
+                ReportDiagnostic(operation.Syntax.GetLocation(), ref context);
                 return;
             }
 
+            Match match = this.ReplacementFieldPatternLazy.Match(parameterString);
+            if (match.Success)
+                ReportDiagnostic(operation.Syntax.GetLocation(), ref context);
+        }
+
+        private void ReportDiagnostic(Microsoft.Dynamics.Nav.CodeAnalysis.Text.Location location, ref OperationAnalysisContext context)
+        {
             context.ReportDiagnostic(
-                Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics.Diagnostic.Create(
+                Diagnostic.Create(
                     DiagnosticDescriptors.Rule0008NoFilterOperatorsInSetRange,
-                    operation.Syntax.GetLocation()));
+                    location));
         }
     }
-
 }
