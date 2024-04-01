@@ -6,9 +6,6 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.InternalSyntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
-
-
-
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
@@ -40,13 +37,6 @@ namespace BusinessCentral.LinterCop.Design
                 while (objectEnumerator.MoveNext())
                 {
                     IApplicationObjectTypeSymbol applicationSymbol = objectEnumerator.Current;
-
-                    if (applicationSymbol.GetNavTypeKindSafe() == NavTypeKind.Codeunit)
-                    {
-                        // If the containing object is an codeunit and implements an interface, then we do not need to check for references for this procedure.
-                        ICodeunitTypeSymbol codeunitSymbol = applicationSymbol as ICodeunitTypeSymbol;
-                        if (codeunitSymbol != null && codeunitSymbol.ImplementedInterfaces.Any()) continue;
-                    }
                     ImmutableArray<ISymbol>.Enumerator objectMemberEnumerator = applicationSymbol.GetMembers().GetEnumerator();
                     while (objectMemberEnumerator.MoveNext())
                     {
@@ -78,20 +68,19 @@ namespace BusinessCentral.LinterCop.Design
                 {
                     return false;
                 }
+                // If the procedure and implements an interface, then we do not need to check for references for this procedure
+                IApplicationObjectTypeSymbol objectSymbol = methodSymbol.GetContainingApplicationObjectTypeSymbol();
+                if (objectSymbol != null && HelperFunctions.MethodImplementsInterfaceMethod(objectSymbol, methodSymbol))
+                {
+                    return false;
+                }
                 if (!methodSymbol.IsInternal)
                 {
                     // Check if public procedure in internal object
-                    if (methodSymbol.DeclaredAccessibility == Accessibility.Public && methodSymbol.ContainingSymbol is IApplicationObjectTypeSymbol)
+                    if (methodSymbol.DeclaredAccessibility == Accessibility.Public && objectSymbol != null)
                     {
-                        var objectSymbol = methodSymbol.GetContainingApplicationObjectTypeSymbol();
-
                         // If the containing object is not an internal object, then we do not need to check for references for this public procedure.
                         if (objectSymbol.DeclaredAccessibility != Accessibility.Internal)
-                        {
-                            return false;
-                        }
-
-                        if (HelperFunctions.MethodImplementsInterfaceMethod(objectSymbol, methodSymbol))
                         {
                             return false;
                         }
