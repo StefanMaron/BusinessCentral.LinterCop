@@ -22,14 +22,12 @@ namespace BusinessCentral.LinterCop.Design
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeHttpObjects), OperationKind.InvocationExpression);
-            // TODO: enable after Spring2024OrGreater release
-            // context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeIsolatedStorage), OperationKind.InvocationExpression);
+            context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeIsolatedStorage), OperationKind.InvocationExpression);
         }
 
         private void AnalyzeIsolatedStorage(OperationAnalysisContext ctx)
         {
-            // TODO: enable after Spring2024OrGreater release
-            // if (!VersionChecker.IsSupported(ctx.ContainingSymbol, VersionCompatibility.Spring2024OrGreater)) return;
+            if (!VersionChecker.IsSupported(ctx.ContainingSymbol, VersionCompatibility.Spring2024OrGreater)) return;
 
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
             if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
