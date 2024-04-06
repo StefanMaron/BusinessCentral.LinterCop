@@ -27,7 +27,7 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.ContainingSymbol.Kind == SymbolKind.LocalVariable || ctx.ContainingSymbol.Kind == SymbolKind.GlobalVariable)
             {
                 IVariableSymbol variable = (IVariableSymbol)ctx.ContainingSymbol;
-                if (variable.Type.GetNavTypeKindSafe() == NavTypeKind.DotNet) return;
+                if (variable.Type.IsErrorType() || variable.Type.GetNavTypeKindSafe() == NavTypeKind.DotNet) return;
 
                 if (variable.Type.GetNavTypeKindSafe() == NavTypeKind.Array)
                     correctName = ((IArrayTypeSymbol)variable.Type).ElementType.Name.ToString();
