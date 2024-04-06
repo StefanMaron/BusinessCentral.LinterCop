@@ -271,6 +271,16 @@
       "id": "LC0055",
       "action": "Info",
       "justification": "The suffix 'Tok' is meant to be used when the value of the label matches the name."
+    },
+    {
+      "id": "LC0056",
+      "action": "Info",
+      "justification": "Empty Enum values should not have a specified Caption property."
+    },
+    {
+      "id": "LC0057",
+      "action": "Info",
+      "justification": "Enum values must have non-empty a Caption to be selectable in the client."
     }
   ]
 }

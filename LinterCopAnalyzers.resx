@@ -600,4 +600,22 @@
   <data name="Rule0055TokSuffixForTokenLabelsDescription" xml:space="preserve">
     <value>The suffix 'Tok' is meant to be used when the value of the label matches the name.</value>
   </data>
+  <data name="Rule0056EmptyEnumValueWithCaptionTitle" xml:space="preserve">
+    <value>Empty Enum values should not have a specified Caption property.</value>
+  </data>
+  <data name="Rule0056EmptyEnumValueWithCaptionFormat" xml:space="preserve">
+    <value>Empty Enum values should not have a specified Caption property.</value>
+  </data>
+  <data name="Rule0056EmptyEnumValueWithCaptionDescription" xml:space="preserve">
+    <value>Empty Enum values should not have a specified Caption property.</value>
+  </data>
+  <data name="Rule0057EnumValueWithEmptyCaptionTitle" xml:space="preserve">
+    <value>Enum values must have non-empty a Caption to be selectable in the client.</value>
+  </data>
+  <data name="Rule0057EnumValueWithEmptyCaptionFormat" xml:space="preserve">
+    <value>Enum values must have non-empty a Caption to be selectable in the client.</value>
+  </data>
+  <data name="Rule0057EnumValueWithEmptyCaptionDescription" xml:space="preserve">
+    <value>Enum values must have non-empty a Caption to be selectable in the client.</value>
+  </data>
 </root>
