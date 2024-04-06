@@ -25,7 +25,7 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.Symbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.Symbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
 
             ICollection<IFieldSymbol> tableFields = GetTableFields(ctx.Symbol).Where(x => x.Id > 0 && x.Id < 2000000000)
-                                                                .Where(x => x.DeclaredAccessibility != Accessibility.Local)
+                                                                .Where(x => x.DeclaredAccessibility != Accessibility.Local && x.DeclaredAccessibility != Accessibility.Protected)
                                                                 .Where(x => x.FieldClass != FieldClassKind.FlowFilter)
                                                                 .Where(x => x.GetBooleanPropertyValue(PropertyKind.Enabled) != false)
                                                                 .Where(x => x.GetProperty(PropertyKind.AllowInCustomizations) is null)
