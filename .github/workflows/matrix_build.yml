@@ -9,8 +9,6 @@ jobs:
   setup-matrix:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
       - name: Create Release
         id: create-release
         uses: release-drafter/release-drafter@v6
@@ -46,7 +44,16 @@ jobs:
           foreach ($result in $results) {
               $assetName = "BusinessCentral.LinterCop.$($result.version).dll"
               $assetUri = $result | Select-Object -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage" } | Select-Object -ExpandProperty source
-              $matrix += [Ordered]@{version = $result.version; assetname = $assetName; assetUri = $assetUri; latest = $($result.version -eq $versionLatest); prerelease = $($result.version -eq $versionPreRelease) }
+              $featureflags = $(3..('{0}' -f $result.version.split('.'))) | ForEach-Object { "#$_" }
+
+              $matrix += [Ordered]@{
+                  version      = $result.version;
+                  assetname    = $assetName;
+                  assetUri     = $assetUri;
+                  latest       = $($result.version -eq $versionLatest);
+                  prerelease   = $($result.version -eq $versionPreRelease);
+                  featureflags = [System.String]::Join("", $featureflags)        
+              }
           }
           $MATRIX_COMBINATIONS = @{'include' = $matrix } | ConvertTo-Json -Compress
           Write-Host "::set-output name=matrix-combinations::$($MATRIX_COMBINATIONS)"
@@ -91,7 +98,7 @@ jobs:
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
 
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build /p:DefineConstants=${{ matrix.featureflags }} --no-restore --configuration Release
 
       # - name: Upload a Build
       #   uses: actions/upload-artifact@v2.2.4
