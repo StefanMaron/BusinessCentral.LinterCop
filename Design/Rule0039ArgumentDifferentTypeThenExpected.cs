@@ -137,8 +137,10 @@ namespace BusinessCentral.LinterCop.Design
 
         private static string GetFullyQualifiedObjectName(IPageTypeSymbol page)
         {
+#if Namespace
             if (page.ContainingNamespace.QualifiedName != "")
                 return page.ContainingNamespace.QualifiedName + "." + "\"" + page.Name + "\"";
+#endif
 
             return page.Name;
         }
