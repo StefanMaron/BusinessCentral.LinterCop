@@ -119,7 +119,7 @@ jobs:
       - name: Attach artifacts to release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE-TAG-NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}'
+          RELEASE-TAG-NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
         run: |
           $artifacts = Get-ChildItem -Path downloaded_artifacts -Filter *.dll -Recurse
 
