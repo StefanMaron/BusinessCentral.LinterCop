@@ -109,6 +109,30 @@ jobs:
           asset_name: ${{ matrix.assetname }}
           asset_content_type: application/octet-stream
 
+      - name: Upload Release Asset as Latest
+        id: upload-release-asset-current
+        uses: actions/upload-release-asset@v1
+        if: ${{ matrix.latest }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          asset_name: BusinessCentral.LinterCop.Latest.dll
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Asset as Pre-Release
+        id: upload-release-asset-current
+        uses: actions/upload-release-asset@v1
+        if: ${{ matrix.latest }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          asset_name: BusinessCentral.LinterCop.Prerelease.dll
+          asset_content_type: application/octet-stream
+
       # - name: Upload artifact to release
       #   uses: svenstaro/upload-release-action@v2
       #   with:
