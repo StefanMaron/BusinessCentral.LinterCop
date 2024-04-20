@@ -59,7 +59,6 @@ jobs:
       matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix-combinations) }}
     env:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-      TAG_NAME: ${{ steps.color-selector.outputs.SELECTED_COLOR }}
     steps:
       - uses: actions/checkout@v2
 
