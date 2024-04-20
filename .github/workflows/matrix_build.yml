@@ -62,16 +62,6 @@ jobs:
         run: 7z x "ALLanguage.vsix" "-oms-dynamics-smb.al-latest"
           extension\bin\Analyzers -r
 
-      - name: Release
-        id: create-release
-        uses: release-drafter/release-drafter@v5
-        with:
-          prerelease: ${{ github.ref != 'refs/heads/master' }}
-          commitish: ${{ github.ref }}
-          disable-autolabeler: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Set current version
         run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
           ("Version(""" + ('${{ steps.create-release.outputs.tag_name }}'
@@ -80,9 +70,17 @@ jobs:
       - name: Build
         run: dotnet build --no-restore --configuration Release
 
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
+      - name: Upload a Build
+        uses: actions/upload-artifact@v2.2.4
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          asset_name: ${{ matrix.assetName }}
+          name: BusinessCentral.LinterCop.${{ matrix.version }}.dll
+          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+
+  release-job:
+    runs-on: windows-latest
+    needs: matrix-job
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: downloaded_artifacts
