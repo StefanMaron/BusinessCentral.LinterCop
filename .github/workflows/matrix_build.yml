@@ -9,6 +9,16 @@ jobs:
   setup-matrix:
     runs-on: ubuntu-latest
     steps:
+      - name: Create Release
+        id: create-release
+        uses: release-drafter/release-drafter@v5
+        with:
+          prerelease: ${{ github.ref != 'refs/heads/master' }}
+          commitish: ${{ github.ref }}
+          disable-autolabeler: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Get AL Language versions
         id: setup-matrix-combinations
         shell: pwsh
@@ -35,6 +45,7 @@ jobs:
           #Write-Host "matrix-combinations=$($MATRIX_COMBINATIONS)" >> $GITHUB_OUTPUT
 
     outputs:
+      tag-name: ${{ steps.create-release.outputs.tag_name }}
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
 
   matrix-job:
@@ -64,7 +75,7 @@ jobs:
 
       - name: Set current version
         run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
-          ("Version(""" + ('${{ steps.create-release.outputs.tag_name }}'
+          ("Version(""" + ('${{ needs.setup-matrix.outputs.tag_name }}'
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
 
       - name: Build
