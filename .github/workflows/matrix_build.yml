@@ -20,12 +20,13 @@ jobs:
 
           $results = $listing.results | Select-Object -First 1 -ExpandProperty extensions `
           | Select-Object -ExpandProperty versions `
-          | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.version.split('.')) -gt [System.Version]"14.0.0.0" }
+          | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.version.split('.')) -gt [System.Version]"14.0.963280.0" }
 
           $matrix = @()
           foreach ($result in $results) {
+              $assetName = "BusinessCentral.LinterCop.$($result.version).dll"
               $assetUri = $result | Select-Object -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage" } | Select-Object -ExpandProperty source
-              $matrix += [Ordered]@{version = $result.version; assetUri = $assetUri }
+              $matrix += [Ordered]@{version = $result.version; assetname = $assetName; assetUri = $assetUri }
           }
           $MATRIX_COMBINATIONS = @{'include' = $matrix } | ConvertTo-Json -Compress
           Write-Host "::set-output name=matrix-combinations::$($MATRIX_COMBINATIONS)"
@@ -62,7 +63,7 @@ jobs:
           extension\bin\Analyzers -r
 
       - name: Release
-        id: create_release
+        id: create-release
         uses: release-drafter/release-drafter@v5
         with:
           prerelease: ${{ github.ref != 'refs/heads/master' }}
@@ -73,25 +74,15 @@ jobs:
 
       - name: Set current version
         run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
-          ("Version(""" + ('${{ steps.create_release.outputs.tag_name }}'
+          ("Version(""" + ('${{ steps.create-release.outputs.tag_name }}'
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
 
       - name: Build
         run: dotnet build --no-restore --configuration Release
 
-      - name: Upload Release Asset current
-        id: upload-release-asset-current
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          asset_name: BusinessCentral.LinterCop.${{ matrix.version }}.dll
-          asset_content_type: application/octet-stream
-
-      # - name: Upload a Build
-      #   uses: actions/upload-artifact@v2.2.4
-      #   with:
-      #     name: BusinessCentral.LinterCop.${{ matrix.version }}.dll
-      #     path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          asset_name: ${{ matrix.assetName }}
