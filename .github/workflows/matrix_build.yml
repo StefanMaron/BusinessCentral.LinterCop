@@ -81,11 +81,13 @@ jobs:
       - name: Build
         run: dotnet build --no-restore --configuration Release
 
-      - name: Upload a Build
-        uses: actions/upload-artifact@v2.2.4
+      - name: Upload artifact to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: BusinessCentral.LinterCop.${{ matrix.version }}.dll
-          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          asset_name: ${{ matrix.assetname }}
+          tag: ${{ needs.setup-matrix.outputs.tag_name }}
 
   release-job:
     runs-on: windows-latest
