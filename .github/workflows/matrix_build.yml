@@ -76,11 +76,22 @@ jobs:
           ("Version(""" + ('${{ steps.create_release.outputs.tag_name }}'
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
 
-      - name: Build current
+      - name: Build
         run: dotnet build --no-restore --configuration Release
 
-      - name: Upload a Build current
-        uses: actions/upload-artifact@v2.2.4
+      - name: Upload Release Asset current
+        id: upload-release-asset-current
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: BusinessCentral.LinterCop.${{ matrix.version }}.dll
-          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          asset_name: BusinessCentral.LinterCop.${{ matrix.version }}.dll
+          asset_content_type: application/octet-stream
+
+      # - name: Upload a Build
+      #   uses: actions/upload-artifact@v2.2.4
+      #   with:
+      #     name: BusinessCentral.LinterCop.${{ matrix.version }}.dll
+      #     path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
