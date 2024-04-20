@@ -99,7 +99,7 @@ jobs:
       #     path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
 
       - name: Upload Release Asset
-        id: upload-release-asset-current
+        id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -110,7 +110,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload Release Asset as Latest
-        id: upload-release-asset-current
+        id: upload-release-asset-latest
         uses: actions/upload-release-asset@v1
         if: ${{ matrix.latest }}
         env:
@@ -122,7 +122,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload Release Asset as Pre-Release
-        id: upload-release-asset-current
+        id: upload-release-asset-prerelease
         uses: actions/upload-release-asset@v1
         if: ${{ matrix.latest }}
         env:
