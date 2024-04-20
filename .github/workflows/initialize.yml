@@ -9,7 +9,7 @@ jobs:
   setup-matrix:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup matrix combinations
+      - name: Get AL Language versions
         id: setup-matrix-combinations
         shell: pwsh
         run: |
@@ -20,7 +20,7 @@ jobs:
 
           $results = $listing.results | Select-Object -First 1 -ExpandProperty extensions `
           | Select-Object -ExpandProperty versions `
-          | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.version.split('.')) -gt [System.Version]"1.0.0.0" }
+          | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.version.split('.')) -gt [System.Version]"14.0.0.0" }
 
           $matrix = @()
           foreach ($result in $results) {
@@ -28,16 +28,32 @@ jobs:
           }
           $MATRIX_COMBINATIONS = @{'include' = $matrix } | ConvertTo-Json -Compress
           Write-Host "::set-output name=matrix-combinations::$($MATRIX_COMBINATIONS)"
+
+          # TODO: Resolve set-output warning from line above 
           #Write-Host "matrix-combinations=$($MATRIX_COMBINATIONS)" >> $GITHUB_OUTPUT
 
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
+
   matrix-job:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: setup-matrix
     strategy:
       matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix-combinations) }}
+    env:
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
     steps:
-      - run: |
-          echo assetUri=${{ matrix.version }}
-          echo assetUri=${{ matrix.assetUri }}
+      - uses: actions/checkout@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 8.0.*
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Download platform artifact
+        run: Invoke-WebRequest ${{ matrix.assetUri }} -OutFile ALLanguage.vsix
+      - name: Unzip vsix
+        run: 7z x "ALLanguage.vsix" "-oms-dynamics-smb.al-latest"
+          extension\bin\Analyzers -r
+      - name: Build current
+        run: dotnet build --no-restore --configuration Release
