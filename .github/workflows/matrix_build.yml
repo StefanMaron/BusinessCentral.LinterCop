@@ -126,5 +126,6 @@ jobs:
 
           foreach ($artifact in $artifacts)
           {
-              hub release edit $artifact.FullName -m "" $env:RELEASE-TAG-NAME
+              gh release upload $env:RELEASE-TAG-NAME $artifact.FullName
+              #hub release edit $artifact.FullName -m "" $env:RELEASE-TAG-NAME
           }
