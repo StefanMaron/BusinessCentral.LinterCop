@@ -20,14 +20,13 @@ jobs:
 
           $results = $listing.results | Select-Object -First 1 -ExpandProperty extensions `
           | Select-Object -ExpandProperty versions `
-          | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.version.split('.')) -gt [System.Version]"14.0.963280.0" }
+          | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.version.split('.')) -gt [System.Version]"1.0.0.0" }
 
           $matrix = @()
           foreach ($result in $results) {
               $matrix += @{version = $result.version; assetUri = $result.assetUri }
           }
           $MATRIX_COMBINATIONS = @{'include' = $matrix } | ConvertTo-Json -Compress
-          #Write-Host "::set-output name=matrix-combinations::$($MATRIX_COMBINATIONS)"
           Write-Host "matrix-combinations=$($MATRIX_COMBINATIONS)" >> $GITHUB_OUTPUT
 
     outputs:
