@@ -40,11 +40,21 @@ jobs:
           | Select-Object -ExpandProperty versions `
           | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.version.split('.')) -gt [System.Version]"13.0.0.0" }
 
+          $features = @{
+              'ManifestHelper' = '13.0.937154'
+          }
+
           $matrix = @()
           foreach ($result in $results) {
               $assetName = "BusinessCentral.LinterCop.$($result.version).dll"
               $assetUri = $result | Select-Object -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage" } | Select-Object -ExpandProperty source
-              $featureflags = $(3..('{0}' -f $result.version.split('.'))) | ForEach-Object { "#v$_" }
+              $supportedFeatureFlags = $features.GetEnumerator() | Where-Object { $_.Value -le $result.version } | Foreach-Object { $_.Key }
+              if (([string]::IsNullOrEmpty($supportedFeatureFlags))) {
+                  $featureFlags = ""
+              }
+              else {
+                  $featureFlags = $([System.String]::Join("", $supportedFeatureFlags) | ForEach-Object { "#$_" })
+              }
 
               $matrix += [Ordered]@{
                   version      = $result.version;
@@ -52,7 +62,7 @@ jobs:
                   assetUri     = $assetUri;
                   latest       = $($result.version -eq $versionLatest);
                   prerelease   = $($result.version -eq $versionPreRelease);
-                  featureflags = [System.String]::Join("", $featureflags)        
+                  featureflags = $featureFlags  
               }
           }
           $MATRIX_COMBINATIONS = @{'include' = $matrix } | ConvertTo-Json -Compress
