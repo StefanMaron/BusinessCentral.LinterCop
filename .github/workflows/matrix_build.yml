@@ -101,6 +101,7 @@ jobs:
           file: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
           asset_name: ${{ matrix.assetname }}
           tag: ${{ needs.setup-matrix.outputs.release-tag-name }}
+          draft: true
 
   release-job:
     runs-on: windows-latest
