@@ -1,12 +1,15 @@
 using BusinessCentral.LinterCop.Helpers;
-using Microsoft.Dynamics.Nav.Analyzers.Common;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.InternalSyntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
-
+#if v13
+using Microsoft.Dynamics.Nav.Analyzers.Common;
+#else
+using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
+#endif
 
 
 using System.Collections.Immutable;
@@ -29,7 +32,11 @@ namespace BusinessCentral.LinterCop.Design
 
             public MethodSymbolAnalyzer(CompilationAnalysisContext compilationAnalysisContext)
             {
-                NavAppManifest manifest = ManifestHelper.GetManifest(compilationAnalysisContext.Compilation);
+#if v13
+            NavAppManifest manifest = ManifestHelper.GetManifest(ctx.Compilation);
+#else
+                NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(ctx.Compilation);
+#endif
 
                 if (manifest.InternalsVisibleTo != null && manifest.InternalsVisibleTo.Any())
                 {

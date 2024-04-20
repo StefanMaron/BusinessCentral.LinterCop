@@ -44,7 +44,7 @@ jobs:
           foreach ($result in $results) {
               $assetName = "BusinessCentral.LinterCop.$($result.version).dll"
               $assetUri = $result | Select-Object -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage" } | Select-Object -ExpandProperty source
-              $featureflags = $(3..('{0}' -f $result.version.split('.'))) | ForEach-Object { "#$_" }
+              $featureflags = $(3..('{0}' -f $result.version.split('.'))) | ForEach-Object { "#v$_" }
 
               $matrix += [Ordered]@{
                   version      = $result.version;

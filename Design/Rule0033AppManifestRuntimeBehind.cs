@@ -3,6 +3,11 @@ using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
 using System.Collections.Immutable;
+#if v13
+using Microsoft.Dynamics.Nav.Analyzers.Common;
+#else
+using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
+#endif
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -15,7 +20,11 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckAppManifestRuntime(CompilationAnalysisContext ctx)
         {
+#if v13
             NavAppManifest manifest = ManifestHelper.GetManifest(ctx.Compilation);
+#else
+            NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(ctx.Compilation);
+#endif
 
             if (manifest == null) return;
             if (manifest.Runtime == null) return;
