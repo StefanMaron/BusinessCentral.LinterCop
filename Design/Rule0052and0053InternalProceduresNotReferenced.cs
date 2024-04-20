@@ -33,9 +33,9 @@ namespace BusinessCentral.LinterCop.Design
             public MethodSymbolAnalyzer(CompilationAnalysisContext compilationAnalysisContext)
             {
 #if v13
-            NavAppManifest manifest = ManifestHelper.GetManifest(ctx.Compilation);
+            NavAppManifest manifest = ManifestHelper.GetManifest(compilationAnalysisContext.Compilation);
 #else
-                NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(ctx.Compilation);
+                NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(compilationAnalysisContext.Compilation);
 #endif
 
                 if (manifest.InternalsVisibleTo != null && manifest.InternalsVisibleTo.Any())
