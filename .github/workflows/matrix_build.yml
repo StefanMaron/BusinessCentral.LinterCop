@@ -55,6 +55,7 @@ jobs:
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
       release-tag-name: ${{ steps.create-release.outputs.tag_name }}
+      release-upload-url: ${{ steps.create-release.outputs.upload_url }}
 
   matrix-job:
     runs-on: windows-latest
@@ -89,11 +90,22 @@ jobs:
       - name: Build
         run: dotnet build --no-restore --configuration Release
 
-      - name: Upload a Build
-        uses: actions/upload-artifact@v2.2.4
+      # - name: Upload a Build
+      #   uses: actions/upload-artifact@v2.2.4
+      #   with:
+      #     name: ${{ matrix.assetname }}
+      #     path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+
+      - name: Upload Release Asset
+        id: upload-release-asset-current
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: ${{ matrix.assetname }}
-          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          asset_name: ${{ matrix.assetname }}
+          asset_content_type: application/octet-stream
 
       # - name: Upload artifact to release
       #   uses: svenstaro/upload-release-action@v2
@@ -105,28 +117,28 @@ jobs:
       #     draft: true
       #     overwrite: true
 
-  release-job:
-    runs-on: windows-latest
-    needs:
-      - setup-matrix
-      - matrix-job
-    steps:
-      - uses: actions/checkout@v2
+  # release-job:
+  #   runs-on: windows-latest
+  #   needs:
+  #     - setup-matrix
+  #     - matrix-job
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-        with:
-          path: downloaded_artifacts
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         path: downloaded_artifacts
 
-      - name: Attach artifacts to release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
-        run: |
-          $artifacts = Get-ChildItem -Path downloaded_artifacts -Depth 0 -Filter *.dll 
+  #     - name: Attach artifacts to release
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
+  #       run: |
+  #         $artifacts = Get-ChildItem -Path downloaded_artifacts -Depth 0 -Filter *.dll
 
-          foreach ($artifact in $artifacts)
-          {
-              Write-Host "gh release upload $($env:RELEASE_TAG_NAME) $($artifact.FullName)"
-              gh release upload $env:RELEASE_TAG_NAME $artifact.FullName
-          }
+  #         foreach ($artifact in $artifacts)
+  #         {
+  #             Write-Host "gh release upload $($env:RELEASE_TAG_NAME) $($artifact.FullName)"
+  #             gh release upload $env:RELEASE_TAG_NAME $artifact.FullName
+  #         }
