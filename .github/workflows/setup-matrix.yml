@@ -11,8 +11,9 @@ jobs:
     steps:
       - name: Setup matrix combinations
         id: setup-matrix-combinations
+        shell: pwsh
         run: |
-          MATRIX_PARAMS_COMBINATIONS='
+          $MATRIX_PARAMS_COMBINATIONS='
               {"foo": "foo-1", "bar": "bar-1"},
               {"foo": "foo-1", "bar": "bar-2"},
               {"foo": "foo-2", "bar": "bar-1"},
