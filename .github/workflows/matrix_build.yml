@@ -40,9 +40,10 @@ jobs:
           | Select-Object -ExpandProperty versions `
           | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.version.split('.')) -gt [System.Version]"13.0.0.0" }
 
+          # The mininal version of the AL Language needed to enable this feature
           $features = @{
               'ManifestHelper' = '13.0.937154'
-              'PageSystemActionSyntaxKind' = '13.0.864697'
+              'PageSystemActionSyntaxKind' = '13.0.878831'
           }
 
           $matrix = @()
