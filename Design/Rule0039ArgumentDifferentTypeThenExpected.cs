@@ -128,7 +128,9 @@ namespace BusinessCentral.LinterCop.Design
         private static bool AreTheSameNavObjects(ITableTypeSymbol left, ITableTypeSymbol right)
         {
             if (left.GetNavTypeKindSafe() != right.GetNavTypeKindSafe()) return false;
+#if Namespace
             if (((INamespaceSymbol)left.ContainingSymbol).QualifiedName != ((INamespaceSymbol)right.ContainingSymbol).QualifiedName) return false;
+#endif
             if (left.Name != right.Name) return false;
             return true;
         }
