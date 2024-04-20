@@ -27,7 +27,8 @@ jobs:
               $matrix += @{version = $result.version; assetUri = $result.assetUri }
           }
           $MATRIX_COMBINATIONS = @{'include' = $matrix } | ConvertTo-Json -Compress
-          Write-Host "matrix-combinations=$($MATRIX_COMBINATIONS)" >> $GITHUB_OUTPUT
+          Write-Host "::set-output name=matrix-combinations::$($MATRIX_COMBINATIONS)"
+          #Write-Host "matrix-combinations=$($MATRIX_COMBINATIONS)" >> $GITHUB_OUTPUT
 
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
