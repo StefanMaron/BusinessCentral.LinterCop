@@ -49,12 +49,12 @@ jobs:
           foreach ($result in $results) {
               $assetName = "BusinessCentral.LinterCop.$($result.version).dll"
               $assetUri = $result | Select-Object -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage" } | Select-Object -ExpandProperty source
-              $supportedFeatureFlags = $features.GetEnumerator() | Where-Object { $_.Value -le $result.version } | Foreach-Object { $_.Key }
+              $supportedFeatureFlags = $features.GetEnumerator() | Where-Object { $_.Value -le $result.version } | Foreach-Object { $_.Key } | ForEach-Object { "#$_" }
               if (([string]::IsNullOrEmpty($supportedFeatureFlags))) {
                   $featureFlags = ""
               }
               else {
-                  $featureFlags = $([System.String]::Join("", $supportedFeatureFlags) | ForEach-Object { "#$_" })
+                  $featureFlags = [System.String]::Join("", $supportedFeatureFlags)
               }
 
               $matrix += [Ordered]@{
@@ -111,6 +111,13 @@ jobs:
 
       - name: Build
         run: dotnet build /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
+
+      - name: Upload a Build current
+        uses: actions/upload-artifact@v4
+        if: ${{ matrix.latest }}
+        with:
+          name: BusinessCentral.LinterCop.Latest.dll
+          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
 
       ### Release Asset
       - name: Remove possible existing Release Asset
