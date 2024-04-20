@@ -38,7 +38,7 @@ jobs:
 
           $results = $listing.results | Select-Object -First 1 -ExpandProperty extensions `
           | Select-Object -ExpandProperty versions `
-          | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.version.split('.')) -gt [System.Version]"13.0.0.0" }
+          | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.version.split('.')) -gt [System.Version]"12.0.0.0" }
 
           # The mininal version of the AL Language needed to enable this feature
           $features = @{
@@ -50,7 +50,7 @@ jobs:
           foreach ($result in $results) {
               $assetName = "BusinessCentral.LinterCop.$($result.version).dll"
               $assetUri = $result | Select-Object -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage" } | Select-Object -ExpandProperty source
-              $supportedFeatureFlags = $features.GetEnumerator() | Where-Object { $_.Value -le $result.version } | Foreach-Object { $_.Key } | ForEach-Object { "#$_" }
+              $supportedFeatureFlags = $features.GetEnumerator() | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.Value.split('.')) -le [System.Version]('{0}.{1}.{2}.0' -f $result.version.split('.')) } | Foreach-Object { $_.Key } | ForEach-Object { "#$_" }
               if (([string]::IsNullOrEmpty($supportedFeatureFlags))) {
                   $featureFlags = ""
               }
@@ -113,11 +113,11 @@ jobs:
       - name: Build
         run: dotnet build /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
 
-      - name: Upload a Build current
-        uses: actions/upload-artifact@v4
+      - name: Upload Release Asset
+        uses: actions/upload-artifact@v2.2.4
         if: ${{ matrix.latest }}
         with:
-          name: BusinessCentral.LinterCop.Latest.dll
+          name: BusinessCentral.LinterCop.dll
           path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
 
       ### Release Asset
