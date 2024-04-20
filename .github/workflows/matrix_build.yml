@@ -33,6 +33,14 @@ jobs:
               -Body '{"filters":[{"criteria":[{"filterType":8,"value":"Microsoft.VisualStudio.Code"},{"filterType":12,"value":"4096"},{"filterType":7,"value":"ms-dynamics-smb.al"}],"pageNumber":1,"pageSize":50,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":0x192}' `
               -ContentType application/json | ConvertFrom-Json
 
+          $versionLatest = $listing.results.extensions.versions `
+          | Where-Object properties -ne $null `
+          | Where-Object { $_.properties.key -notcontains 'Microsoft.VisualStudio.Code.PreRelease' } | Select-Object -First 1 -ExpandProperty version
+
+          $versionPreRelease = $listing.results.extensions.versions `
+          | Where-Object properties -ne $null `
+          | Where-Object { $_.properties.key -contains 'Microsoft.VisualStudio.Code.PreRelease' } | Select-Object -First 1 -ExpandProperty version
+
           $results = $listing.results | Select-Object -First 1 -ExpandProperty extensions `
           | Select-Object -ExpandProperty versions `
           | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.version.split('.')) -gt [System.Version]"14.0.963280.0" }
@@ -41,7 +49,7 @@ jobs:
           foreach ($result in $results) {
               $assetName = "BusinessCentral.LinterCop.$($result.version).dll"
               $assetUri = $result | Select-Object -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage" } | Select-Object -ExpandProperty source
-              $matrix += [Ordered]@{version = $result.version; assetname = $assetName; assetUri = $assetUri }
+              $matrix += [Ordered]@{version = $result.version; assetname = $assetName; assetUri = $assetUri; latest = $($result.version -eq $versionLatest); prerelease = $($result.version -eq $versionPreRelease) }
           }
           $MATRIX_COMBINATIONS = @{'include' = $matrix } | ConvertTo-Json -Compress
           Write-Host "::set-output name=matrix-combinations::$($MATRIX_COMBINATIONS)"
@@ -93,6 +101,7 @@ jobs:
           file: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
           asset_name: ${{ matrix.assetname }}
           tag: ${{ needs.setup-matrix.outputs.release-tag-name }}
+          draft: true
 
   release-job:
     runs-on: windows-latest
