@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Create Release
         id: create-release
-        uses: release-drafter/release-drafter@v5
+        uses: release-drafter/release-drafter@v6
         with:
           prerelease: ${{ github.ref != 'refs/heads/master' }}
           commitish: ${{ github.ref }}
@@ -107,7 +107,11 @@ jobs:
 
   release-job:
     runs-on: windows-latest
-    needs: matrix-job
+    needs:
+      - setup-matrix
+      - matrix-job
+    env:
+      RELEASE-TAG-NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}'
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v3
@@ -118,10 +122,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          Get-ChildItem -Path downloaded_artifacts
-          #set -x
-          #assets=()
-          #for asset in ./bin/*; do               #loop the assets in the bin folder
-          #  assets+=("-a" "$asset")
-          #done
-          #hub release edit "${assets[@]}" -m "Release v1" "v1"          # add the assets to the Release v1
+          $artifacts = Get-ChildItem -Path downloaded_artifacts -Filter *.dll -Recurse
+
+          foreach ($artifact in $artifacts)
+          {
+              hub release edit $artifact.FullName -m "" $env:RELEASE-TAG-NAME
+          }
