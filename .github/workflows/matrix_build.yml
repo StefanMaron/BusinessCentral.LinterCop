@@ -19,10 +19,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Set Release Tag Name
-      #   id: release-tag-name
-      #   shell: pwsh
-      #   run: Write-Host "release-tag-name=${{ steps.create_release.outputs.tag_name }}" >> "$GITHUB_OUTPUT"
+      - name: Expose Release Tag Name
+        id: release-tag-name
+        shell: pwsh
+        run: Write-Host "release-tag-name=${{ steps.create_release.outputs.tag_name }}" >> "$GITHUB_OUTPUT"
 
       - name: Get AL Language versions
         id: setup-matrix-combinations
@@ -79,7 +79,7 @@ jobs:
 
       - name: Set current version
         run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
-          ("Version(""" + ('${{ needs.setup-matrix.outputs.create-release.outputs.tag_name }}'
+          ("Version(""" + ('${{ needs.setup-matrix.outputs.release-tag-name }}'
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
 
       - name: Build
