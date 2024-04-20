@@ -18,7 +18,9 @@ jobs:
               {"foo": "foo-1", "bar": "bar-2"},
               {"foo": "foo-2", "bar": "bar-1"},
           '
-          echo ::set-output name=matrix-combinations::{\"include\":[$MATRIX_PARAMS_COMBINATIONS]}
+          #echo ::set-output name=matrix-combinations::{\"include\":[$MATRIX_PARAMS_COMBINATIONS]}
+          Write-Host "matrix-combinations={`"include`":$MATRIX_PARAMS_COMBINATIONS}" >> $env:GITHUB_OUTPUT;
+
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
   matrix-job:
