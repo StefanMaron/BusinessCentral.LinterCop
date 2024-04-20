@@ -19,11 +19,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Expose Release Tag Name
-      #   id: expose-release-tag-name
-      #   shell: pwsh
-      #   run: Write-Host "release-tag-name=${{ steps.create-release.outputs.tag_name }}" >> $GITHUB_OUTPUT
-
       - name: Get AL Language versions
         id: setup-matrix-combinations
         shell: pwsh
@@ -94,14 +89,21 @@ jobs:
       - name: Build
         run: dotnet build --no-restore --configuration Release
 
-      - name: Upload artifact to release
-        uses: svenstaro/upload-release-action@v2
+      - name: Upload a Build
+        uses: actions/upload-artifact@v2.2.4
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          asset_name: ${{ matrix.assetname }}
-          tag: ${{ needs.setup-matrix.outputs.release-tag-name }}
-          draft: true
+          name: ${{ matrix.assetname }}
+          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+
+      # - name: Upload artifact to release
+      #   uses: svenstaro/upload-release-action@v2
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     tag: ${{ needs.setup-matrix.outputs.release-tag-name }}
+      #     file: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+      #     asset_name: ${{ matrix.assetname }}
+      #     draft: true
+      #     overwrite: true
 
   release-job:
     runs-on: windows-latest
@@ -111,3 +113,15 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           path: downloaded_artifacts
+
+      - name: Attach artifacts to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          Get-ChildItem -Path downloaded_artifacts
+          #set -x
+          #assets=()
+          #for asset in ./bin/*; do               #loop the assets in the bin folder
+          #  assets+=("-a" "$asset")
+          #done
+          #hub release edit "${assets[@]}" -m "Release v1" "v1"          # add the assets to the Release v1
