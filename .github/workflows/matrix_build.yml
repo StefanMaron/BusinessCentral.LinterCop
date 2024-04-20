@@ -133,7 +133,7 @@ jobs:
       - name: Upload Release Asset as Pre-Release
         id: upload-release-asset-prerelease
         uses: actions/upload-release-asset@v1
-        if: ${{ matrix.latest }}
+        if: ${{ matrix.prerelease }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
