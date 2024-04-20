@@ -11,6 +11,7 @@ jobs:
     steps:
       - name: Setup matrix combinations
         id: setup-matrix-combinations
+        shell: pwsh
         run: |
           $listing = Invoke-WebRequest -Method POST -UseBasicParsing `
               -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 `
