@@ -32,7 +32,7 @@ jobs:
           #    {"version": "2", "assetUri": "http://www.google.be-2"},
           #    {"version": "3", "assetUri": "http://www.google.be-3"},
           #'
-          Write-Host "matrix-combinations={ \"include\":$MATRIX_PARAMS_COMBINATIONS }" >> $env:GITHUB_OUTPUT;
+          Write-Host "matrix-combinations={"include":$MATRIX_PARAMS_COMBINATIONS}" >> $env:GITHUB_OUTPUT;
 
           #Write-Host ::set-output name=matrix-combinations:: { \"include\":$MATRIX_PARAMS_COMBINATIONS }
     outputs:
