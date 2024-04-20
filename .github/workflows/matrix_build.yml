@@ -19,6 +19,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # - name: Set Release Tag Name
+      #   id: release-tag-name
+      #   shell: pwsh
+      #   run: Write-Host "release-tag-name=${{ steps.create_release.outputs.tag_name }}" >> "$GITHUB_OUTPUT"
+
       - name: Get AL Language versions
         id: setup-matrix-combinations
         shell: pwsh
@@ -45,7 +50,6 @@ jobs:
           #Write-Host "matrix-combinations=$($MATRIX_COMBINATIONS)" >> $GITHUB_OUTPUT
 
     outputs:
-      tag-name: ${{ steps.create-release.outputs.tag_name }}
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
 
   matrix-job:
@@ -55,6 +59,7 @@ jobs:
       matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix-combinations) }}
     env:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      TAG_NAME: ${{ steps.color-selector.outputs.SELECTED_COLOR }}
     steps:
       - uses: actions/checkout@v2
 
@@ -75,7 +80,7 @@ jobs:
 
       - name: Set current version
         run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
-          ("Version(""" + ('${{ needs.setup-matrix.outputs.tag_name }}'
+          ("Version(""" + ('${{ needs.setup-matrix.outputs.create-release.outputs.tag_name }}'
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
 
       - name: Build
