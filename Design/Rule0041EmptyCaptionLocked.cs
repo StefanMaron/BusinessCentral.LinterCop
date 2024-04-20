@@ -34,7 +34,9 @@ namespace BusinessCentral.LinterCop.Design
                 SyntaxKind.ReportColumn,
                 SyntaxKind.EnumValue,
                 SyntaxKind.PageCustomAction,
+                #if PageSystemActionSyntaxKind
                 SyntaxKind.PageSystemAction,
+                #endif
                 SyntaxKind.PageView,
                 SyntaxKind.ReportLayout,
                 SyntaxKind.ProfileObject,

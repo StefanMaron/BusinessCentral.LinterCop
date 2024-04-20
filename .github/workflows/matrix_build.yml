@@ -42,6 +42,7 @@ jobs:
 
           $features = @{
               'ManifestHelper' = '13.0.937154'
+              'PageSystemActionSyntaxKind' = '13.0.864697'
           }
 
           $matrix = @()
