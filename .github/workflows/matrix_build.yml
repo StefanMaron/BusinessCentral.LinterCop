@@ -126,6 +126,7 @@ jobs:
 
           foreach ($artifact in $artifacts)
           {
+              Write-Host "gh release upload $($env:RELEASE-TAG-NAME) $($artifact.FullName)"
               gh release upload $env:RELEASE-TAG-NAME $artifact.FullName
               #hub release edit $artifact.FullName -m "" $env:RELEASE-TAG-NAME
           }
