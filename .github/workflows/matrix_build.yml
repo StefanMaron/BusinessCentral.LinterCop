@@ -22,7 +22,7 @@ jobs:
       - name: Expose Release Tag Name
         id: release-tag-name
         shell: pwsh
-        run: Write-Host "release-tag-name=${{ steps.create_release.outputs.tag_name }}" >> "$GITHUB_OUTPUT"
+        run: Write-Host "release-tag-name=${{ steps.create-release.outputs.tag_name }}" >> "$GITHUB_OUTPUT"
 
       - name: Get AL Language versions
         id: setup-matrix-combinations
