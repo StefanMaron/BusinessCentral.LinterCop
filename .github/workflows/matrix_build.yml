@@ -56,6 +56,7 @@ jobs:
 
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
+      release-id: ${{ steps.create-release.outputs.id }}
       release-tag-name: ${{ steps.create-release.outputs.tag_name }}
       release-upload-url: ${{ steps.create-release.outputs.upload_url }}
 
@@ -97,6 +98,14 @@ jobs:
       #   with:
       #     name: ${{ matrix.assetname }}
       #     path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+
+      - name: Remove possible existing Release Asset
+        uses: flcdrg/remove-release-asset-action@v4.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ needs.setup-matrix.outputs.release-id }}
+          asset_name: ${{ matrix.assetname }}
 
       - name: Upload Release Asset
         id: upload-release-asset
