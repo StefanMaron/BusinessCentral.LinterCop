@@ -11,30 +11,13 @@ jobs:
     steps:
       - name: Setup matrix combinations
         id: setup-matrix-combinations
-        shell: pwsh
         run: |
-          $listing = Invoke-WebRequest -Method POST -UseBasicParsing `
-              -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 `
-              -Body '{"filters":[{"criteria":[{"filterType":8,"value":"Microsoft.VisualStudio.Code"},{"filterType":12,"value":"4096"},{"filterType":7,"value":"ms-dynamics-smb.al"}],"pageNumber":1,"pageSize":50,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":0x192}' `
-              -ContentType application/json | ConvertFrom-Json
-
-          $results = $listing.results | Select-Object -First 1 -ExpandProperty extensions `
-          | Select-Object -ExpandProperty versions `
-          | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.version.split('.')) -gt [System.Version]"14.0.963280.0" }
-
-          $matrix = @()
-          foreach ($result in $results) {
-              $matrix += @{version = $result.version; assetUri = $result.assetUri }
-          }
-          $MATRIX_PARAMS_COMBINATIONS = $matrix | ConvertTo-Json
-          #$MATRIX_PARAMS_COMBINATIONS='
-          #    {"version": "1", "assetUri": "http://www.google.be-1"},
-          #    {"version": "2", "assetUri": "http://www.google.be-2"},
-          #    {"version": "3", "assetUri": "http://www.google.be-3"},
-          #'
-          Write-Host "matrix-combinations={"include":$MATRIX_PARAMS_COMBINATIONS}" >> $env:GITHUB_OUTPUT;
-
-          #Write-Host ::set-output name=matrix-combinations:: { \"include\":$MATRIX_PARAMS_COMBINATIONS }
+          MATRIX_PARAMS_COMBINATIONS='
+              {"foo": "foo-1", "bar": "bar-1"},
+              {"foo": "foo-1", "bar": "bar-2"},
+              {"foo": "foo-2", "bar": "bar-1"},
+          '
+          echo ::set-output name=matrix-combinations::{\"include\":[$MATRIX_PARAMS_COMBINATIONS]}
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
   matrix-job:
@@ -44,5 +27,53 @@ jobs:
       matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix-combinations) }}
     steps:
       - run: |
-          echo assetUri=${{ matrix.version }}
-          echo assetUri=${{ matrix.assetUri }}
+          echo foo=${{ matrix.foo }}
+          echo bar=${{ matrix.bar }}
+
+# name: Initialization
+# on:
+#   push:
+#     branches:
+#       - master
+#       - prerelease
+#   workflow_dispatch: null
+# jobs:
+#   setup-matrix:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Setup matrix combinations
+#         id: setup-matrix-combinations
+#         shell: pwsh
+#         run: |
+#           $listing = Invoke-WebRequest -Method POST -UseBasicParsing `
+#               -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 `
+#               -Body '{"filters":[{"criteria":[{"filterType":8,"value":"Microsoft.VisualStudio.Code"},{"filterType":12,"value":"4096"},{"filterType":7,"value":"ms-dynamics-smb.al"}],"pageNumber":1,"pageSize":50,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":0x192}' `
+#               -ContentType application/json | ConvertFrom-Json
+
+#           $results = $listing.results | Select-Object -First 1 -ExpandProperty extensions `
+#           | Select-Object -ExpandProperty versions `
+#           | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.version.split('.')) -gt [System.Version]"14.0.963280.0" }
+
+#           $matrix = @()
+#           foreach ($result in $results) {
+#               $matrix += @{version = $result.version; assetUri = $result.assetUri }
+#           }
+#           $MATRIX_PARAMS_COMBINATIONS = $matrix | ConvertTo-Json
+#           #$MATRIX_PARAMS_COMBINATIONS='
+#           #    {"version": "1", "assetUri": "http://www.google.be-1"},
+#           #    {"version": "2", "assetUri": "http://www.google.be-2"},
+#           #    {"version": "3", "assetUri": "http://www.google.be-3"},
+#           #'
+#           Write-Host "matrix-combinations={"include":$MATRIX_PARAMS_COMBINATIONS}" >> $env:GITHUB_OUTPUT;
+
+#     outputs:
+#       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
+#   matrix-job:
+#     runs-on: ubuntu-latest
+#     needs: setup-matrix
+#     strategy:
+#       matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix-combinations) }}
+#     steps:
+#       - run: |
+#           echo assetUri=${{ matrix.version }}
+#           echo assetUri=${{ matrix.assetUri }}
