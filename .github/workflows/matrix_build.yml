@@ -99,7 +99,7 @@ jobs:
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
 
       - name: Build
-        run: dotnet build /p:DefineConstants=${{ matrix.featureflags }} --no-restore --configuration Release
+        run: dotnet build /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
 
       ### Release Asset
       - name: Remove possible existing Release Asset
