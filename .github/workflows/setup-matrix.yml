@@ -1,0 +1,40 @@
+name: Initialization
+on:
+  push:
+    branches:
+      - master
+      - prerelease
+  workflow_dispatch: null
+jobs:
+  setup-matrix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup matrix combinations
+        id: setup-matrix-combinations
+        run: |
+          $listing = Invoke-WebRequest -Method POST -UseBasicParsing `
+              -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 `
+              -Body '{"filters":[{"criteria":[{"filterType":8,"value":"Microsoft.VisualStudio.Code"},{"filterType":12,"value":"4096"},{"filterType":7,"value":"ms-dynamics-smb.al"}],"pageNumber":1,"pageSize":50,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":0x192}' `
+              -ContentType application/json | ConvertFrom-Json
+
+          $results = $listing.results | Select-Object -First 1 -ExpandProperty extensions `
+          | Select-Object -ExpandProperty versions `
+          | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.version.split('.')) -gt [System.Version]"14.0.963280.0" }
+
+          $MATRIX_PARAMS_COMBINATIONS = @()
+          foreach ($result in $results) {
+              $MATRIX_PARAMS_COMBINATIONS += @{version = $result.version; assetUri = $result.assetUri }
+          }
+
+          echo ::set-output name=matrix-combinations::{\"include\":[$MATRIX_PARAMS_COMBINATIONS]}
+    outputs:
+      matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
+  matrix-job:
+    runs-on: ubuntu-latest
+    needs: setup-matrix
+    strategy:
+      matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix-combinations) }}
+    steps:
+      - run: |
+          echo assetUri=${{ matrix.version }}
+          echo assetUri=${{ matrix.assetUri }}
