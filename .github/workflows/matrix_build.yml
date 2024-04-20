@@ -100,12 +100,7 @@ jobs:
       - name: Build
         run: dotnet build /p:DefineConstants=${{ matrix.featureflags }} --no-restore --configuration Release
 
-      # - name: Upload a Build
-      #   uses: actions/upload-artifact@v2.2.4
-      #   with:
-      #     name: ${{ matrix.assetname }}
-      #     path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-
+      ### Release Asset
       - name: Remove possible existing Release Asset
         uses: flcdrg/remove-release-asset-action@v4.0.2
         env:
@@ -125,7 +120,17 @@ jobs:
           asset_name: ${{ matrix.assetname }}
           asset_content_type: application/octet-stream
 
-      - name: Upload Release Asset as Latest
+      ### Release Asset as Latest
+      - name: Remove possible existing Release Asset (Latest)
+        uses: flcdrg/remove-release-asset-action@v4.0.2
+        if: ${{ matrix.latest }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ needs.setup-matrix.outputs.release-id }}
+          asset_name: BusinessCentral.LinterCop.Latest.dll
+
+      - name: Upload Release Asset (Latest)
         id: upload-release-asset-latest
         uses: actions/upload-release-asset@v1
         if: ${{ matrix.latest }}
@@ -137,7 +142,17 @@ jobs:
           asset_name: BusinessCentral.LinterCop.Latest.dll
           asset_content_type: application/octet-stream
 
-      - name: Upload Release Asset as Pre-Release
+      ### Release Asset as Pre-Release
+      - name: Remove possible existing Release Asset (Pre-Release)
+        uses: flcdrg/remove-release-asset-action@v4.0.2
+        if: ${{ matrix.prerelease }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ needs.setup-matrix.outputs.release-id }}
+          asset_name: BusinessCentral.LinterCop.Prerelease.dll
+
+      - name: Upload Release Asset (Pre-Release)
         id: upload-release-asset-prerelease
         uses: actions/upload-release-asset@v1
         if: ${{ matrix.prerelease }}
@@ -149,38 +164,47 @@ jobs:
           asset_name: BusinessCentral.LinterCop.Prerelease.dll
           asset_content_type: application/octet-stream
 
-      # - name: Upload artifact to release
-      #   uses: svenstaro/upload-release-action@v2
-      #   with:
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     tag: ${{ needs.setup-matrix.outputs.release-tag-name }}
-      #     file: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-      #     asset_name: ${{ matrix.assetname }}
-      #     draft: true
-      #     overwrite: true
+      ### Compatilibty
+      ### Release Asset as Current
+      - name: Remove possible existing Release Asset (Current)
+        uses: flcdrg/remove-release-asset-action@v4.0.2
+        if: ${{ matrix.latest }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ needs.setup-matrix.outputs.release-id }}
+          asset_name: BusinessCentral.LinterCop.current.dll
 
-  # release-job:
-  #   runs-on: windows-latest
-  #   needs:
-  #     - setup-matrix
-  #     - matrix-job
-  #   steps:
-  #     - uses: actions/checkout@v2
+      - name: Upload Release Asset (Current)
+        id: upload-release-asset-current
+        uses: actions/upload-release-asset@v1
+        if: ${{ matrix.latest }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          asset_name: BusinessCentral.LinterCop.current.dll
+          asset_content_type: application/octet-stream
 
-  #     - name: Download artifacts
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         path: downloaded_artifacts
+      ### Release Asset as Next
+      - name: Remove possible existing Release Asset (Next)
+        uses: flcdrg/remove-release-asset-action@v4.0.2
+        if: ${{ matrix.prerelease }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ needs.setup-matrix.outputs.release-id }}
+          asset_name: BusinessCentral.LinterCop.next.dll
 
-  #     - name: Attach artifacts to release
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
-  #       run: |
-  #         $artifacts = Get-ChildItem -Path downloaded_artifacts -Depth 0 -Filter *.dll
-
-  #         foreach ($artifact in $artifacts)
-  #         {
-  #             Write-Host "gh release upload $($env:RELEASE_TAG_NAME) $($artifact.FullName)"
-  #             gh release upload $env:RELEASE_TAG_NAME $artifact.FullName
-  #         }
+      - name: Upload Release Asset (Next)
+        id: upload-release-asset-next
+        uses: actions/upload-release-asset@v1
+        if: ${{ matrix.prerelease }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          asset_name: BusinessCentral.LinterCop.next.dll
+          asset_content_type: application/octet-stream
