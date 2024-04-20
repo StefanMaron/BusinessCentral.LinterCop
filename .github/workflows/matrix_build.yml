@@ -9,6 +9,8 @@ jobs:
   setup-matrix:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+
       - name: Create Release
         id: create-release
         uses: release-drafter/release-drafter@v6
