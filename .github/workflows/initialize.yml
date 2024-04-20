@@ -24,7 +24,8 @@ jobs:
 
           $matrix = @()
           foreach ($result in $results) {
-              $matrix += @{version = $result.version; assetUri = $result.assetUri }
+              $assetUri = $result | Select-Object -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage" } | Select-Object -ExpandProperty source
+              $matrix += [Ordered]@{version = $result.version; assetUri = $assetUri }
           }
           $MATRIX_COMBINATIONS = @{'include' = $matrix } | ConvertTo-Json -Compress
           Write-Host "::set-output name=matrix-combinations::$($MATRIX_COMBINATIONS)"
