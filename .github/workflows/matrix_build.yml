@@ -121,26 +121,33 @@ jobs:
           asset_content_type: application/octet-stream
 
       ### Release Asset as Latest
-      - name: Remove possible existing Release Asset (Latest)
-        uses: flcdrg/remove-release-asset-action@v4.0.2
+      - name: Upload a Build next
+        uses: actions/upload-artifact@v2.2.4
         if: ${{ matrix.latest }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          release_id: ${{ needs.setup-matrix.outputs.release-id }}
-          asset_name: BusinessCentral.LinterCop.Latest.dll
+          name: BusinessCentral.LinterCop.Latest.dll
+          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
 
-      - name: Upload Release Asset (Latest)
-        id: upload-release-asset-latest
-        uses: actions/upload-release-asset@v1
-        if: ${{ matrix.latest }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          asset_name: BusinessCentral.LinterCop.Latest.dll
-          asset_content_type: application/octet-stream
+      # - name: Remove possible existing Release Asset (Latest)
+      #   uses: flcdrg/remove-release-asset-action@v4.0.2
+      #   if: ${{ matrix.latest }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     release_id: ${{ needs.setup-matrix.outputs.release-id }}
+      #     asset_name: BusinessCentral.LinterCop.Latest.dll
+
+      # - name: Upload Release Asset (Latest)
+      #   id: upload-release-asset-latest
+      #   uses: actions/upload-release-asset@v1
+      #   if: ${{ matrix.latest }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+      #     asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+      #     asset_name: BusinessCentral.LinterCop.Latest.dll
+      #     asset_content_type: application/octet-stream
 
       ### Release Asset as Pre-Release
       - name: Remove possible existing Release Asset (Pre-Release)
