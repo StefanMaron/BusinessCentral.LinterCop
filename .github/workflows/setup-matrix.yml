@@ -22,12 +22,13 @@ jobs:
           | Select-Object -ExpandProperty versions `
           | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.version.split('.')) -gt [System.Version]"14.0.963280.0" }
 
-          $MATRIX_PARAMS_COMBINATIONS = @()
+          $matrix = @()
           foreach ($result in $results) {
-              $MATRIX_PARAMS_COMBINATIONS += @{version = $result.version; assetUri = $result.assetUri }
+              $matrix += @{version = $result.version; assetUri = $result.assetUri }
           }
+          $MATRIX_PARAMS_COMBINATIONS = $matrix | ConvertTo-Json
 
-          echo ::set-output name=matrix-combinations::{\"include\":[$MATRIX_PARAMS_COMBINATIONS]}
+          echo ::set-output name=matrix-combinations:: { \"include\":[$MATRIX_PARAMS_COMBINATIONS] }
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
   matrix-job:
