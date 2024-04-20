@@ -19,10 +19,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Expose Release Tag Name
-        id: expose-release-tag-name
-        shell: pwsh
-        run: Write-Host "release-tag-name=${{ steps.create-release.outputs.tag_name }}" >> $GITHUB_OUTPUT
+      # - name: Expose Release Tag Name
+      #   id: expose-release-tag-name
+      #   shell: pwsh
+      #   run: Write-Host "release-tag-name=${{ steps.create-release.outputs.tag_name }}" >> $GITHUB_OUTPUT
 
       - name: Get AL Language versions
         id: setup-matrix-combinations
@@ -51,6 +51,7 @@ jobs:
 
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
+      release-tag-name: ${{ steps.create-release.outputs.tag_name }}
 
   matrix-job:
     runs-on: windows-latest
