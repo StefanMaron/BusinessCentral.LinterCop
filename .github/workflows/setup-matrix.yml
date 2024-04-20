@@ -26,8 +26,12 @@ jobs:
           foreach ($result in $results) {
               $matrix += @{version = $result.version; assetUri = $result.assetUri }
           }
-          $MATRIX_PARAMS_COMBINATIONS = $matrix | ConvertTo-Json
-
+          #$MATRIX_PARAMS_COMBINATIONS = $matrix | ConvertTo-Json
+          MATRIX_PARAMS_COMBINATIONS='
+              {"version": "1", "assetUri": "http://www.google.be-1"},
+              {"version": "2", "assetUri": "http://www.google.be-2"},
+              {"version": "3", "assetUri": "http://www.google.be-3"},
+          '
           echo ::set-output name=matrix-combinations:: { \"include\":[$MATRIX_PARAMS_COMBINATIONS] }
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
