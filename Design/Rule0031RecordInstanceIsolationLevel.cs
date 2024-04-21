@@ -1,3 +1,4 @@
+#if Spring2023
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
@@ -27,3 +28,4 @@ namespace BusinessCentral.LinterCop.Design
         }
     }
 }
+#endif

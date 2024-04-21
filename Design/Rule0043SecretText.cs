@@ -1,3 +1,4 @@
+#if Fall2023
 using System.Collections.Immutable;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
@@ -121,3 +122,4 @@ namespace BusinessCentral.LinterCop.Design
         }
     }
 }
+#endif
