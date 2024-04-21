@@ -144,10 +144,10 @@ namespace BusinessCentral.LinterCop.Design
                 if (((IFieldSymbol)Symbol).Id >= 2000000000)
                     return false;
             }
-
+#if Fall2022
             if (Symbol.GetEnumPropertyValue<ShowAsKind>(PropertyKind.ShowAs) == ShowAsKind.SplitButton)
                 return false;
-
+#endif
             if (SemanticFacts.IsSameName(Symbol.MostSpecificKind, "Group") && PromotedGroupNames.Contains(Symbol.Name.ToLowerInvariant()))
                 return false;
 

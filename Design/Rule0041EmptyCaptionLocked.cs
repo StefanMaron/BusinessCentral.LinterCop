@@ -33,10 +33,10 @@ namespace BusinessCentral.LinterCop.Design
                 SyntaxKind.QueryFilter,
                 SyntaxKind.ReportColumn,
                 SyntaxKind.EnumValue,
+#if Fall2022
                 SyntaxKind.PageCustomAction,
-                #if PageSystemActionSyntaxKind
+#endif
                 SyntaxKind.PageSystemAction,
-                #endif
                 SyntaxKind.PageView,
                 SyntaxKind.ReportLayout,
                 SyntaxKind.ProfileObject,
