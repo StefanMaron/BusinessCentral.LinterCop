@@ -65,6 +65,8 @@ jobs:
                   'Fall2024'    = '14.0'
                   'Spring2025'  = '15.0'
                   'Fall2025'    = '16.0'
+
+                  'ManifestHelper' = '13.0.937154'
               }
 
               $supportedRuntimeVersions = $RuntimeVersion.GetEnumerator() | Where-Object { $(ConvertTo-Version($_.Value)) -le $(ConvertTo-Version($version)) } | Foreach-Object { $_.Key } | ForEach-Object { "#$_" }
