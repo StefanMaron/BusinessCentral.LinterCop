@@ -5,7 +5,7 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.InternalSyntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
-#if ManifestHelper
+#if Fall2024
 using Microsoft.Dynamics.Nav.Analyzers.Common;
 #else
 using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
@@ -32,7 +32,7 @@ namespace BusinessCentral.LinterCop.Design
 
             public MethodSymbolAnalyzer(CompilationAnalysisContext compilationAnalysisContext)
             {
-#if ManifestHelper
+#if Fall2024
             NavAppManifest manifest = ManifestHelper.GetManifest(compilationAnalysisContext.Compilation);
 #else
                 NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(compilationAnalysisContext.Compilation);

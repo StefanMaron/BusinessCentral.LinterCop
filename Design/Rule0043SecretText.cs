@@ -1,4 +1,3 @@
-#if !Legacy
 using System.Collections.Immutable;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
@@ -84,7 +83,7 @@ namespace BusinessCentral.LinterCop.Design
                 case MethodKind.Method:
                     if (operation.TargetMethod.ContainingType.GetNavTypeKindSafe() != NavTypeKind.Codeunit) return;
                     ICodeunitTypeSymbol codeunitTypeSymbol = (ICodeunitTypeSymbol)operation.TargetMethod.GetContainingObjectTypeSymbol();
-#if Namespace
+#if Fall2023
                     if (!SemanticFacts.IsSameName(((INamespaceSymbol)codeunitTypeSymbol.ContainingSymbol).QualifiedName, "System.RestClient")) return;
 #endif
                     if (!SemanticFacts.IsSameName(codeunitTypeSymbol.Name, "Rest Client")) return;
@@ -122,4 +121,3 @@ namespace BusinessCentral.LinterCop.Design
         }
     }
 }
-#endif

@@ -45,25 +45,34 @@ jobs:
                   [Parameter(Mandatory = $true)]
                   [System.Version] $version
               ) 
+              $featureFlags = ""
 
-              # The mininal version of the AL Language needed to enable this feature
-              $features = @{
-                  'ManifestHelper'               = '13.0.937154'
-                  'PageSystemActionSyntaxKind'   = '13.0.878831'
-                  'Namespace'                    = '12.0.847725'
+              $RuntimeVersion = [Ordered]@{
+                  'Spring2018' = '1.0'
+                  'Fall2018'   = '2.0'
+                  'Spring2019' = '3.0'
+                  'Fall2019'   = '4.0'
+                  'Spring2020' = '5.0'
+                  'Fall2020'   = '6.0'
+                  'Spring2021' = '7.0'
+                  'Fall2021'   = '8.0'
+                  'Spring2022' = '9.0'
+                  'Fall2022'   = '10.0'
+                  'Spring2023' = '11.0'
+                  'Fall2023'   = '12.0'
+                  'Spring2024' = '13.0'
+                  'Fall2024'   = '14.0'
+                  'Spring2025' = '15.0'
+                  'Fall2025'   = '16.0'
               }
 
-              $supportedFeatureFlags = $features.GetEnumerator() | Where-Object { $(ConvertTo-Version($_.Value)) -le $(ConvertTo-Version($version)) } | Foreach-Object { $_.Key } | ForEach-Object { "#$_" }
-              if (([string]::IsNullOrEmpty($supportedFeatureFlags))) {
-                  $featureFlags = ""
-              }
-              else {
-                  $featureFlags = [System.String]::Join("", $supportedFeatureFlags)
+              $supportedRuntimeVersions = $RuntimeVersion.GetEnumerator() | Where-Object { $(ConvertTo-Version($_.Value)) -le $(ConvertTo-Version($version)) } | Foreach-Object { $_.Key } | ForEach-Object { "#$_" }
+              if (![string]::IsNullOrEmpty($supportedRuntimeVersions)) {
+                  $featureFlags = [System.String]::Join("", $supportedRuntimeVersions)
               }
 
               return $featureFlags
           }
-
 
           $listing = Invoke-WebRequest -Method POST -UseBasicParsing `
               -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 `
@@ -103,7 +112,7 @@ jobs:
                   assetUri     = $assetUri;
                   latest       = $($result.version -eq $versionLatest);
                   prerelease   = $($result.version -eq $versionPreRelease);
-                  featureflags = $featureFlags  
+                  featureflags = Get-FeatureFlags($version)
               }
           }
           $MATRIX_COMBINATIONS = @{'include' = $matrix } | ConvertTo-Json -Compress
