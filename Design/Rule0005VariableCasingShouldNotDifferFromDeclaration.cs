@@ -249,4 +249,3 @@ namespace BusinessCentral.LinterCop.Design
         }
     }
 }
-#endif
