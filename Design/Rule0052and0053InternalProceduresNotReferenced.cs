@@ -1,3 +1,4 @@
+#if Spring2022
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
@@ -252,3 +253,4 @@ namespace BusinessCentral.LinterCop.Design
         }
     }
 }
+#endif

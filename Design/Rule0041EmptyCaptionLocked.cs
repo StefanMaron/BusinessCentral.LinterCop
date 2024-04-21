@@ -40,7 +40,9 @@ namespace BusinessCentral.LinterCop.Design
                 SyntaxKind.PageSystemAction,
 #endif
                 SyntaxKind.PageView,
+#if Spring2022
                 SyntaxKind.ReportLayout,
+#endif
                 SyntaxKind.ProfileObject,
                 SyntaxKind.EnumType,
                 SyntaxKind.PermissionSet,
