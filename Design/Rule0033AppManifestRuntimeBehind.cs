@@ -1,3 +1,4 @@
+#if Fall2020
 using Microsoft.Dynamics.Nav.Analyzers.Common;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
@@ -96,3 +97,4 @@ namespace BusinessCentral.LinterCop.Design
         }
     }
 }
+#endif
