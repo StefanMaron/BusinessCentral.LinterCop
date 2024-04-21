@@ -92,7 +92,7 @@ jobs:
 
           $results = $listing.results | Select-Object -First 1 -ExpandProperty extensions `
           | Select-Object -ExpandProperty versions `
-          | Where-Object { $(ConvertTo-Version($_.version)) -gt [System.Version]::Parse("10.0.0") }
+          | Where-Object { $(ConvertTo-Version($_.version)) -gt [System.Version]::Parse("9.0.0") }
 
           $matrix = @()
           foreach ($result in $results) {
