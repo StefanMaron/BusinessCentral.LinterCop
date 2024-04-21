@@ -45,8 +45,9 @@ namespace BusinessCentral.LinterCop.Design
                     continue;
                 }
 
+#if Fall2023RV1
                 if (appObjTypeSymbol.Properties.Where(currentProperty => currentProperty.PropertyKind == PropertyKind.InherentPermissions).Any()) continue;
-
+#endif
                 switch (appObjTypeSymbol.NavTypeKind)
                 {
                     case NavTypeKind.Codeunit:

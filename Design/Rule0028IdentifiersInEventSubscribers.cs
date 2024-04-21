@@ -1,3 +1,4 @@
+#if Spring2023
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
@@ -37,3 +38,4 @@ namespace BusinessCentral.LinterCop.Design
         }
     }
 }
+#endif
