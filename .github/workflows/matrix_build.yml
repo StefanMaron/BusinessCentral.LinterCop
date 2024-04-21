@@ -48,29 +48,30 @@ jobs:
               $featureFlags = ""
 
               $RuntimeVersion = [Ordered]@{
-                  'Spring2018'     = '1.0'
-                  'Fall2018'       = '2.0'
-                  'Spring2019'     = '3.0'
-                  'Fall2019'       = '4.0'
-                  'Spring2020'     = '5.0'
-                  'Fall2020'       = '6.0'
-                  'Spring2021'     = '7.0'
-                  'Fall2021'       = '8.0'
-                  'Spring2022'     = '9.0'
-                  'Spring2022RV1'  = '9.1'
-                  'Spring2022RV2'  = '9.2'
-                  'Fall2022'       = '10.0'
-                  'Spring2023'     = '11.0'
-                  'Fall2023'       = '12.0'
-                  'Fall2023RV1'    = '12.1'
-                  'Fall2023RV2'    = '12.2'
-                  'Fall2023RV3'    = '12.3'
-                  'Spring2024'     = '13.0'
-                  'Fall2024'       = '14.0'
-                  'Spring2025'     = '15.0'
-                  'Fall2025'       = '16.0'
+                  'Spring2018'       = '1.0'
+                  'Fall2018'         = '2.0'
+                  'Spring2019'       = '3.0'
+                  'Fall2019'         = '4.0'
+                  'Spring2020'       = '5.0'
+                  'Fall2020'         = '6.0'
+                  'Spring2021'       = '7.0'
+                  'Fall2021'         = '8.0'
+                  'Spring2022'       = '9.0'
+                  'Spring2022RV1'    = '9.1'
+                  'Spring2022RV2'    = '9.2'
+                  'Fall2022'         = '10.0'
+                  'Spring2023'       = '11.0'
+                  'Fall2023'         = '12.0'
+                  'Fall2023RV1'      = '12.1'
+                  'Fall2023RV2'      = '12.2'
+                  'Fall2023RV3'      = '12.3'
+                  'Spring2024'       = '13.0'
+                  'Fall2024'         = '14.0'
+                  'Spring2025'       = '15.0'
+                  'Fall2025'         = '16.0'
 
-                  'ManifestHelper' = '13.0.937154'
+                  'ManifestHelper'   = '13.0.937154'
+                  'PageSystemAction' = '13.0.878831'
               }
 
               $supportedRuntimeVersions = $RuntimeVersion.GetEnumerator() | Where-Object { $(ConvertTo-Version($_.Value)) -le $(ConvertTo-Version($version)) } | Foreach-Object { $_.Key } | ForEach-Object { "#$_" }
@@ -96,7 +97,7 @@ jobs:
 
           $results = $listing.results | Select-Object -First 1 -ExpandProperty extensions `
           | Select-Object -ExpandProperty versions `
-          | Where-Object { $(ConvertTo-Version($_.version)) -gt [System.Version]::Parse("8.0.0") }
+          | Where-Object { $(ConvertTo-Version($_.version)) -gt [System.Version]::Parse("7.0.0") }
 
           $matrix = @()
           foreach ($result in $results) {
@@ -169,17 +170,17 @@ jobs:
         run: dotnet build /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
 
       ### Release Asset
-      - name: Remove possible existing Release Asset
-        uses: flcdrg/remove-release-asset-action@v4.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ needs.setup-matrix.outputs.release-id }}
-          asset_name: ${{ matrix.assetname }}
+      # - name: Remove possible existing Release Asset
+      #   uses: flcdrg/remove-release-asset-action@v4.0.2
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     release_id: ${{ needs.setup-matrix.outputs.release-id }}
+      #     asset_name: ${{ matrix.assetname }}
 
       - name: Upload Release Asset
         id: upload-release-asset
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.1.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -189,18 +190,18 @@ jobs:
           asset_content_type: application/octet-stream
 
       ### Release Asset as Latest
-      - name: Remove possible existing Release Asset (Latest)
-        uses: flcdrg/remove-release-asset-action@v4.0.2
-        if: ${{ matrix.latest }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ needs.setup-matrix.outputs.release-id }}
-          asset_name: BusinessCentral.LinterCop.dll
+      # - name: Remove possible existing Release Asset (Latest)
+      #   uses: flcdrg/remove-release-asset-action@v4.0.2
+      #   if: ${{ matrix.latest }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     release_id: ${{ needs.setup-matrix.outputs.release-id }}
+      #     asset_name: BusinessCentral.LinterCop.dll
 
       - name: Upload Release Asset (Latest)
         id: upload-release-asset-latest
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.1.3
         if: ${{ matrix.latest }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -211,18 +212,18 @@ jobs:
           asset_content_type: application/octet-stream
 
       ### Release Asset as Pre-Release
-      - name: Remove possible existing Release Asset (Pre-Release)
-        uses: flcdrg/remove-release-asset-action@v4.0.2
-        if: ${{ matrix.prerelease }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ needs.setup-matrix.outputs.release-id }}
-          asset_name: BusinessCentral.LinterCop.PreRelease.dll
+      # - name: Remove possible existing Release Asset (Pre-Release)
+      #   uses: flcdrg/remove-release-asset-action@v4.0.2
+      #   if: ${{ matrix.prerelease }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     release_id: ${{ needs.setup-matrix.outputs.release-id }}
+      #     asset_name: BusinessCentral.LinterCop.PreRelease.dll
 
       - name: Upload Release Asset (Pre-Release)
         id: upload-release-asset-prerelease
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.1.3
         if: ${{ matrix.prerelease }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -234,18 +235,18 @@ jobs:
 
       ### Compatilibty
       ### Release Asset as Current
-      - name: Remove possible existing Release Asset (Current)
-        uses: flcdrg/remove-release-asset-action@v4.0.2
-        if: ${{ matrix.latest }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ needs.setup-matrix.outputs.release-id }}
-          asset_name: BusinessCentral.LinterCop.current.dll
+      # - name: Remove possible existing Release Asset (Current)
+      #   uses: flcdrg/remove-release-asset-action@v4.0.2
+      #   if: ${{ matrix.latest }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     release_id: ${{ needs.setup-matrix.outputs.release-id }}
+      #     asset_name: BusinessCentral.LinterCop.current.dll
 
       - name: Upload Release Asset (Current)
         id: upload-release-asset-current
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.1.3
         if: ${{ matrix.latest }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -256,18 +257,18 @@ jobs:
           asset_content_type: application/octet-stream
 
       ### Release Asset as Next
-      - name: Remove possible existing Release Asset (Next)
-        uses: flcdrg/remove-release-asset-action@v4.0.2
-        if: ${{ matrix.prerelease }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ needs.setup-matrix.outputs.release-id }}
-          asset_name: BusinessCentral.LinterCop.next.dll
+      # - name: Remove possible existing Release Asset (Next)
+      #   uses: flcdrg/remove-release-asset-action@v4.0.2
+      #   if: ${{ matrix.prerelease }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     release_id: ${{ needs.setup-matrix.outputs.release-id }}
+      #     asset_name: BusinessCentral.LinterCop.next.dll
 
       - name: Upload Release Asset (Next)
         id: upload-release-asset-next
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.1.3
         if: ${{ matrix.prerelease }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

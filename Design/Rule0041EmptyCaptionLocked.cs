@@ -36,7 +36,7 @@ namespace BusinessCentral.LinterCop.Design
 #if Fall2022
                 SyntaxKind.PageCustomAction,
 #endif
-#if Fall2023RV3
+#if PageSystemAction
                 SyntaxKind.PageSystemAction,
 #endif
                 SyntaxKind.PageView,
