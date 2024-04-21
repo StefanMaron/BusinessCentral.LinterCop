@@ -1,4 +1,4 @@
-#if Fall2023
+#if Fall2023RV1
 using System.Collections.Immutable;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
@@ -84,9 +84,7 @@ namespace BusinessCentral.LinterCop.Design
                 case MethodKind.Method:
                     if (operation.TargetMethod.ContainingType.GetNavTypeKindSafe() != NavTypeKind.Codeunit) return;
                     ICodeunitTypeSymbol codeunitTypeSymbol = (ICodeunitTypeSymbol)operation.TargetMethod.GetContainingObjectTypeSymbol();
-#if Fall2023RV1
                     if (!SemanticFacts.IsSameName(((INamespaceSymbol)codeunitTypeSymbol.ContainingSymbol).QualifiedName, "System.RestClient")) return;
-#endif
                     if (!SemanticFacts.IsSameName(codeunitTypeSymbol.Name, "Rest Client")) return;
                     if (!SemanticFacts.IsSameName(operation.TargetMethod.Name, "SetDefaultRequestHeader")) return;
                     break;
