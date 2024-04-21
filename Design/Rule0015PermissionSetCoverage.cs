@@ -1,4 +1,5 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿#if Fall2021
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 using Microsoft.Dynamics.Nav.Analyzers.Common;
@@ -162,3 +163,4 @@ namespace BusinessCentral.LinterCop.Design
         }
     }
 }
+#endif
