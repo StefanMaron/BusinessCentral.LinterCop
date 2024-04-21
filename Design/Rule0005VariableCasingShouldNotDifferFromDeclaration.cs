@@ -47,7 +47,9 @@ namespace BusinessCentral.LinterCop.Design
                 SymbolKind.ProfileExtension,
                 SymbolKind.Query,
                 SymbolKind.Report,
+#if Spring2021
                 SymbolKind.ReportExtension,
+#endif
                 SymbolKind.Table,
                 SymbolKind.TableExtension,
                 SymbolKind.XmlPort

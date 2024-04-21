@@ -45,7 +45,9 @@ namespace BusinessCentral.LinterCop.Design
 #endif
                 SyntaxKind.ProfileObject,
                 SyntaxKind.EnumType,
+#if Spring2021
                 SyntaxKind.PermissionSet,
+#endif
                 SyntaxKind.TableExtensionObject,
                 SyntaxKind.PageExtensionObject
             });
