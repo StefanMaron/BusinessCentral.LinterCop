@@ -23,40 +23,78 @@ jobs:
         id: setup-matrix-combinations
         shell: pwsh
         run: |
-          $listing = Invoke-WebRequest -Method POST -UseBasicParsing `
-              -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 `
-              -Body '{"filters":[{"criteria":[{"filterType":8,"value":"Microsoft.VisualStudio.Code"},{"filterType":12,"value":"4096"},{"filterType":7,"value":"ms-dynamics-smb.al"}],"pageNumber":1,"pageSize":50,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":0x192}' `
-              -ContentType application/json | ConvertFrom-Json
-
-          $versionLatest = $listing.results.extensions.versions `
-          | Where-Object properties -ne $null `
-          | Where-Object { $_.properties.key -notcontains 'Microsoft.VisualStudio.Code.PreRelease' } | Select-Object -First 1 -ExpandProperty version
-
-          $versionPreRelease = $listing.results.extensions.versions `
-          | Where-Object properties -ne $null `
-          | Where-Object { $_.properties.key -contains 'Microsoft.VisualStudio.Code.PreRelease' } | Select-Object -First 1 -ExpandProperty version
-
-          $results = $listing.results | Select-Object -First 1 -ExpandProperty extensions `
-          | Select-Object -ExpandProperty versions `
-          | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.version.split('.')) -gt [System.Version]"12.0.842197.0" }
-
-          # The mininal version of the AL Language needed to enable this feature
-          $features = @{
-              'ManifestHelper'               = '13.0.937154'
-              'PageSystemActionSyntaxKind'   = '13.0.878831'
-              'Namespace'                    = '12.0.847725'
+          function ConvertTo-Version {
+              [OutputType([System.Version])]
+              Param (
+                  [Parameter(Mandatory = $true)]
+                  [string] $version
+              ) 
+              
+              $result = $null
+              if ([System.Version]::TryParse($version, [ref]$result)) {
+                  return $result
+              }
+              else {
+                  Write-Error "The value '$($version)' is not a valid input."
+              }
           }
 
-          $matrix = @()
-          foreach ($result in $results) {
-              $assetName = "BusinessCentral.LinterCop.$($result.version).dll"
-              $assetUri = $result | Select-Object -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage" } | Select-Object -ExpandProperty source
-              $supportedFeatureFlags = $features.GetEnumerator() | Where-Object { [System.Version]('{0}.{1}.{2}.0' -f $_.Value.split('.')) -le [System.Version]('{0}.{1}.{2}.0' -f $result.version.split('.')) } | Foreach-Object { $_.Key } | ForEach-Object { "#$_" }
+          function Get-FeatureFlags {
+              [OutputType([System.String])]
+              Param (
+                  [Parameter(Mandatory = $true)]
+                  [System.Version] $version
+              ) 
+
+              # The mininal version of the AL Language needed to enable this feature
+              $features = @{
+                  'ManifestHelper'               = '13.0.937154'
+                  'PageSystemActionSyntaxKind'   = '13.0.878831'
+                  'Namespace'                    = '12.0.847725'
+              }
+
+              $supportedFeatureFlags = $features.GetEnumerator() | Where-Object { $(ConvertTo-Version($_.Value)) -le $(ConvertTo-Version($version)) } | Foreach-Object { $_.Key } | ForEach-Object { "#$_" }
               if (([string]::IsNullOrEmpty($supportedFeatureFlags))) {
                   $featureFlags = ""
               }
               else {
                   $featureFlags = [System.String]::Join("", $supportedFeatureFlags)
+              }
+
+              return $featureFlags
+          }
+
+
+          $listing = Invoke-WebRequest -Method POST -UseBasicParsing `
+              -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 `
+              -Body '{"filters":[{"criteria":[{"filterType":8,"value":"Microsoft.VisualStudio.Code"},{"filterType":12,"value":"4096"},{"filterType":7,"value":"ms-dynamics-smb.al"}],"pageNumber":1,"pageSize":50,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":0x192}' `
+              -ContentType application/json | ConvertFrom-Json
+
+          $versionLatest = ConvertTo-Version $($listing.results.extensions.versions `
+              | Where-Object properties -ne $null `
+              | Where-Object { $_.properties.key -notcontains 'Microsoft.VisualStudio.Code.PreRelease' } | Select-Object -First 1 -ExpandProperty version)
+
+          $versionPreRelease = ConvertTo-Version $($listing.results.extensions.versions `
+              | Where-Object properties -ne $null `
+              | Where-Object { $_.properties.key -contains 'Microsoft.VisualStudio.Code.PreRelease' } | Select-Object -First 1 -ExpandProperty version)
+
+          $results = $listing.results | Select-Object -First 1 -ExpandProperty extensions `
+          | Select-Object -ExpandProperty versions `
+          | Where-Object { $(ConvertTo-Version($_.version)) -gt [System.Version]::Parse("12.0.842197") }
+
+          $matrix = @()
+          foreach ($result in $results) {
+              $version = ConvertTo-Version($result.version)
+
+              $assetName = "BusinessCentral.LinterCop.$($result.version).dll"
+              $assetUri = $result | Select-Object -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage" } | Select-Object -ExpandProperty source
+
+              $featureflags = Get-FeatureFlags($version)
+              if ( $version.Major -gt $versionLatest.Major) {
+                  $featureflags += "#Prerelease"
+              }
+              if ( $version.Major -lt $versionLatest.Major) {
+                  $featureflags += "#Legacy"
               }
 
               $matrix += [Ordered]@{
