@@ -36,7 +36,9 @@ namespace BusinessCentral.LinterCop.Design
 #if Fall2022
                 SyntaxKind.PageCustomAction,
 #endif
+#if Fall2023RV3
                 SyntaxKind.PageSystemAction,
+#endif
                 SyntaxKind.PageView,
                 SyntaxKind.ReportLayout,
                 SyntaxKind.ProfileObject,
