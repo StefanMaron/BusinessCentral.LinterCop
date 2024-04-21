@@ -36,8 +36,10 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckForObjectIdsInFunctionInvocations(OperationAnalysisContext context)
         {
-            if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
             if (context.ContainingSymbol.IsObsoletePending || context.ContainingSymbol.IsObsoleteRemoved) return;
+#if Spring2021
+            if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+#endif
 
             IInvocationExpression operation = (IInvocationExpression)context.Operation;
             if (operation.TargetMethod.Parameters.Length == 0) return;

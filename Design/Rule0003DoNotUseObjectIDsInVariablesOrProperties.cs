@@ -21,7 +21,9 @@ namespace BusinessCentral.LinterCop.Design
         private void CheckForObjectIDsInVariablesOrProperties(SyntaxNodeAnalysisContext ctx)
         {
             if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
+#if Spring2021
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+#endif
 
             string correctName;
             if (ctx.ContainingSymbol.Kind == SymbolKind.LocalVariable || ctx.ContainingSymbol.Kind == SymbolKind.GlobalVariable)

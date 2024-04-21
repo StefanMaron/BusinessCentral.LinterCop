@@ -53,8 +53,9 @@ namespace BusinessCentral.LinterCop.Design
         private void AnalyzeCaptionProperty(SyntaxNodeAnalysisContext ctx)
         {
             if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
+#if Spring2021
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-
+#endif
             if (ctx.Node.IsKind(SyntaxKind.EnumValue) && ctx.ContainingSymbol.Kind == SymbolKind.Enum) return; // Prevent double raising the rule on EnumValue in a EnumObject
 
             LabelPropertyValueSyntax captionProperty = ctx.Node?.GetProperty("Caption")?.Value as LabelPropertyValueSyntax;

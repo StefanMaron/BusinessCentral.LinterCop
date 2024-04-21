@@ -14,7 +14,9 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeInvocation(OperationAnalysisContext context)
         {
+#if Spring2021
             if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+#endif
             if (context.ContainingSymbol.IsObsoletePending || context.ContainingSymbol.IsObsoleteRemoved) return;
             IInvocationExpression operation = (IInvocationExpression)context.Operation;
             if (!SemanticFacts.IsSameName(operation.TargetMethod.Name, "setrange") || operation.TargetMethod == null || operation.Arguments.Count() < 2)

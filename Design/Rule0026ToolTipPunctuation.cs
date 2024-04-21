@@ -16,8 +16,9 @@ namespace BusinessCentral.LinterCop.Design
         private void AnalyzeToolTipPunctuation(SyntaxNodeAnalysisContext ctx)
         {
             if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
+#if Spring2021
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-
+#endif
             PropertyValueSyntax tooltipProperty = ctx.Node.GetPropertyValue(PropertyKind.ToolTip);
             if (tooltipProperty == null) return;
 

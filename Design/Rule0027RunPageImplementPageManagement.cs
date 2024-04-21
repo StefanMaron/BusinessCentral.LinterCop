@@ -15,9 +15,10 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckRunPageImplementPageManagement(OperationAnalysisContext ctx)
         {
-            if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
             if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
-
+#if Spring2021
+            if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+#endif
             IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
 

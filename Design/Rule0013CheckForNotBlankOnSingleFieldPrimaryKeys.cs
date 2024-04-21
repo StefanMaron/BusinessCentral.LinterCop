@@ -1,4 +1,5 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿#if Spring2021
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 
@@ -53,3 +54,4 @@ namespace BusinessCentral.LinterCop.Design
         }
     }
 }
+#endif

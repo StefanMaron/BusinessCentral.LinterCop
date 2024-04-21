@@ -13,9 +13,11 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeFlowFieldEditable(SymbolAnalysisContext ctx)
         {
-            if (ctx.Symbol.IsObsoletePending || ctx.Symbol.IsObsoleteRemoved) return;
-            if (ctx.Symbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.Symbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
 
+            if (ctx.Symbol.IsObsoletePending || ctx.Symbol.IsObsoleteRemoved) return;
+#if Spring2021
+            if (ctx.Symbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.Symbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+#endif
             IFieldSymbol field = (IFieldSymbol)ctx.Symbol;
             if (field.FieldClass == FieldClassKind.FlowField && field.GetBooleanPropertyValue(PropertyKind.Editable).Value)
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0001FlowFieldsShouldNotBeEditable, field.Location));

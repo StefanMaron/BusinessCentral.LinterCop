@@ -14,9 +14,10 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CompareDateTimeWithTypeHelper(OperationAnalysisContext context)
         {
-            if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
             if (context.ContainingSymbol.IsObsoletePending || context.ContainingSymbol.IsObsoleteRemoved) return;
-
+#if Spring2021
+            if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+#endif
             IBinaryOperatorExpression operation = (IBinaryOperatorExpression)context.Operation;
 
             if (!(operation.LeftOperand.Type.NavTypeKind == NavTypeKind.DateTime && operation.RightOperand.Type.NavTypeKind == NavTypeKind.DateTime)) return;

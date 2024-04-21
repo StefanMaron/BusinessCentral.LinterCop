@@ -15,8 +15,9 @@ namespace BusinessCentral.LinterCop.Design
         private void AnalyzeSemicolonAfterMethodOrTriggerDeclaration(SyntaxNodeAnalysisContext ctx)
         {
             if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
+#if Spring2021
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-
+#endif
             MethodOrTriggerDeclarationSyntax syntax = ctx.Node as MethodOrTriggerDeclarationSyntax;
 
             if (syntax.SemicolonToken.Kind != SyntaxKind.None)

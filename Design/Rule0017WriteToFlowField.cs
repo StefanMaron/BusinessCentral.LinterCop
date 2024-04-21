@@ -20,7 +20,9 @@ namespace BusinessCentral.LinterCop.Design
         private void CheckForWriteToFlowField(OperationAnalysisContext context)
         {
             if (context.ContainingSymbol.IsObsoletePending || context.ContainingSymbol.IsObsoleteRemoved) return;
+#if Spring2021
             if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+#endif
 
             if (context.Operation.Kind == OperationKind.InvocationExpression)
             {
