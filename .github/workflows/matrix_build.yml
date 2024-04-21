@@ -91,7 +91,7 @@ jobs:
 
               $featureflags = Get-FeatureFlags($version)
               if ( $version.Major -gt $versionLatest.Major) {
-                  $featureflags += "#Prerelease"
+                  $featureflags += "#PreRelease"
               }
               if ( $version.Major -lt $versionLatest.Major) {
                   $featureflags += "#Legacy"
@@ -202,7 +202,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           release_id: ${{ needs.setup-matrix.outputs.release-id }}
-          asset_name: BusinessCentral.LinterCop.Prerelease.dll
+          asset_name: BusinessCentral.LinterCop.PreRelease.dll
 
       - name: Upload Release Asset (Pre-Release)
         id: upload-release-asset-prerelease
@@ -213,7 +213,7 @@ jobs:
         with:
           upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
           asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          asset_name: BusinessCentral.LinterCop.Prerelease.dll
+          asset_name: BusinessCentral.LinterCop.PreRelease.dll
           asset_content_type: application/octet-stream
 
       ### Compatilibty

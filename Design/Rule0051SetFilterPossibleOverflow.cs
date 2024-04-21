@@ -1,3 +1,4 @@
+#if !Legacy
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
@@ -252,3 +253,4 @@ namespace BusinessCentral.LinterCop.Design
         }
     }
 }
+#endif
