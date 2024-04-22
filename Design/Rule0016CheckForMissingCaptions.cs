@@ -115,6 +115,12 @@ namespace BusinessCentral.LinterCop.Design
                         break;
                 }
             }
+            else if (context.Symbol.Kind == SymbolKind.EnumValue)
+            {
+                IEnumValueSymbol enumValueSymbol = (IEnumValueSymbol)context.Symbol;
+                if (enumValueSymbol.Name != "" && CaptionIsMissing(context.Symbol, context))
+                    RaiseCaptionWarning(context);
+            }
             else if (context.Symbol.Kind == SymbolKind.Page)
             {
                 if (((IPageTypeSymbol)context.Symbol).PageType != PageTypeKind.API)
