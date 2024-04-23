@@ -10,7 +10,8 @@
             "args": [
                 "build",
                 "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "/consoleloggerparameters:NoSummary",
+                "/p:FeatureFlags=#Spring2018#Fall2018#Spring2019#Fall2019#Spring2020#Fall2020#Spring2021#Fall2021#Spring2022#Spring2022RV1#Spring2022RV2#Fall2022#Spring2023#Fall2023#Fall2023RV1#Fall2023RV2#Fall2023RV3#Spring2024#Fall2024#ManifestHelper#PageSystemAction"
             ],
             "group": "build",
             "problemMatcher": "$msCompile",
