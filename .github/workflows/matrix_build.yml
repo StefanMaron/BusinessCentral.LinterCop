@@ -7,7 +7,7 @@ on:
   workflow_dispatch: null
 jobs:
   setup-matrix:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Create Release
         id: create-release
@@ -97,7 +97,7 @@ jobs:
 
           $results = $listing.results | Select-Object -First 1 -ExpandProperty extensions `
           | Select-Object -ExpandProperty versions `
-          | Where-Object { $(ConvertTo-Version($_.version)) -gt [System.Version]::Parse("5.0.0") }
+          | Where-Object { $(ConvertTo-Version($_.version)) -gt [System.Version]::Parse("13.0.0") }
 
           $matrix = @()
           foreach ($result in $results) {
@@ -124,10 +124,10 @@ jobs:
               }
           }
           $MATRIX_COMBINATIONS = @{'include' = $matrix } | ConvertTo-Json -Compress
-          Write-Host "::set-output name=matrix-combinations::$($MATRIX_COMBINATIONS)"
+          #Write-Host "::set-output name=matrix-combinations::$($MATRIX_COMBINATIONS)"
 
           # TODO: Resolve set-output warning from line above 
-          #Write-Host "matrix-combinations=$($MATRIX_COMBINATIONS)" >> $GITHUB_OUTPUT
+          Write-Host "matrix-combinations=$($MATRIX_COMBINATIONS)" >> $GITHUB_OUTPUT
 
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
