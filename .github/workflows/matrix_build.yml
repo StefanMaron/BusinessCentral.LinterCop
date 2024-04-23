@@ -125,7 +125,7 @@ jobs:
           }
           $MATRIX_COMBINATIONS = @{'include' = $matrix } | ConvertTo-Json -Compress
           #Write-Host "::set-output name=matrix-combinations::$($MATRIX_COMBINATIONS)"
-          Write-Host "matrix-combinations=$($MATRIX_COMBINATIONS)" >> $env:$GITHUB_OUTPUT
+          Write-Host "matrix-combinations=$($MATRIX_COMBINATIONS)" >> $env:GITHUB_OUTPUT
 
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
