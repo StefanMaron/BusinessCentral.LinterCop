@@ -1,3 +1,4 @@
+using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
@@ -20,9 +21,7 @@ namespace BusinessCentral.LinterCop.Design
         private void AnalyzeAllowInCustomization(SymbolAnalysisContext ctx)
         {
             if (!VersionChecker.IsSupported(ctx.Symbol, Feature.AddPageControlInPageCustomization)) return;
-
-            if (ctx.Symbol.IsObsoletePending || ctx.Symbol.IsObsoleteRemoved) return;
-            if (ctx.Symbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.Symbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+            if (ctx.IsObsoletePendingOrRemoved()) return;
 
             ICollection<IFieldSymbol> tableFields = GetTableFields(ctx.Symbol).Where(x => x.Id > 0 && x.Id < 2000000000)
                                                                 .Where(x => x.DeclaredAccessibility != Accessibility.Local && x.DeclaredAccessibility != Accessibility.Protected)

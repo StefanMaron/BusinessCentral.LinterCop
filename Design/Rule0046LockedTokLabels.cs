@@ -1,3 +1,4 @@
+using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
@@ -12,6 +13,8 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeLockedLabel(SymbolAnalysisContext ctx)
         {
+            if (ctx.IsObsoletePendingOrRemoved()) return;
+
             IVariableSymbol symbol = (IVariableSymbol)ctx.Symbol;
 
             ITypeSymbol type1 = symbol.Type;

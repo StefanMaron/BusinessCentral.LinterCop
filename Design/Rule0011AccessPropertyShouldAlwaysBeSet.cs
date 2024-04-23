@@ -2,6 +2,7 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
+using BusinessCentral.LinterCop.AnalysisContextExtension;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -18,7 +19,8 @@ namespace BusinessCentral.LinterCop.Design
             if (!VersionChecker.IsSupported(context.Symbol, VersionCompatibility.Spring2021OrGreater) && (context.Symbol.Kind == SymbolKind.Enum || context.Symbol.Kind == SymbolKind.Interface))
                 return;
 
-            if (context.Symbol.IsObsoletePending || context.Symbol.IsObsoleteRemoved) return;
+            if (context.IsObsoletePendingOrRemoved()) return;
+
             if (context.Symbol.Kind == SymbolKind.Field)
             {
                 if (context.Symbol.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.Symbol.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;

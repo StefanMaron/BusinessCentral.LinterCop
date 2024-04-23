@@ -1,3 +1,4 @@
+using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
@@ -25,6 +26,8 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeLockedLabel(SymbolAnalysisContext ctx)
         {
+            if (ctx.IsObsoletePendingOrRemoved()) return;
+
             IVariableSymbol variable = (IVariableSymbol)ctx.Symbol;
             if (variable.Type == null || variable.Type.GetNavTypeKindSafe() != NavTypeKind.Label)
                 return;

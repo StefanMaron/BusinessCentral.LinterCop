@@ -3,6 +3,7 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
+using BusinessCentral.LinterCop.AnalysisContextExtension;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -10,11 +11,11 @@ namespace BusinessCentral.LinterCop.Design
     public class Rule0009CodeMetrics : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0009CodeMetricsInfo, DiagnosticDescriptors.Rule0010CodeMetricsWarning);
-        
-        private static readonly HashSet<SyntaxKind> OperatorAndOperandKinds = 
+
+        private static readonly HashSet<SyntaxKind> OperatorAndOperandKinds =
             Enum.GetValues(typeof(SyntaxKind))
                 .Cast<SyntaxKind>()
-                .Where(value => 
+                .Where(value =>
                     (value.ToString().Contains("Keyword") ||
                      value.ToString().Contains("Token")) ||
                     IsOperandKind(value))
@@ -28,17 +29,12 @@ namespace BusinessCentral.LinterCop.Design
             if ((context.CodeBlock.Kind != SyntaxKind.MethodDeclaration) &&
                 (context.CodeBlock.Kind != SyntaxKind.TriggerDeclaration))
                 return;
-                
-            if (context.OwningSymbol.IsObsoletePending || context.OwningSymbol.IsObsoleteRemoved) 
-                return;
+
+            if (context.IsObsoletePendingOrRemoved()) return;
 
             var containingObjectTypeSymbol = context.OwningSymbol.GetContainingObjectTypeSymbol();
-            if (containingObjectTypeSymbol.IsObsoletePending || 
-                containingObjectTypeSymbol.IsObsoleteRemoved)
-                return;
-            
             if (containingObjectTypeSymbol.NavTypeKind == NavTypeKind.Interface ||
-                containingObjectTypeSymbol.NavTypeKind == NavTypeKind.ControlAddIn) 
+                containingObjectTypeSymbol.NavTypeKind == NavTypeKind.ControlAddIn)
                 return;
 
             SyntaxNode bodyNode = context.CodeBlock.Kind == SyntaxKind.MethodDeclaration
@@ -55,7 +51,7 @@ namespace BusinessCentral.LinterCop.Design
 
             if (LinterSettings.instance == null)
                 LinterSettings.Create(context.SemanticModel.Compilation.FileSystem.GetDirectoryPath());
-           
+
             if (cyclomaticComplexity >= LinterSettings.instance.cyclomaticComplexityThreshold || Math.Round(HalsteadVolume) <= LinterSettings.instance.maintainabilityIndexThreshold)
             {
                 context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0010CodeMetricsWarning, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexity, LinterSettings.instance.cyclomaticComplexityThreshold, Math.Round(HalsteadVolume), LinterSettings.instance.maintainabilityIndexThreshold }));

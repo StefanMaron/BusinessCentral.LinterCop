@@ -1,4 +1,5 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 
@@ -36,8 +37,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckForObjectIdsInFunctionInvocations(OperationAnalysisContext context)
         {
-            if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-            if (context.ContainingSymbol.IsObsoletePending || context.ContainingSymbol.IsObsoleteRemoved) return;
+            if (context.IsObsoletePendingOrRemoved()) return;
 
             IInvocationExpression operation = (IInvocationExpression)context.Operation;
             if (operation.TargetMethod.Parameters.Length == 0) return;
