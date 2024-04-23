@@ -1,3 +1,4 @@
+#if Fall2023RV1
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
@@ -252,3 +253,4 @@ namespace BusinessCentral.LinterCop.Design
         }
     }
 }
+#endif

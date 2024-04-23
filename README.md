@@ -39,8 +39,8 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 
 ## Rules
 
-|Id| Title|Default Severity|
-|---|---|---|
+|Id| Title|Default Severity|AL version|
+|---|---|---|---|
 |[LC0000](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0000)|An error ocurred in a given rule. Please create an issue on GitHub|Info|
 |[LC0001](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0001)|FlowFields should not be editable.|Warning|
 |[LC0002](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0002)|`Commit()` needs a comment to justify its existence. Either a leading or a trailing comment.|Warning|
@@ -76,7 +76,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0032](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0032)|Clear(All) does not affect or change values for global variables in single instance codeunits.|Warning|
 |[LC0033](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0033)|The specified runtime version in app.json is falling behind.|Info|
 |[LC0034](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0034)|The property `Extensible` should be explicitly set for public objects.|Disabled|
-|[LC0035](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0035)|Explicitly set `AllowInCustomizations` for fields omitted on pages.|Info|
+|[LC0035](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0035)|Explicitly set `AllowInCustomizations` for fields omitted on pages.|Info|12.1|
 |[LC0036](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0036)|ToolTip must start with the verb "Specifies".|Info|
 |[LC0037](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0037)|Do not use line breaks in ToolTip.|Info|
 |[LC0038](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0038)|Try to not exceed 200 characters (including spaces).|Info|
@@ -84,7 +84,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0040](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0040)|Explicitly set the `RunTrigger` parameter on build-in methods.|Info|
 |[LC0041](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0041)|Empty Captions should be `Locked`.|Info|
 |[LC0042](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0042)|`AutoCalcFields` should only be used for FlowFields or Blob fields.|Warning|
-|[LC0043](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0043)|Use `SecretText` type to protect credentials and sensitive textual values from being revealed.|Info|
+|[LC0043](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0043)|Use `SecretText` type to protect credentials and sensitive textual values from being revealed.|Info|14.0|
 |[LC0044](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0044)|Tables coupled with `TransferFields` must have matching fields.|Warning|
 |[LC0045](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0045)|Zero (0) `Enum` value should be reserved for Empty Value.|Info|
 |[LC0046](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0046)|`Label` with suffix Tok must be locked.|Info|
@@ -92,7 +92,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0048](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0048)|Use Error with a `ErrorInfo` or `Label` variable to improve telemetry details.|Info|
 |[LC0049](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0049)|`SourceTable` property not defined on Page.|Info|
 |[LC0050](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0050)|`SetFilter` with unsupported operator in filter expression.|Info|
-|[LC0051](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0051)|Do not assign a text to a target with smaller size.|Warning|
+|[LC0051](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0051)|Do not assign a text to a target with smaller size.|Warning|12.1|
 |[LC0052](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0052)|The internal procedure is declared but never used.|Info|
 |[LC0053](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0053)|The internal procedure is only used in the object in which it is declared. Consider making the procedure local.|Info|
 |[LC0055](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0055)|The suffix `Tok` is meant to be used when the value of the label matches the name.|Info|
