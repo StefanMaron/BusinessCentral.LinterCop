@@ -1,4 +1,4 @@
-name: Initialization
+name: Setup Matrix
 on:
   push:
     branches:
