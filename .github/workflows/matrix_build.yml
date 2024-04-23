@@ -124,7 +124,6 @@ jobs:
               }
           }
           $MATRIX_COMBINATIONS = @{'include' = $matrix } | ConvertTo-Json -Compress
-          #Write-Host "::set-output name=matrix-combinations::$($MATRIX_COMBINATIONS)"
           echo "matrix-combinations=$($MATRIX_COMBINATIONS)" >> $env:GITHUB_OUTPUT
 
     outputs:
@@ -142,10 +141,10 @@ jobs:
     env:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v1.5
         with:
           dotnet-version: 8.0.*
 
