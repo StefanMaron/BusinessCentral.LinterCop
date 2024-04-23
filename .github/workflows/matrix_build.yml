@@ -7,7 +7,7 @@ on:
   workflow_dispatch: null
 jobs:
   setup-matrix:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Create Release
         id: create-release
@@ -125,9 +125,7 @@ jobs:
           }
           $MATRIX_COMBINATIONS = @{'include' = $matrix } | ConvertTo-Json -Compress
           #Write-Host "::set-output name=matrix-combinations::$($MATRIX_COMBINATIONS)"
-
-          # TODO: Resolve set-output warning from line above 
-          Write-Host "matrix-combinations=$($MATRIX_COMBINATIONS)" >> $GITHUB_OUTPUT
+          Write-Host "matrix-combinations=$($MATRIX_COMBINATIONS)" >> $env:$GITHUB_OUTPUT
 
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
