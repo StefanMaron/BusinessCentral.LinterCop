@@ -1,4 +1,5 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using System.Collections.Immutable;
@@ -16,8 +17,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeInvocation(OperationAnalysisContext context)
         {
-            if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-            if (context.ContainingSymbol.IsObsoletePending || context.ContainingSymbol.IsObsoleteRemoved) return;
+            if (context.IsObsoletePendingOrRemoved()) return;
             IInvocationExpression operation = (IInvocationExpression)context.Operation;
             if (!SemanticFacts.IsSameName(operation.TargetMethod.Name, "setrange") || operation.TargetMethod == null || operation.Arguments.Count() < 2)
                 return;

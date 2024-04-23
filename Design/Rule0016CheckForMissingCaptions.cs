@@ -1,4 +1,5 @@
-﻿using BusinessCentral.LinterCop.Helpers;
+﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
@@ -49,8 +50,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckForMissingCaptions(SymbolAnalysisContext context)
         {
-            if (context.Symbol.IsObsoletePending || context.Symbol.IsObsoleteRemoved) return;
-            if (context.Symbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.Symbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+            if (context.IsObsoletePendingOrRemoved()) return;
 
             if (context.Symbol.Kind == SymbolKind.Control)
             {

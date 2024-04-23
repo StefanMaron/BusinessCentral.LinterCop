@@ -1,4 +1,5 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 
@@ -14,7 +15,8 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckForLookupPageIdAndDrillDownPageId(SymbolAnalysisContext context)
         {
-            if (context.Symbol.IsObsoletePending || context.Symbol.IsObsoleteRemoved) return;
+            if (context.IsObsoletePendingOrRemoved()) return;
+
             IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)context.Symbol;
             if (pageTypeSymbol.PageType != PageTypeKind.List || pageTypeSymbol.RelatedTable == null) return;
             if (pageTypeSymbol.RelatedTable.ContainingModule != context.Symbol.ContainingModule) return;
@@ -23,7 +25,8 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckTable(ITableTypeSymbol table, SymbolAnalysisContext context)
         {
-            if (table.IsObsoletePending || table.IsObsoleteRemoved) return;
+            if (table.IsObsoletePendingOrRemoved()) return;
+
             if (!IsSymbolAccessible(table, context)) return;
             if (table.TableType == TableTypeKind.Temporary) return;
 

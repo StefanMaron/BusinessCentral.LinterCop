@@ -2,6 +2,7 @@ using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
+using BusinessCentral.LinterCop.AnalysisContextExtension;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -14,7 +15,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckAccessOnInstallAndUpgradeCodeunits(SymbolAnalysisContext context)
         {
-            if (context.Symbol.IsObsoletePending || context.Symbol.IsObsoleteRemoved) return;
+            if (context.IsObsoletePendingOrRemoved()) return;
 
             ICodeunitTypeSymbol symbol = (ICodeunitTypeSymbol)context.Symbol;
             if (symbol.Subtype != CodeunitSubtypeKind.Install && symbol.Subtype != CodeunitSubtypeKind.Upgrade)

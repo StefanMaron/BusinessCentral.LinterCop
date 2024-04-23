@@ -1,3 +1,4 @@
+using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
@@ -16,9 +17,7 @@ namespace BusinessCentral.LinterCop.Design
         {
             if (!VersionChecker.IsSupported(context.OwningSymbol, Feature.IdentifiersInEventSubscribers)) return;
 
-            if (context.OwningSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.OwningSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-            if (context.OwningSymbol.IsObsoletePending || context.OwningSymbol.IsObsoleteRemoved) return;
-
+            if (context.IsObsoletePendingOrRemoved()) return;
             if (!context.CodeBlock.IsKind(SyntaxKind.MethodDeclaration)) return;
 
             var SyntaxList = ((MethodDeclarationSyntax)context.CodeBlock).Attributes.Where(value => SemanticFacts.IsSameName(value.GetIdentifierOrLiteralValue(), "EventSubscriber"));

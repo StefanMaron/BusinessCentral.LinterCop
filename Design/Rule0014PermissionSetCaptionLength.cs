@@ -1,4 +1,5 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 
@@ -16,6 +17,8 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckPermissionSetNameAndCaptionLength(SymbolAnalysisContext context)
         {
+            if (context.IsObsoletePendingOrRemoved()) return;
+
             IPropertySymbol captionProperty = context.Symbol.GetProperty(PropertyKind.Caption);
             if (captionProperty == null)
                 return;
