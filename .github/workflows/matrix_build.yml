@@ -125,7 +125,7 @@ jobs:
           }
           $MATRIX_COMBINATIONS = @{'include' = $matrix } | ConvertTo-Json -Compress
           #Write-Host "::set-output name=matrix-combinations::$($MATRIX_COMBINATIONS)"
-          Write-Host "matrix-combinations=$($MATRIX_COMBINATIONS)" >> $env:GITHUB_OUTPUT
+          echo "matrix-combinations=$($MATRIX_COMBINATIONS)" >> $env:GITHUB_OUTPUT
 
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
@@ -167,15 +167,6 @@ jobs:
       - name: Build
         run: dotnet build /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
 
-      ### Release Asset
-      # - name: Remove possible existing Release Asset
-      #   uses: flcdrg/remove-release-asset-action@v4.0.2
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     release_id: ${{ needs.setup-matrix.outputs.release-id }}
-      #     asset_name: ${{ matrix.assetname }}
-
       - name: Upload Release Asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
@@ -188,15 +179,6 @@ jobs:
           asset_content_type: application/octet-stream
 
       ### Release Asset as Latest
-      # - name: Remove possible existing Release Asset (Latest)
-      #   uses: flcdrg/remove-release-asset-action@v4.0.2
-      #   if: ${{ matrix.latest }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     release_id: ${{ needs.setup-matrix.outputs.release-id }}
-      #     asset_name: BusinessCentral.LinterCop.dll
-
       - name: Upload Release Asset (Latest)
         id: upload-release-asset-latest
         uses: actions/upload-release-asset@v1
@@ -210,15 +192,6 @@ jobs:
           asset_content_type: application/octet-stream
 
       ### Release Asset as Pre-Release
-      # - name: Remove possible existing Release Asset (Pre-Release)
-      #   uses: flcdrg/remove-release-asset-action@v4.0.2
-      #   if: ${{ matrix.prerelease }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     release_id: ${{ needs.setup-matrix.outputs.release-id }}
-      #     asset_name: BusinessCentral.LinterCop.PreRelease.dll
-
       - name: Upload Release Asset (Pre-Release)
         id: upload-release-asset-prerelease
         uses: actions/upload-release-asset@v1
@@ -231,17 +204,8 @@ jobs:
           asset_name: BusinessCentral.LinterCop.PreRelease.dll
           asset_content_type: application/octet-stream
 
-      ### Compatilibty
+      ### Compatibility with previous naming of files
       ### Release Asset as Current
-      # - name: Remove possible existing Release Asset (Current)
-      #   uses: flcdrg/remove-release-asset-action@v4.0.2
-      #   if: ${{ matrix.latest }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     release_id: ${{ needs.setup-matrix.outputs.release-id }}
-      #     asset_name: BusinessCentral.LinterCop.current.dll
-
       - name: Upload Release Asset (Current)
         id: upload-release-asset-current
         uses: actions/upload-release-asset@v1
@@ -255,15 +219,6 @@ jobs:
           asset_content_type: application/octet-stream
 
       ### Release Asset as Next
-      # - name: Remove possible existing Release Asset (Next)
-      #   uses: flcdrg/remove-release-asset-action@v4.0.2
-      #   if: ${{ matrix.prerelease }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     release_id: ${{ needs.setup-matrix.outputs.release-id }}
-      #     asset_name: BusinessCentral.LinterCop.next.dll
-
       - name: Upload Release Asset (Next)
         id: upload-release-asset-next
         uses: actions/upload-release-asset@v1
