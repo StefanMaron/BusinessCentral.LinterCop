@@ -16,7 +16,7 @@ namespace BusinessCentral.LinterCop.Design
         }
         private void CheckForSingleFieldPrimaryKeysNotBlank(SymbolAnalysisContext context)
         {
-            if (context.IsObsoletePendingOrRemoved()) return; //review
+            if (context.IsObsoletePendingOrRemoved()) return;
 
             IFieldSymbol field = (IFieldSymbol)context.Symbol;
             if (GetExitCondition(field))
