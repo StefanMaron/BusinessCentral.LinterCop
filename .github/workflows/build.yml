@@ -154,18 +154,22 @@ jobs:
         run: dotnet restore
 
       - name: Download platform artifact
+        shell: pwsh
         run: Invoke-WebRequest ${{ matrix.assetUri }} -OutFile ALLanguage.vsix
 
       - name: Unzip vsix
+        shell: pwsh
         run: 7z x "ALLanguage.vsix" "-oms-dynamics-smb.al-latest"
           extension\bin\Analyzers -r
 
       - name: Set current version
+        shell: pwsh
         run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
           ("Version(""" + ('${{ needs.setup-matrix.outputs.release-tag-name }}'
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
 
       - name: Build
+        shell: pwsh
         run: dotnet build /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
 
       - name: Upload Release Asset
