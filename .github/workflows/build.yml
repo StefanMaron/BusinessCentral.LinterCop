@@ -104,7 +104,7 @@ jobs:
           foreach ($result in $results) {
               $version = ConvertTo-Version($result.version)
 
-              $assetName = "BusinessCentral.LinterCop.$($result.version).dll"
+              $assetName = "BusinessCentral.LinterCop.AL-$($result.version).dll"
               $assetUri = $result | Select-Object -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage" } | Select-Object -ExpandProperty source
 
               $featureflags = Get-FeatureFlags($version)
@@ -202,7 +202,7 @@ jobs:
         with:
           upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
           asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          asset_name: BusinessCentral.LinterCop.PreRelease.dll
+          asset_name: BusinessCentral.LinterCop.AL-PreRelease.dll
           asset_content_type: application/octet-stream
 
       ### Compatibility with previous naming of files
