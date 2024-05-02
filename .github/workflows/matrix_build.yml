@@ -158,7 +158,7 @@ jobs:
         run: Invoke-WebRequest ${{ matrix.assetUri }} -OutFile ALLanguage.vsix
 
       - name: Unzip vsix
-        run: 7z x ALLanguage.vsix -oms-dynamics-smb.al-latest extension\bin\Analyzers -r
+        run: 7z x ALLanguage.vsix extension\bin\Analyzers -r
 
       - name: Set current version
         shell: pwsh
