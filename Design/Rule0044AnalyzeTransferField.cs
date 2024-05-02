@@ -442,8 +442,9 @@ namespace BusinessCentral.LinterCop.Design
                 new Tuple<string, string>("Contact", "Customer"),
                 new Tuple<string, string>("Contact", "Vendor"),
                 new Tuple<string, string>("Contact", "Employee"),
-                new Tuple<string, string>("Contact", "BankAccount"),
-
+                new Tuple<string, string>("Contact", "Bank Account"),
+                new Tuple<string, string>("Contact", "Customer Templ."),
+                
                 new Tuple<string, string>("Contact Business Relation", "Office Contact Details"),
 
                 new Tuple<string, string>("Deferral Line", "Deferral Line Archive"),
