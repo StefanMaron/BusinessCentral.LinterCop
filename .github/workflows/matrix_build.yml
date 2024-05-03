@@ -167,7 +167,6 @@ jobs:
           -replace "v","") + """)]") | Out-File AssemblyInfo.cs
 
       - name: Build
-        shell: pwsh
         run: dotnet build /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
 
       - name: Upload Release Asset
