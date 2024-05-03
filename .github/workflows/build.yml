@@ -167,6 +167,7 @@ jobs:
 
       - name: Set current version
         shell: pwsh
+        if: ${{ matrix.GH_eventName != 'pull_request' }}
         run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
           ("Version(""" + ('${{ needs.setup-matrix.outputs.release-tag-name }}'
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
