@@ -4,6 +4,7 @@ on:
     branches:
       - master
       - prerelease
+  pull_request:
   workflow_dispatch: null
 jobs:
   setup-matrix:
@@ -13,6 +14,7 @@ jobs:
       - name: Create Release
         id: create-release
         uses: release-drafter/release-drafter@v6
+        if: github.event_name != 'pull_request'
         with:
           prerelease: ${{ github.ref != 'refs/heads/master' }}
           commitish: ${{ github.ref }}
@@ -23,6 +25,8 @@ jobs:
       - name: Get AL Language versions
         id: setup-matrix-combinations
         shell: pwsh
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: |
           function ConvertTo-Version {
               [OutputType([System.Version])]
@@ -122,6 +126,7 @@ jobs:
                   latest       = $($result.version -eq $versionLatest);
                   prerelease   = $($result.version -eq $versionPreRelease);
                   featureflags = Get-FeatureFlags($version)
+                  GH_eventName = $env:GITHUB_EVENT_NAME
               }
           }
           $MATRIX_COMBINATIONS = @{'include' = $matrix } | ConvertTo-Json -Compress
@@ -172,6 +177,7 @@ jobs:
       - name: Upload Release Asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
+        if: ${{ matrix.GH_eventName != 'pull_request' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -184,7 +190,7 @@ jobs:
       - name: Upload Release Asset (Latest)
         id: upload-release-asset-latest
         uses: actions/upload-release-asset@v1
-        if: ${{ matrix.latest }}
+        if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -197,7 +203,7 @@ jobs:
       - name: Upload Release Asset (Pre-Release)
         id: upload-release-asset-prerelease
         uses: actions/upload-release-asset@v1
-        if: ${{ matrix.prerelease }}
+        if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -211,7 +217,7 @@ jobs:
       - name: Upload Release Asset (Current)
         id: upload-release-asset-current
         uses: actions/upload-release-asset@v1
-        if: ${{ matrix.latest }}
+        if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -224,7 +230,7 @@ jobs:
       - name: Upload Release Asset (Next)
         id: upload-release-asset-next
         uses: actions/upload-release-asset@v1
-        if: ${{ matrix.prerelease }}
+        if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
