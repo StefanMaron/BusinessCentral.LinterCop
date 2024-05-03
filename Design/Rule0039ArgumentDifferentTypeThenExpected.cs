@@ -127,16 +127,19 @@ namespace BusinessCentral.LinterCop.Design
         private static bool AreTheSameNavObjects(ITableTypeSymbol left, ITableTypeSymbol right)
         {
             if (left.GetNavTypeKindSafe() != right.GetNavTypeKindSafe()) return false;
+#if Fall2023RV1
             if (((INamespaceSymbol)left.ContainingSymbol).QualifiedName != ((INamespaceSymbol)right.ContainingSymbol).QualifiedName) return false;
+#endif
             if (left.Name != right.Name) return false;
             return true;
         }
 
         private static string GetFullyQualifiedObjectName(IPageTypeSymbol page)
         {
+#if Fall2023RV1
             if (page.ContainingNamespace.QualifiedName != "")
                 return page.ContainingNamespace.QualifiedName + "." + "\"" + page.Name + "\"";
-
+#endif
             return page.Name;
         }
     }
