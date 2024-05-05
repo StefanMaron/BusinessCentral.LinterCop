@@ -1,4 +1,4 @@
-#if Fall2024
+#if Fall2023RV1
 using System.Collections.Immutable;
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
@@ -29,6 +29,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeIsolatedStorage(OperationAnalysisContext ctx)
         {
+#if Spring2024OrGreater
             if (!VersionChecker.IsSupported(ctx.ContainingSymbol, VersionCompatibility.Spring2024OrGreater)) return;
 
             if (ctx.IsObsoletePendingOrRemoved()) return;
@@ -59,6 +60,7 @@ namespace BusinessCentral.LinterCop.Design
 
             if (!IsArgumentOfTypeSecretText(operation.Arguments[argumentIndex]))
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0043SecretText, ctx.Operation.Syntax.GetLocation()));
+#endif
         }
 
         private void AnalyzeHttpObjects(OperationAnalysisContext ctx)
