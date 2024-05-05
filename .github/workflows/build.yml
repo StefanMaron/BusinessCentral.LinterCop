@@ -75,7 +75,7 @@ jobs:
                   'Spring2025'          = '15.0'
                   'Fall2025'            = '16.0'
 
-                  'Spring2024OrGreater' = '13.0.937154'
+                  'Spring2024OrGreater' = '13.0.964488'
                   'ManifestHelper'      = '13.0.937154'
                   'PageSystemAction'    = '13.0.878831'
               }
