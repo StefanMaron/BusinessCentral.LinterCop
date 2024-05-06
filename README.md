@@ -12,35 +12,40 @@ If you are not happy with some rules or only feel like you need one rule of this
 
 The Linter is not finished yet (and probably never will be :D ) If you have any rule on mind that would be nice to be covered, **please start a new [discussion](https://github.com/StefanMaron/BusinessCentral.LinterCop/discussions)!** then we can maybe sharpen the rule a bit if necessary. This way we can build value for all of us. If you want to write the rule yourself you can of course also submit a pull request ;)
 
-## How to use
+## Setup
+The LinterCop is compatible with various approaches and solutions for the AL Language extension for Microsoft Dynamics 365 Business Central.
 
-### Manual Compile
+- [Command Line](/.assets/CommandLine.md)
+    - [BcContainerHelper](/.assets/CommandLine.md#BcContainerHelper)
+- [Visual Studio Code](/.assets/VSCode.md)
+- [DevOps](/.assets/DevOps.md)
+    - [AL-Go! for GitHub](/.assets/DevOps.md#AL-Go!-for-GitHub)  
+    - [BcContainerHelper](/.assets/DevOps.md#BcContainerHelper)
+    - [Azure DevOps](/.assets/DevOps.md#Azure-DevOps)
 
-1. Download the `BusinessCentral.LinterCop.dll` and place it into your AL Extension folder. For Example `%userprofile%\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\`
-2. Run the AL Compiler `. %userprofile%\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\alc.exe /project:"<PathToYourAlProject>" /packagecachepath:"<PathToYour.alpackages>" /analyzer:"userprofile%\.vscode\extensions\ms-dynamics-smb.al-7.4.502459\bin\BusinessCentral.LinterCop.dll"`
+## Configuration
 
-### In VS Code
+Some rules can be configured by adding a file named `LinterCop.json` in the root of your project.
+**Important:** The file will only be read on startup of the linter, meaning if you make any changes you need to reload VS Code once.
 
-1. Get the [BusinessCentral.LinterCop](https://marketplace.visualstudio.com/items?itemName=StefanMaron.businesscentral-lintercop) VSCode helper extension from the Visual Studio Marketplace
-2. Add `"${analyzerfolder}BusinessCentral.LinterCop.dll"` to the `"al.codeAnalyzers"` setting in either user, workspace or folder settings
-3. Be aware that folder settings overwrite workspace and workspace overwrite user settings. If you have codecops defined in folder settings, the codecops defined in the user settings won't be applied.
+For an example and the default values see: [LinterCop.json](LinterCop.json)
 
-### BcContainerHelper
+If you want to use the `LinterCop.json` file in a pipeline, using BcContainerHelper, you need to copy the file to `C:\build\vsix\extension\bin\win32\LinterCop.json` inside the container before calling `Compile-AppInBcContainer`. See [this issue](https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/263) for details on how to accomplish that.
 
-For manual compile you can use the `Compile-AppInBcContainer` command and pass the path to the `BusinessCentral.LinterCop.dll` in via the parameter `-CustomCodeCops`.
+## Can I disable certain rules?
 
-If you are using `Run-ALPipeline` in your build pipelines you can also pass in the `BusinessCentral.LinterCop.dll` in via the parameter `-CustomCodeCops`. To have the correct compiler dependecies you should also load the latest compiler from the marketplace. Add `-vsixFile (Get-LatestAlLanguageExtensionUrl)` to do so.
+Since the linter integrates with the AL compiler directly, you can use the custom rule sets like you are used to from the other code cops.
+https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-rule-set-syntax-for-code-analysis-tools
 
-Be aware though, the `BusinessCentral.LinterCop.dll` needs to be placed in a folder shared with the container.
+Of course you can also use pragmas for disabling a rule just for a certain place in code.
+https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/directives/devenv-directive-pragma-warning
 
-Further note that you should have BcContainerHelper version 2.0.16 (or newer) installed.
-
-**Tip:** You also can let your build pipelines download the latest version of the `BusinessCentral.LinterCop.dll` via the GitHub API. You can find an example for this in the [DownloadFile.ps1](https://github.com/StefanMaron/vsc-lintercop/blob/master/DownloadFile.ps1) script used by the BusinessCentral.LinterCop VSCode helper extension for automatic updates.
+For an example and the default values see: [LinterCop.ruleset.json](LinterCop.ruleset.json)
 
 ## Rules
 
-|Id| Title|Default Severity|
-|---|---|---|
+|Id| Title|Default Severity|AL version|
+|---|---|---|---|
 |[LC0000](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0000)|An error ocurred in a given rule. Please create an issue on GitHub|Info|
 |[LC0001](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0001)|FlowFields should not be editable.|Warning|
 |[LC0002](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0002)|`Commit()` needs a comment to justify its existence. Either a leading or a trailing comment.|Warning|
@@ -76,7 +81,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0032](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0032)|Clear(All) does not affect or change values for global variables in single instance codeunits.|Warning|
 |[LC0033](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0033)|The specified runtime version in app.json is falling behind.|Info|
 |[LC0034](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0034)|The property `Extensible` should be explicitly set for public objects.|Disabled|
-|[LC0035](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0035)|Explicitly set `AllowInCustomizations` for fields omitted on pages.|Info|
+|[LC0035](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0035)|Explicitly set `AllowInCustomizations` for fields omitted on pages.|Info|12.1|
 |[LC0036](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0036)|ToolTip must start with the verb "Specifies".|Info|
 |[LC0037](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0037)|Do not use line breaks in ToolTip.|Info|
 |[LC0038](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0038)|Try to not exceed 200 characters (including spaces).|Info|
@@ -84,7 +89,7 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0040](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0040)|Explicitly set the `RunTrigger` parameter on build-in methods.|Info|
 |[LC0041](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0041)|Empty Captions should be `Locked`.|Info|
 |[LC0042](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0042)|`AutoCalcFields` should only be used for FlowFields or Blob fields.|Warning|
-|[LC0043](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0043)|Use `SecretText` type to protect credentials and sensitive textual values from being revealed.|Info|
+|[LC0043](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0043)|Use `SecretText` type to protect credentials and sensitive textual values from being revealed.|Info|14.0|
 |[LC0044](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0044)|Tables coupled with `TransferFields` must have matching fields.|Warning|
 |[LC0045](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0045)|Zero (0) `Enum` value should be reserved for Empty Value.|Info|
 |[LC0046](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0046)|`Label` with suffix Tok must be locked.|Info|
@@ -92,29 +97,9 @@ Further note that you should have BcContainerHelper version 2.0.16 (or newer) in
 |[LC0048](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0048)|Use Error with a `ErrorInfo` or `Label` variable to improve telemetry details.|Info|
 |[LC0049](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0049)|`SourceTable` property not defined on Page.|Info|
 |[LC0050](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0050)|`SetFilter` with unsupported operator in filter expression.|Info|
-|[LC0051](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0051)|Do not assign a text to a target with smaller size.|Warning|
+|[LC0051](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0051)|Do not assign a text to a target with smaller size.|Warning|12.1|
 |[LC0052](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0052)|The internal procedure is declared but never used.|Info|
 |[LC0053](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0053)|The internal procedure is only used in the object in which it is declared. Consider making the procedure local.|Info|
 |[LC0055](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0055)|The suffix `Tok` is meant to be used when the value of the label matches the name.|Info|
 |[LC0056](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0056)|Empty Enum values should not have a specified `Caption` property.|Info|
 |[LC0057](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0057)|Enum values must have non-empty a `Caption` to be selectable in the client|Info|
-
-## Configuration
-
-Some rules can be configured by adding a file named `LinterCop.json` in the root of your project.
-**Important:** The file will only be read on startup of the linter, meaning if you make any changes you need to reload VS Code once.
-
-For an example and the default values see: [LinterCop.json](LinterCop.json)
-
-If you want to use the `LinterCop.json` file in a pipeline, using BcContainerHelper, you need to copy the file to `C:\build\vsix\extension\bin\win32\LinterCop.json` inside the container before calling `Compile-AppInBcContainer`. See [this issue](https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/263) for details on how to accomplish that.
-
-## Can I disable certain rules?
-
-Since the linter integrates with the AL compiler directly, you can use the custom rule sets like you are used to from the other code cops.
-https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-rule-set-syntax-for-code-analysis-tools
-
-Of course you can also use pragmas for disabling a rule just for a certain place in code.
-https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/directives/devenv-directive-pragma-warning
-
-For an example and the default values see: [LinterCop.ruleset.json](LinterCop.ruleset.json)
-

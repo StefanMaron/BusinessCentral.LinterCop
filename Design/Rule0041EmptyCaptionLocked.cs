@@ -1,3 +1,4 @@
+using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
@@ -34,7 +35,9 @@ namespace BusinessCentral.LinterCop.Design
                 SyntaxKind.ReportColumn,
                 SyntaxKind.EnumValue,
                 SyntaxKind.PageCustomAction,
+#if PageSystemAction
                 SyntaxKind.PageSystemAction,
+#endif
                 SyntaxKind.PageView,
                 SyntaxKind.ReportLayout,
                 SyntaxKind.ProfileObject,
@@ -46,8 +49,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeCaptionProperty(SyntaxNodeAnalysisContext ctx)
         {
-            if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
-            if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+            if (ctx.IsObsoletePendingOrRemoved()) return;
 
             if (ctx.Node.IsKind(SyntaxKind.EnumValue) && ctx.ContainingSymbol.Kind == SymbolKind.Enum) return; // Prevent double raising the rule on EnumValue in a EnumObject
 

@@ -5,9 +5,9 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <LangVersion>Latest</LangVersion>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <DefineConstants>$(DefineConstants)$(FeatureFlags.Replace("#",";"))</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
-        <CoreCompileCache Include="$(DefineConstants)" />
         <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
             <SpecificVersion>False</SpecificVersion>
             <HintPath>ALLanguage/extension/bin/Analyzers/System.Collections.Immutable.dll</HintPath>

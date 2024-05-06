@@ -1,3 +1,4 @@
+using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
@@ -26,8 +27,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeRunPageArguments(OperationAnalysisContext ctx)
         {
-            if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-            if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
+            if (ctx.IsObsoletePendingOrRemoved()) return;
 
             IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
@@ -54,8 +54,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeSetRecordArgument(OperationAnalysisContext ctx)
         {
-            if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-            if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
+            if (ctx.IsObsoletePendingOrRemoved()) return;
 
             IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
@@ -89,7 +88,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeTableReferencePageProvider(SymbolAnalysisContext ctx)
         {
-            if (ctx.Symbol.IsObsoletePending || ctx.Symbol.IsObsoleteRemoved) return;
+            if (ctx.IsObsoletePendingOrRemoved()) return;
 
             ITableTypeSymbol table = (ITableTypeSymbol)ctx.Symbol;
             foreach (PropertyKind propertyKind in referencePageProviders)
@@ -108,7 +107,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeTableExtensionReferencePageProvider(SymbolAnalysisContext ctx)
         {
-            if (ctx.Symbol.IsObsoletePending || ctx.Symbol.IsObsoleteRemoved) return;
+            if (ctx.IsObsoletePendingOrRemoved()) return;
 
             ITableExtensionTypeSymbol tableExtension = (ITableExtensionTypeSymbol)ctx.Symbol;
             ITableTypeSymbol table = (ITableTypeSymbol)tableExtension.Target;
@@ -128,16 +127,19 @@ namespace BusinessCentral.LinterCop.Design
         private static bool AreTheSameNavObjects(ITableTypeSymbol left, ITableTypeSymbol right)
         {
             if (left.GetNavTypeKindSafe() != right.GetNavTypeKindSafe()) return false;
+#if Fall2023RV1
             if (((INamespaceSymbol)left.ContainingSymbol).QualifiedName != ((INamespaceSymbol)right.ContainingSymbol).QualifiedName) return false;
+#endif
             if (left.Name != right.Name) return false;
             return true;
         }
 
         private static string GetFullyQualifiedObjectName(IPageTypeSymbol page)
         {
+#if Fall2023RV1
             if (page.ContainingNamespace.QualifiedName != "")
                 return page.ContainingNamespace.QualifiedName + "." + "\"" + page.Name + "\"";
-
+#endif
             return page.Name;
         }
     }

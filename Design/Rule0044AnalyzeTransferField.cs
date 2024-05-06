@@ -442,8 +442,9 @@ namespace BusinessCentral.LinterCop.Design
                 new Tuple<string, string>("Contact", "Customer"),
                 new Tuple<string, string>("Contact", "Vendor"),
                 new Tuple<string, string>("Contact", "Employee"),
-                new Tuple<string, string>("Contact", "BankAccount"),
-
+                new Tuple<string, string>("Contact", "Bank Account"),
+                new Tuple<string, string>("Contact", "Customer Templ."),
+                
                 new Tuple<string, string>("Contact Business Relation", "Office Contact Details"),
 
                 new Tuple<string, string>("Deferral Line", "Deferral Line Archive"),
@@ -727,6 +728,7 @@ namespace BusinessCentral.LinterCop.Design
                     string objtype = typeprop.GetValue(field).ToString();
                     string fieldClass = fieldClassProp.GetValue(field).ToString();
 
+#if Fall2023RV1
                     // Remove the QualifiedName from the Enum for now.
                     // In the future refactor this to support Enums with the same object name cross different namespaces
                     IEnumBaseTypeSymbol? enumBaseTypeSymbol = typeprop.GetValue(field) as IEnumBaseTypeSymbol;
@@ -736,7 +738,7 @@ namespace BusinessCentral.LinterCop.Design
                         if (namespaceSymbol != null)
                             objtype = objtype.Replace(namespaceSymbol.QualifiedName + '.', "");
                     }
-
+#endif
                     if (id < 2000000000)
                         Fields.Add(new Field(id, name, objtype, null, this, GetFieldClass(fieldClass)));
                 }

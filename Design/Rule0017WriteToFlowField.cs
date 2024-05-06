@@ -1,4 +1,5 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Semantics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
@@ -19,8 +20,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckForWriteToFlowField(OperationAnalysisContext context)
         {
-            if (context.ContainingSymbol.IsObsoletePending || context.ContainingSymbol.IsObsoleteRemoved) return;
-            if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+            if (context.IsObsoletePendingOrRemoved()) return;
 
             if (context.Operation.Kind == OperationKind.InvocationExpression)
             {

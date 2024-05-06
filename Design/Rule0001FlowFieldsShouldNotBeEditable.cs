@@ -1,4 +1,5 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 
@@ -13,8 +14,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeFlowFieldEditable(SymbolAnalysisContext ctx)
         {
-            if (ctx.Symbol.IsObsoletePending || ctx.Symbol.IsObsoleteRemoved) return;
-            if (ctx.Symbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.Symbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
+            if (ctx.IsObsoletePendingOrRemoved()) return;
 
             IFieldSymbol field = (IFieldSymbol)ctx.Symbol;
             if (field.FieldClass == FieldClassKind.FlowField && field.GetBooleanPropertyValue(PropertyKind.Editable).Value)

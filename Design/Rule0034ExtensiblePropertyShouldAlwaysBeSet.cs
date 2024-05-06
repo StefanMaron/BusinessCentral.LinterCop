@@ -1,3 +1,4 @@
+using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
@@ -21,7 +22,7 @@ namespace BusinessCentral.LinterCop.Design
         {
             if (!VersionChecker.IsSupported(ctx.Symbol, VersionCompatibility.Fall2019OrGreater)) return;
 
-            if (ctx.Symbol.IsObsoletePending || ctx.Symbol.IsObsoleteRemoved) return;
+            if (ctx.IsObsoletePendingOrRemoved()) return;
 
             if (ctx.Symbol.GetTypeSymbol().Kind == SymbolKind.Table && ctx.Symbol.DeclaredAccessibility != Accessibility.Public) return;
             if (ctx.Symbol.GetTypeSymbol().Kind == SymbolKind.Page && ((IPageTypeSymbol)ctx.Symbol.GetTypeSymbol()).PageType == PageTypeKind.API) return;

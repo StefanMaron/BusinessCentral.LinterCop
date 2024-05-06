@@ -1,4 +1,5 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 
@@ -14,7 +15,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckForMissingDataPerCompanyOnTables(SymbolAnalysisContext context)
         {
-            if (context.Symbol.IsObsoletePending || context.Symbol.IsObsoleteRemoved) return;
+            if (context.IsObsoletePendingOrRemoved()) return;
             ITableTypeSymbol table = (ITableTypeSymbol)context.Symbol;
             if (table.TableType == TableTypeKind.Temporary)
                 return;

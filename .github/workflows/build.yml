@@ -1,122 +1,242 @@
----
-name: .NET
+name: Build
 on:
   push:
     branches:
       - master
       - prerelease
+  pull_request:
   workflow_dispatch: null
 jobs:
-  build:
-    runs-on: windows-latest
-    env:
-      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  setup-matrix:
+    name: Setup
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 8.0.*
-      - name: Restore dependencies
-        run: dotnet restore
-      - name: GetALVsixVersionAndURL
-        id: get-vsix
-        run: >
-          $listing = Invoke-WebRequest -Method POST -UseBasicParsing -Uri
-          https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1
-          -Body
-          '{"filters":[{"criteria":[{"filterType":8,"value":"Microsoft.VisualStudio.Code"},{"filterType":12,"value":"4096"},{"filterType":7,"value":"ms-dynamics-smb.al"}],"pageNumber":1,"pageSize":50,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":147}'
-          -ContentType application/json | ConvertFrom-Json ;
-
-          $ALVersion_Current = $listing.results.extensions.versions | where properties -ne $null | Where-Object { $_.properties.key -notcontains 'Microsoft.VisualStudio.Code.PreRelease'} | Select-Object -First 1 -ExpandProperty version;
-
-          $vsixUrl_Current = $listing.results.extensions.versions | where properties -ne $null | Where-Object { $_.properties.key -notcontains 'Microsoft.VisualStudio.Code.PreRelease'} | Select-Object -First 1 -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage"} | Select-Object -ExpandProperty source;
-
-          $ALVersion_Next = $listing.results.extensions.versions | where properties -ne $null | Where-Object { $_.properties.key -contains 'Microsoft.VisualStudio.Code.PreRelease'} | Select-Object -First 1 -ExpandProperty version;
-
-          $vsixUrl_Next = $listing.results.extensions.versions | where properties -ne $null | Where-Object { $_.properties.key -contains 'Microsoft.VisualStudio.Code.PreRelease'} | Select-Object -First 1 -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage"} | Select-Object -ExpandProperty source;
-
-          echo "AL_VERSION_CURRENT=$ALVersion_Current" >> $env:GITHUB_OUTPUT;
-
-          echo "VSIX_URL_CURRENT=$vsixUrl_Current" >> $env:GITHUB_OUTPUT;
-
-          echo "AL_VERSION_NEXT=$ALVersion_Next" >> $env:GITHUB_OUTPUT;
-
-          echo "VSIX_URL_NEXT=$vsixUrl_Next" >> $env:GITHUB_OUTPUT;
-      - name: Download platform artifact Current
-        run: Invoke-WebRequest ${{ steps.get-vsix.outputs.VSIX_URL_CURRENT }} -OutFile
-          ALLanguage_current.vsix
-      - name: Download platform artifact Next
-        run: Invoke-WebRequest ${{ steps.get-vsix.outputs.VSIX_URL_NEXT }} -OutFile
-          ALLanguage_next.vsix
-      - name: Unzip vsix current
-        run: 7z x "ALLanguage_current.vsix" "-oms-dynamics-smb.al-latest"
-          extension\bin\Analyzers -r
-      - name: Release
-        id: create_release
-        uses: release-drafter/release-drafter@v5
+      - name: Create Release
+        id: create-release
+        uses: release-drafter/release-drafter@v6
+        if: github.event_name != 'pull_request'
         with:
           prerelease: ${{ github.ref != 'refs/heads/master' }}
           commitish: ${{ github.ref }}
           disable-autolabeler: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set current version
-        run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
-          ("Version(""" + ('${{ steps.create_release.outputs.tag_name }}'
-          -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
-      - name: Build current
-        run: dotnet build --no-restore --configuration Release
-      - name: Upload a Build current
-        uses: actions/upload-artifact@v2.2.4
+
+      - name: Get AL Language versions
+        id: setup-matrix-combinations
+        shell: pwsh
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+        run: |
+          function ConvertTo-Version {
+              [OutputType([System.Version])]
+              Param (
+                  [Parameter(Mandatory = $true)]
+                  [string] $version
+              ) 
+              
+              $result = $null
+              if ([System.Version]::TryParse($version, [ref]$result)) {
+                  return $result
+              }
+              else {
+                  Write-Error "The value '$($version)' is not a valid input."
+              }
+          }
+
+          function Get-FeatureFlags {
+              [OutputType([System.String])]
+              Param (
+                  [Parameter(Mandatory = $true)]
+                  [System.Version] $version
+              ) 
+              $featureFlags = ""
+
+              $RuntimeVersion = [Ordered]@{
+                  'Spring2018'          = '1.0'
+                  'Fall2018'            = '2.0'
+                  'Spring2019'          = '3.0'
+                  'Fall2019'            = '4.0'
+                  'Spring2020'          = '5.0'
+                  'Fall2020'            = '6.0'
+                  'Spring2021'          = '7.0'
+                  'Fall2021'            = '8.0'
+                  'Spring2022'          = '9.0'
+                  'Spring2022RV1'       = '9.1'
+                  'Spring2022RV2'       = '9.2'
+                  'Fall2022'            = '10.0'
+                  'Spring2023'          = '11.0'
+                  'Fall2023'            = '12.0'
+                  'Fall2023RV1'         = '12.1'
+                  'Fall2023RV2'         = '12.2'
+                  'Fall2023RV3'         = '12.3'
+                  'Spring2024'          = '13.0'
+                  'Fall2024'            = '14.0'
+                  'Spring2025'          = '15.0'
+                  'Fall2025'            = '16.0'
+
+                  'Spring2024OrGreater' = '13.0.964488'
+                  'ManifestHelper'      = '13.0.937154'
+                  'PageSystemAction'    = '13.0.878831'
+              }
+
+              $supportedRuntimeVersions = $RuntimeVersion.GetEnumerator() | Where-Object { $(ConvertTo-Version($_.Value)) -le $(ConvertTo-Version($version)) } | Foreach-Object { $_.Key } | ForEach-Object { "#$_" }
+              if (![string]::IsNullOrEmpty($supportedRuntimeVersions)) {
+                  $featureFlags = [System.String]::Join("", $supportedRuntimeVersions)
+              }
+
+              return $featureFlags
+          }
+
+          $listing = Invoke-WebRequest -Method POST -UseBasicParsing `
+              -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 `
+              -Body '{"filters":[{"criteria":[{"filterType":8,"value":"Microsoft.VisualStudio.Code"},{"filterType":12,"value":"4096"},{"filterType":7,"value":"ms-dynamics-smb.al"}],"pageNumber":1,"pageSize":50,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":0x192}' `
+              -ContentType application/json | ConvertFrom-Json
+
+          $versionLatest = ConvertTo-Version $($listing.results.extensions.versions `
+              | Where-Object properties -ne $null `
+              | Where-Object { $_.properties.key -notcontains 'Microsoft.VisualStudio.Code.PreRelease' } | Select-Object -First 1 -ExpandProperty version)
+
+          $versionPreRelease = ConvertTo-Version $($listing.results.extensions.versions `
+              | Where-Object properties -ne $null `
+              | Where-Object { $_.properties.key -contains 'Microsoft.VisualStudio.Code.PreRelease' } | Select-Object -First 1 -ExpandProperty version)
+
+          $results = $listing.results | Select-Object -First 1 -ExpandProperty extensions `
+          | Select-Object -ExpandProperty versions `
+          | Where-Object { $(ConvertTo-Version($_.version)) -gt [System.Version]::Parse("12.0.0") }
+
+          $matrix = @()
+          foreach ($result in $results) {
+              $version = ConvertTo-Version($result.version)
+
+              $assetName = "BusinessCentral.LinterCop.AL-$($result.version).dll"
+              $assetUri = $result | Select-Object -ExpandProperty files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage" } | Select-Object -ExpandProperty source
+
+              $featureflags = Get-FeatureFlags($version)
+              if ( $version.Major -gt $versionLatest.Major) {
+                  $featureflags += "#PreRelease"
+              }
+              if ( $version.Major -lt $versionLatest.Major) {
+                  $featureflags += "#Legacy"
+              }
+
+              $matrix += [Ordered]@{
+                  version      = $result.version;
+                  assetname    = $assetName;
+                  assetUri     = $assetUri;
+                  latest       = $($result.version -eq $versionLatest);
+                  prerelease   = $($result.version -eq $versionPreRelease);
+                  featureflags = Get-FeatureFlags($version)
+                  GH_eventName = $env:GITHUB_EVENT_NAME
+              }
+          }
+          $MATRIX_COMBINATIONS = @{'include' = $matrix } | ConvertTo-Json -Compress
+          echo "matrix-combinations=$($MATRIX_COMBINATIONS)" >> $env:GITHUB_OUTPUT
+
+    outputs:
+      matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
+      release-id: ${{ steps.create-release.outputs.id }}
+      release-tag-name: ${{ steps.create-release.outputs.tag_name }}
+      release-upload-url: ${{ steps.create-release.outputs.upload_url }}
+
+  matrix-job:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: setup-matrix
+    strategy:
+      matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix-combinations) }}
+      fail-fast: false
+    env:
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
         with:
-          name: BusinessCentral.LinterCop.current.dll
-          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-      - name: Remove a Release Asset current
-        uses: flcdrg/remove-release-asset-action@v1.0.13
+          dotnet-version: 8.0.*
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Download platform artifact
+        shell: pwsh
+        run: Invoke-WebRequest ${{ matrix.assetUri }} -OutFile ALLanguage.vsix
+
+      - name: Unzip vsix
+        run: 7z x ALLanguage.vsix "-oms-dynamics-smb.al-latest" extension/bin/Analyzers -r
+
+      - name: Set current version
+        shell: pwsh
+        if: ${{ matrix.GH_eventName != 'pull_request' }}
+        run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
+          ("Version(""" + ('${{ needs.setup-matrix.outputs.release-tag-name }}'
+          -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
+
+      - name: Build
+        run: dotnet build /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        if: ${{ matrix.GH_eventName != 'pull_request' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          release_id: ${{ steps.create_release.outputs.id }} 
-          asset_name: BusinessCentral.LinterCop.current.dll
-      - name: Upload Release Asset current
+          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          asset_name: ${{ matrix.assetname }}
+          asset_content_type: application/octet-stream
+
+      ### Release Asset as Latest
+      - name: Upload Release Asset (Latest)
+        id: upload-release-asset-latest
+        uses: actions/upload-release-asset@v1
+        if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          asset_name: BusinessCentral.LinterCop.dll
+          asset_content_type: application/octet-stream
+
+      ### Release Asset as Pre-Release
+      - name: Upload Release Asset (Pre-Release)
+        id: upload-release-asset-prerelease
+        uses: actions/upload-release-asset@v1
+        if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
+          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          asset_name: BusinessCentral.LinterCop.AL-PreRelease.dll
+          asset_content_type: application/octet-stream
+
+      ### Compatibility with previous naming of files
+      ### Release Asset as Current
+      - name: Upload Release Asset (Current)
         id: upload-release-asset-current
         uses: actions/upload-release-asset@v1
+        if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
           asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
           asset_name: BusinessCentral.LinterCop.current.dll
           asset_content_type: application/octet-stream
-      - name: Clear Build output
-        run: Remove-Item -Path "bin/Release" -Force -Recurse -Verbose;
-      - name: Unzip vsix next
-        run: >
-          Remove-Item -Path "ms-dynamics-smb.al-latest" -Force -Recurse -Verbose;
-          7z x "ALLanguage_next.vsix" "-oms-dynamics-smb.al-latest" extension\bin\Analyzers -r;
-      - name: Build next
-        run: dotnet build /p:DefineConstants=PreRelease --no-restore --configuration Release
-          
-      - name: Upload a Build next
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          name: BusinessCentral.LinterCop.next.dll
-          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-      - name: Remove a Release Asset next
-        uses: flcdrg/remove-release-asset-action@v1.0.13
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ steps.create_release.outputs.id }} 
-          asset_name: BusinessCentral.LinterCop.next.dll
-      - name: Upload Release Asset next
+
+      ### Release Asset as Next
+      - name: Upload Release Asset (Next)
         id: upload-release-asset-next
         uses: actions/upload-release-asset@v1
+        if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
           asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
           asset_name: BusinessCentral.LinterCop.next.dll
           asset_content_type: application/octet-stream

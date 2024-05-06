@@ -1,4 +1,5 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 
@@ -15,6 +16,8 @@ namespace BusinessCentral.LinterCop.Design
         }
         private void CheckForSingleFieldPrimaryKeysNotBlank(SymbolAnalysisContext context)
         {
+            if (context.IsObsoletePendingOrRemoved()) return;
+
             IFieldSymbol field = (IFieldSymbol)context.Symbol;
             if (GetExitCondition(field))
                 return;
@@ -31,11 +34,7 @@ namespace BusinessCentral.LinterCop.Design
         private static bool GetExitCondition(IFieldSymbol field)
         {
             return
-                field.IsObsoletePending ||
-                field.IsObsoleteRemoved ||
                 field.FieldClass != FieldClassKind.Normal ||
-                field.GetContainingObjectTypeSymbol().IsObsoletePending ||
-                field.GetContainingObjectTypeSymbol().IsObsoleteRemoved ||
                 field.GetContainingObjectTypeSymbol().Kind != SymbolKind.Table ||
                 !field.DeclaringSyntaxReference.GetSyntax().DescendantNodes().Any(Token => Token.Kind == SyntaxKind.LengthDataType) ||
                 TableContainsNoSeries((ITableTypeSymbol)field.GetContainingObjectTypeSymbol());

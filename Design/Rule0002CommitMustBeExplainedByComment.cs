@@ -1,4 +1,5 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
@@ -14,8 +15,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckCommitForExplainingComment(OperationAnalysisContext ctx)
         {
-            if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-            if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
+            if (ctx.IsObsoletePendingOrRemoved()) return;
 
             IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
             if (operation.TargetMethod.Name.ToUpper() == "COMMIT" && operation.TargetMethod.MethodKind == MethodKind.BuiltInMethod)

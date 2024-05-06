@@ -1,4 +1,6 @@
+#if Fall2023RV1
 using System.Collections.Immutable;
+using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
@@ -27,10 +29,10 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeIsolatedStorage(OperationAnalysisContext ctx)
         {
+#if Spring2024OrGreater
             if (!VersionChecker.IsSupported(ctx.ContainingSymbol, VersionCompatibility.Spring2024OrGreater)) return;
 
-            if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-            if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
+            if (ctx.IsObsoletePendingOrRemoved()) return;
 
             IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
             if (operation.Arguments.Count() < 3) return;
@@ -58,14 +60,13 @@ namespace BusinessCentral.LinterCop.Design
 
             if (!IsArgumentOfTypeSecretText(operation.Arguments[argumentIndex]))
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0043SecretText, ctx.Operation.Syntax.GetLocation()));
+#endif
         }
 
         private void AnalyzeHttpObjects(OperationAnalysisContext ctx)
         {
             if (!VersionChecker.IsSupported(ctx.ContainingSymbol, VersionCompatibility.Fall2023OrGreater)) return;
-
-            if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-            if (ctx.ContainingSymbol.IsObsoletePending || ctx.ContainingSymbol.IsObsoleteRemoved) return;
+            if (ctx.IsObsoletePendingOrRemoved()) return;
 
             IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
 
@@ -117,3 +118,4 @@ namespace BusinessCentral.LinterCop.Design
         }
     }
 }
+#endif
