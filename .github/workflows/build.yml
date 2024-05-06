@@ -170,7 +170,7 @@ jobs:
         shell: pwsh
         if: ${{ matrix.GH_eventName != 'pull_request' }}
         env:
-          AL_VERSION: ${{ needs.setup-matrix.outputs.version }}
+          AL_VERSION: "${{ needs.setup-matrix.outputs.version }}"
         run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
           ("Version(""" + ('${{ needs.setup-matrix.outputs.release-tag-name }}'
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
