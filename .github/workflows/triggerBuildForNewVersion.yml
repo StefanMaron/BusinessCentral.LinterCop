@@ -18,7 +18,7 @@ jobs:
           $latestRelease = irm https://api.github.com/repos/StefanMaron/BusinessCentral.LinterCop/releases/latest
           Write-Host "Latest release: $($latestRelease.assets.Name)"
           if ($latestRelease.assets.Name -contains "BusinessCentral.LinterCop.AL-$($extensionVersions.results[0].extensions[0].versions[0].version).dll") {
-            $secureToken = ConvertTo-SecureString $env:GITHUB_TOKEN -AsPlainText
+            $secureToken = ConvertTo-SecureString ${{ secrets.GITHUB_TOKEN }} -AsPlainText
             irm -Method Post -ContentType application/json -Body '{"ref":"master"}' -Uri https://api.github.com/repos/stefanmaron/BusinessCentral.LinterCop/actions/workflows/14874791/dispatches -Authentication Bearer -Token $secureToken
             Write-Host "Build triggered"
           } else {
