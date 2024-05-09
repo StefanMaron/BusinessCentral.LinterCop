@@ -151,8 +151,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Disable Setup .NET
+      # dotnet-install: .NET Core Runtime with version '8.0.4' is already installed.
+      # dotnet-install: .NET Core SDK with version '8.0.204' is already installed.
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
+        if: false
         with:
           dotnet-version: 8.0.*
 
@@ -166,12 +170,16 @@ jobs:
       - name: Unzip vsix
         run: 7z x ALLanguage.vsix "-oms-dynamics-smb.al-latest" extension/bin/Analyzers -r
 
-      - name: Set current version
+      - name: Set AssemblyInfo
         shell: pwsh
         if: ${{ matrix.GH_eventName != 'pull_request' }}
+        env:
+          AL_VERSION: ${{ matrix.version }}
         run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
           ("Version(""" + ('${{ needs.setup-matrix.outputs.release-tag-name }}'
           -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
+
+          (Get-Content AssemblyInfo.cs) -replace 'AssemblyTitle\("([^"]*)"\)', "AssemblyTitle(`"AL-$env:AL_VERSION`")" | Out-File AssemblyInfo.cs
 
       - name: Build
         run: dotnet build /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
