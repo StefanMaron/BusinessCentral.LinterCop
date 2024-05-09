@@ -151,8 +151,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Disable Setup .NET
+      # dotnet-install: .NET Core Runtime with version '8.0.4' is already installed.
+      # dotnet-install: .NET Core SDK with version '8.0.204' is already installed.
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
+        if: false
         with:
           dotnet-version: 8.0.*
 
