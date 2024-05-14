@@ -135,9 +135,7 @@ jobs:
 
     outputs:
       matrix-combinations: ${{ steps.setup-matrix-combinations.outputs.matrix-combinations }}
-      release-id: ${{ steps.create-release.outputs.id }}
       release-tag-name: ${{ steps.create-release.outputs.tag_name }}
-      release-upload-url: ${{ steps.create-release.outputs.upload_url }}
 
   matrix-job:
     name: Build
@@ -184,67 +182,124 @@ jobs:
       - name: Build
         run: dotnet build /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
 
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        if: ${{ matrix.GH_eventName != 'pull_request' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload build artifact
+        id: upload-build-asset
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          asset_name: ${{ matrix.assetname }}
-          asset_content_type: application/octet-stream
+          name: ${{ matrix.assetname }}
+          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          compression-level: 0 # no compression
 
-      ### Release Asset as Latest
-      - name: Upload Release Asset (Latest)
-        id: upload-release-asset-latest
-        uses: actions/upload-release-asset@v1
+      ### Upload Asset as Latest
+      - name: Upload build artifact (Latest)
+        id: upload-build-asset-latest
+        uses: actions/upload-artifact@v4
         if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          asset_name: BusinessCentral.LinterCop.dll
-          asset_content_type: application/octet-stream
+          name: BusinessCentral.LinterCop.dll
+          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          compression-level: 0 # no compression
 
-      ### Release Asset as Pre-Release
-      - name: Upload Release Asset (Pre-Release)
-        id: upload-release-asset-prerelease
-        uses: actions/upload-release-asset@v1
+      ### Upload Asset as Pre-Release
+      - name: Upload build artifact (Pre-Release)
+        id: upload-build-asset-prerelease
+        uses: actions/upload-artifact@v4
         if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          asset_name: BusinessCentral.LinterCop.AL-PreRelease.dll
-          asset_content_type: application/octet-stream
+          name: BusinessCentral.LinterCop.AL-PreRelease.dll
+          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          compression-level: 0 # no compression
 
       ### Compatibility with previous naming of files
       ### Release Asset as Current
-      - name: Upload Release Asset (Current)
-        id: upload-release-asset-current
-        uses: actions/upload-release-asset@v1
+      - name: Upload build artifact (Current)
+        id: upload-build-asset-current
+        uses: actions/upload-artifact@v4
         if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          asset_name: BusinessCentral.LinterCop.current.dll
-          asset_content_type: application/octet-stream
+          name: BusinessCentral.LinterCop.current.dll
+          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          compression-level: 0 # no compression
 
-      ### Release Asset as Next
-      - name: Upload Release Asset (Next)
-        id: upload-release-asset-next
-        uses: actions/upload-release-asset@v1
+      # ### Release Asset as Next
+      - name: Upload build artifact (Next)
+        id: upload-build-asset-next
+        uses: actions/upload-artifact@v4
         if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
+        with:
+          name: BusinessCentral.LinterCop.next.dll
+          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          compression-level: 0 # no compression
+
+  sign-job:
+    name: Sign
+    runs-on: windows-latest # Code signing must run on a Windows agent for Authenticode signing (dll/exe)
+    permissions:
+      id-token: write # Required for requesting the JWT
+      contents: write # Required for Uploading Release Assets with GitHub CLI (gh release upload)
+    needs:
+      - setup-matrix
+      - matrix-job
+    if: github.event_name != 'pull_request' # Exclude this job for validation on the pull-request
+    steps:
+      # Disable Setup .NET
+      # dotnet-install: .NET Core Runtime with version '8.0.4' is already installed.
+      # dotnet-install: .NET Core SDK with version '8.0.204' is already installed.
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        if: false
+        with:
+          dotnet-version: 8.0.*
+
+        # Install the code signing tool
+      - name: Install Sign CLI tool
+        run: dotnet tool install --tool-path . sign --version 0.9.0-beta.23127.3
+
+      # Download artifacts
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: DownloadArtifacts
+
+      # Rename artifacts
+      - name: Rename artifacts
+        run: |
+          # Get list of artifacts files
+          $artifacts = Get-ChildItem -Path DownloadArtifacts -Recurse | ForEach-Object { if (!($_.PSIsContainer)) { $_}} | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
+
+          # Create folder if not exits
+          if (!(Test-Path BuildArtifacts)) {
+              New-Item -Path BuildArtifacts -ItemType Directory -Force | Out-Null
+          }
+
+          # Move the artifacts (BusinessCentral.LinterCop.dll) in every directory to a combined folder and rename the file to the name of it's parent directory
+          $artifacts | ForEach-Object { Move-Item -Path $_ -Destination (Join-Path 'BuildArtifacts' $_.Directory.Name) }
+
+      - name: "Azure Login"
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Run the signing command
+      - name: Sign artifacts
+        shell: pwsh
+        run: >
+          ./sign code azure-key-vault
+          **/*.dll
+          --base-directory "${{ github.workspace }}\BuildArtifacts"
+          --description "BusinessCentral.LinterCop"
+          --description-url "https://github.com/StefanMaron/BusinessCentral.LinterCop"
+          --azure-key-vault-managed-identity true
+          --azure-key-vault-url "${{ secrets.KEY_VAULT_URL }}"
+          --azure-key-vault-certificate "${{ secrets.KEY_VAULT_CERTIFICATE }}"
+
+      # Publish the signed packages
+      - name: Upload Release Assets
+        id: upload-release-assets
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.setup-matrix.outputs.release-upload-url }}
-          asset_path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-          asset_name: BusinessCentral.LinterCop.next.dll
-          asset_content_type: application/octet-stream
+          GITHUB_REPO: ${{ github.repository }}
+          RELEASE_TAG_NAME: ${{ needs.setup-matrix.outputs.release-tag-name }}
+        run: |
+          $artifacts = Get-ChildItem -Path BuildArtifacts -Depth 0 -Filter *.dll
+          $artifacts | ForEach-Object { gh release upload --repo "$env:GITHUB_REPO" "$env:RELEASE_TAG_NAME" "$_" }
