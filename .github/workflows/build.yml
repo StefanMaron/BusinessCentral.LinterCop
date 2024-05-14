@@ -185,6 +185,7 @@ jobs:
       - name: Upload build artifact
         id: upload-build-asset
         uses: actions/upload-artifact@v4
+        if: ${{ matrix.GH_eventName != 'pull_request' }}
         with:
           name: ${{ matrix.assetname }}
           path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
