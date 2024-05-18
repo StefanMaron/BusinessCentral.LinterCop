@@ -100,9 +100,9 @@ namespace BusinessCentral.LinterCop.Design
                         break;
                 }
             }
-            else if (context.Symbol.Kind == SymbolKind.Action)
+            else if (context.Symbol is IActionSymbol actionSymbol)
             {
-                switch (((IActionSymbol)context.Symbol).ActionKind)
+                switch (actionSymbol.ActionKind)
                 {
                     case ActionKind.Action:
                         if (CaptionIsMissing(context.Symbol, context))
@@ -110,9 +110,34 @@ namespace BusinessCentral.LinterCop.Design
                         break;
 
                     case ActionKind.Group:
-                        if (CaptionIsMissing(context.Symbol, context))
-                            RaiseCaptionWarning(context);
-                        break;
+                        if (context.Symbol.GetEnumPropertyValue<ShowAsKind>(PropertyKind.ShowAs) == ShowAsKind.SplitButton)
+                        {
+                            // There is one specifc case where a Caption is needed on a Group where the property ShowAs is set to SplitButton
+                            // A) The group is inside a Promoted Area
+                            // B) Has one or more actionrefs
+                            // C) One of the actions of the actionsrefs has Scope set to Repeater
+
+                            if (((IActionSymbol)context.Symbol.ContainingSymbol).ActionKind != ActionKind.Area)
+                                break;
+
+                            if (!SemanticFacts.IsSameName(context.Symbol.ContainingSymbol.Name, "Promoted"))
+                                break;
+
+                            if (!actionSymbol.Actions.Where(a => a.ActionKind == ActionKind.ActionRef)
+                                                     .Where(a => a.Target.GetEnumPropertyValueOrDefault<PageActionScopeKind>(PropertyKind.Scope) == PageActionScopeKind.Repeater)
+                                                     .Any())
+                                break;
+
+                            if (CaptionIsMissing(context.Symbol, context))
+                                RaiseCaptionWarning(context);
+                            break;
+                        }
+                        else
+                        {
+                            if (CaptionIsMissing(context.Symbol, context))
+                                RaiseCaptionWarning(context);
+                            break;
+                        }
                 }
             }
             else if (context.Symbol.Kind == SymbolKind.EnumValue)
@@ -150,9 +175,6 @@ namespace BusinessCentral.LinterCop.Design
                 if (((IFieldSymbol)Symbol).Id >= 2000000000)
                     return false;
             }
-
-            if (Symbol.GetEnumPropertyValue<ShowAsKind>(PropertyKind.ShowAs) == ShowAsKind.SplitButton)
-                return false;
 
             if (SemanticFacts.IsSameName(Symbol.MostSpecificKind, "Group") && PromotedGroupNames.Contains(Symbol.Name.ToLowerInvariant()))
                 return false;
