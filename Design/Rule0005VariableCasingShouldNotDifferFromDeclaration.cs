@@ -25,7 +25,8 @@ namespace BusinessCentral.LinterCop.Design
                 OperationKind.GlobalReferenceExpression,
                 OperationKind.LocalReferenceExpression,
                 OperationKind.ParameterReferenceExpression,
-                OperationKind.ReturnValueReferenceExpression
+                OperationKind.ReturnValueReferenceExpression,
+                OperationKind.XmlPortDataItemAccess
             });
 
             context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForBuiltInTypeCasingMismatch), new SymbolKind[] {
@@ -214,6 +215,9 @@ namespace BusinessCentral.LinterCop.Design
                     break;
                 case OperationKind.ReturnValueReferenceExpression:
                     targetName = ((IReturnValueReferenceExpression)ctx.Operation).ReturnValue.Name;
+                    break;
+                case OperationKind.XmlPortDataItemAccess:
+                    targetName = ((IXmlPortNodeAccess)ctx.Operation).XmlPortNodeSymbol.Name;
                     break;
                 default:
                     return;
