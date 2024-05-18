@@ -124,8 +124,8 @@ namespace BusinessCentral.LinterCop.Design
                                 break;
 
                             if (!actionSymbol.Actions.Where(a => a.ActionKind == ActionKind.ActionRef)
-                                                                        .Where(a => a.Target.GetEnumPropertyValueOrDefault<PageActionScopeKind>(PropertyKind.Scope) == PageActionScopeKind.Repeater)
-                                                                        .Any())
+                                                     .Where(a => a.Target.GetEnumPropertyValueOrDefault<PageActionScopeKind>(PropertyKind.Scope) == PageActionScopeKind.Repeater)
+                                                     .Any())
                                 break;
 
                             if (CaptionIsMissing(context.Symbol, context))
