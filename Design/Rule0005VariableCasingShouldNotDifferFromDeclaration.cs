@@ -1,6 +1,7 @@
 ﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 
@@ -13,10 +14,12 @@ namespace BusinessCentral.LinterCop.Design
             = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration);
 
         private static readonly HashSet<SyntaxKind> _dataTypeSyntaxKinds = Enum.GetValues(typeof(SyntaxKind)).Cast<SyntaxKind>().Where(x => x.ToString().AsSpan().EndsWith("DataType")).ToHashSet();
-        private static readonly string[] _symbolKinds = Enum.GetValues(typeof(SymbolKind)).Cast<SymbolKind>().Select(x => x.ToString()).ToArray();
         private static string[] _navTypeKindStrings;
-        private static readonly string[] _propertyKindStrings = Enum.GetValues(typeof(PropertyKind)).Cast<PropertyKind>().Select(x => x.ToString()).ToArray();
+        private static readonly string[] _actionAreaKinds = Enum.GetValues(typeof(ActionAreaKind)).Cast<ActionAreaKind>().Select(x => x.ToString()).ToArray();
         private static readonly string[] _labelPropertyString = LabelPropertyHelper.GetAllLabelProperties();
+        private static readonly string[] _propertyKindStrings = Enum.GetValues(typeof(PropertyKind)).Cast<PropertyKind>().Select(x => x.ToString()).ToArray();
+        private static readonly string[] _symbolKinds = Enum.GetValues(typeof(SymbolKind)).Cast<SymbolKind>().Select(x => x.ToString()).ToArray();
+
 
         public override void Initialize(AnalysisContext context)
         {
@@ -66,6 +69,7 @@ namespace BusinessCentral.LinterCop.Design
         {
             AnalyseTokens(ctx);
             AnalyseNodes(ctx);
+            AnalysePageActionAreas(ctx);
             AnalyzeMemberAccessExpressions(ctx);
             AnalyzePropertyNames(ctx);
             AnalyzeLabelProperties(ctx);
@@ -146,6 +150,24 @@ namespace BusinessCentral.LinterCop.Design
                         }
                     }
                 }
+            }
+        }
+
+        private void AnalysePageActionAreas(SymbolAnalysisContext ctx)
+        {
+            IEnumerable<SyntaxNode> descendantNodes = ctx.Symbol.DeclaringSyntaxReference.GetSyntax().DescendantNodes()
+                                            .Where(n => n.Parent.Kind == SyntaxKind.PageActionArea);
+
+            foreach (SyntaxNode node in descendantNodes)
+            {
+                ctx.CancellationToken.ThrowIfCancellationRequested();
+
+                int result = Array.FindIndex(_actionAreaKinds, t => t.Equals(node.ToString(), StringComparison.OrdinalIgnoreCase));
+                if (result == -1)
+                    continue;
+
+                if (!node.ToString().AsSpan().Equals(_actionAreaKinds[result].ToString().AsSpan(), StringComparison.Ordinal))
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.GetLocation(), new object[] { _actionAreaKinds[result].ToString(), "" }));
             }
         }
 
