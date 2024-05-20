@@ -1,6 +1,7 @@
 ﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
@@ -11,13 +12,15 @@ namespace BusinessCentral.LinterCop.Design
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; }
             = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration);
 
-        private static readonly HashSet<SyntaxKind> _validTokens = new();
+        private static readonly HashSet<SyntaxKind> _dataTypeSyntaxKinds = Enum.GetValues(typeof(SyntaxKind)).Cast<SyntaxKind>().Where(x => x.ToString().AsSpan().EndsWith("DataType")).ToHashSet();
+        private static readonly string[] _symbolKinds = Enum.GetValues(typeof(SymbolKind)).Cast<SymbolKind>().Select(x => x.ToString()).ToArray();
         private static string[] _navTypeKindStrings;
+        private static readonly string[] _propertyKindStrings = Enum.GetValues(typeof(PropertyKind)).Cast<PropertyKind>().Select(x => x.ToString()).ToArray();
+        private static readonly string[] _labelPropertyString = LabelPropertyHelper.GetAllLabelProperties();
 
         public override void Initialize(AnalysisContext context)
         {
             GenerateNavTypeKindArray();
-            GenerateValidTokenArray();
 
             context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForBuiltInMethodsWithCasingMismatch), new OperationKind[] {
                 OperationKind.InvocationExpression,
@@ -59,118 +62,145 @@ namespace BusinessCentral.LinterCop.Design
             _navTypeKindStrings = navTypeKinds.ToArray();
         }
 
-        private static void GenerateValidTokenArray()
-        {
-            _validTokens.Clear();
-            var allKinds = Enum.GetValues(typeof(SyntaxKind)).Cast<SyntaxKind>();
-            foreach (var kind in allKinds)
-            {
-                var kindSpan = kind.ToString().AsSpan();
-
-                if ((kindSpan.Contains("Keyword", StringComparison.Ordinal) &&
-                    !kindSpan.StartsWith("Action") &&
-                    !kindSpan.StartsWith("Codeunit") &&
-                    !kindSpan.StartsWith("ControlAddIn") &&
-                    !kindSpan.StartsWith("DotNet") &&
-                    !kindSpan.StartsWith("Enum") &&
-                    !kindSpan.StartsWith("Interface") &&
-                    !kindSpan.StartsWith("Label") &&
-                    !kindSpan.StartsWith("Page") &&
-                    !kindSpan.StartsWith("Query") &&
-                    !kindSpan.StartsWith("Report") &&
-                    !kindSpan.StartsWith("XmlPort")) ||
-                    kindSpan.Contains("DataType", StringComparison.Ordinal)
-                   )
-                {
-                    _validTokens.Add(kind);
-                    continue;
-                }
-
-                switch (kind)
-                {
-                    case SyntaxKind.SimpleTypeReference:
-                    case SyntaxKind.OptionAccessExpression:
-                        _validTokens.Add(kind);
-                        continue;
-                }
-
-            }
-        }
-
         private void CheckForBuiltInTypeCasingMismatch(SymbolAnalysisContext ctx)
         {
-            foreach (var node in ctx.Symbol.DeclaringSyntaxReference.GetSyntax().DescendantNodesAndTokens().Where(n => _validTokens.Contains(n.Kind)))
+            AnalyseTokens(ctx);
+            AnalyseNodes(ctx);
+            AnalyzeMemberAccessExpressions(ctx);
+            AnalyzePropertyNames(ctx);
+            AnalyzeLabelProperties(ctx);
+        }
+
+        private void AnalyseTokens(SymbolAnalysisContext ctx)
+        {
+            IEnumerable<SyntaxToken> descendantTokens = ctx.Symbol.DeclaringSyntaxReference.GetSyntax().DescendantTokens()
+                                            .Where(t => t.Kind.IsKeyword())
+                                            .Where(t => !_dataTypeSyntaxKinds.Contains(t.Parent.Kind));
+
+            foreach (SyntaxToken descendantToken in descendantTokens)
             {
                 ctx.CancellationToken.ThrowIfCancellationRequested();
 
-                var syntaxNodeKindSpan = node.Kind.ToString().AsSpan();
+                SyntaxToken syntaxToken = SyntaxFactory.Token(descendantToken.Kind);
+                if (syntaxToken.Kind == SyntaxKind.None)
+                    continue;
 
-                if (node.IsToken)
+                if (!syntaxToken.ToString().AsSpan().Equals(descendantToken.ToString().AsSpan(), StringComparison.Ordinal))
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, descendantToken.GetLocation(), new object[] { syntaxToken, "" }));
+            }
+        }
+
+        private void AnalyseNodes(SymbolAnalysisContext ctx)
+        {
+            IEnumerable<SyntaxNode> descendantNodes = ctx.Symbol.DeclaringSyntaxReference.GetSyntax().DescendantNodes()
+                                            .Where(n => !n.ToString().AsSpan().StartsWith("array"));
+
+            foreach (SyntaxNode descendantNode in descendantNodes)
+            {
+                ctx.CancellationToken.ThrowIfCancellationRequested();
+
+                var syntaxNodeKindSpan = descendantNode.Kind.ToString().AsSpan();
+                var syntaxNodeSpan = descendantNode.ToString();
+
+                if ((descendantNode.IsKind(SyntaxKind.SimpleTypeReference) ||
+                     syntaxNodeKindSpan.Contains("DataType", StringComparison.Ordinal)) &&
+                    !syntaxNodeKindSpan.StartsWith("Codeunit") &&
+                    !syntaxNodeKindSpan.StartsWith("Enum") &&
+                    !syntaxNodeKindSpan.StartsWith("Label"))
                 {
-                    var syntaxToken = SyntaxFactory.Token(node.Kind);
-                    if (!syntaxToken.ToString().AsSpan().Equals(node.ToString().AsSpan(), StringComparison.Ordinal))
+                    var targetName = _navTypeKindStrings.FirstOrDefault(Kind =>
                     {
-                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.GetLocation(), new object[] { syntaxToken, "" }));
+                        var kindSpan = Kind.AsSpan();
+                        return kindSpan.Equals(syntaxNodeSpan.AsSpan(), StringComparison.OrdinalIgnoreCase) &&
+                               !kindSpan.Equals(syntaxNodeSpan.AsSpan(), StringComparison.Ordinal);
+                    });
+
+                    if (targetName != null)
+                    {
+                        ctx.ReportDiagnostic(Diagnostic.Create(
+                            DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration,
+                            descendantNode.GetLocation(), new object[] { targetName, "" }));
                         continue;
                     }
                 }
 
-                var syntaxNode = node.AsNode();
-                if (syntaxNode == null)
-                    continue;
-
-                if (!node.IsNode)
-                    continue;
-
-                var syntaxNodeAsString = syntaxNode.ToString();
-                if (!syntaxNodeAsString.StartsWith("array"))
+                if (IsValidKind(descendantNode.Kind))
                 {
-                    if ((syntaxNode.IsKind(SyntaxKind.SimpleTypeReference) ||
-                         syntaxNodeKindSpan.Contains("DataType", StringComparison.Ordinal)) &&
-                        !syntaxNodeKindSpan.StartsWith("Codeunit") &&
-                        !syntaxNodeKindSpan.StartsWith("Enum") &&
+                    if (syntaxNodeKindSpan.StartsWith("Codeunit") ||
+                        !syntaxNodeKindSpan.StartsWith("Enum") ||
                         !syntaxNodeKindSpan.StartsWith("Label"))
                     {
                         var targetName = _navTypeKindStrings.FirstOrDefault(Kind =>
                         {
                             var kindSpan = Kind.AsSpan();
-                            return kindSpan.Equals(syntaxNodeAsString.AsSpan(), StringComparison.OrdinalIgnoreCase) &&
-                                   !kindSpan.Equals(syntaxNodeAsString.AsSpan(), StringComparison.Ordinal);
+                            var readOnlySpan = syntaxNodeSpan.AsSpan();
+                            return readOnlySpan.StartsWith(kindSpan, StringComparison.OrdinalIgnoreCase) &&
+                                   !readOnlySpan.StartsWith(kindSpan, StringComparison.Ordinal);
                         });
-
                         if (targetName != null)
                         {
+                            var firstToken = descendantNode.GetFirstToken();
                             ctx.ReportDiagnostic(Diagnostic.Create(
                                 DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration,
-                                node.GetLocation(), new object[] { targetName, "" }));
-                            continue;
-                        }
-                    }
-
-                    if (IsValidKind(syntaxNode.Kind))
-                    {
-                        if (syntaxNodeKindSpan.StartsWith("Codeunit") ||
-                            !syntaxNodeKindSpan.StartsWith("Enum") ||
-                            !syntaxNodeKindSpan.StartsWith("Label"))
-                        {
-                            var targetName = _navTypeKindStrings.FirstOrDefault(Kind =>
-                            {
-                                var kindSpan = Kind.AsSpan();
-                                var readOnlySpan = syntaxNodeAsString.AsSpan();
-                                return readOnlySpan.StartsWith(kindSpan, StringComparison.OrdinalIgnoreCase) &&
-                                       !readOnlySpan.StartsWith(kindSpan, StringComparison.Ordinal);
-                            });
-                            if (targetName != null)
-                            {
-                                var firstToken = syntaxNode.GetFirstToken();
-                                ctx.ReportDiagnostic(Diagnostic.Create(
-                                    DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration,
-                                    firstToken.GetLocation(), new object[] { targetName, "" }));
-
-                            }
+                                firstToken.GetLocation(), new object[] { targetName, "" }));
                         }
                     }
                 }
+            }
+        }
+
+        private void AnalyzeMemberAccessExpressions(SymbolAnalysisContext ctx)
+        {
+            IEnumerable<SyntaxToken> descendantTokens = ctx.Symbol.DeclaringSyntaxReference.GetSyntax().DescendantTokens()
+                                            .Where(t => t.Parent.Parent.Kind == SyntaxKind.MemberAccessExpression);
+
+            foreach (SyntaxToken token in descendantTokens)
+            {
+                ctx.CancellationToken.ThrowIfCancellationRequested();
+
+                int result = Array.FindIndex(_symbolKinds, t => t.Equals(token.ValueText, StringComparison.OrdinalIgnoreCase));
+                if (result == -1)
+                    continue;
+
+                if (!token.ValueText.AsSpan().Equals(_symbolKinds[result].ToString().AsSpan(), StringComparison.Ordinal))
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, token.GetLocation(), new object[] { _symbolKinds[result].ToString(), "" }));
+            }
+        }
+
+        private void AnalyzePropertyNames(SymbolAnalysisContext ctx)
+        {
+            IEnumerable<SyntaxToken> descendantTokens = ctx.Symbol.DeclaringSyntaxReference.GetSyntax().DescendantTokens()
+                                            .Where(t => t.Parent.Kind == SyntaxKind.PropertyName);
+
+            foreach (SyntaxToken token in descendantTokens)
+            {
+                ctx.CancellationToken.ThrowIfCancellationRequested();
+
+                int result = Array.FindIndex(_propertyKindStrings, t => t.Equals(token.ValueText, StringComparison.OrdinalIgnoreCase));
+                if (result == -1)
+                    continue;
+
+                if (!token.ValueText.AsSpan().Equals(_propertyKindStrings[result].ToString().AsSpan(), StringComparison.Ordinal))
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, token.GetLocation(), new object[] { _propertyKindStrings[result].ToString(), "" }));
+            }
+        }
+
+        private static void AnalyzeLabelProperties(SymbolAnalysisContext ctx)
+        {
+            IEnumerable<SyntaxToken> descendantTokens = ctx.Symbol.DeclaringSyntaxReference.GetSyntax().DescendantTokens()
+                                            .Where(n => n.Kind == SyntaxKind.IdentifierToken)
+                                            .Where(n => n.Parent.Parent.Parent.Kind == SyntaxKind.Label);
+
+            foreach (SyntaxToken token in descendantTokens)
+            {
+                ctx.CancellationToken.ThrowIfCancellationRequested();
+
+                int result = Array.FindIndex(_labelPropertyString, t => t.Equals(token.ToString(), StringComparison.OrdinalIgnoreCase));
+                if (result == -1)
+                    continue;
+
+                if (!token.ToString().AsSpan().Equals(_labelPropertyString[result].ToString().AsSpan(), StringComparison.Ordinal))
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, token.GetLocation(), new object[] { _labelPropertyString[result].ToString(), "" }));
             }
         }
 
@@ -222,7 +252,6 @@ namespace BusinessCentral.LinterCop.Design
                 default:
                     return;
             }
-
 
             if (OnlyDiffersInCasing(ctx.Operation.Syntax.ToString().AsSpan(), targetName.AsSpan()))
             {
