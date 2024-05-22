@@ -14,22 +14,23 @@ namespace BusinessCentral.LinterCop.Design
             = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration);
 
         private static readonly HashSet<SyntaxKind> _dataTypeSyntaxKinds = Enum.GetValues(typeof(SyntaxKind)).Cast<SyntaxKind>().Where(x => x.ToString().AsSpan().EndsWith("DataType")).ToHashSet();
-        private static string[] _navTypeKindStrings;
         private static readonly string[] _areaKinds = Enum.GetValues(typeof(AreaKind)).Cast<AreaKind>().Select(x => x.ToString()).ToArray();
         private static readonly string[] _actionAreaKinds = Enum.GetValues(typeof(ActionAreaKind)).Cast<ActionAreaKind>().Select(x => x.ToString()).ToArray();
         private static readonly string[] _labelPropertyString = LabelPropertyHelper.GetAllLabelProperties();
+        private static readonly string[] _navTypeKindStrings = GenerateNavTypeKindArray();
         private static readonly string[] _propertyKindStrings = Enum.GetValues(typeof(PropertyKind)).Cast<PropertyKind>().Select(x => x.ToString()).ToArray();
         private static readonly string[] _symbolKinds = Enum.GetValues(typeof(SymbolKind)).Cast<SymbolKind>().Select(x => x.ToString()).ToArray();
+        private static readonly Dictionary<TriggerTypeKind, string> _triggerTypeKinds = GenerateNTriggerTypeKindMappings();
+
 
         public override void Initialize(AnalysisContext context)
         {
-            GenerateNavTypeKindArray();
-
             context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeLabel), SyntaxKind.Label);
             context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzePropertyName), SyntaxKind.PropertyName);
             context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeMemberAccessExpression), SyntaxKind.MemberAccessExpression);
             context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeAreaSectionName), SyntaxKind.PageArea);
             context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeActionAreaSectionName), SyntaxKind.PageActionArea);
+            context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeTriggerDeclaration), SyntaxKind.TriggerDeclaration);
 
             context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForBuiltInMethodsWithCasingMismatch), new OperationKind[] {
                 OperationKind.InvocationExpression,
@@ -64,11 +65,28 @@ namespace BusinessCentral.LinterCop.Design
             });
         }
 
-        private static void GenerateNavTypeKindArray()
+        private static string[] GenerateNavTypeKindArray()
         {
             var navTypeKinds = Enum.GetValues(typeof(NavTypeKind)).Cast<NavTypeKind>().Select(s => s.ToString()).ToList();
             navTypeKinds.Add("Database"); // for Database::"G/L Entry" (there is no NavTypeKind for this)
-            _navTypeKindStrings = navTypeKinds.ToArray();
+            return navTypeKinds.ToArray();
+        }
+
+        private static Dictionary<TriggerTypeKind, string> GenerateNTriggerTypeKindMappings()
+        {
+            var mappings = new Dictionary<TriggerTypeKind, string>();
+
+            foreach (TriggerTypeKind type in Enum.GetValues(typeof(TriggerTypeKind)))
+            {
+                string typeName = type.ToString();
+                int index = typeName.IndexOf("On");
+                if (index > 0)
+                {
+                    mappings[type] = typeName.Substring(index); ;
+                }
+            }
+
+            return mappings;
         }
 
         private void AnalyzeLabel(SyntaxNodeAnalysisContext ctx)
@@ -149,6 +167,22 @@ namespace BusinessCentral.LinterCop.Design
                 if (!syntaxToken.ValueText.AsSpan().Equals(_actionAreaKinds[result].ToString().AsSpan(), StringComparison.Ordinal))
                     ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, childNode.GetLocation(), new object[] { _actionAreaKinds[result].ToString(), "" }));
             }
+        }
+
+        private void AnalyzeTriggerDeclaration(SyntaxNodeAnalysisContext ctx)
+        {
+            TriggerDeclarationSyntax syntax = ctx.Node as TriggerDeclarationSyntax;
+            ISymbolWithTriggers symbolWithTriggers = ctx.ContainingSymbol.ContainingSymbol as ISymbolWithTriggers;
+
+            TriggerTypeInfo triggerTypeInfo = symbolWithTriggers.GetTriggerTypeInfo(syntax.Name.Identifier.ValueText);
+            if (triggerTypeInfo == null)
+                return;
+
+            if (!_triggerTypeKinds.TryGetValue(triggerTypeInfo.Kind, out string targetName))
+                return;
+
+            if (!syntax.Name.Identifier.ValueText.AsSpan().Equals(targetName.AsSpan(), StringComparison.Ordinal))
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, syntax.Name.GetLocation(), new object[] { targetName, "" }));
         }
 
         private void CheckForBuiltInTypeCasingMismatch(SymbolAnalysisContext ctx)
