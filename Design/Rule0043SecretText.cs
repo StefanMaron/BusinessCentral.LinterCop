@@ -10,7 +10,7 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0043SecretText : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0043SecretText);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0043SecretText, DiagnosticDescriptors.Rule0000ErrorInRule);
 
         private static readonly string authorization = "Authorization";
 
@@ -89,8 +89,15 @@ namespace BusinessCentral.LinterCop.Design
                 default:
                     return;
             }
-
-            if (!IsAuthorizationArgument(operation.Arguments[0])) return;
+            
+            try
+            {
+                if (!IsAuthorizationArgument(operation.Arguments[0])) return;
+            }
+            catch(InvalidCastException)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, context.Symbol.GetLocation(), new Object[] { "Rule0043", "InvalidCastException", "at Line 63" }));
+            }
 
             if (!IsArgumentOfTypeSecretText(operation.Arguments[1]))
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0043SecretText, ctx.Operation.Syntax.GetLocation()));
