@@ -98,7 +98,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private bool IsArgumentOfTypeSecretText(IArgument argument)
         {
-            return argument.Parameter.OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.SecretText;
+            return argument.Parameter?.OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.SecretText;
         }
 
         private static bool IsAuthorizationArgument(IArgument argument)

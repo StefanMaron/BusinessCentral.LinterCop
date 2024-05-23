@@ -172,6 +172,9 @@ namespace BusinessCentral.LinterCop.Design
         private void AnalyzeTriggerDeclaration(SyntaxNodeAnalysisContext ctx)
         {
             TriggerDeclarationSyntax syntax = ctx.Node as TriggerDeclarationSyntax;
+            if (syntax == null)
+                return;
+
             ISymbolWithTriggers symbolWithTriggers = ctx.ContainingSymbol.ContainingSymbol as ISymbolWithTriggers;
 
             TriggerTypeInfo triggerTypeInfo = symbolWithTriggers.GetTriggerTypeInfo(syntax.Name.Identifier.ValueText);
