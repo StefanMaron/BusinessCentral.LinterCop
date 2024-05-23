@@ -10,7 +10,7 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0043SecretText : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0043SecretText, DiagnosticDescriptors.Rule0000ErrorInRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0043SecretText);
 
         private static readonly string authorization = "Authorization";
 
@@ -90,14 +90,7 @@ namespace BusinessCentral.LinterCop.Design
                     return;
             }
 
-            try
-            {
-                if (!IsAuthorizationArgument(operation.Arguments[0])) return;
-            }
-            catch (InvalidCastException)
-            {
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0043", "InvalidCastException", "at Line 63" }));
-            }
+            if (!IsAuthorizationArgument(operation.Arguments[0])) return;
 
             if (!IsArgumentOfTypeSecretText(operation.Arguments[1]))
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0043SecretText, ctx.Operation.Syntax.GetLocation()));
@@ -115,6 +108,7 @@ namespace BusinessCentral.LinterCop.Design
                 case SyntaxKind.LiteralExpression:
                     return SemanticFacts.IsSameName(argument.Value.ConstantValue.Value.ToString(), authorization);
                 case SyntaxKind.IdentifierName:
+                    if (argument.Value.Kind != OperationKind.ConversionExpression) return false;
                     IOperation operand = ((IConversionExpression)argument.Value).Operand;
                     if (operand.GetSymbol().OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Label) return false;
                     ILabelTypeSymbol label = (ILabelTypeSymbol)operand.GetSymbol().OriginalDefinition.GetTypeSymbol();
