@@ -195,7 +195,8 @@ namespace BusinessCentral.LinterCop.Design
         {
             IEnumerable<SyntaxToken> descendantTokens = ctx.Symbol.DeclaringSyntaxReference.GetSyntax().DescendantTokens()
                                             .Where(t => t.Kind.IsKeyword())
-                                            .Where(t => !_dataTypeSyntaxKinds.Contains(t.Parent.Kind));
+                                            .Where(t => !_dataTypeSyntaxKinds.Contains(t.Parent.Kind))
+                                            .Where(t => !string.IsNullOrEmpty(t.ToString()));
 
             foreach (SyntaxToken descendantToken in descendantTokens)
             {
