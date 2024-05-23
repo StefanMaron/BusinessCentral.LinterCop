@@ -89,14 +89,14 @@ namespace BusinessCentral.LinterCop.Design
                 default:
                     return;
             }
-            
+
             try
             {
                 if (!IsAuthorizationArgument(operation.Arguments[0])) return;
             }
-            catch(InvalidCastException)
+            catch (InvalidCastException)
             {
-                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, context.Symbol.GetLocation(), new Object[] { "Rule0043", "InvalidCastException", "at Line 63" }));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0043", "InvalidCastException", "at Line 63" }));
             }
 
             if (!IsArgumentOfTypeSecretText(operation.Arguments[1]))
