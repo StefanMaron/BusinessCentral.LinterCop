@@ -158,7 +158,7 @@ namespace BusinessCentral.LinterCop.Design
                 return false;
 
             if (Symbol.GetBooleanPropertyValue(PropertyKind.ShowCaption) != false)
-                if (Symbol.GetProperty(PropertyKind.Caption) == null && Symbol.GetProperty(PropertyKind.CaptionClass) == null)
+                if (Symbol.GetProperty(PropertyKind.Caption) == null && Symbol.GetProperty(PropertyKind.CaptionClass) == null && Symbol.GetProperty(PropertyKind.CaptionML) == null)
                     return true;
             return false;
         }
