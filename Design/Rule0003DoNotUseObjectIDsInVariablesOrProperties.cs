@@ -87,6 +87,9 @@ namespace BusinessCentral.LinterCop.Design
                         else
                             correctName = parameter.ParameterType.Name;
 
+                        if (string.IsNullOrEmpty(correctName))
+                            continue;
+
                         if (ctx.Node.GetLastToken().ToString().Trim('"').ToUpper() != correctName.ToUpper())
                             ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
 
