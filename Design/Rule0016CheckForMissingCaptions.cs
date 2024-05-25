@@ -12,29 +12,7 @@ namespace BusinessCentral.LinterCop.Design
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0016CheckForMissingCaptions);
 
-        private static readonly List<string> PromotedGroupNames = new List<string>
-        {
-            "category_new",
-            "category_process",
-            "category_report",
-            "category_category4",
-            "category_category5",
-            "category_category6",
-            "category_category7",
-            "category_category8",
-            "category_category9",
-            "category_category10",
-            "category_category11",
-            "category_category12",
-            "category_category13",
-            "category_category14",
-            "category_category15",
-            "category_category16",
-            "category_category17",
-            "category_category18",
-            "category_category19",
-            "category_category20",
-        };
+        private static readonly HashSet<string> _predefinedActionCategoryNames = SyntaxFacts.PredefinedActionCategoryNames.Select(x => x.Key.ToLowerInvariant()).ToHashSet();
 
         public override void Initialize(AnalysisContext context)
             => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForMissingCaptions),
@@ -100,9 +78,9 @@ namespace BusinessCentral.LinterCop.Design
                         break;
                 }
             }
-            else if (context.Symbol.Kind == SymbolKind.Action)
+            else if (context.Symbol is IActionSymbol actionSymbol)
             {
-                switch (((IActionSymbol)context.Symbol).ActionKind)
+                switch (actionSymbol.ActionKind)
                 {
                     case ActionKind.Action:
                         if (CaptionIsMissing(context.Symbol, context))
@@ -110,9 +88,34 @@ namespace BusinessCentral.LinterCop.Design
                         break;
 
                     case ActionKind.Group:
-                        if (CaptionIsMissing(context.Symbol, context))
-                            RaiseCaptionWarning(context);
-                        break;
+                        if (context.Symbol.GetEnumPropertyValue<ShowAsKind>(PropertyKind.ShowAs) == ShowAsKind.SplitButton)
+                        {
+                            // There is one specifc case where a Caption is needed on a Group where the property ShowAs is set to SplitButton
+                            // A) The group is inside a Promoted Area
+                            // B) Has one or more actionrefs
+                            // C) One of the actions of the actionsrefs has Scope set to Repeater
+
+                            if (((IActionSymbol)context.Symbol.ContainingSymbol).ActionKind != ActionKind.Area)
+                                break;
+
+                            if (!SemanticFacts.IsSameName(context.Symbol.ContainingSymbol.Name, "Promoted"))
+                                break;
+
+                            if (!actionSymbol.Actions.Where(a => a.ActionKind == ActionKind.ActionRef)
+                                                     .Where(a => a.Target.GetEnumPropertyValueOrDefault<PageActionScopeKind>(PropertyKind.Scope) == PageActionScopeKind.Repeater)
+                                                     .Any())
+                                break;
+
+                            if (CaptionIsMissing(context.Symbol, context))
+                                RaiseCaptionWarning(context);
+                            break;
+                        }
+                        else
+                        {
+                            if (CaptionIsMissing(context.Symbol, context))
+                                RaiseCaptionWarning(context);
+                            break;
+                        }
                 }
             }
             else if (context.Symbol.Kind == SymbolKind.EnumValue)
@@ -151,10 +154,7 @@ namespace BusinessCentral.LinterCop.Design
                     return false;
             }
 
-            if (Symbol.GetEnumPropertyValue<ShowAsKind>(PropertyKind.ShowAs) == ShowAsKind.SplitButton)
-                return false;
-
-            if (SemanticFacts.IsSameName(Symbol.MostSpecificKind, "Group") && PromotedGroupNames.Contains(Symbol.Name.ToLowerInvariant()))
+            if (Symbol.Kind == SymbolKind.Action && ((IActionSymbol)Symbol).ActionKind == ActionKind.Group && _predefinedActionCategoryNames.Contains(Symbol.Name.ToLowerInvariant()))
                 return false;
 
             if (Symbol.GetBooleanPropertyValue(PropertyKind.ShowCaption) != false)

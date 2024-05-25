@@ -98,7 +98,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private bool IsArgumentOfTypeSecretText(IArgument argument)
         {
-            return argument.Parameter.OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.SecretText;
+            return argument.Parameter?.OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.SecretText;
         }
 
         private static bool IsAuthorizationArgument(IArgument argument)
@@ -108,6 +108,7 @@ namespace BusinessCentral.LinterCop.Design
                 case SyntaxKind.LiteralExpression:
                     return SemanticFacts.IsSameName(argument.Value.ConstantValue.Value.ToString(), authorization);
                 case SyntaxKind.IdentifierName:
+                    if (argument.Value.Kind != OperationKind.ConversionExpression) return false;
                     IOperation operand = ((IConversionExpression)argument.Value).Operand;
                     if (operand.GetSymbol().OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Label) return false;
                     ILabelTypeSymbol label = (ILabelTypeSymbol)operand.GetSymbol().OriginalDefinition.GetTypeSymbol();
