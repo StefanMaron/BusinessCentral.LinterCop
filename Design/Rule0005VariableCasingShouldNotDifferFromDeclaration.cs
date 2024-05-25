@@ -1,8 +1,9 @@
 ﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
@@ -31,6 +32,9 @@ namespace BusinessCentral.LinterCop.Design
             context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeAreaSectionName), SyntaxKind.PageArea);
             context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeActionAreaSectionName), SyntaxKind.PageActionArea);
             context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeTriggerDeclaration), SyntaxKind.TriggerDeclaration);
+            context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeIdentifierName), SyntaxKind.IdentifierName);
+            context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeQualifiedName), SyntaxKind.QualifiedName);
+            context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeQualifiedNameWithoutNamespace), SyntaxKind.QualifiedName);
 
             context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForBuiltInMethodsWithCasingMismatch), new OperationKind[] {
                 OperationKind.InvocationExpression,
@@ -186,6 +190,72 @@ namespace BusinessCentral.LinterCop.Design
 
             if (!syntax.Name.Identifier.ValueText.AsSpan().Equals(targetName.AsSpan(), StringComparison.Ordinal))
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, syntax.Name.GetLocation(), new object[] { targetName, "" }));
+        }
+
+        private void AnalyzeIdentifierName(SyntaxNodeAnalysisContext ctx)
+        {
+            if (ctx.Node is not IdentifierNameSyntax node)
+                return;
+
+            ISymbol fieldSymbol = ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol;
+            if (fieldSymbol == null)
+                return;
+
+            // TODO: Support more SymbolKinds
+            if (fieldSymbol.Kind != SymbolKind.Field)
+                return;
+
+            string identifierName = StringExtensions.UnquoteIdentifier(node.Identifier.ValueText);
+
+            if (!identifierName.AsSpan().Equals(fieldSymbol.Name.AsSpan(), StringComparison.Ordinal))
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.GetLocation(), new object[] { StringExtensions.QuoteIdentifierIfNeeded(fieldSymbol.Name), "" }));
+        }
+
+        private void AnalyzeQualifiedName(SyntaxNodeAnalysisContext ctx)
+        {
+            if (ctx.Node is not QualifiedNameSyntax node)
+                return;
+
+            ISymbol fieldSymbol = ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol;
+            if (fieldSymbol == null)
+                return;
+
+            string identifierName = StringExtensions.UnquoteIdentifier(node.Right.Identifier.ValueText);
+
+            if (!identifierName.AsSpan().Equals(fieldSymbol.Name.AsSpan(), StringComparison.Ordinal))
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.Right.GetLocation(), new object[] { StringExtensions.QuoteIdentifierIfNeeded(fieldSymbol.Name), "" }));
+        }
+
+        private void AnalyzeQualifiedNameWithoutNamespace(SyntaxNodeAnalysisContext ctx)
+        {
+            if (ctx.Node is not QualifiedNameSyntax node)
+                return;
+
+            if (node.Left.Kind != SyntaxKind.IdentifierName)
+                return;
+
+            ISymbol fieldSymbol = ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol;
+            if (fieldSymbol == null)
+                return;
+
+            if (fieldSymbol.ContainingSymbol is not IObjectTypeSymbol objectTypeSymbol)
+                return;
+
+            if (fieldSymbol.ContainingSymbol.Kind == SymbolKind.TableExtension)
+            {
+                ITableExtensionTypeSymbol tableExtension = (ITableExtensionTypeSymbol)fieldSymbol.ContainingSymbol;
+                objectTypeSymbol = tableExtension.Target as IObjectTypeSymbol;
+            }
+
+            IdentifierNameSyntax identifierNameSyntax = (IdentifierNameSyntax)node.Left;
+            SyntaxToken identifier = identifierNameSyntax.Identifier;
+            if (identifier == null)
+                return;
+
+            string identifierName = StringExtensions.UnquoteIdentifier(identifier.ValueText);
+
+            if (!identifierName.AsSpan().Equals(objectTypeSymbol.Name.AsSpan(), StringComparison.Ordinal))
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, identifierNameSyntax.GetLocation(), new object[] { StringExtensions.QuoteIdentifierIfNeeded(objectTypeSymbol.Name), "" }));
         }
 
         private void CheckForBuiltInTypeCasingMismatch(SymbolAnalysisContext ctx)
