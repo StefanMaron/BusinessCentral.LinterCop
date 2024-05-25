@@ -15,7 +15,7 @@ namespace BusinessCentral.LinterCop.Design
     {
         private List<Tuple<string, string>> tablePairs = new List<Tuple<string, string>>();
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0044AnalyzeTransferFields);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0044AnalyzeTransferFields, DiagnosticDescriptors.Rule0000ErrorInRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -77,7 +77,14 @@ namespace BusinessCentral.LinterCop.Design
             List<VariableDeclarationBaseSyntax> variables = new List<VariableDeclarationBaseSyntax>();
 
             SyntaxNode localVariables = await localVariablesTask;
-            variables.AddRange(FindLocalVariables(localVariables));
+            try
+            {
+                variables.AddRange(FindLocalVariables(localVariables));
+            }
+            catch (InvalidCastException)
+            {
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0044", "InvalidCastException", "at Line 82" }));
+            }
             SyntaxNode globalVariables = await globalVariablesTask;
             variables.AddRange(FindGlobalVariables(globalVariables));
 
@@ -444,7 +451,7 @@ namespace BusinessCentral.LinterCop.Design
                 new Tuple<string, string>("Contact", "Employee"),
                 new Tuple<string, string>("Contact", "Bank Account"),
                 new Tuple<string, string>("Contact", "Customer Templ."),
-                
+
                 new Tuple<string, string>("Contact Business Relation", "Office Contact Details"),
 
                 new Tuple<string, string>("Deferral Line", "Deferral Line Archive"),
