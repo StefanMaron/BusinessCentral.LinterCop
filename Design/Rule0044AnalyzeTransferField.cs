@@ -184,7 +184,7 @@ namespace BusinessCentral.LinterCop.Design
             {
                 TableSyntax tableSyntax = (TableSyntax)node;
 
-                return tableSyntax.Name.Identifier.ToString().Replace("\"", "");
+                return GetIdentifierName(tableSyntax.Name);
             }
 
             if (nodeType == typeof(TableExtensionSyntax))
@@ -242,7 +242,7 @@ namespace BusinessCentral.LinterCop.Design
 
             IdentifierNameSyntax identifierNameSyntax = (IdentifierNameSyntax)identifier;
 
-            return identifierNameSyntax.ToString().Replace("\"", "");
+            return identifierNameSyntax.Identifier.ValueText.UnquoteIdentifier();
         }
 
         private Tuple<string, string>? GetInvokingRecordNames(InvocationExpressionSyntax invocationExpression)

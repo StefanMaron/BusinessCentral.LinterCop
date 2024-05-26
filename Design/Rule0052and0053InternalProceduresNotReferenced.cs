@@ -200,7 +200,7 @@ namespace BusinessCentral.LinterCop.Design
                     IMethodSymbol methodSymbol = unusedInternalMethod.Key;
                     IApplicationObjectTypeSymbol objectSymbol = methodSymbol.GetContainingApplicationObjectTypeSymbol();
 
-                    Diagnostic diagnostic = Diagnostic.Create(DiagnosticDescriptors.Rule0052InternalProceduresNotReferencedAnalyzerDescriptor, methodSymbol.OriginalDefinition.GetLocation(), methodSymbol.DeclaredAccessibility.ToString().ToLowerInvariant(), StringExtensions.QuoteIdentifierIfNeeded(methodSymbol.Name), objectSymbol.NavTypeKind, StringExtensions.QuoteIdentifierIfNeeded(objectSymbol.Name), objectSymbol.DeclaredAccessibility);
+                    Diagnostic diagnostic = Diagnostic.Create(DiagnosticDescriptors.Rule0052InternalProceduresNotReferencedAnalyzerDescriptor, methodSymbol.OriginalDefinition.GetLocation(), methodSymbol.DeclaredAccessibility.ToString().ToLowerInvariant(), methodSymbol.Name.QuoteIdentifierIfNeeded(), objectSymbol.NavTypeKind, objectSymbol.Name.QuoteIdentifierIfNeeded(), objectSymbol.DeclaredAccessibility);
                     action(diagnostic);
                 }
             }
@@ -214,7 +214,7 @@ namespace BusinessCentral.LinterCop.Design
                     IMethodSymbol methodSymbol = internalMethodPair.Key;
                     IApplicationObjectTypeSymbol objectSymbol = methodSymbol.GetContainingApplicationObjectTypeSymbol();
 
-                    Diagnostic diagnostic = Diagnostic.Create(DiagnosticDescriptors.Rule0053InternalProcedureOnlyUsedInCurrentObjectAnalyzerDescriptor, methodSymbol.OriginalDefinition.GetLocation(), methodSymbol.DeclaredAccessibility.ToString().ToLowerInvariant(), StringExtensions.QuoteIdentifierIfNeeded(methodSymbol.Name), objectSymbol.NavTypeKind, StringExtensions.QuoteIdentifierIfNeeded(objectSymbol.Name), objectSymbol.DeclaredAccessibility);
+                    Diagnostic diagnostic = Diagnostic.Create(DiagnosticDescriptors.Rule0053InternalProcedureOnlyUsedInCurrentObjectAnalyzerDescriptor, methodSymbol.OriginalDefinition.GetLocation(), methodSymbol.DeclaredAccessibility.ToString().ToLowerInvariant(), methodSymbol.Name.QuoteIdentifierIfNeeded(), objectSymbol.NavTypeKind, objectSymbol.Name.QuoteIdentifierIfNeeded(), objectSymbol.DeclaredAccessibility);
                     action(diagnostic);
                 }
             }

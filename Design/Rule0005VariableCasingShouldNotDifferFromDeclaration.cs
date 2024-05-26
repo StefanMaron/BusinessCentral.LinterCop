@@ -208,7 +208,7 @@ namespace BusinessCentral.LinterCop.Design
             string identifierName = StringExtensions.UnquoteIdentifier(node.Identifier.ValueText);
 
             if (!identifierName.AsSpan().Equals(fieldSymbol.Name.AsSpan(), StringComparison.Ordinal))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.GetLocation(), new object[] { StringExtensions.QuoteIdentifierIfNeeded(fieldSymbol.Name), "" }));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.GetLocation(), new object[] { fieldSymbol.Name.QuoteIdentifierIfNeeded(), "" }));
         }
 
         private void AnalyzeQualifiedName(SyntaxNodeAnalysisContext ctx)
@@ -223,7 +223,7 @@ namespace BusinessCentral.LinterCop.Design
             string identifierName = StringExtensions.UnquoteIdentifier(node.Right.Identifier.ValueText);
 
             if (!identifierName.AsSpan().Equals(fieldSymbol.Name.AsSpan(), StringComparison.Ordinal))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.Right.GetLocation(), new object[] { StringExtensions.QuoteIdentifierIfNeeded(fieldSymbol.Name), "" }));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.Right.GetLocation(), new object[] { fieldSymbol.Name.QuoteIdentifierIfNeeded(), "" }));
         }
 
         private void AnalyzeQualifiedNameWithoutNamespace(SyntaxNodeAnalysisContext ctx)
@@ -255,7 +255,7 @@ namespace BusinessCentral.LinterCop.Design
             string identifierName = StringExtensions.UnquoteIdentifier(identifier.ValueText);
 
             if (!identifierName.AsSpan().Equals(objectTypeSymbol.Name.AsSpan(), StringComparison.Ordinal))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, identifierNameSyntax.GetLocation(), new object[] { StringExtensions.QuoteIdentifierIfNeeded(objectTypeSymbol.Name), "" }));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, identifierNameSyntax.GetLocation(), new object[] { objectTypeSymbol.Name.QuoteIdentifierIfNeeded(), "" }));
         }
 
         private void CheckForBuiltInTypeCasingMismatch(SymbolAnalysisContext ctx)
