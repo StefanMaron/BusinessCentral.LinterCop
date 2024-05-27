@@ -197,6 +197,9 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.Node is not IdentifierNameSyntax node)
                 return;
 
+            if (node.Parent.Kind == SyntaxKind.PragmaWarningDirectiveTrivia)
+                return;
+
             ISymbol fieldSymbol = ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol;
             if (fieldSymbol == null)
                 return;
