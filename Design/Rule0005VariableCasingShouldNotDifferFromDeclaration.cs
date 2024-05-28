@@ -305,18 +305,34 @@ namespace BusinessCentral.LinterCop.Design
                     !syntaxNodeKindSpan.StartsWith("Enum") &&
                     !syntaxNodeKindSpan.StartsWith("Label"))
                 {
+                    var sourceName = syntaxNodeSpan;
+                    var sourceLocation = descendantNode.GetLocation();
+
+                    if (descendantNode.IsKind(SyntaxKind.LengthDataType))
+                    {
+                        if (!descendantNode.Parent.IsKind(SyntaxKind.SimpleTypeReference))
+                        {
+                            // if parent is no SimpleTypeReference use the LengthDataType itself without the range expression: [n]
+                            var SimpleTypeRefSubstituteToken = descendantNode.GetFirstToken();
+                            sourceName = SimpleTypeRefSubstituteToken.ToString();
+                            sourceLocation = SimpleTypeRefSubstituteToken.GetLocation();
+                        }
+                        else
+                            continue; // avoid duplicate diagnostic (will be performed on SimpleTypeReference)
+                    }
+
                     var targetName = _navTypeKindStrings.FirstOrDefault(Kind =>
                     {
                         var kindSpan = Kind.AsSpan();
-                        return kindSpan.Equals(syntaxNodeSpan.AsSpan(), StringComparison.OrdinalIgnoreCase) &&
-                               !kindSpan.Equals(syntaxNodeSpan.AsSpan(), StringComparison.Ordinal);
+                        return kindSpan.Equals(sourceName.AsSpan(), StringComparison.OrdinalIgnoreCase) &&
+                               !kindSpan.Equals(sourceName.AsSpan(), StringComparison.Ordinal);
                     });
 
                     if (targetName != null)
                     {
                         ctx.ReportDiagnostic(Diagnostic.Create(
                             DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration,
-                            descendantNode.GetLocation(), new object[] { targetName, "" }));
+                            sourceLocation, new object[] { targetName, "" }));
                         continue;
                     }
                 }
