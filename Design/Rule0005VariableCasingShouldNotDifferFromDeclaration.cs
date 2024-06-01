@@ -35,6 +35,7 @@ namespace BusinessCentral.LinterCop.Design
             context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeIdentifierName), SyntaxKind.IdentifierName);
             context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeQualifiedName), SyntaxKind.QualifiedName);
             context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeQualifiedNameWithoutNamespace), SyntaxKind.QualifiedName);
+            context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeLengthDataType), SyntaxKind.LengthDataType);
 
             context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForBuiltInMethodsWithCasingMismatch), new OperationKind[] {
                 OperationKind.InvocationExpression,
@@ -261,6 +262,18 @@ namespace BusinessCentral.LinterCop.Design
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, identifierNameSyntax.GetLocation(), new object[] { StringExtensions.QuoteIdentifierIfNeeded(objectTypeSymbol.Name), "" }));
         }
 
+        private void AnalyzeLengthDataType(SyntaxNodeAnalysisContext ctx)
+        {
+            if (ctx.Node is not LengthDataTypeSyntax node)
+                return;
+
+            SyntaxToken identifierToken = node.GetFirstToken();
+            if (!IsNavTypeKindWithDifferentCasing(identifierToken.ValueText, out string targetName))
+                return;
+
+            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, identifierToken.GetLocation(), new object[] { targetName, "" }));
+        }
+
         private void CheckForBuiltInTypeCasingMismatch(SymbolAnalysisContext ctx)
         {
             AnalyseTokens(ctx);
@@ -290,6 +303,7 @@ namespace BusinessCentral.LinterCop.Design
         private void AnalyseNodes(SymbolAnalysisContext ctx)
         {
             IEnumerable<SyntaxNode> descendantNodes = ctx.Symbol.DeclaringSyntaxReference.GetSyntax().DescendantNodes()
+                                            .Where(t => t.Kind != SyntaxKind.LengthDataType) // handeld on AnalyzeLengthDataType method
                                             .Where(n => !n.ToString().AsSpan().StartsWith("array"));
 
             foreach (SyntaxNode descendantNode in descendantNodes)
@@ -305,34 +319,21 @@ namespace BusinessCentral.LinterCop.Design
                     !syntaxNodeKindSpan.StartsWith("Enum") &&
                     !syntaxNodeKindSpan.StartsWith("Label"))
                 {
-                    var sourceName = syntaxNodeSpan;
-                    var sourceLocation = descendantNode.GetLocation();
-
-                    if (descendantNode.IsKind(SyntaxKind.LengthDataType))
-                    {
-                        if (!descendantNode.Parent.IsKind(SyntaxKind.SimpleTypeReference))
-                        {
-                            // if parent is no SimpleTypeReference use the LengthDataType itself without the range expression: [n]
-                            var SimpleTypeRefSubstituteToken = descendantNode.GetFirstToken();
-                            sourceName = SimpleTypeRefSubstituteToken.ToString();
-                            sourceLocation = SimpleTypeRefSubstituteToken.GetLocation();
-                        }
-                        else
-                            continue; // avoid duplicate diagnostic (will be performed on SimpleTypeReference)
-                    }
+                    if (descendantNode is SimpleTypeReferenceSyntax simpleTypeRefSubstituteToken && simpleTypeRefSubstituteToken.DataType.Kind == SyntaxKind.LengthDataType)
+                        continue; // handeld on AnalyzeLengthDataType method
 
                     var targetName = _navTypeKindStrings.FirstOrDefault(Kind =>
                     {
                         var kindSpan = Kind.AsSpan();
-                        return kindSpan.Equals(sourceName.AsSpan(), StringComparison.OrdinalIgnoreCase) &&
-                               !kindSpan.Equals(sourceName.AsSpan(), StringComparison.Ordinal);
+                        return kindSpan.Equals(syntaxNodeSpan.AsSpan(), StringComparison.OrdinalIgnoreCase) &&
+                               !kindSpan.Equals(syntaxNodeSpan.AsSpan(), StringComparison.Ordinal);
                     });
 
                     if (targetName != null)
                     {
                         ctx.ReportDiagnostic(Diagnostic.Create(
                             DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration,
-                            sourceLocation, new object[] { targetName, "" }));
+                            descendantNode.GetLocation(), new object[] { targetName, "" }));
                         continue;
                     }
                 }
@@ -428,6 +429,18 @@ namespace BusinessCentral.LinterCop.Design
             var rightSpan = right.Trim('"');
             return leftSpan.Equals(rightSpan, StringComparison.OrdinalIgnoreCase) &&
                    !leftSpan.Equals(rightSpan, StringComparison.Ordinal);
+        }
+
+        private static bool IsNavTypeKindWithDifferentCasing(string inputNavTypeKind, out string matchedNavTypeKind)
+        {
+            matchedNavTypeKind = _navTypeKindStrings.SingleOrDefault(Kind =>
+                {
+                    var kindSpan = Kind.AsSpan();
+                    return kindSpan.Equals(inputNavTypeKind.AsSpan(), StringComparison.OrdinalIgnoreCase) &&
+                            !kindSpan.Equals(inputNavTypeKind.AsSpan(), StringComparison.Ordinal);
+                });
+
+            return matchedNavTypeKind is not null;
         }
     }
 }
