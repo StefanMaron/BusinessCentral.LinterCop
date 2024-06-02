@@ -2,6 +2,7 @@ using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
@@ -9,7 +10,7 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0039ArgumentDifferentTypeThenExpected : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, DiagnosticDescriptors.Rule0049PageWithoutSourceTable, DiagnosticDescriptors.Rule0000ErrorInRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, DiagnosticDescriptors.Rule0049PageWithoutSourceTable);
 
         private static readonly List<PropertyKind> referencePageProviders = new List<PropertyKind>
         {
@@ -54,43 +55,40 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeSetRecordArgument(OperationAnalysisContext ctx)
         {
-            try
+            if (ctx.IsObsoletePendingOrRemoved()) return;
+
+            IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
+            if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
+
+            if (operation.TargetMethod.ContainingType.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Page) return;
+            string[] procedureNames = { "GetRecord", "SetRecord", "SetSelectionFilter", "SetTableView" };
+            if (!procedureNames.Contains(operation.TargetMethod.Name)) return;
+            if (operation.Arguments.Count() != 1) return;
+
+            if (operation.Arguments[0].Syntax.Kind != SyntaxKind.IdentifierName || operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression) return;
+
+            IOperation pageReference = ctx.Operation.DescendantsAndSelf().Where(x => x.GetSymbol() != null)
+                                                        .Where(x => x.Type.GetNavTypeKindSafe() == NavTypeKind.Page)
+                                                        .SingleOrDefault();
+            if (pageReference == null) return;
+            ISymbol variableSymbol = pageReference.GetSymbol().OriginalDefinition;
+            IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)variableSymbol.GetTypeSymbol().OriginalDefinition;
+            if (pageTypeSymbol.RelatedTable == null)
             {
-                if (ctx.IsObsoletePendingOrRemoved()) return;
-
-                IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
-                if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
-
-                if (operation.TargetMethod.ContainingType.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Page) return;
-                string[] procedureNames = { "GetRecord", "SetRecord", "SetSelectionFilter", "SetTableView" };
-                if (!procedureNames.Contains(operation.TargetMethod.Name)) return;
-                if (operation.Arguments.Count() != 1) return;
-
-                if (operation.Arguments[0].Syntax.Kind != SyntaxKind.IdentifierName || operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression) return;
-
-                IOperation pageReference = ctx.Operation.DescendantsAndSelf().Where(x => x.GetSymbol() != null)
-                                                            .Where(x => x.Type.GetNavTypeKindSafe() == NavTypeKind.Page)
-                                                            .SingleOrDefault();
-                if (pageReference == null) return;
-                ISymbol variableSymbol = pageReference.GetSymbol().OriginalDefinition;
-                IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)variableSymbol.GetTypeSymbol().OriginalDefinition;
-                if (pageTypeSymbol.RelatedTable == null)
-                {
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0049PageWithoutSourceTable, ctx.Operation.Syntax.GetLocation(), new object[] { NavTypeKind.Page, GetFullyQualifiedObjectName(pageTypeSymbol) }));
-                    return;
-                }
-                ITableTypeSymbol pageSourceTable = pageTypeSymbol.RelatedTable;
-
-                IOperation operand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
-                ITableTypeSymbol recordArgument = ((IRecordTypeSymbol)operand.GetSymbol().GetTypeSymbol()).BaseTable;
-
-                if (!AreTheSameNavObjects(recordArgument, pageSourceTable))
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, ctx.Operation.Syntax.GetLocation(), new object[] { 1, operand.GetSymbol().GetTypeSymbol().ToString(), pageSourceTable.GetNavTypeKindSafe() + " \"" + pageSourceTable.Name + "\"" }));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0049PageWithoutSourceTable, ctx.Operation.Syntax.GetLocation(), new object[] { NavTypeKind.Page, GetFullyQualifiedObjectName(pageTypeSymbol) }));
+                return;
             }
-            catch (InvalidCastException)
-            {
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0039", "Exception", "" }));
-            }
+            ITableTypeSymbol pageSourceTable = pageTypeSymbol.RelatedTable;
+
+            IOperation operand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
+            ITypeSymbol typeSymbol = operand.GetSymbol().GetTypeSymbol();
+            if (typeSymbol.GetNavTypeKindSafe() != NavTypeKind.Record)
+                return;
+
+            ITableTypeSymbol recordArgument = ((IRecordTypeSymbol)typeSymbol).BaseTable;
+
+            if (!AreTheSameNavObjects(recordArgument, pageSourceTable))
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, ctx.Operation.Syntax.GetLocation(), new object[] { 1, operand.GetSymbol().GetTypeSymbol().ToString(), pageSourceTable.GetNavTypeKindSafe().ToString() + ' ' + pageSourceTable.Name.QuoteIdentifierIfNeeded() }));
         }
 
         private void AnalyzeTableReferencePageProvider(SymbolAnalysisContext ctx)
@@ -108,7 +106,7 @@ namespace BusinessCentral.LinterCop.Design
                 if (pageSourceTable == null) continue;
 
                 if (!AreTheSameNavObjects(table, pageSourceTable))
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, pageReference.GetLocation(), new object[] { 1, table.GetTypeSymbol().GetNavTypeKindSafe() + " \"" + table.Name + "\"", pageSourceTable.GetNavTypeKindSafe() + " \"" + pageSourceTable.Name + "\"" }));
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, pageReference.GetLocation(), new object[] { 1, table.GetTypeSymbol().GetNavTypeKindSafe() + ' ' + table.Name.QuoteIdentifierIfNeeded(), pageSourceTable.GetNavTypeKindSafe().ToString() + ' ' + pageSourceTable.Name.QuoteIdentifierIfNeeded() }));
             }
         }
 
@@ -127,7 +125,7 @@ namespace BusinessCentral.LinterCop.Design
                 if (pageSourceTable == null) continue;
 
                 if (!AreTheSameNavObjects(table, pageSourceTable))
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, pageReference.GetLocation(), new object[] { 1, table.GetTypeSymbol().GetNavTypeKindSafe() + " \"" + table.Name + "\"", pageSourceTable.GetNavTypeKindSafe() + " \"" + pageSourceTable.Name + "\"" }));
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, pageReference.GetLocation(), new object[] { 1, table.GetTypeSymbol().GetNavTypeKindSafe() + ' ' + table.Name.QuoteIdentifierIfNeeded(), pageSourceTable.GetNavTypeKindSafe() + ' ' + pageSourceTable.Name.QuoteIdentifierIfNeeded() }));
             }
         }
 
@@ -145,9 +143,9 @@ namespace BusinessCentral.LinterCop.Design
         {
 #if Fall2023RV1
             if (page.ContainingNamespace.QualifiedName != "")
-                return page.ContainingNamespace.QualifiedName + "." + "\"" + page.Name + "\"";
+                return page.ContainingNamespace.QualifiedName + "." + page.Name.QuoteIdentifierIfNeeded();
 #endif
-            return page.Name;
+            return page.Name.QuoteIdentifierIfNeeded();
         }
     }
 }
