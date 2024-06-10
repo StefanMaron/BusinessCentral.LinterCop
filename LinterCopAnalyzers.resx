@@ -618,4 +618,13 @@
   <data name="Rule0057EnumValueWithEmptyCaptionDescription" xml:space="preserve">
     <value>Enum values must have non-empty a Caption to be selectable in the client.</value>
   </data>
+  <data name="Rule0058PageVariableMethodOnTemporaryTableTitle" xml:space="preserve">
+    <value>{0}.{1}(): You cannot use a temporary record for the Record parameter.</value>
+  </data>
+  <data name="Rule0058PageVariableMethodOnTemporaryTableFormat" xml:space="preserve">
+    <value>{0}.{1}(): You cannot use a temporary record for the Record parameter.</value>
+  </data>
+  <data name="Rule0058PageVariableMethodOnTemporaryTableDescription" xml:space="preserve">
+    <value>{0}.{1}(): You cannot use a temporary record for the Record parameter.</value>
+  </data>
 </root>

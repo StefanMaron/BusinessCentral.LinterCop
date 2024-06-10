@@ -83,7 +83,7 @@ namespace BusinessCentral.LinterCop.Design
             IRecordTypeSymbol recordTypeSymbol = operand.GetSymbol().GetTypeSymbol() as IRecordTypeSymbol;
             if (recordTypeSymbol.Temporary && SemanticFacts.IsSameName(operation.TargetMethod.Name, "SetRecord"))
             {
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0058PageVariableMethodOnTemporaryTable, ctx.Operation.Syntax.GetLocation(), new object[] { NavTypeKind.Page, GetFullyQualifiedObjectName(pageTypeSymbol) }));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0058PageVariableMethodOnTemporaryTable, ctx.Operation.Syntax.GetLocation(), new object[] { variableSymbol.ToString().QuoteIdentifierIfNeeded(), operation.TargetMethod.Name }));
                 return;
             }
             ITableTypeSymbol pageSourceTable = pageTypeSymbol.RelatedTable;
