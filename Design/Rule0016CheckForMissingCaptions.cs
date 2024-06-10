@@ -95,7 +95,10 @@ namespace BusinessCentral.LinterCop.Design
                             // B) Has one or more actionrefs
                             // C) One of the actions of the actionsrefs has Scope set to Repeater
 
-                            if (((IActionSymbol)context.Symbol.ContainingSymbol).ActionKind != ActionKind.Area)
+                            if (context.Symbol.ContainingSymbol is not IActionSymbol containingSymbol)
+                                return;
+
+                            if (containingSymbol.ActionKind != ActionKind.Area)
                                 break;
 
                             if (!SemanticFacts.IsSameName(context.Symbol.ContainingSymbol.Name, "Promoted"))
