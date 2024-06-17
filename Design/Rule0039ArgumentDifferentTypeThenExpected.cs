@@ -125,7 +125,7 @@ namespace BusinessCentral.LinterCop.Design
                 if (pageSourceTable == null) continue;
 
                 if (!AreTheSameNavObjects(table, pageSourceTable))
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, pageReference.GetLocation(), new object[] { 1, table.GetTypeSymbol().GetNavTypeKindSafe() + ' ' + table.Name.QuoteIdentifierIfNeeded(), pageSourceTable.GetNavTypeKindSafe() + ' ' + pageSourceTable.Name.QuoteIdentifierIfNeeded() }));
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, pageReference.GetLocation(), new object[] { 1, table.GetTypeSymbol().GetNavTypeKindSafe().ToString() + ' ' + table.Name.QuoteIdentifierIfNeeded(), pageSourceTable.GetNavTypeKindSafe().ToString() + ' ' + pageSourceTable.Name.QuoteIdentifierIfNeeded() }));
             }
         }
 
