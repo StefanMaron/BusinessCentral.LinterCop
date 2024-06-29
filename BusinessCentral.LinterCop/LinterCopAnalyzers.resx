@@ -448,13 +448,13 @@
     <value>Try to not exceed 200 characters (including spaces).</value>
   </data>
   <data name="Rule0039ArgumentDifferentTypeThenExpectedDescription" xml:space="preserve">
-    <value>Argument {0}: cannot convert from '{1}' to '{2}'.</value>
+    <value>Argument {0}: cannot convert from {1} to {2}.</value>
   </data>
   <data name="Rule0039ArgumentDifferentTypeThenExpectedFormat" xml:space="preserve">
-    <value>Argument {0}: cannot convert from '{1}' to '{2}'.</value>
+    <value>Argument {0}: cannot convert from {1} to {2}.</value>
   </data>
   <data name="Rule0039ArgumentDifferentTypeThenExpectedTitle" xml:space="preserve">
-    <value>Argument {0}: cannot convert from '{1}' to '{2}'.</value>
+    <value>Argument {0}: cannot convert from {1} to {2}.</value>
   </data>
   <data name="Rule0040ExplicitlySetRunTriggerTitle" xml:space="preserve">
     <value>Explicitly set the RunTrigger parameter on build-in methods.</value>
@@ -617,5 +617,14 @@
   </data>
   <data name="Rule0057EnumValueWithEmptyCaptionDescription" xml:space="preserve">
     <value>Enum values must have non-empty a Caption to be selectable in the client.</value>
+  </data>
+  <data name="Rule0058PageVariableMethodOnTemporaryTableTitle" xml:space="preserve">
+    <value>{0}.{1}(): You cannot use a temporary record for the Record parameter.</value>
+  </data>
+  <data name="Rule0058PageVariableMethodOnTemporaryTableFormat" xml:space="preserve">
+    <value>{0}.{1}(): You cannot use a temporary record for the Record parameter.</value>
+  </data>
+  <data name="Rule0058PageVariableMethodOnTemporaryTableDescription" xml:space="preserve">
+    <value>{0}.{1}(): You cannot use a temporary record for the Record parameter.</value>
   </data>
 </root>

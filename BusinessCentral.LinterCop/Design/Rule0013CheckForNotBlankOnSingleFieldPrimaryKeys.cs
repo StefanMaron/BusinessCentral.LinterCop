@@ -1,6 +1,7 @@
 ﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
@@ -46,7 +47,7 @@ namespace BusinessCentral.LinterCop.Design
             {
                 var property = field.GetProperty(PropertyKind.TableRelation);
                 if (property != null)
-                    return field.GetProperty(PropertyKind.TableRelation).ValueText.StartsWith("\"No. Series\"");
+                    return field.GetProperty(PropertyKind.TableRelation).ValueText.UnquoteIdentifier().StartsWith("No. Series");
                 return false;
             });
         }

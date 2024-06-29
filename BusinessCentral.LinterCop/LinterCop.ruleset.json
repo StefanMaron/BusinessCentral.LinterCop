@@ -281,6 +281,11 @@
       "id": "LC0057",
       "action": "Info",
       "justification": "Enum values must have non-empty a Caption to be selectable in the client."
+    },
+    {
+      "id": "LC0058",
+      "action": "Warning",
+      "justification": "PageVariable.SetRecord(): You cannot use a temporary record for the Record parameter."
     }
   ]
 }
