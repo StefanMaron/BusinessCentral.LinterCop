@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 namespace BusinessCentral.LinterCop.Design
 {
     [DiagnosticAnalyzer]
-    class Rule0020ApplicationAreaEqualsToPage : DiagnosticAnalyzer
+    public class Rule0020ApplicationAreaEqualsToPage : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0020ApplicationAreaEqualsToPage);
         public override VersionCompatibility SupportedVersions { get; } = VersionCompatibility.Fall2022OrGreater;

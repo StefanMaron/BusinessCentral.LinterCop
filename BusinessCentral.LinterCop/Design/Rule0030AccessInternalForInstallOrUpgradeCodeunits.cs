@@ -7,7 +7,7 @@ using BusinessCentral.LinterCop.AnalysisContextExtension;
 namespace BusinessCentral.LinterCop.Design
 {
     [DiagnosticAnalyzer]
-    class Rule0030AccessInternalForInstallAndUpgradeCodeunits : DiagnosticAnalyzer
+    public class Rule0030AccessInternalForInstallAndUpgradeCodeunits : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0030AccessInternalForInstallAndUpgradeCodeunits);
 

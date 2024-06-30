@@ -4,12 +4,12 @@ table 50100 MyTable
 
     fields
     {
-        [|field(1; MyField; Integer)|]
+        field(1; MyField; Integer)
         {
-            DataClassification = SystemMetadata;
+            [|DataClassification = SystemMetadata;|]
         }
     }
-    
+
     keys
     {
         key(Key1; MyField)
