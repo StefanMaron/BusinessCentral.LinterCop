@@ -1,6 +1,7 @@
 ﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
 using System.Collections.Immutable;
 
@@ -43,11 +44,15 @@ namespace BusinessCentral.LinterCop.Design
 
         private static bool TableContainsNoSeries(ITableTypeSymbol table)
         {
-            return table.Fields.Any(field =>
+            return table.Fields
+                .Where(x => x.Id > 0 && x.Id < 2000000000)
+                .Where(x => x.FieldClass == FieldClassKind.Normal)
+                .Where(x => x.Type.GetNavTypeKindSafe() == NavTypeKind.Code)
+                .Any(field =>
             {
-                var property = field.GetProperty(PropertyKind.TableRelation);
-                if (property != null)
-                    return field.GetProperty(PropertyKind.TableRelation).ValueText.UnquoteIdentifier().StartsWith("No. Series");
+                IPropertySymbol propertySymbol = field.GetProperty(PropertyKind.TableRelation);
+                if (propertySymbol != null && propertySymbol.ContainingSymbol != null)
+                    return SemanticFacts.IsSameName(propertySymbol.ContainingSymbol.Name.UnquoteIdentifier(), "No. Series");
                 return false;
             });
         }
