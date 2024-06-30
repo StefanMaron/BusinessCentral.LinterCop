@@ -21,17 +21,17 @@ namespace BusinessCentral.LinterCop.Design
         {
             if (ctx.IsObsoletePendingOrRemoved()) return;
 
-            IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
-            if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
-
-            if (!SemanticFacts.IsSameName(operation.TargetMethod.Name, "Clear")) return;
-            if (operation.Arguments.Count() < 1) return;
-
-            IOperation operand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
-            if (operand.GetSymbol().GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Codeunit) return;
-
-            try // temporary add an Try/Catch to investigate issue https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/523
+            try // temporary add an Try/Catch to investigate issue https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/656
             {
+                IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
+                if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
+
+                if (!SemanticFacts.IsSameName(operation.TargetMethod.Name, "Clear")) return;
+                if (operation.Arguments.Count() < 1) return;
+
+                IOperation operand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
+                if (operand.GetSymbol().GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Codeunit) return;
+
                 if (IsSingleInstanceCodeunitWithGlobalVars((ICodeunitTypeSymbol)operand.GetSymbol().GetTypeSymbol()))
                     ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0032ClearCodeunitSingleInstance, ctx.Operation.Syntax.GetLocation(), new Object[] { operand.GetSymbol().Name, operand.GetSymbol().GetTypeSymbol().Name }));
             }
