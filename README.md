@@ -12,6 +12,113 @@ If you are not happy with some rules or only feel like you need one rule of this
 
 The Linter is not finished yet (and probably never will be :D ) If you have any rule on mind that would be nice to be covered, **please start a new [discussion](https://github.com/StefanMaron/BusinessCentral.LinterCop/discussions)!** then we can maybe sharpen the rule a bit if necessary. This way we can build value for all of us. If you want to write the rule yourself you can of course also submit a pull request ;)
 
+### Contribute to Unit Tests
+
+You can also contribute to the collection of unit tests. If you want to add a new test case, please create a new test class in the [BusinessCentral.LinterCop.Test](./BusinessCentral.LinterCop.Test/) folder. The test class name should match the rule name. Use one of the existing test classes as an example.
+
+Test class:
+
+```CSharp
+namespace BusinessCentral.LinterCop.Test;
+
+public class RuleXXXX  // Id of the rule that is being tested
+{
+    private string _testCaseDir = "";
+
+    [SetUp]
+    public void Setup()
+    {
+        _testCaseDir = Path.Combine(Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName,
+            "TestCases", "RuleXXXX");  // Set path to subfolder with test cases
+    }
+
+    [Test]
+    [TestCase("1")]  // Test case 1.al
+    [TestCase("2")]  // Test case 2.al
+    ...
+    [TestCase("n")]
+    public async Task HasDiagnostic(string testCase)  // Positive test
+    {
+        // Load code file for test case
+        var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
+            .ConfigureAwait(false);
+
+        // Create fixture for rule
+        var fixture = RoslynFixtureFactory.Create<RuleXXXXMyCodeRule>();
+        // Check for reported diagnostic
+        fixture.HasDiagnostic(code, DiagnosticDescriptors.RuleXXXXMyCodeRule.Id);
+    }
+
+    [Test]
+    [TestCase("1")]  // Test case 1.al
+    [TestCase("2")]  // Test case 2.al
+    ...
+    [TestCase("n")]
+    public async Task NoDiagnostic(string testCase)  // Negative test
+    {
+        // Load code file for test case
+        var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
+            .ConfigureAwait(false);
+
+        // Create fixture for rule
+        var fixture = RoslynFixtureFactory.Create<RuleXXXXMyCodeRule>();
+        // Check for no reported diagnostic
+        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.RuleXXXXMyCodeRule.Id);
+    }
+}
+```
+
+Test cases can be *positive* (a diagnostic is expected) or *negative* (no diagnostic is expected) and are contained in the [BusinessCentral.LinterCop.Test/TestCases/](./BusinessCentral.LinterCop.Test/TestCases/) folder, with a subfolder per rule and a sub-subfolder for positive *HasDiagnostic* and negative *NoDiagnostic* test cases. The individual test cases are numbered (if you have an idea for a better naming scheme, please let me know) and must be compilable AL code.
+
+Basic folder structure:
+
+```bash
+├───BusinessCentral.LinterCop.Test
+│   ├───RoslynTestKit
+│   │   ├───CodeActionLocators
+│   │   └───Utils
+│   └───TestCases
+│       ├───Rule0001
+│       │   ├───HasDiagnostic
+│       │   │   ├───1.al
+│       │   │   ├───2.al
+│       │   │   └───X.al
+│       │   └───NoDiagnostic
+│       │   │   ├───1.al
+│       │   │   ├───2.al
+│       │   │   └───X.al
+│       ├───Rule0002
+│       │   ├───HasDiagnostic
+│       │   │   ├───X.al
+│       │   └───NoDiagnostic
+│       │   │   ├───X.al
+│       ├───RuleXXXX
+│       │   ├───HasDiagnostic
+│       │   │   ├───X.al
+│       │   └───NoDiagnostic
+│       │   │   ├───X.al
+├───Rule0001.cs
+├───Rule0002.cs
+└───RuleXXXX.cs
+```
+
+You surround the range in the code you want to check for the diagnostic with `[|` and`|]`.
+
+Test case:
+
+```AL
+codeunit 50100 MyCodeunit
+{
+    procedure MyProcedure()
+    var
+        MyVariable: Integer;
+    begin
+        // We want to check for a diagnostic between the [| and |] markers
+        [|MyVariable := 1;|]
+    end;
+}
+```
+
 ## Setup
 The LinterCop is compatible with various approaches and solutions for the AL Language extension for Microsoft Dynamics 365 Business Central.
 
