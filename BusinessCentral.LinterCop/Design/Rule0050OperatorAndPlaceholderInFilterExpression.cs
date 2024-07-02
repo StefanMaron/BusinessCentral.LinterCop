@@ -10,7 +10,7 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0050OperatorAndPlaceholderInFilterExpression : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0050OperatorAndPlaceholderInFilterExpression);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0050OperatorAndPlaceholderInFilterExpression, DiagnosticDescriptors.Rule0059SingleQuoteEscapingIssueDetected);
 
         public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeInvocation), OperationKind.InvocationExpression);
 
@@ -36,6 +36,11 @@ namespace BusinessCentral.LinterCop.Design
                 return;
 
             string parameterString = operand.Syntax.ToFullString();
+            if (parameterString.Equals("'<>'''"))
+            {
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0059SingleQuoteEscapingIssueDetected, operand.Syntax.GetLocation()));
+                return;
+            }
 
             string pattern = @"%\d+"; // Only when a placeholders (%1) is used in the filter expression we need to raise the rule that the placeholders won't work as expected
             Regex regex = new Regex(pattern);
