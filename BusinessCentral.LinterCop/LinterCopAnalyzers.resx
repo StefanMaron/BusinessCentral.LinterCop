@@ -636,4 +636,13 @@
   <data name="Rule0058PageVariableMethodOnTemporaryTableDescription" xml:space="preserve">
     <value>{0}.{1}(): You cannot use a temporary record for the Record parameter.</value>
   </data>
+  <data name="Rule0059SingleQuoteEscapingIssueDetectedTitle" xml:space="preserve">
+    <value>Single quote escaping issue detected: Use %1 or '''' for correct text escaping.</value>
+  </data>
+  <data name="Rule0059SingleQuoteEscapingIssueDetectedFormat" xml:space="preserve">
+    <value>Single quote escaping issue detected: Use %1 or '''' for correct text escaping.</value>
+  </data>
+  <data name="Rule0059SingleQuoteEscapingIssueDetectedDescription" xml:space="preserve">
+    <value>Single quote escaping issue detected: Use %1 or '''' for correct text escaping.</value>
+  </data>
 </root>

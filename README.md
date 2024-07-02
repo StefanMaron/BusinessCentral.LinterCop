@@ -212,3 +212,4 @@ For an example and the default values see: [LinterCop.ruleset.json](LinterCop.ru
 |[LC0056](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0056)|Empty Enum values should not have a specified `Caption` property.|Info|
 |[LC0057](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0057)|Enum values must have non-empty a `Caption` to be selectable in the client|Info|
 |[LC0058](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0058)|PageVariable.SetRecord(): You cannot use a temporary record for the Record parameter.|Warning|
+|[LC0059](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0058)|Single quote escaping issue detected.|Warning|
