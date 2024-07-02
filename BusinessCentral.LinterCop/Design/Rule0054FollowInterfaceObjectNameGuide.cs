@@ -18,7 +18,7 @@ namespace BusinessCentral.LinterCop.Design
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationAction(new Action<CompilationAnalysisContext>(this.PopulateListOfAffixes));
+            context.RegisterCompilationStartAction(new Action<CompilationStartAnalysisContext>(this.PopulateListOfAffixes));
             context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.AnalyzeObjectName), SymbolKind.Interface);
         }
 
@@ -33,22 +33,24 @@ namespace BusinessCentral.LinterCop.Design
             if (_affixes is null && interfaceTypeSymbol.Name.StartsWith(_charCapitalI) && !char.IsWhiteSpace(interfaceTypeSymbol.Name[1]))
                 return;
 
-            int? charAfterAffix = GetIndexAfterAffix(interfaceTypeSymbol.Name);
-            if (charAfterAffix is null)
+            int? indexAfterAffix = GetIndexAfterAffix(interfaceTypeSymbol.Name);
+            if (indexAfterAffix is null)
                 return;
 
+            string objectNameWithoutPrefix = interfaceTypeSymbol.Name.Remove(0, indexAfterAffix.GetValueOrDefault());
+
             // The first character after the prefix should be a capital 'I'
-            if (RemoveSpecialCharacters(interfaceTypeSymbol.Name)[charAfterAffix.GetValueOrDefault()] != _charCapitalI)
+            if (RemoveSpecialCharacters(objectNameWithoutPrefix)[0] != _charCapitalI)
             {
                 ReportDiagnostic(context, interfaceTypeSymbol);
                 return;
             }
 
             // The character after the capital 'I' should not be a whitespace
-            int index = interfaceTypeSymbol.Name.IndexOf(_charCapitalI, charAfterAffix.GetValueOrDefault());
-            if (index != -1 && index < interfaceTypeSymbol.Name.Length - 1)
+            int index = objectNameWithoutPrefix.IndexOf(_charCapitalI);
+            if (index != -1 && index < objectNameWithoutPrefix.Length - 1)
             {
-                if (char.IsWhiteSpace(interfaceTypeSymbol.Name[index + 1]))
+                if (char.IsWhiteSpace(objectNameWithoutPrefix[index + 1]))
                 {
                     ReportDiagnostic(context, interfaceTypeSymbol);
                     return;
@@ -56,7 +58,7 @@ namespace BusinessCentral.LinterCop.Design
             }
         }
 
-        private void PopulateListOfAffixes(CompilationAnalysisContext context)
+        private void PopulateListOfAffixes(CompilationStartAnalysisContext context)
         {
             _affixes = GetAffixes(context.Compilation);
         }
@@ -78,7 +80,7 @@ namespace BusinessCentral.LinterCop.Design
         {
             foreach (var affix in _affixes)
             {
-                if (typeSymbolName.ToLowerInvariant().StartsWith(affix))
+                if (typeSymbolName.StartsWith(affix, StringComparison.OrdinalIgnoreCase))
                 {
                     int affixLength = affix.Length;
                     if (typeSymbolName.Length > affixLength)
@@ -94,19 +96,18 @@ namespace BusinessCentral.LinterCop.Design
 
         private static List<string> GetAffixes(Compilation compilation)
         {
-            List<string> affixes = new List<string>();
-
             AppSourceCopConfiguration copConfiguration = AppSourceCopConfigurationProvider.GetAppSourceCopConfiguration(compilation);
             if (copConfiguration is null)
                 return null;
 
-            if (!string.IsNullOrEmpty(copConfiguration.MandatoryPrefix) && !affixes.Contains(copConfiguration.MandatoryPrefix))
-                affixes.Add(copConfiguration.MandatoryPrefix.ToLowerInvariant());
+            List<string> affixes = new List<string>();
+            if (!string.IsNullOrEmpty(copConfiguration.MandatoryPrefix) && !affixes.Contains(copConfiguration.MandatoryPrefix, StringComparer.OrdinalIgnoreCase))
+                affixes.Add(copConfiguration.MandatoryPrefix);
 
             foreach (string mandatoryAffix in copConfiguration.MandatoryAffixes)
             {
-                if (!string.IsNullOrEmpty(mandatoryAffix) && !affixes.Contains(mandatoryAffix))
-                    affixes.Add(mandatoryAffix.ToLowerInvariant());
+                if (!string.IsNullOrEmpty(mandatoryAffix) && !affixes.Contains(mandatoryAffix, StringComparer.OrdinalIgnoreCase))
+                    affixes.Add(mandatoryAffix);
             }
             return affixes;
         }
