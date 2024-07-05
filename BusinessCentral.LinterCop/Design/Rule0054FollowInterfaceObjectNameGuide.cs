@@ -35,7 +35,10 @@ namespace BusinessCentral.LinterCop.Design
 
             int? indexAfterAffix = GetIndexAfterAffix(interfaceTypeSymbol.Name);
             if (indexAfterAffix is null)
+            {
+                ReportDiagnostic(context, interfaceTypeSymbol);
                 return;
+            }
 
             string objectNameWithoutPrefix = interfaceTypeSymbol.Name.Remove(0, indexAfterAffix.GetValueOrDefault());
 
@@ -78,7 +81,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private static int? GetIndexAfterAffix(string typeSymbolName)
         {
-            foreach (var affix in _affixes)
+            foreach (var affix in _affixes ?? Enumerable.Empty<string>())
             {
                 if (typeSymbolName.StartsWith(affix, StringComparison.OrdinalIgnoreCase))
                 {
