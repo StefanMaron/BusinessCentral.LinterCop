@@ -103,6 +103,9 @@ namespace BusinessCentral.LinterCop.Design
             if (copConfiguration is null)
                 return null;
 
+            if (copConfiguration.MandatoryAffixes == null)
+                return null;
+
             List<string> affixes = new List<string>();
             if (!string.IsNullOrEmpty(copConfiguration.MandatoryPrefix) && !affixes.Contains(copConfiguration.MandatoryPrefix, StringComparer.OrdinalIgnoreCase))
                 affixes.Add(copConfiguration.MandatoryPrefix);
