@@ -217,3 +217,4 @@ For an example and the default values see: [LinterCop.ruleset.json](LinterCop.ru
 |[LC0061](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0061)|Pages of type API must have the `ODataKeyFields` property set to the SystemId field.|Info|
 |[LC0062](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0062)|Mandatory field is missing on API page.|Info|
 |[LC0063](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0063)|Consider naming field with a more descriptive name.|Info|
+|[LC0064](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0064)|Use table field ToolTip instead of page field ToolTip.|Info|

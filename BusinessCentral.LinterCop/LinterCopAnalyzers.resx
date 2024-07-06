@@ -681,4 +681,13 @@
   <data name="Rule0063GiveFieldMoreDescriptiveNameDescription" xml:space="preserve">
     <value>Consider naming field with a more descriptive name: '{0}'.</value>
   </data>
+  <data name="Rule0064UseTableFieldToolTipInsteadOfPageFieldToolTipTitle" xml:space="preserve">
+    <value>Use table field ToolTip instead of page field ToolTip.</value>
+  </data>
+  <data name="Rule0064UseTableFieldToolTipInsteadOfPageFieldToolTipFormat" xml:space="preserve">
+    <value>Use table field ToolTip instead of page field ToolTip.</value>
+  </data>
+  <data name="Rule0064UseTableFieldToolTipInsteadOfPageFieldToolTipDescription" xml:space="preserve">
+    <value>Use table field ToolTip instead of page field ToolTip.</value>
+  </data>
 </root>
