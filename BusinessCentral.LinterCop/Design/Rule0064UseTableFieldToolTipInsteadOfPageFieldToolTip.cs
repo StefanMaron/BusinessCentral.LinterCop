@@ -1,3 +1,4 @@
+#if Spring2024OrGreater
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
@@ -61,3 +62,4 @@ namespace BusinessCentral.LinterCop.Design
         }
     }
 }
+#endif
