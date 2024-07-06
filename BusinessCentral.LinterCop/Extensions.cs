@@ -1,8 +1,8 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿#nullable enable
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 
 namespace BusinessCentral.LinterCop
@@ -21,25 +21,25 @@ namespace BusinessCentral.LinterCop
 
     internal static bool IsValidCamelCase(this string str) => !string.IsNullOrEmpty(str) && Extensions.CamelCaseRegex.IsMatch(str);
 
-    internal static IdentifierNameSyntax GetIdentifierNameSyntax(
+    internal static IdentifierNameSyntax? GetIdentifierNameSyntax(
       this SyntaxNodeAnalysisContext context)
     {
         if (context.Node.IsKind(SyntaxKind.IdentifierName))
-        return (IdentifierNameSyntax) context.Node;
-        return !context.Node.IsKind(SyntaxKind.IdentifierNameOrEmpty) ? (IdentifierNameSyntax) null : ((IdentifierNameOrEmptySyntax) context.Node).IdentifierName;
+          return (IdentifierNameSyntax?) context.Node;
+        return !context.Node.IsKind(SyntaxKind.IdentifierNameOrEmpty) ? (IdentifierNameSyntax?) null : ((IdentifierNameOrEmptySyntax) context.Node).IdentifierName;
     }
 
     internal static bool TryGetSymbolFromIdentifier(
       SyntaxNodeAnalysisContext syntaxNodeAnalysisContext,
       IdentifierNameSyntax identifierName,
       SymbolKind symbolKind,
-      out ISymbol symbol)
+      out ISymbol? symbol)
     {
-        symbol = (ISymbol) null;
+        symbol = (ISymbol?) null;
         SymbolInfo symbolInfo = syntaxNodeAnalysisContext.SemanticModel.GetSymbolInfo((ExpressionSyntax) identifierName, new CancellationToken());
-        ISymbol symbol1 = symbolInfo.Symbol;
+        ISymbol? symbol1 = symbolInfo.Symbol;
         if ((symbol1 != null ? (symbol1.Kind != symbolKind ? 1 : 0) : 1) != 0)
-        return false;
+          return false;
         symbol = symbolInfo.Symbol;
         return true;
     }

@@ -1,11 +1,11 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿#nullable enable
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
 using System.Collections.Immutable;
 using System.Reflection;
 
-#nullable enable
 namespace BusinessCentral.LinterCop.Design
 {
     public delegate bool Filter(IGrouping<int, Rule0044AnalyzeTransferFields.Field> fieldGroup);
@@ -305,7 +305,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private Table GetTableWithFieldsByTableName(Compilation compilation, string tableName, Dictionary<string, TableExtensionSyntax>? tableExtensions = null)
         {
-            IApplicationObjectTypeSymbol tableSymbol = compilation.GetApplicationObjectTypeSymbolsByNameAcrossModules(SymbolKind.Table, tableName).FirstOrDefault();
+            IApplicationObjectTypeSymbol? tableSymbol = compilation.GetApplicationObjectTypeSymbolsByNameAcrossModules(SymbolKind.Table, tableName).FirstOrDefault();
 
             Table table = new Table(tableName);
 
@@ -337,7 +337,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private string? GetSourceTableByPageName(Compilation compilation, string pageName)
         {
-            IApplicationObjectTypeSymbol pageSymbol = compilation.GetApplicationObjectTypeSymbolsByNameAcrossModules(SymbolKind.Page, pageName).FirstOrDefault();
+            IApplicationObjectTypeSymbol? pageSymbol = compilation.GetApplicationObjectTypeSymbolsByNameAcrossModules(SymbolKind.Page, pageName).FirstOrDefault();
 
             if (pageSymbol != null)
             {
