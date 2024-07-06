@@ -316,6 +316,11 @@
       "id": "LC0063",
       "action": "Info",
       "justification": "Consider naming field with a more descriptive name."
+    },
+    {
+      "id": "LC0064",
+      "action": "Info",
+      "justification": "Use table field ToolTip instead of page field ToolTip."
     }
   ]
 }
