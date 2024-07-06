@@ -645,4 +645,40 @@
   <data name="Rule0059SingleQuoteEscapingIssueDetectedDescription" xml:space="preserve">
     <value>Single quote escaping issue detected: Use %1 or '''' for correct text escaping.</value>
   </data>
+  <data name="Rule0060PropertyApplicationAreaOnApiPageTitle" xml:space="preserve">
+    <value>The 'ApplicationArea' property is not applicable to API pages.</value>
+  </data>
+  <data name="Rule0060PropertyApplicationAreaOnApiPageFormat" xml:space="preserve">
+    <value>The 'ApplicationArea' property is not applicable to API pages.</value>
+  </data>
+  <data name="Rule0060PropertyApplicationAreaOnApiPageDescription" xml:space="preserve">
+    <value>The 'ApplicationArea' property is not applicable to API pages"</value>
+  </data>
+  <data name="Rule0061SetODataKeyFieldsWithSystemIdFieldTitle" xml:space="preserve">
+    <value>Pages of type API must have the 'ODataKeyFields' property set to the 'SystemId' field.</value>
+  </data>
+  <data name="Rule0061SetODataKeyFieldsWithSystemIdFieldFormat" xml:space="preserve">
+    <value>Pages of type API must have the 'ODataKeyFields' property set to the 'SystemId' field.</value>
+  </data>
+  <data name="Rule0061SetODataKeyFieldsWithSystemIdFieldDescription" xml:space="preserve">
+    <value>Pages of type API must have the 'ODataKeyFields' property set to the 'SystemId' field.</value>
+  </data>
+  <data name="Rule0062MandatoryFieldMissingOnApiPageTitle" xml:space="preserve">
+    <value>"Field 'Rec.{0}' exposed with the name '{1}' should always be included on API Pages."</value>
+  </data>
+  <data name="Rule0062MandatoryFieldMissingOnApiPageFormat" xml:space="preserve">
+    <value>"Field 'Rec.{0}' exposed with the name '{1}' should always be included on API Pages."</value>
+  </data>
+  <data name="Rule0062MandatoryFieldMissingOnApiPageDescription" xml:space="preserve">
+    <value>"Field 'Rec.{0}' exposed with the name '{1}' should always be included on API Pages."</value>
+  </data>
+  <data name="Rule0063GiveFieldMoreDescriptiveNameTitle" xml:space="preserve">
+    <value>Consider naming field with a more descriptive name: '{0}'.</value>
+  </data>
+  <data name="Rule0063GiveFieldMoreDescriptiveNameFormat" xml:space="preserve">
+    <value>Consider naming field with a more descriptive name: '{0}'.</value>
+  </data>
+  <data name="Rule0063GiveFieldMoreDescriptiveNameDescription" xml:space="preserve">
+    <value>Consider naming field with a more descriptive name: '{0}'.</value>
+  </data>
 </root>
