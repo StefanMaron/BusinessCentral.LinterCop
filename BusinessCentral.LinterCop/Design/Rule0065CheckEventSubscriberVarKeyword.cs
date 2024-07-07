@@ -67,7 +67,13 @@ public class Rule0065CheckEventSubscriberVarKeyword : DiagnosticAnalyzer
             return null;
         }
         
-        var eventName = eventSubscriberAttribute.Arguments[2].ValueText; 
+        var eventName = eventSubscriberAttribute.Arguments[2].ValueText;
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (eventName == null) 
+        {
+            return null;
+        }
+        
         return applicationObject.GetFirstMethod(eventName, context.Compilation);
     }
 
