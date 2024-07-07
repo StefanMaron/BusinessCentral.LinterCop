@@ -7,10 +7,10 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.InternalSyntax;
 namespace BusinessCentral.LinterCop.Design;
 
 [DiagnosticAnalyzer]
-public class Rule0060CheckEventSubscriberVarKeyword : DiagnosticAnalyzer
+public class Rule0065CheckEventSubscriberVarKeyword : DiagnosticAnalyzer
 {
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0060EventSubscriberVarCheck);
+        ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0065EventSubscriberVarCheck);
 
     public override void Initialize(AnalysisContext context)
     {
@@ -47,7 +47,7 @@ public class Rule0060CheckEventSubscriberVarKeyword : DiagnosticAnalyzer
             if (publisherParameter.IsVar && !subscriberParameter.IsVar)
             {
                 context.ReportDiagnostic(Diagnostic.Create(
-                    DiagnosticDescriptors.Rule0060EventSubscriberVarCheck,
+                    DiagnosticDescriptors.Rule0065EventSubscriberVarCheck,
                     subscriberParameter.GetLocation(),
                     new object[] { subscriberParameter.Name}));
             }
@@ -73,13 +73,13 @@ public class Rule0060CheckEventSubscriberVarKeyword : DiagnosticAnalyzer
 
     public static class DiagnosticDescriptors
     {
-        public static readonly DiagnosticDescriptor Rule0060EventSubscriberVarCheck = new(
-            id: LinterCopAnalyzers.AnalyzerPrefix + "0060",
-            title: LinterCopAnalyzers.GetLocalizableString("Rule0060EventSubscriberVarCheckTitle"),
-            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0060EventSubscriberVarCheckFormat"),
+        public static readonly DiagnosticDescriptor Rule0065EventSubscriberVarCheck = new(
+            id: LinterCopAnalyzers.AnalyzerPrefix + "0065",
+            title: LinterCopAnalyzers.GetLocalizableString("Rule0065EventSubscriberVarCheckTitle"),
+            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0065EventSubscriberVarCheckFormat"),
             category: "Design",
             defaultSeverity: DiagnosticSeverity.Warning, isEnabledByDefault: true,
-            description:  LinterCopAnalyzers.GetLocalizableString("Rule0060EventSubscriberVarCheckDescription"),
-            helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0060");
+            description:  LinterCopAnalyzers.GetLocalizableString("Rule0065EventSubscriberVarCheckDescription"),
+            helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0065");
     }
 }
