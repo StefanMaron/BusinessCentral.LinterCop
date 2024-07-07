@@ -6,7 +6,7 @@ codeunit 50000 MyCodeunit
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::MyCodeunit, MyProcedure, '', false, false)]
-    local procedure MyProcedure2([|MyTable|]: Record MyTable; var [|Mytable2|]: Record MyTable; [|MyTable3|]: Record MyTable)
+    local procedure MyProcedure2(var MyTable: Record MyTable; var Mytable2: Record MyTable; [|MyTable3|]: Record MyTable)
     begin
 
     end;
