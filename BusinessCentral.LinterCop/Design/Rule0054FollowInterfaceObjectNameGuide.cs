@@ -107,10 +107,13 @@ namespace BusinessCentral.LinterCop.Design
             if (!string.IsNullOrEmpty(copConfiguration.MandatoryPrefix) && !affixes.Contains(copConfiguration.MandatoryPrefix, StringComparer.OrdinalIgnoreCase))
                 affixes.Add(copConfiguration.MandatoryPrefix);
 
-            foreach (string mandatoryAffix in copConfiguration.MandatoryAffixes)
+            if (copConfiguration.MandatoryAffixes != null)
             {
-                if (!string.IsNullOrEmpty(mandatoryAffix) && !affixes.Contains(mandatoryAffix, StringComparer.OrdinalIgnoreCase))
-                    affixes.Add(mandatoryAffix);
+                foreach (string mandatoryAffix in copConfiguration.MandatoryAffixes)
+                {
+                    if (!string.IsNullOrEmpty(mandatoryAffix) && !affixes.Contains(mandatoryAffix, StringComparer.OrdinalIgnoreCase))
+                        affixes.Add(mandatoryAffix);
+                }
             }
             return affixes;
         }
