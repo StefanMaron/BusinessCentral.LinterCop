@@ -690,4 +690,13 @@
   <data name="Rule0064UseTableFieldToolTipInsteadOfPageFieldToolTipDescription" xml:space="preserve">
     <value>Use table field ToolTip instead of page field ToolTip.</value>
   </data>
+  <data name="Rule0065EventSubscriberVarCheckTitle" xml:space="preserve">
+    <value>Event subscriber var keyword mismatch</value>
+  </data>
+  <data name="Rule0065EventSubscriberVarCheckFormat" xml:space="preserve">
+    <value>Parameter '{0}' must use the 'var' keyword if the publisher parameter is 'var'.</value>
+  </data>
+  <data name="Rule0065EventSubscriberVarCheckDescription" xml:space="preserve">
+    <value>Ensures that event subscriber methods use 'var' keyword for parameters as defined by event publisher.</value>
+  </data>
 </root>

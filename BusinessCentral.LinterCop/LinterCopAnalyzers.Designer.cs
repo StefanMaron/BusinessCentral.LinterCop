@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Resources;
 using System.Runtime.CompilerServices;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 
 namespace BusinessCentral.LinterCop
 {
@@ -40,5 +41,14 @@ namespace BusinessCentral.LinterCop
         internal static string AnalyzerPrefix => LinterCopAnalyzers.ResourceManager.GetString(nameof(AnalyzerPrefix), LinterCopAnalyzers.resourceCulture);
 
         internal static string Fix0021ConfirmImplementConfirmManagementMessage => LinterCopAnalyzers.ResourceManager.GetString("Fix0021ConfirmImplementConfirmManagementMessage", LinterCopAnalyzers.resourceCulture);
+
+        internal static LocalizableString GetLocalizableString(string nameOfLocalizableResource)
+        {
+            return new LocalizableResourceString(
+                nameOfLocalizableResource,
+                LinterCopAnalyzers.ResourceManager,
+                typeof(LinterCopAnalyzers)
+                );
+        }
     }
 }
