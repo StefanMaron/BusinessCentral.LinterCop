@@ -74,14 +74,33 @@ namespace BusinessCentral.LinterCop.Design
 
         private static bool IsSingleInstanceCodeunitWithGlobalVars(ICodeunitTypeSymbol codeunitTypeSymbol)
         {
-            IPropertySymbol singleInstanceProperty = codeunitTypeSymbol.GetProperty(PropertyKind.SingleInstance);
-            if (singleInstanceProperty == null || !(bool)singleInstanceProperty.Value) return false;
+            if (!IsSingleInstanceCodeunit(codeunitTypeSymbol))
+            {
+                return false;
+            }
 
             var globalVariables = codeunitTypeSymbol.GetMembers().Where(members => members.Kind == SymbolKind.GlobalVariable);
             var globalVariablesNonRecordTypes = globalVariables.Where(vars => vars.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Record);
 
             bool globalVariablesExists = globalVariablesNonRecordTypes.Count() != 0;
             return globalVariablesExists;
+        }
+
+        private static bool IsSingleInstanceCodeunit(ICodeunitTypeSymbol codeunitTypeSymbol)
+        {
+            IPropertySymbol singleInstanceProperty = codeunitTypeSymbol.GetProperty(PropertyKind.SingleInstance);
+            if (singleInstanceProperty == null)
+            {
+                return false;
+            }
+
+            // codeunits without source code could return "1" for the SingleInstance value
+            if (singleInstanceProperty.Value is not bool booleanValue)
+            {
+                return false;
+            }
+
+            return booleanValue;
         }
     }
 }
