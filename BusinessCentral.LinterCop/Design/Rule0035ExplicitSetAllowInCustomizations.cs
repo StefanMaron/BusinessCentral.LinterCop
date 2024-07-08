@@ -35,7 +35,17 @@ namespace BusinessCentral.LinterCop.Design
             if (!tableFields.Any()) return;
 
             IEnumerable<IApplicationObjectTypeSymbol> relatedPages = GetRelatedPages(ctx);
-            if (!relatedPages.Any()) return;
+
+            if (!relatedPages.Any())
+            {
+                if (ctx.Symbol.GetTypeSymbol().Kind != SymbolKind.TableExtension)
+                    return;
+                ITableExtensionTypeSymbol tableExtension = (ITableExtensionTypeSymbol)ctx.Symbol;
+                if (!LookupOrDrillDownPageIsSet((ITableTypeSymbol)tableExtension.Target))
+                    return;
+                // allows diagnostic for table extension fields where base table has lookup or drilldown page set
+                // even if no relatedPages exist directly
+            }
 
             NavTypeKind navTypeKind = ctx.Symbol.GetContainingObjectTypeSymbol().GetNavTypeKindSafe();
             ICollection<IFieldSymbol> pageFields = GetPageFields(navTypeKind, relatedPages);
@@ -117,6 +127,11 @@ namespace BusinessCentral.LinterCop.Design
                 default:
                     return true;
             }
+        }
+
+        private static bool LookupOrDrillDownPageIsSet(ITableTypeSymbol table)
+        {
+            return table.Properties.Any(e => e.PropertyKind == PropertyKind.DrillDownPageId || e.PropertyKind == PropertyKind.LookupPageId);
         }
     }
 }
