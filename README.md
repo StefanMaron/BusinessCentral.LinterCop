@@ -212,3 +212,9 @@ For an example and the default values see: [LinterCop.ruleset.json](LinterCop.ru
 |[LC0056](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0056)|Empty Enum values should not have a specified `Caption` property.|Info|
 |[LC0057](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0057)|Enum values must have non-empty a `Caption` to be selectable in the client|Info|
 |[LC0058](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0058)|PageVariable.SetRecord(): You cannot use a temporary record for the Record parameter.|Warning|
+|[LC0059](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0058)|Single quote escaping issue detected.|Warning|
+|[LC0060](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0060)|The `ApplicationArea` property is not applicable to API pages.|Info|
+|[LC0061](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0061)|Pages of type API must have the `ODataKeyFields` property set to the SystemId field.|Info|
+|[LC0062](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0062)|Mandatory field is missing on API page.|Info|
+|[LC0063](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0063)|Consider naming field with a more descriptive name.|Info|
+|[LC0064](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0064)|Use table field ToolTip instead of page field ToolTip.|Info|

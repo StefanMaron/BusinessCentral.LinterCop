@@ -291,6 +291,36 @@
       "id": "LC0058",
       "action": "Warning",
       "justification": "PageVariable.SetRecord(): You cannot use a temporary record for the Record parameter."
+    },
+    {
+      "id": "LC0059",
+      "action": "Warning",
+      "justification": "Single quote escaping issue detected."
+    },
+    {
+      "id": "LC0060",
+      "action": "Info",
+      "justification": " The ApplicationArea property is not applicable to API pages."
+    },
+    {
+      "id": "LC0061",
+      "action": "Info",
+      "justification": "Pages of type API must have the ODataKeyFields property set to the SystemId field."
+    },
+    {
+      "id": "LC0062",
+      "action": "Info",
+      "justification": "Mandatory field is missing on API page."
+    },
+    {
+      "id": "LC0063",
+      "action": "Info",
+      "justification": "Consider naming field with a more descriptive name."
+    },
+    {
+      "id": "LC0064",
+      "action": "Info",
+      "justification": "Use table field ToolTip instead of page field ToolTip."
     }
   ]
 }
