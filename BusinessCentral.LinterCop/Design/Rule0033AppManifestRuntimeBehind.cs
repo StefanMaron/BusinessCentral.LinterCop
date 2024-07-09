@@ -27,7 +27,7 @@ namespace BusinessCentral.LinterCop.Design
 #endif
 
             if (manifest == null) return;
-            if (manifest.Runtime == null) return;
+            if (manifest.Runtime == null || manifest.Runtime == RuntimeVersion.CurrentRelease) return; // In the case the runtime version isn't specified in the app.json it returns the RuntimeVersion.CurrentRelease
             if (manifest.Application == null && manifest.Platform == null) return;
 
             GetTargetProperty(manifest, out string propertyName, out Version propertyVersion);
