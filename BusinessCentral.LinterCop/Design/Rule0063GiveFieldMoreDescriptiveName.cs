@@ -1,6 +1,7 @@
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
@@ -17,9 +18,9 @@ namespace BusinessCentral.LinterCop.Design
             };
 
         public override void Initialize(AnalysisContext context)
-            => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.AnalyzePropertyApplicationAreaOnFieldsOfApiPage), SymbolKind.Page);
+            => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.AnalyzeFieldNames), SymbolKind.Page);
 
-        private void AnalyzePropertyApplicationAreaOnFieldsOfApiPage(SymbolAnalysisContext ctx)
+        private void AnalyzeFieldNames(SymbolAnalysisContext ctx)
         {
             if (ctx.IsObsoletePendingOrRemoved()) return;
 
@@ -31,6 +32,7 @@ namespace BusinessCentral.LinterCop.Design
 
             IEnumerable<IControlSymbol> pageFields = pageTypeSymbol.FlattenedControls
                                                             .Where(e => e.ControlKind == ControlKind.Field)
+                                                            .Where(e => IsIdentifierValueTextRec(e, ctx))
                                                             .Where(e => e.RelatedFieldSymbol != null);
 
             foreach (IControlSymbol field in pageFields)
@@ -56,11 +58,37 @@ namespace BusinessCentral.LinterCop.Design
 
             return null;
         }
-        public static string ReplaceNoWithNumber(string input)
+        private static string ReplaceNoWithNumber(string input)
         {
             input = input.Replace("No", "Number");
             input = input.Replace("no", "number");
             return input;
+        }
+
+        private static bool IsIdentifierValueTextRec(IControlSymbol controlSymbol, SymbolAnalysisContext ctx)
+        {
+            if (controlSymbol.DeclaringSyntaxReference.GetSyntax(ctx.CancellationToken) is not PageFieldSyntax pageFieldSyntax)
+                return false;
+
+            if (pageFieldSyntax.Expression is not MemberAccessExpressionSyntax memberAccessExpressionSyntax)
+                return false;
+
+            if (memberAccessExpressionSyntax.Expression is not IdentifierNameSyntax identifierNameSyntax)
+                return false;
+
+            return SemanticFacts.IsSameName(identifierNameSyntax.Identifier.ValueText, "Rec");
+        }
+
+        public static class DiagnosticDescriptors
+        {
+            public static readonly DiagnosticDescriptor Rule0063GiveFieldMoreDescriptiveName = new(
+                id: LinterCopAnalyzers.AnalyzerPrefix + "0063",
+                title: LinterCopAnalyzers.GetLocalizableString("Rule0063GiveFieldMoreDescriptiveNameTitle"),
+                messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0063GiveFieldMoreDescriptiveNameFormat"),
+                category: "Design",
+                defaultSeverity: DiagnosticSeverity.Info, isEnabledByDefault: true,
+                description: LinterCopAnalyzers.GetLocalizableString("Rule0063GiveFieldMoreDescriptiveNameDescription"),
+                helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0063");
         }
     }
 }
