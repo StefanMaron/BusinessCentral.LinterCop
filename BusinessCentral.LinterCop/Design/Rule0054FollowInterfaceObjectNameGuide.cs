@@ -30,7 +30,7 @@ namespace BusinessCentral.LinterCop.Design
                 return;
 
             // The interface object should start with a capital 'I' and should not have a space after it
-            if (_affixes is null && interfaceTypeSymbol.Name.StartsWith(_charCapitalI) && !char.IsWhiteSpace(interfaceTypeSymbol.Name[1]))
+            if (interfaceTypeSymbol.Name.StartsWith(_charCapitalI) && !char.IsWhiteSpace(interfaceTypeSymbol.Name[1]))
                 return;
 
             int? indexAfterAffix = GetIndexAfterAffix(interfaceTypeSymbol.Name);
