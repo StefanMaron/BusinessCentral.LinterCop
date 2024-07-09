@@ -10,7 +10,7 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0027RunPageImplementPageManagement : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0027RunPageImplementPageManagement);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0027RunPageImplementPageManagement, DiagnosticDescriptors.Rule0000ErrorInRule);
 
         public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckRunPageImplementPageManagement), OperationKind.InvocationExpression);
 
@@ -38,8 +38,15 @@ namespace BusinessCentral.LinterCop.Design
                     break;
 
                 case SyntaxKind.OptionAccessExpression:
-                    if (IsSupportedRecord(((IConversionExpression)operation.Arguments[1].Value).Operand))
-                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0027RunPageImplementPageManagement, ctx.Operation.Syntax.GetLocation()));
+                    try // Investigate https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/682
+                    {
+                        if (IsSupportedRecord(((IConversionExpression)operation.Arguments[1].Value).Operand))
+                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0027RunPageImplementPageManagement, ctx.Operation.Syntax.GetLocation()));
+                    }
+                    catch
+                    {
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0027", "IsSupportedRecord", "" }));
+                    }
                     break;
 
                 default:
