@@ -320,7 +320,17 @@
     {
       "id": "LC0064",
       "action": "Info",
-      "justification": "Use table field ToolTip instead of page field ToolTip."
+      "justification": "Missing ToolTip property on table field."
+    },
+    {
+      "id": "LC0065",
+      "action": "Info",
+      "justification": "Event subscriber var keyword mismatch."
+    },
+    {
+      "id": "LC0066",
+      "action": "Info",
+      "justification": "Duplicate ToolTip between page and table field."
     }
   ]
 }

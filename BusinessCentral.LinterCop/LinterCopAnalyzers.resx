@@ -681,22 +681,31 @@
   <data name="Rule0063GiveFieldMoreDescriptiveNameDescription" xml:space="preserve">
     <value>It is common for API pages to give certain fields a more describing name.</value>
   </data>
-  <data name="Rule0064UseTableFieldToolTipInsteadOfPageFieldToolTipTitle" xml:space="preserve">
-    <value>Use table field ToolTip instead of page field ToolTip.</value>
+  <data name="Rule0064TableFieldMissingToolTipTitle" xml:space="preserve">
+    <value>Missing ToolTip property on table field.</value>
   </data>
-  <data name="Rule0064UseTableFieldToolTipInsteadOfPageFieldToolTipFormat" xml:space="preserve">
-    <value>Use table field ToolTip instead of page field ToolTip.</value>
+  <data name="Rule0064TableFieldMissingToolTipFormat" xml:space="preserve">
+    <value>A value for the ToolTip property is missing for the table field {0} of page field {1}. Consider adding a ToolTip for table field {0} and/or removing the ToolTip from page field {1}.</value>
   </data>
-  <data name="Rule0064UseTableFieldToolTipInsteadOfPageFieldToolTipDescription" xml:space="preserve">
-    <value>Use table field ToolTip instead of page field ToolTip.</value>
+  <data name="Rule0064TableFieldMissingToolTipDescription" xml:space="preserve">
+    <value>Informs the user that it is better to apply the ToolTip property on the table field instead of the page field.</value>
   </data>
   <data name="Rule0065EventSubscriberVarCheckTitle" xml:space="preserve">
-    <value>Event subscriber var keyword mismatch</value>
+    <value>Event subscriber var keyword mismatch.</value>
   </data>
   <data name="Rule0065EventSubscriberVarCheckFormat" xml:space="preserve">
     <value>Parameter '{0}' must use the 'var' keyword if the publisher parameter is 'var'.</value>
   </data>
   <data name="Rule0065EventSubscriberVarCheckDescription" xml:space="preserve">
     <value>Ensures that event subscriber methods use 'var' keyword for parameters as defined by event publisher.</value>
+  </data>
+  <data name="Rule0066DuplicateToolTipBetweenPageAndTableTitle" xml:space="preserve">
+    <value>Duplicate ToolTip between page and table field.</value>
+  </data>
+  <data name="Rule0066DuplicateToolTipBetweenPageAndTableFormat" xml:space="preserve">
+    <value>The ToolTip property of page field {0} and it's table field {1} have the same value and therefore the page field's ToolTip can be removed.</value>
+  </data>
+  <data name="Rule0066DuplicateToolTipBetweenPageAndTableDescription" xml:space="preserve">
+    <value>Informs the user that it is better to only apply the ToolTip property on the table field when the page fields ToolTip is the same.</value>
   </data>
 </root>
