@@ -10,71 +10,9 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0027RunPageImplementPageManagement : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0027RunPageImplementPageManagement, DiagnosticDescriptors.Rule0000ErrorInRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0027RunPageImplementPageManagement);
 
-        public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckRunPageImplementPageManagement), OperationKind.InvocationExpression);
-
-        private void CheckRunPageImplementPageManagement(OperationAnalysisContext ctx)
-        {
-            if (ctx.IsObsoletePendingOrRemoved()) return;
-
-            IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
-            if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
-
-            if (operation.TargetMethod.ContainingType.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Page) return;
-            if (operation.Arguments.Count() < 2) return;
-
-            // do not execute on CurrPage.EnqueueBackgroundTask
-            if (SemanticFacts.IsSameName(operation.TargetMethod.Name, "EnqueueBackgroundTask")) return;
-
-            // Page Management Codeunit doesn't support returntype Action
-            if (operation.TargetMethod.ReturnValueSymbol.ReturnType.GetNavTypeKindSafe() == NavTypeKind.Action) return;
-
-            switch (operation.Arguments[0].Syntax.Kind)
-            {
-                case SyntaxKind.LiteralExpression:
-                    if (operation.Arguments[0].Syntax.GetIdentifierOrLiteralValue() == "0")
-                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0027RunPageImplementPageManagement, ctx.Operation.Syntax.GetLocation()));
-                    break;
-
-                case SyntaxKind.OptionAccessExpression:
-                    try // Investigate https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/682
-                    {
-                        if (IsSupportedRecord(((IConversionExpression)operation.Arguments[1].Value).Operand))
-                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0027RunPageImplementPageManagement, ctx.Operation.Syntax.GetLocation()));
-                    }
-                    catch
-                    {
-                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0027", "IsSupportedRecord", "" }));
-                    }
-                    break;
-
-                default:
-                    return;
-            }
-        }
-
-        private static bool IsSupportedRecord(IOperation operation)
-        {
-            IRecordTypeSymbol recordTypeSymbol = null;
-
-            if (operation.Kind == OperationKind.GlobalReferenceExpression || operation.Kind == OperationKind.LocalReferenceExpression)
-                recordTypeSymbol = (IRecordTypeSymbol)operation.GetSymbol().GetTypeSymbol();
-
-            if (operation.Kind == OperationKind.InvocationExpression)
-                recordTypeSymbol = (IRecordTypeSymbol)operation.Type.GetTypeSymbol();
-
-            if (recordTypeSymbol == null || recordTypeSymbol.Temporary) return false;
-
-            if (GetSupportedRecords().ContainsKey(recordTypeSymbol.Id))
-                return SemanticFacts.IsSameName(recordTypeSymbol.Name, GetSupportedRecords()[recordTypeSymbol.Id]);
-
-            return false;
-        }
-
-        private static Dictionary<int, string> GetSupportedRecords()
-        {
-            Dictionary<int, string> SupportedRecords = new Dictionary<int, string>
+        private static readonly Dictionary<int, string> _supportedRecords = new Dictionary<int, string>
             {
                 { 36, "Sales Header" },
                 { 38, "Purchase Header" },
@@ -102,7 +40,76 @@ namespace BusinessCentral.LinterCop.Design
                 { 7152, "Item Analysis View" },
                 { 2000000120, "User" }
             };
-            return SupportedRecords;
+
+        public override void Initialize(AnalysisContext context)
+            => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckRunPageImplementPageManagement), OperationKind.InvocationExpression);
+
+        private void CheckRunPageImplementPageManagement(OperationAnalysisContext ctx)
+        {
+            if (ctx.IsObsoletePendingOrRemoved()) return;
+
+            IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
+            if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
+            if (operation.TargetMethod.ContainingType.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Page) return;
+            if (operation.Arguments.Count() < 2) return;
+
+            // do not execute on CurrPage.EnqueueBackgroundTask
+            if (SemanticFacts.IsSameName(operation.TargetMethod.Name, "EnqueueBackgroundTask")) return;
+
+            // Page Management Codeunit doesn't support returntype Action
+            if (operation.TargetMethod.ReturnValueSymbol.ReturnType.GetNavTypeKindSafe() == NavTypeKind.Action) return;
+
+            switch (operation.Arguments[0].Syntax.Kind)
+            {
+                case SyntaxKind.LiteralExpression:
+                    if (operation.Arguments[0].Syntax.GetIdentifierOrLiteralValue() == "0")
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0027RunPageImplementPageManagement, ctx.Operation.Syntax.GetLocation()));
+                    break;
+
+                case SyntaxKind.OptionAccessExpression:
+                    if (IsSupportedRecord(((IConversionExpression)operation.Arguments[1].Value).Operand))
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0027RunPageImplementPageManagement, ctx.Operation.Syntax.GetLocation()));
+                    break;
+
+                default:
+                    return;
+            }
+        }
+
+        private static bool IsSupportedRecord(IOperation operation)
+        {
+            IRecordTypeSymbol recordTypeSymbol = null;
+            switch (operation.Kind)
+            {
+                case OperationKind.GlobalReferenceExpression:
+                case OperationKind.LocalReferenceExpression:
+                    recordTypeSymbol = operation.GetSymbol().GetTypeSymbol() as IRecordTypeSymbol;
+                    break;
+                case OperationKind.InvocationExpression:
+                    recordTypeSymbol = operation.Type.GetTypeSymbol() as IRecordTypeSymbol;
+                    break;
+                default:
+                    return false;
+            }
+
+            if (recordTypeSymbol == null || recordTypeSymbol.Temporary) return false;
+
+            if (_supportedRecords.ContainsKey(recordTypeSymbol.Id))
+                return SemanticFacts.IsSameName(recordTypeSymbol.Name, _supportedRecords[recordTypeSymbol.Id]);
+
+            return false;
+        }
+
+        public static class DiagnosticDescriptors
+        {
+            public static readonly DiagnosticDescriptor Rule0027RunPageImplementPageManagement = new(
+                id: LinterCopAnalyzers.AnalyzerPrefix + "0027",
+                title: LinterCopAnalyzers.GetLocalizableString("Rule0027RunPageImplementPageManagementTitle"),
+                messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0027RunPageImplementPageManagementFormat"),
+                category: "Design",
+                defaultSeverity: DiagnosticSeverity.Info, isEnabledByDefault: true,
+                description: LinterCopAnalyzers.GetLocalizableString("Rule0027RunPageImplementPageManagementDescription"),
+                helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0027");
         }
     }
 }

@@ -49,7 +49,8 @@ namespace BusinessCentral.LinterCop.Design
             if (pageSourceTable == null) return;
 
             IOperation operand = ((IConversionExpression)operation.Arguments[1].Value).Operand;
-            ITableTypeSymbol recordArgument = ((IRecordTypeSymbol)operand.GetSymbol().GetTypeSymbol()).BaseTable;
+            if (operand.GetSymbol().GetTypeSymbol() is not IRecordTypeSymbol recordTypeSymbol) return;
+            ITableTypeSymbol recordArgument = recordTypeSymbol.BaseTable;
 
             if (!AreTheSameNavObjects(recordArgument, pageSourceTable))
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected, ctx.Operation.Syntax.GetLocation(), new object[] { 2, operand.GetSymbol().GetTypeSymbol().ToString(), pageSourceTable.GetNavTypeKindSafe() + pageSourceTable.Name.QuoteIdentifierIfNeeded() }));

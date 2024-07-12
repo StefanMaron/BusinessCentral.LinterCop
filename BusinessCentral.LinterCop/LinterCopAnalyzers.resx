@@ -345,8 +345,14 @@
   <data name="Rule0026ToolTipMustEndWithDotTitle" xml:space="preserve">
     <value>ToolTip must end with a dot.</value>
   </data>
-  <data name="Rule0027RunPageImplementPageManagement" xml:space="preserve">
+  <data name="Rule0027RunPageImplementPageManagementTitle" xml:space="preserve">
+    <value>Utilize Page Management codeunit for launching page.</value>
+  </data>
+  <data name="Rule0027RunPageImplementPageManagementFormat" xml:space="preserve">
     <value>Utilize the "Page Management" codeunit for launching page.</value>
+  </data>
+  <data name="Rule0027RunPageImplementPageManagementDescription" xml:space="preserve">
+    <value>Utilizing the Page Management codeunit rather than invoking Page.Run directly.</value>
   </data>
   <data name="Rule0028IdentifiersInEventSubscribersDescription" xml:space="preserve">
     <value>Event subscriber arguments now use identifier syntax instead of string literals.</value>
