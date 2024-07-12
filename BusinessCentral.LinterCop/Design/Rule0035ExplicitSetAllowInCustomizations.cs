@@ -47,8 +47,7 @@ namespace BusinessCentral.LinterCop.Design
                 // even if no relatedPages exist directly
             }
 
-            NavTypeKind navTypeKind = ctx.Symbol.GetContainingObjectTypeSymbol().GetNavTypeKindSafe();
-            ICollection<IFieldSymbol> pageFields = GetPageFields(navTypeKind, relatedPages);
+            ICollection<IFieldSymbol> pageFields = GetPageFields(relatedPages);
             ICollection<IFieldSymbol> fieldsNotReferencedOnPage = tableFields.Except(pageFields).ToList();
             foreach (IFieldSymbol field in fieldsNotReferencedOnPage)
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0035ExplicitSetAllowInCustomizations, field.Location));
@@ -67,50 +66,54 @@ namespace BusinessCentral.LinterCop.Design
             }
         }
 
-        private static ICollection<IFieldSymbol> GetPageFields(NavTypeKind navTypeKind, IEnumerable<IApplicationObjectTypeSymbol> relatedPages)
+        private static ICollection<IFieldSymbol> GetPageFields(IEnumerable<IApplicationObjectTypeSymbol> relatedPages)
         {
             ICollection<IFieldSymbol> pageFields = new Collection<IFieldSymbol>();
-            switch (navTypeKind)
+            foreach (IApplicationObjectTypeSymbol relatedPageLike in relatedPages)
             {
-                case NavTypeKind.Record:
-                    foreach (IPageTypeSymbol page in relatedPages.Cast<IPageTypeSymbol>())
-                    {
-                        IEnumerable<IFieldSymbol> fields = page.FlattenedControls.Where(x => x.ControlKind == ControlKind.Field && x.RelatedFieldSymbol != null)
-                                                                                    .Select(x => (IFieldSymbol)x.RelatedFieldSymbol.OriginalDefinition);
-
+                switch (relatedPageLike.GetNavTypeKindSafe())
+                {
+                    case NavTypeKind.Page:
+                        IEnumerable<IFieldSymbol> fields = ((IPageTypeSymbol)relatedPageLike).FlattenedControls.Where(x => x.ControlKind == ControlKind.Field && x.RelatedFieldSymbol != null)
+                                                            .Select(x => (IFieldSymbol)x.RelatedFieldSymbol.OriginalDefinition);
                         pageFields = pageFields.Union(fields).Distinct().ToList();
-                    }
-                    return pageFields;
-                case NavTypeKind.TableExtension:
-                    foreach (IPageExtensionTypeSymbol page in relatedPages.Cast<IPageExtensionTypeSymbol>())
-                    {
-                        IEnumerable<IFieldSymbol> fields = page.AddedControlsFlattened.Where(x => x.ControlKind == ControlKind.Field && x.RelatedFieldSymbol != null)
-                                                                                    .Select(x => (IFieldSymbol)x.RelatedFieldSymbol.OriginalDefinition);
+                        break;
+                    case NavTypeKind.PageExtension:
+                        IEnumerable<IFieldSymbol> extFields = ((IPageExtensionTypeSymbol)relatedPageLike).AddedControlsFlattened.Where(x => x.ControlKind == ControlKind.Field && x.RelatedFieldSymbol != null)
+                                                            .Select(x => (IFieldSymbol)x.RelatedFieldSymbol.OriginalDefinition);
 
-                        pageFields = pageFields.Union(fields).Distinct().ToList();
-                    }
-                    return pageFields;
-                default:
-                    return pageFields;
+                        pageFields = pageFields.Union(extFields).Distinct().ToList();
+                        break;
+                }
             }
+            return pageFields;
         }
 
         private static IEnumerable<IApplicationObjectTypeSymbol> GetRelatedPages(SymbolAnalysisContext ctx)
         {
+            // table and tableextension fields can each be referenced on both pages and pageextensions
+            ITableTypeSymbol table = null;
             switch (ctx.Symbol.GetContainingObjectTypeSymbol().GetNavTypeKindSafe())
             {
                 case NavTypeKind.Record:
-                    return ctx.Compilation.GetDeclaredApplicationObjectSymbols()
-                                            .Where(x => x.GetNavTypeKindSafe() == NavTypeKind.Page)
-                                            .Where(x => ((IPageTypeSymbol)x.GetTypeSymbol()).PageType != PageTypeKind.API)
-                                            .Where(x => ((IPageTypeSymbol)x.GetTypeSymbol()).RelatedTable == (ITableTypeSymbol)ctx.Symbol);
+                    table = (ITableTypeSymbol)ctx.Symbol;
+                    break;
                 case NavTypeKind.TableExtension:
-                    return ctx.Compilation.GetDeclaredApplicationObjectSymbols()
-                                            .Where(x => x.GetNavTypeKindSafe() == NavTypeKind.PageExtension)
-                                            .Where(x => ((IPageTypeSymbol)((IApplicationObjectExtensionTypeSymbol)x).Target.GetTypeSymbol()).RelatedTable == ((IApplicationObjectExtensionTypeSymbol)ctx.Symbol).Target);
+                    table = (ITableTypeSymbol)((IApplicationObjectExtensionTypeSymbol)ctx.Symbol).Target;
+                    break;
                 default:
                     return null;
             }
+            IEnumerable<IApplicationObjectTypeSymbol> pages = ctx.Compilation.GetDeclaredApplicationObjectSymbols()
+                                            .Where(x => x.GetNavTypeKindSafe() == NavTypeKind.Page)
+                                            .Where(x => ((IPageTypeSymbol)x.GetTypeSymbol()).PageType != PageTypeKind.API)
+                                            .Where(x => ((IPageTypeSymbol)x.GetTypeSymbol()).RelatedTable == table);
+
+            IEnumerable<IApplicationObjectTypeSymbol> pageExtensions = ctx.Compilation.GetDeclaredApplicationObjectSymbols()
+                                            .Where(x => x.GetNavTypeKindSafe() == NavTypeKind.PageExtension)
+                                            .Where(x => ((IPageTypeSymbol)((IApplicationObjectExtensionTypeSymbol)x).Target.GetTypeSymbol()).RelatedTable == table);
+
+            return pages.Union(pageExtensions);
         }
 
         private static bool IsSupportedType(NavTypeKind navTypeKind)
