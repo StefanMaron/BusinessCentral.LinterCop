@@ -1,0 +1,336 @@
+{
+  "name": "LinterCopRuleset",
+  "description": "These are the default rules of the linter cop. You can use this file as a template to start from",
+  "rules": [
+    {
+      "id": "LC0001",
+      "action": "Warning",
+      "justification": "FlowFields should not be editable."
+    },
+    {
+      "id": "LC0002",
+      "action": "Warning",
+      "justification": "Commit() needs a comment to justify its existence. Either a leading or a trailing comment."
+    },
+    {
+      "id": "LC0003",
+      "action": "Warning",
+      "justification": "Do not use an Object ID for properties or variable declarations."
+    },
+    {
+      "id": "LC0004",
+      "action": "Warning",
+      "justification": "DrillDownPageId and LookupPageId must be filled in table when table is used in list page."
+    },
+    {
+      "id": "LC0005",
+      "action": "Warning",
+      "justification": "The casing of variable/method usage must align with the definition."
+    },
+    {
+      "id": "LC0006",
+      "action": "Error",
+      "justification": "Fields with property AutoIncrement cannot be used in temporary table (TableType = Temporary)."
+    },
+    {
+      "id": "LC0007",
+      "action": "Hidden",
+      "justification": "Every table needs to specify a value for the DataPerCompany property. Either true or false."
+    },
+    {
+      "id": "LC0008",
+      "action": "Warning",
+      "justification": "Filter operators should not be used in SetRange"
+    },
+    {
+      "id": "LC0009",
+      "action": "Hidden",
+      "justification": "Show info message about code metrics for each function or trigger."
+    },
+    {
+      "id": "LC0010",
+      "action": "Warning",
+      "justification": "Show warning about code metrics for each function or trigger if either cyclomatic complexity is 8 or greater or maintainability index 20 or lower."
+    },
+    {
+      "id": "LC0011",
+      "action": "Hidden",
+      "justification": "Every object needs to specify a value for the Access property. Either true or false. Optionally this can also be activated for table fields with the setting enableRule0011ForTableFields."
+    },
+    {
+      "id": "LC0012",
+      "action": "Warning",
+      "justification": "Using hardcoded IDs in functions like Codeunit.Run() is not allowed."
+    },
+    {
+      "id": "LC0013",
+      "action": "Warning",
+      "justification": "Any table with a single field in the PK of type code or text, should have set NotBlank on the PK field."
+    },
+    {
+      "id": "LC0014",
+      "action": "Warning",
+      "justification": "The Caption of permissionset objects should not exceed the maximum length."
+    },
+    {
+      "id": "LC0015",
+      "action": "Warning",
+      "justification": "All application objects should be covered by at least one permission set in the extension."
+    },
+    {
+      "id": "LC0016",
+      "action": "Warning",
+      "justification": "Caption is missing. Optionally this can also be activated for fields on API objects with the setting enableRule0016ForApiObjects"
+    },
+    {
+      "id": "LC0017",
+      "action": "Warning",
+      "justification": "Writing to a FlowField is not common. Add a comment to explain this."
+    },
+    {
+      "id": "LC0018",
+      "action": "Info",
+      "justification": "Events in internal codeunits are not accessible to extensions and should therefore be avoided."
+    },
+    {
+      "id": "LC0019",
+      "action": "Info",
+      "justification": "If Data Classification is set on the Table. Fields do not need the same classification."
+    },
+    {
+      "id": "LC0020",
+      "action": "Info",
+      "justification": "If Application Area is set on the TablePage. Controls do not need the same classification."
+    },
+    {
+      "id": "LC0021",
+      "action": "Info",
+      "justification": "Confirm() must be implemented through the Confirm Management codeunit from the System Application."
+    },
+    {
+      "id": "LC0022",
+      "action": "Info",
+      "justification": "GlobalLanguage() must be implemented through the Translation Helper codeunit from the Base Application."
+    },
+    {
+      "id": "LC0023",
+      "action": "Info",
+      "justification": "Always provide fieldsgroups DropDown and Brick on tables."
+    },
+    {
+      "id": "LC0024",
+      "action": "Info",
+      "justification": "Procedure or Trigger declaration should not end with semicolon."
+    },
+    {
+      "id": "LC0025",
+      "action": "Info",
+      "justification": "Procedure must be either local, internal or define a documentation comment."
+    },
+    {
+      "id": "LC0026",
+      "action": "Info",
+      "justification": "ToolTip must end with a dot."
+    },
+    {
+      "id": "LC0027",
+      "action": "Info",
+      "justification": "Utilize the Page Management codeunit for launching page."
+    },
+    {
+      "id": "LC0028",
+      "action": "Info",
+      "justification": "Event subscriber arguments now use identifier syntax instead of string literals. Convert the argument literal to an identifier."
+    },
+    {
+      "id": "LC0029",
+      "action": "Info",
+      "justification": "Use CompareDateTime method in Type Helper codeunit for DateTime variable comparisons."
+    },
+    {
+      "id": "LC0030",
+      "action": "Info",
+      "justification": "Set Access property to Internal for Install/Upgrade codeunits."
+    },
+    {
+      "id": "LC0031",
+      "action": "Info",
+      "justification": "Set ReadIsolation property instead of LockTable method."
+    },
+    {
+      "id": "LC0032",
+      "action": "Warning",
+      "justification": "Clear(All) does not affect or change values for global variables in single instance codeunits."
+    },
+    {
+      "id": "LC0033",
+      "action": "Info",
+      "justification": "The specified runtime version in app.json is falling behind."
+    },
+    {
+      "id": "LC0034",
+      "action": "Hidden",
+      "justification": "The property Extensible should be explicitly set for public objects."
+    },
+    {
+      "id": "LC0035",
+      "action": "Info",
+      "justification": "Explicitly set AllowInCustomizations for fields omitted on pages."
+    },
+    {
+      "id": "LC0036",
+      "action": "Info",
+      "justification": "ToolTip must start with the verb Specifies."
+    },
+    {
+      "id": "LC0037",
+      "action": "Info",
+      "justification": "Do not use line breaks in ToolTip."
+    },
+    {
+      "id": "LC0038",
+      "action": "Info",
+      "justification": "Try to not exceed 200 characters (including spaces)."
+    },
+    {
+      "id": "LC0039",
+      "action": "Warning",
+      "justification": "The given argument has a different type from the one expected."
+    },
+    {
+      "id": "LC0040",
+      "action": "Info",
+      "justification": "Explicitly set the RunTrigger parameter on build-in methods."
+    },
+    {
+      "id": "LC0041",
+      "action": "Info",
+      "justification": "Empty Captions should be Locked."
+    },
+    {
+      "id": "LC0042",
+      "action": "Warning",
+      "justification": "AutoCalcFields should only be used for FlowFields or Blob fields."
+    },
+    {
+      "id": "LC0043",
+      "action": "Info",
+      "justification": "Use SecretText type to protect credentials and sensitive textual values from being revealed."
+    },
+    {
+      "id": "LC0044",
+      "action": "Warning",
+      "justification": "Tables coupled with TransferFields must have matching fields."
+    },
+    {
+      "id": "LC0045",
+      "action": "Info",
+      "justification": "Zero (0) Enum value should be reserved for Empty Value."
+    },
+    {
+      "id": "LC0046",
+      "action": "Info",
+      "justification": "Label with suffix Tok must be locked."
+    },
+    {
+      "id": "LC0047",
+      "action": "None",
+      "justification": "Locked Label must have a suffix Tok."
+    },
+    {
+      "id": "LC0048",
+      "action": "Info",
+      "justification": "Use Error with a ErrorInfo or Label variable to improve telemetry details."
+    },
+    {
+      "id": "LC0049",
+      "action": "Info",
+      "justification": "SourceTable property not defined on Page."
+    },
+    {
+      "id": "LC0050",
+      "action": "Info",
+      "justification": "SetFilter with unsupported operator in filter expression."
+    },
+    {
+      "id": "LC0051",
+      "action": "Warning",
+      "justification": "Do not assign a text to a target with smaller size."
+    },
+    {
+      "id": "LC0052",
+      "action": "Info",
+      "justification": "The internal procedure is declared but never used."
+    },
+    {
+      "id": "LC0053",
+      "action": "Info",
+      "justification": "The internal procedure is only used in the object in which it is declared. Consider making the procedure local."
+    },
+    {
+      "id": "LC0054",
+      "action": "Info",
+      "justification": "Interface name must start with the capital 'I' without any spaces following it."
+    },
+    {
+      "id": "LC0055",
+      "action": "Info",
+      "justification": "The suffix 'Tok' is meant to be used when the value of the label matches the name."
+    },
+    {
+      "id": "LC0056",
+      "action": "Info",
+      "justification": "Empty Enum values should not have a specified Caption property."
+    },
+    {
+      "id": "LC0057",
+      "action": "Info",
+      "justification": "Enum values must have non-empty a Caption to be selectable in the client."
+    },
+    {
+      "id": "LC0058",
+      "action": "Warning",
+      "justification": "PageVariable.SetRecord(): You cannot use a temporary record for the Record parameter."
+    },
+    {
+      "id": "LC0059",
+      "action": "Warning",
+      "justification": "Single quote escaping issue detected."
+    },
+    {
+      "id": "LC0060",
+      "action": "Info",
+      "justification": " The ApplicationArea property is not applicable to API pages."
+    },
+    {
+      "id": "LC0061",
+      "action": "Info",
+      "justification": "Pages of type API must have the ODataKeyFields property set to the SystemId field."
+    },
+    {
+      "id": "LC0062",
+      "action": "Info",
+      "justification": "Mandatory field is missing on API page."
+    },
+    {
+      "id": "LC0063",
+      "action": "Info",
+      "justification": "Consider naming field with a more descriptive name."
+    },
+    {
+      "id": "LC0064",
+      "action": "Info",
+      "justification": "Missing ToolTip property on table field."
+    },
+    {
+      "id": "LC0065",
+      "action": "Info",
+      "justification": "Event subscriber var keyword mismatch."
+    },
+    {
+      "id": "LC0066",
+      "action": "Info",
+      "justification": "Duplicate ToolTip between page and table field."
+    }
+  ]
+}

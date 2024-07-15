@@ -12,6 +12,113 @@ If you are not happy with some rules or only feel like you need one rule of this
 
 The Linter is not finished yet (and probably never will be :D ) If you have any rule on mind that would be nice to be covered, **please start a new [discussion](https://github.com/StefanMaron/BusinessCentral.LinterCop/discussions)!** then we can maybe sharpen the rule a bit if necessary. This way we can build value for all of us. If you want to write the rule yourself you can of course also submit a pull request ;)
 
+### Contribute to Unit Tests
+
+You can also contribute to the collection of unit tests. If you want to add a new test case, please create a new test class in the [BusinessCentral.LinterCop.Test](./BusinessCentral.LinterCop.Test/) folder. The test class name should match the rule name. Use one of the existing test classes as an example.
+
+Test class:
+
+```CSharp
+namespace BusinessCentral.LinterCop.Test;
+
+public class RuleXXXX  // Id of the rule that is being tested
+{
+    private string _testCaseDir = "";
+
+    [SetUp]
+    public void Setup()
+    {
+        _testCaseDir = Path.Combine(Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName,
+            "TestCases", "RuleXXXX");  // Set path to subfolder with test cases
+    }
+
+    [Test]
+    [TestCase("1")]  // Test case 1.al
+    [TestCase("2")]  // Test case 2.al
+    ...
+    [TestCase("n")]
+    public async Task HasDiagnostic(string testCase)  // Positive test
+    {
+        // Load code file for test case
+        var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
+            .ConfigureAwait(false);
+
+        // Create fixture for rule
+        var fixture = RoslynFixtureFactory.Create<RuleXXXXMyCodeRule>();
+        // Check for reported diagnostic
+        fixture.HasDiagnostic(code, DiagnosticDescriptors.RuleXXXXMyCodeRule.Id);
+    }
+
+    [Test]
+    [TestCase("1")]  // Test case 1.al
+    [TestCase("2")]  // Test case 2.al
+    ...
+    [TestCase("n")]
+    public async Task NoDiagnostic(string testCase)  // Negative test
+    {
+        // Load code file for test case
+        var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
+            .ConfigureAwait(false);
+
+        // Create fixture for rule
+        var fixture = RoslynFixtureFactory.Create<RuleXXXXMyCodeRule>();
+        // Check for no reported diagnostic
+        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.RuleXXXXMyCodeRule.Id);
+    }
+}
+```
+
+Test cases can be *positive* (a diagnostic is expected) or *negative* (no diagnostic is expected) and are contained in the [BusinessCentral.LinterCop.Test/TestCases/](./BusinessCentral.LinterCop.Test/TestCases/) folder, with a subfolder per rule and a sub-subfolder for positive *HasDiagnostic* and negative *NoDiagnostic* test cases. The individual test cases are numbered (if you have an idea for a better naming scheme, please let me know) and must be compilable AL code.
+
+Basic folder structure:
+
+```bash
+├───BusinessCentral.LinterCop.Test
+│   ├───RoslynTestKit
+│   │   ├───CodeActionLocators
+│   │   └───Utils
+│   └───TestCases
+│       ├───Rule0001
+│       │   ├───HasDiagnostic
+│       │   │   ├───1.al
+│       │   │   ├───2.al
+│       │   │   └───X.al
+│       │   └───NoDiagnostic
+│       │   │   ├───1.al
+│       │   │   ├───2.al
+│       │   │   └───X.al
+│       ├───Rule0002
+│       │   ├───HasDiagnostic
+│       │   │   ├───X.al
+│       │   └───NoDiagnostic
+│       │   │   ├───X.al
+│       ├───RuleXXXX
+│       │   ├───HasDiagnostic
+│       │   │   ├───X.al
+│       │   └───NoDiagnostic
+│       │   │   ├───X.al
+├───Rule0001.cs
+├───Rule0002.cs
+└───RuleXXXX.cs
+```
+
+You surround the range in the code you want to check for the diagnostic with `[|` and`|]`.
+
+Test case:
+
+```AL
+codeunit 50100 MyCodeunit
+{
+    procedure MyProcedure()
+    var
+        MyVariable: Integer;
+    begin
+        // We want to check for a diagnostic between the [| and |] markers
+        [|MyVariable := 1;|]
+    end;
+}
+```
+
 ## Setup
 The LinterCop is compatible with various approaches and solutions for the AL Language extension for Microsoft Dynamics 365 Business Central.
 
@@ -100,6 +207,16 @@ For an example and the default values see: [LinterCop.ruleset.json](LinterCop.ru
 |[LC0051](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0051)|Do not assign a text to a target with smaller size.|Warning|12.1|
 |[LC0052](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0052)|The internal procedure is declared but never used.|Info|
 |[LC0053](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0053)|The internal procedure is only used in the object in which it is declared. Consider making the procedure local.|Info|
+|[LC0054](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0054)|Interface name must start with the capital 'I' without any spaces following it.|Info|
 |[LC0055](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0055)|The suffix `Tok` is meant to be used when the value of the label matches the name.|Info|
 |[LC0056](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0056)|Empty Enum values should not have a specified `Caption` property.|Info|
 |[LC0057](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0057)|Enum values must have non-empty a `Caption` to be selectable in the client|Info|
+|[LC0058](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0058)|PageVariable.SetRecord(): You cannot use a temporary record for the Record parameter.|Warning|
+|[LC0059](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0059)|Single quote escaping issue detected.|Warning|
+|[LC0060](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0060)|The `ApplicationArea` property is not applicable to API pages.|Info|
+|[LC0061](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0061)|Pages of type API must have the `ODataKeyFields` property set to the SystemId field.|Info|
+|[LC0062](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0062)|Mandatory field is missing on API page.|Info|
+|[LC0063](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0063)|Consider naming field with a more descriptive name.|Info|
+|[LC0064](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0064)|Missing ToolTip property on table field.|Info|
+|[LC0065](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0065)|Event subscriber var keyword mismatch.|Info|
+|[LC0066](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0066)|Duplicate ToolTip between page and table field.|Info|

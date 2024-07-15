@@ -159,28 +159,29 @@ jobs:
           dotnet-version: 8.0.*
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore BusinessCentral.LinterCop
 
       - name: Download platform artifact
         shell: pwsh
         run: Invoke-WebRequest ${{ matrix.assetUri }} -OutFile ALLanguage.vsix
 
       - name: Unzip vsix
-        run: 7z x ALLanguage.vsix "-oms-dynamics-smb.al-latest" extension/bin/Analyzers -r
+        run: 7z x ALLanguage.vsix "-oALLanguage" "extension/bin/Analyzers" -r
 
       - name: Set AssemblyInfo
         shell: pwsh
         if: ${{ matrix.GH_eventName != 'pull_request' }}
         env:
           AL_VERSION: ${{ matrix.version }}
-        run: (Get-Content AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
+        run:
+          (Get-Content BusinessCentral.LinterCop/AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
           ("Version(""" + ('${{ needs.setup-matrix.outputs.release-tag-name }}'
-          -replace "v","") + """)]") |  Out-File AssemblyInfo.cs
+          -replace "v","") + """)]") |  Out-File BusinessCentral.LinterCop/AssemblyInfo.cs
 
-          (Get-Content AssemblyInfo.cs) -replace 'AssemblyTitle\("([^"]*)"\)', "AssemblyTitle(`"AL-$env:AL_VERSION`")" | Out-File AssemblyInfo.cs
+          (Get-Content BusinessCentral.LinterCop/AssemblyInfo.cs) -replace 'AssemblyTitle\("([^"]*)"\)', "AssemblyTitle(`"AL-$env:AL_VERSION`")" | Out-File BusinessCentral.LinterCop/AssemblyInfo.cs
 
       - name: Build
-        run: dotnet build /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
+        run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
 
       - name: Upload build artifact
         id: upload-build-asset
@@ -188,7 +189,7 @@ jobs:
         if: ${{ matrix.GH_eventName != 'pull_request' }}
         with:
           name: ${{ matrix.assetname }}
-          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          path: BusinessCentral.LinterCop/bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
           compression-level: 0 # no compression
 
       ### Upload Asset as Latest
@@ -198,7 +199,7 @@ jobs:
         if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
         with:
           name: BusinessCentral.LinterCop.dll
-          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          path: BusinessCentral.LinterCop/bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
           compression-level: 0 # no compression
 
       ### Upload Asset as Pre-Release
@@ -208,7 +209,7 @@ jobs:
         if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
         with:
           name: BusinessCentral.LinterCop.AL-PreRelease.dll
-          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          path: BusinessCentral.LinterCop/bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
           compression-level: 0 # no compression
 
       ### Compatibility with previous naming of files
@@ -219,7 +220,7 @@ jobs:
         if: ${{ matrix.GH_eventName != 'pull_request' && matrix.latest }}
         with:
           name: BusinessCentral.LinterCop.current.dll
-          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          path: BusinessCentral.LinterCop/bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
           compression-level: 0 # no compression
 
       # ### Release Asset as Next
@@ -229,7 +230,7 @@ jobs:
         if: ${{ matrix.GH_eventName != 'pull_request' && matrix.prerelease }}
         with:
           name: BusinessCentral.LinterCop.next.dll
-          path: bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+          path: BusinessCentral.LinterCop/bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
           compression-level: 0 # no compression
 
   sign-job:
