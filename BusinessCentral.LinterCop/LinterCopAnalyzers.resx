@@ -160,7 +160,7 @@
     <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table because it is used in list page</value>
   </data>
   <data name="Rule0004LookupPageIdAndDrillDownPageIdFormat" xml:space="preserve">
-    <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table "{1}" because it is used in page "{2}" (list)</value>
+    <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table {0} because it is used in page {1} (list).</value>
   </data>
   <data name="Rule0004LookupPageIdAndDrillDownPageIdTitle" xml:space="preserve">
     <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table because it is used in list page</value>
