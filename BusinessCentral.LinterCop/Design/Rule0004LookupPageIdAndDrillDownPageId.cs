@@ -1,60 +1,56 @@
 ﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
 using System.Collections.Immutable;
 
-namespace BusinessCentral.LinterCop.Design
+namespace BusinessCentral.LinterCop.Design;
+
+[DiagnosticAnalyzer]
+public class Rule0004LookupPageIdAndDrillDownPageId : DiagnosticAnalyzer
 {
-    [DiagnosticAnalyzer]
-    public class Rule0004LookupPageIdAndDrillDownPageId : DiagnosticAnalyzer
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0004LookupPageIdAndDrillDownPageId);
+
+    public override void Initialize(AnalysisContext context)
+        => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForLookupPageIdAndDrillDownPageId), SymbolKind.Page);
+
+    private void CheckForLookupPageIdAndDrillDownPageId(SymbolAnalysisContext context)
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0004LookupPageIdAndDrillDownPageId, DiagnosticDescriptors.Rule0000ErrorInRule);
+        if (context.IsObsoletePendingOrRemoved()) return;
 
-        public override void Initialize(AnalysisContext context)
-            => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForLookupPageIdAndDrillDownPageId), SymbolKind.Page);
+        IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)context.Symbol;
+        if (pageTypeSymbol.PageType != PageTypeKind.List || pageTypeSymbol.RelatedTable == null) return;
+        if (pageTypeSymbol.GetBooleanPropertyValue(PropertyKind.SourceTableTemporary).GetValueOrDefault()) return;
+        if (pageTypeSymbol.RelatedTable.ContainingModule != context.Symbol.ContainingModule) return;
+        CheckTable(pageTypeSymbol.RelatedTable, context);
+    }
 
-        private void CheckForLookupPageIdAndDrillDownPageId(SymbolAnalysisContext context)
-        {
-            if (context.IsObsoletePendingOrRemoved()) return;
+    private void CheckTable(ITableTypeSymbol table, SymbolAnalysisContext context)
+    {
+        if (table.IsObsoletePendingOrRemoved()) return;
 
-            IPageTypeSymbol pageTypeSymbol = (IPageTypeSymbol)context.Symbol;
-            if (pageTypeSymbol.PageType != PageTypeKind.List || pageTypeSymbol.RelatedTable == null) return;
-            if (pageTypeSymbol.RelatedTable.ContainingModule != context.Symbol.ContainingModule) return;
-            CheckTable(pageTypeSymbol.RelatedTable, context);
-        }
+        if (!table.GetLocation().IsInSource) return;
+        if (table.TableType == TableTypeKind.Temporary) return;
 
-        private void CheckTable(ITableTypeSymbol table, SymbolAnalysisContext context)
-        {
-            if (table.IsObsoletePendingOrRemoved()) return;
+        bool exists = table.Properties.Where(e => e.PropertyKind == PropertyKind.DrillDownPageId || e.PropertyKind == PropertyKind.LookupPageId).Count() == 2;
+        if (exists) return;
 
-            if (!IsSymbolAccessible(table, context)) return;
-            if (table.TableType == TableTypeKind.Temporary) return;
+        context.ReportDiagnostic(
+            Diagnostic.Create(
+                DiagnosticDescriptors.Rule0004LookupPageIdAndDrillDownPageId,
+                table.GetLocation(),
+                new object[] { table.Name.ToString().QuoteIdentifierIfNeeded(), context.Symbol.Name.ToString().QuoteIdentifierIfNeeded() }));
+    }
 
-            bool exists = table.Properties.Where(e => e.PropertyKind == PropertyKind.DrillDownPageId || e.PropertyKind == PropertyKind.LookupPageId).Count() == 2;
-            if (exists) return;
-
-            context.ReportDiagnostic(
-                Diagnostic.Create(
-                    DiagnosticDescriptors.Rule0004LookupPageIdAndDrillDownPageId,
-                    table.GetLocation(),
-                    new object[] { GetDeclaration(table, context), table.Name, context.Symbol.Name }));
-        }
-
-        private static string GetDeclaration(ISymbol symbol, SymbolAnalysisContext context)
-            => symbol.Location.SourceTree.GetText(context.CancellationToken).GetSubText(symbol.DeclaringSyntaxReference.Span).ToString();
-
-        private static bool IsSymbolAccessible(ISymbol symbol, SymbolAnalysisContext context)
-        {
-            try
-            {
-                GetDeclaration(symbol, context);
-                return true;
-            }
-            catch (Exception)
-            {
-                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, context.Symbol.GetLocation(), new Object[] { "Rule0004", "Exception", "at Line 47" }));
-                return false;
-            }
-        }
+    public static class DiagnosticDescriptors
+    {
+        public static readonly DiagnosticDescriptor Rule0004LookupPageIdAndDrillDownPageId = new(
+            id: LinterCopAnalyzers.AnalyzerPrefix + "0004",
+            title: LinterCopAnalyzers.GetLocalizableString("Rule0004LookupPageIdAndDrillDownPageIdTitle"),
+            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0004LookupPageIdAndDrillDownPageIdFormat"),
+            category: "Design",
+            defaultSeverity: DiagnosticSeverity.Warning, isEnabledByDefault: true,
+            description: LinterCopAnalyzers.GetLocalizableString("Rule0004LookupPageIdAndDrillDownPageIdDescription"),
+            helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0004");
     }
 }
