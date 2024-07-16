@@ -31,6 +31,6 @@ public class Rule0027
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0027RunPageImplementPageManagement>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0027RunPageImplementPageManagement.Id);
+        fixture.NoDiagnosticAtMarker(code, Rule0027RunPageImplementPageManagement.DiagnosticDescriptors.Rule0027RunPageImplementPageManagement.Id);
     }
 }
