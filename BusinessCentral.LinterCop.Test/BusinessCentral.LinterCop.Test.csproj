@@ -29,13 +29,11 @@
         <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis">
             <SpecificVersion>False</SpecificVersion>
             <HintPath>../ALLanguage/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
-            <Private>False</Private>
         </Reference>
         <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces">
             <SpecificVersion>False</SpecificVersion>
             <HintPath>../ALLanguage/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
+      </Reference>
     </ItemGroup>
 
     <ItemGroup>
