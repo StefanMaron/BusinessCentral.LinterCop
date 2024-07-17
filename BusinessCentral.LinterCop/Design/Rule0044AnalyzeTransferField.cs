@@ -77,16 +77,17 @@ namespace BusinessCentral.LinterCop.Design
             List<VariableDeclarationBaseSyntax> variables = new List<VariableDeclarationBaseSyntax>();
 
             SyntaxNode localVariables = await localVariablesTask;
+            SyntaxNode globalVariables = await globalVariablesTask;
+            // Investigate https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/606
             try
             {
                 variables.AddRange(FindLocalVariables(localVariables));
+                variables.AddRange(FindGlobalVariables(globalVariables));
             }
             catch (InvalidCastException)
             {
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0044", "InvalidCastException", "at Line 82" }));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0044", "InvalidCastException", "at Line 83 or 84" }));
             }
-            SyntaxNode globalVariables = await globalVariablesTask;
-            variables.AddRange(FindGlobalVariables(globalVariables));
 
             string? tableName1 = GetObjectName(variables.FirstOrDefault(x =>
             {
