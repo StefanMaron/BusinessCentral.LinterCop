@@ -220,3 +220,4 @@ For an example and the default values see: [LinterCop.ruleset.json](LinterCop.ru
 |[LC0064](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0064)|Missing ToolTip property on table field.|Info|
 |[LC0065](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0065)|Event subscriber var keyword mismatch.|Info|
 |[LC0066](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0066)|Duplicate ToolTip between page and table field.|Info|
+|[LC0067](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0067)|Set `NotBlank` property to `false` when 'No. Series' TableRelation exists.|Warning|

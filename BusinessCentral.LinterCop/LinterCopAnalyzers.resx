@@ -228,13 +228,13 @@
   <data name="Rule0012DoNotUseObjectIdInSystemFunctionsTitle" xml:space="preserve">
     <value>Wrong Parameter detected.</value>
   </data>
-  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysDescription" xml:space="preserve">
+  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysTitle" xml:space="preserve">
     <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
   </data>
   <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysFormat" xml:space="preserve">
     <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
   </data>
-  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysTitle" xml:space="preserve">
+  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysDescription" xml:space="preserve">
     <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
   </data>
   <data name="Rule0014PermissionSetCaptionLengthDescription" xml:space="preserve">
@@ -713,5 +713,14 @@
   </data>
   <data name="Rule0066DuplicateToolTipBetweenPageAndTableDescription" xml:space="preserve">
     <value>Informs the user that it is better to only apply the ToolTip property on the table field when the page fields ToolTip is the same.</value>
+  </data>
+  <data name="Rule0067DisableNotBlankOnSingleFieldPrimaryKeyTitle" xml:space="preserve">
+    <value>Set NotBlank to false when 'No. Series' TableRelation exists.</value>
+  </data>
+  <data name="Rule0067DisableNotBlankOnSingleFieldPrimaryKeyFormat" xml:space="preserve">
+    <value>The NotBlank property should be set to false (or removed) if a TableRelation of 'No. Series' is present on the table.</value>
+  </data>
+  <data name="Rule0067DisableNotBlankOnSingleFieldPrimaryKeyDescription" xml:space="preserve">
+    <value>When the 'No. Series' TableRelation is present on the table, assigning the primary key might occur after inserting the record, which could cause an error due to the NotBlank property.</value>
   </data>
 </root>
