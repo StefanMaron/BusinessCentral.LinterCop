@@ -8,7 +8,7 @@ table 50100 MyTable
         }
         field(2; "No. Series"; Code[20])
         {
-            TableRelation = "No. Series".Code;
+            TableRelation = "No. Series"."Code";
         }
     }
 

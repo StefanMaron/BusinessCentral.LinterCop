@@ -2,10 +2,13 @@
 {
     fields
     {
-        [|field(1; MyField; Code[20])|] { }
+        [|field(1; MyField; Code[20])|]
+        {
+            NotBlank = true;
+        }
         field(2; "No. Series"; Code[20])
         {
-            TableRelation = "No. Series".Code;
+            TableRelation = "No. Series";
         }
     }
 
