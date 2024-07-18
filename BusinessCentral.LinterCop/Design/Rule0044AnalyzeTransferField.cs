@@ -15,7 +15,7 @@ namespace BusinessCentral.LinterCop.Design
     {
         private List<Tuple<string, string>> tablePairs = new List<Tuple<string, string>>();
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0044AnalyzeTransferFields);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0044AnalyzeTransferFields, DiagnosticDescriptors.Rule0000ErrorInRule);
 
         public override void Initialize(AnalysisContext context)
         {
