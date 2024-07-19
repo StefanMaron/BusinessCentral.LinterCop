@@ -33,7 +33,7 @@ public class Rule0013CheckForNotBlankOnSingleFieldPrimaryKeys : DiagnosticAnalyz
 
         if (TableContainsNoSeries(table))
         {
-            if (field.GetBooleanPropertyValue(PropertyKind.NotBlank).GetValueOrDefault())
+            if (field.GetBooleanPropertyValue(PropertyKind.NotBlank).GetValueOrDefault() && !SemanticFacts.IsSameName(field.Name, "Name"))
                 context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0067DisableNotBlankOnSingleFieldPrimaryKey, field.GetLocation()));
         }
         else
