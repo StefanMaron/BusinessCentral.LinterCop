@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Dynamic;
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.Analyzers.Common;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
@@ -14,12 +15,12 @@ namespace BusinessCentral.LinterCop.Design
 
         private static readonly List<string> buildInTableDataReadMethodNames = new List<string>
         {
-            "Find",
-            "FindFirst",
-            "FindLast",
-            "FindSet",
-            "Get",
-            "IsEmpty"
+            "find",
+            "findfirst",
+            "findlast",
+            "findset",
+            "get",
+            "isempty"
         };
         private static readonly List<string> buildInTableDataModifyMethodNames = new List<string>
         {
@@ -45,7 +46,63 @@ namespace BusinessCentral.LinterCop.Design
             NavTypeKind.Codeunit,
             NavTypeKind.Query
         };
-        public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckObjectPermission), OperationKind.InvocationExpression);
+        public override void Initialize(AnalysisContext context) 
+        {
+          context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckObjectPermission), OperationKind.InvocationExpression);  
+          context.RegisterSymbolAction (new Action<SymbolAnalysisContext>(this.CheckReportDataItemObjectPermission), SymbolKind.ReportDataItem);   
+          context.RegisterSymbolAction (new Action<SymbolAnalysisContext>(this.CheckQueryDataItemObjectPermission), SymbolKind.QueryDataItem);  
+          context.RegisterSymbolAction (new Action<SymbolAnalysisContext>(this.CheckXmlportNodeObjectPermission), SymbolKind.XmlPortNode); 
+        } 
+
+        private void CheckXmlportNodeObjectPermission(SymbolAnalysisContext ctx)
+        {
+            if (ctx.IsObsoletePendingOrRemoved()) return;
+            if (((IXmlPortNodeSymbol)ctx.Symbol.OriginalDefinition).SourceTypeKind != XmlPortSourceTypeKind.Table) return;
+            
+            string direction = "";
+
+            IXmlPortTypeSymbol xmlPort = (IXmlPortTypeSymbol)ctx.Symbol.GetContainingObjectTypeSymbol();
+
+            IPropertySymbol objectPermissions = xmlPort.GetProperty(PropertyKind.Permissions);
+            ITypeSymbol targetSymbol = ((IXmlPortNodeSymbol)ctx.Symbol.OriginalDefinition).GetTypeSymbol();
+            var directionProperty = xmlPort.Properties.First(property => property.Name == "Direction");
+
+            if (directionProperty == null)
+                direction = DirectionKind.Both.ToString();
+            else
+                direction = directionProperty.ValueText;
+                
+            direction = direction.ToLowerInvariant();
+
+            if (direction == "import" || direction == "both")
+            {
+                CheckProcedureInvocation(objectPermissions, targetSymbol.Name, 'm',  ctx.ReportDiagnostic, ctx.Symbol.GetLocation());
+                CheckProcedureInvocation(objectPermissions, targetSymbol.Name, 'i',  ctx.ReportDiagnostic, ctx.Symbol.GetLocation());
+                CheckProcedureInvocation(objectPermissions, targetSymbol.Name, 'd',  ctx.ReportDiagnostic, ctx.Symbol.GetLocation());
+            }
+            if (direction == "export" || direction == "both")
+                CheckProcedureInvocation(objectPermissions, targetSymbol.Name, 'r',  ctx.ReportDiagnostic, ctx.Symbol.GetLocation());
+        }
+
+        private void CheckQueryDataItemObjectPermission(SymbolAnalysisContext ctx)
+        {
+            if (ctx.IsObsoletePendingOrRemoved()) return;
+
+            IPropertySymbol objectPermissions = ctx.Symbol.GetContainingApplicationObjectTypeSymbol().GetProperty(PropertyKind.Permissions);
+            ITypeSymbol targetSymbol = ((IQueryDataItemSymbol)ctx.Symbol).GetTypeSymbol();
+            CheckProcedureInvocation(objectPermissions, targetSymbol.Name, 'r',  ctx.ReportDiagnostic, ctx.Symbol.GetLocation());
+        }
+
+        private void CheckReportDataItemObjectPermission(SymbolAnalysisContext ctx)
+        {
+            if (ctx.IsObsoletePendingOrRemoved()) return;
+            if (ctx.Symbol.GetBooleanPropertyValue(PropertyKind.UseTemporary) == true) return;
+            if (((ITableTypeSymbol)((IRecordTypeSymbol)((IReportDataItemSymbol)ctx.Symbol).GetTypeSymbol()).OriginalDefinition).TableType == TableTypeKind.Temporary) return;
+
+            IPropertySymbol objectPermissions = ctx.Symbol.GetContainingApplicationObjectTypeSymbol().GetProperty(PropertyKind.Permissions);
+            ITypeSymbol targetSymbol = ((IReportDataItemSymbol)ctx.Symbol).GetTypeSymbol();
+            CheckProcedureInvocation(objectPermissions, targetSymbol.Name, 'r',  ctx.ReportDiagnostic, ctx.Symbol.GetLocation());
+        }
 
         private void CheckObjectPermission(OperationAnalysisContext ctx)
         {
@@ -56,7 +113,8 @@ namespace BusinessCentral.LinterCop.Design
 
             ITypeSymbol variableType = operation.Instance?.GetSymbol().GetTypeSymbol();
             if (variableType.GetNavTypeKindSafe() != NavTypeKind.Record) return;
-            if (variableType.ToString().ToLower().EndsWith("temporary") || ((IRecordTypeSymbol)variableType).Temporary) return; 
+
+            if (variableType.ToString().ToLower().EndsWith("temporary") || (((ITableTypeSymbol)((IRecordTypeSymbol)variableType).OriginalDefinition).TableType == TableTypeKind.Temporary)) return; 
             
             // IAttributeSymbol inherentPermissions = ((IMethodSymbol)ctx.ContainingSymbol).Attributes.First(attribute => attribute.Name == "InherentPermissions");
             //TODO: I dont know how to access the value of the inherentPermissions attribute
@@ -72,23 +130,25 @@ namespace BusinessCentral.LinterCop.Design
             IPropertySymbol objectPermissions = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol().GetProperty(PropertyKind.Permissions);
 
             if (buildInTableDataReadMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
-                CheckProcedureInvocation(objectPermissions, variableType, 'r',  ctx);
+                CheckProcedureInvocation(objectPermissions, variableType.Name, 'r',  ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation());
             else if (buildInTableDataInsertMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
-                CheckProcedureInvocation(objectPermissions, variableType, 'i', ctx);
+                CheckProcedureInvocation(objectPermissions, variableType.Name, 'i',ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation());
             else if (buildInTableDataModifyMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
-                CheckProcedureInvocation(objectPermissions, variableType, 'm', ctx);
+                CheckProcedureInvocation(objectPermissions, variableType.Name, 'm', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation());
             else if (buildInTableDataDeleteMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
-                CheckProcedureInvocation(objectPermissions, variableType, 'd', ctx);
+                CheckProcedureInvocation(objectPermissions, variableType.Name, 'd', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation());
 
         }
 
-        private void CheckProcedureInvocation(IPropertySymbol objectPermissions, ITypeSymbol variableType, char requestedPermission, OperationAnalysisContext ctx)
+        private void CheckProcedureInvocation(IPropertySymbol objectPermissions, string variableTypeName, char requestedPermission,Action<Diagnostic> ReportDiagnostic,Microsoft.Dynamics.Nav.CodeAnalysis.Text.Location location)
         {
             if (objectPermissions == null) 
             {
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, ctx.Operation.Syntax.GetLocation(), requestedPermission, variableType.Name));
+                ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, location, requestedPermission, variableTypeName));
                 return;
             }
+
+            bool permissionContainRequestedObject = false;
 
             foreach (var permission in objectPermissions.Value.ToString().Split(','))
             {
@@ -114,15 +174,20 @@ namespace BusinessCentral.LinterCop.Design
                 var objectName = typeAndObjectName[typeEndIndex..].Trim().Trim('"');
 
                 // Match against the parameters of the procedure
-                if (type == "tabledata" && objectName == variableType.Name)
+                if (type == "tabledata" && objectName == variableTypeName)
                 {
+                    permissionContainRequestedObject = true;
                     // Handle tabledata permissions
                     var permissions = permissionValue.ToCharArray();
                     if (!permissions.Contains(requestedPermission))
                     {
-                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, ctx.Operation.Syntax.GetLocation(), requestedPermission, variableType.Name));
+                        ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, location, requestedPermission, variableTypeName));
                     }
-                }
+                }                
+            }
+            if (!permissionContainRequestedObject)
+            {
+                ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, location, requestedPermission, variableTypeName));
             }
         }
 
