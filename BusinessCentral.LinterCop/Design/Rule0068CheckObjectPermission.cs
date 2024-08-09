@@ -7,9 +7,9 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 namespace BusinessCentral.LinterCop.Design
 {
     [DiagnosticAnalyzer]
-    public class Rule0067CheckObjectPermission : DiagnosticAnalyzer
+    public class Rule0068CheckObjectPermission : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0067CheckObjectPermission);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0068CheckObjectPermission);
 
         private static readonly List<string> buildInTableDataReadMethodNames = new List<string>
         {
@@ -74,7 +74,7 @@ namespace BusinessCentral.LinterCop.Design
         {
             if (objectPermissions == null) 
             {
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0067CheckObjectPermission, ctx.Operation.Syntax.GetLocation(), requestedPermission, variableType.Name));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, ctx.Operation.Syntax.GetLocation(), requestedPermission, variableType.Name));
                 return;
             }
 
@@ -108,7 +108,7 @@ namespace BusinessCentral.LinterCop.Design
                     var permissions = permissionValue.ToCharArray();
                     if (!permissions.Contains(requestedPermission))
                     {
-                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0067CheckObjectPermission, ctx.Operation.Syntax.GetLocation(), requestedPermission, variableType.Name));
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, ctx.Operation.Syntax.GetLocation(), requestedPermission, variableType.Name));
                     }
                 }
             }
@@ -116,14 +116,14 @@ namespace BusinessCentral.LinterCop.Design
 
         public static class DiagnosticDescriptors
         {
-                public static readonly DiagnosticDescriptor Rule0067CheckObjectPermission = new(
-                id: LinterCopAnalyzers.AnalyzerPrefix + "0067",
-                title: LinterCopAnalyzers.GetLocalizableString("Rule0067CheckObjectPermissionTitle"),
-                messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0067CheckObjectPermissionFormat"),
+                public static readonly DiagnosticDescriptor Rule0068CheckObjectPermission = new(
+                id: LinterCopAnalyzers.AnalyzerPrefix + "0068",
+                title: LinterCopAnalyzers.GetLocalizableString("Rule0068CheckObjectPermissionTitle"),
+                messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0068CheckObjectPermissionFormat"),
                 category: "Design",
                 defaultSeverity: DiagnosticSeverity.Warning, isEnabledByDefault: true,
-                description:  LinterCopAnalyzers.GetLocalizableString("Rule0067CheckObjectPermissionDescription"),
-                helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0067");
+                description:  LinterCopAnalyzers.GetLocalizableString("Rule0068CheckObjectPermissionDescription"),
+                helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0068");
         }
     }
 }

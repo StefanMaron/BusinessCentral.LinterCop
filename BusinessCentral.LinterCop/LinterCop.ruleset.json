@@ -333,7 +333,7 @@
       "justification": "Duplicate ToolTip between page and table field."
     },
     {
-      "id": "LC0067",
+      "id": "LC0068",
       "action": "Warning",
       "justification": "Informs the user that there are missing permission to access tabledata."
     }

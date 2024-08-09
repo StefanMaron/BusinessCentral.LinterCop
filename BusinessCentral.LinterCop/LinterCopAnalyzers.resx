@@ -717,13 +717,13 @@
   <data name="Rule0065EventSubscriberVarCheckDescription" xml:space="preserve">
     <value>Ensures that event subscriber methods use 'var' keyword for parameters as defined by event publisher.</value>
   </data>
-  <data name="Rule0067CheckObjectPermissionTitle" xml:space="preserve">
+  <data name="Rule0068CheckObjectPermissionTitle" xml:space="preserve">
     <value>The Object has missing permissions</value>
   </data>
-  <data name="Rule0067CheckObjectPermissionFormat" xml:space="preserve">
+  <data name="Rule0068CheckObjectPermissionFormat" xml:space="preserve">
     <value>The current object is missing permission "{0}" for tabledata "{1}"</value>
   </data>
-  <data name="Rule0067CheckObjectPermissionDescription" xml:space="preserve">
+  <data name="Rule0068CheckObjectPermissionDescription" xml:space="preserve">
     <value>Informs the user that there are missing permission to access tabledata.</value>
   </data>
 </root>
