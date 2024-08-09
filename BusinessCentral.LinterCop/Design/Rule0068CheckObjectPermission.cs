@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using BusinessCentral.LinterCop.AnalysisContextExtension;
+using Microsoft.Dynamics.Nav.Analyzers.Common;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
@@ -54,10 +55,21 @@ namespace BusinessCentral.LinterCop.Design
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
 
             ITypeSymbol variableType = operation.Instance?.GetSymbol().GetTypeSymbol();
-            // if (!allowedNavTypeKinds.Contains(ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol().GetNavTypeKindSafe())) return;
-            IPropertySymbol objectPermissions = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol().GetProperty(PropertyKind.Permissions);
-
             if (variableType.GetNavTypeKindSafe() != NavTypeKind.Record) return;
+            if (variableType.ToString().ToLower().EndsWith("temporary") || ((IRecordTypeSymbol)variableType).Temporary) return; 
+            
+            // IAttributeSymbol inherentPermissions = ((IMethodSymbol)ctx.ContainingSymbol).Attributes.First(attribute => attribute.Name == "InherentPermissions");
+            //TODO: I dont know how to access the value of the inherentPermissions attribute
+
+            // if(inherentPermissions != null)
+            // {
+            //     if (inherentPermissions.Value.ToString().Contains("r"))
+            //     {
+            //         return;
+            //     }
+            // }
+
+            IPropertySymbol objectPermissions = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol().GetProperty(PropertyKind.Permissions);
 
             if (buildInTableDataReadMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
                 CheckProcedureInvocation(objectPermissions, variableType, 'r',  ctx);
