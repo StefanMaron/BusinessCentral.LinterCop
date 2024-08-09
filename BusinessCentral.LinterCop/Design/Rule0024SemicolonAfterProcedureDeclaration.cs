@@ -18,7 +18,8 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.IsObsoletePendingOrRemoved()) return;
 
             MethodOrTriggerDeclarationSyntax syntax = ctx.Node as MethodOrTriggerDeclarationSyntax;
-
+            if (syntax == null) return;
+            
             if (syntax.SemicolonToken.Kind != SyntaxKind.None)
             {
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0024SemicolonAfterMethodOrTriggerDeclaration, syntax.SemicolonToken.GetLocation()));
