@@ -184,7 +184,7 @@ jobs:
         run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
 
       - name: Test
-        run: dotnet test ../BusinessCentral.LinterCop.Test/ /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release --logger trx --results-directory "TestResults-${{ matrix.version }}"
+        run: dotnet test BusinessCentral.LinterCop.Test/ /p:FeatureFlags=#ManifestHelper${{ matrix.featureflags }} --no-restore --configuration Release --logger trx --results-directory "TestResults-${{ matrix.version }}"
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
