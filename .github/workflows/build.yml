@@ -184,13 +184,13 @@ jobs:
         run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
 
       - name: Test
-        run: dotnet test ../BusinessCentral.LinterCop.Test/ /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release --logger trx --results-directory "TestResults-${{ matrix.assetname }}"
+        run: dotnet test ../BusinessCentral.LinterCop.Test/ /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release --logger trx --results-directory "TestResults-${{ matrix.version }}"
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
-          name: dotnet-results-${{ matrix.assetname }}
-          path: TestResults-${{ matrix.assetname }}
+          name: dotnet-results-${{ matrix.version }}
+          path: TestResults-${{ matrix.version }}
         # Use always() to always run this step to publish test results when there are test failures
         if: ${{ always() }}
 
