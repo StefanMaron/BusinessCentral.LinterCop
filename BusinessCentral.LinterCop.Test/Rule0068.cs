@@ -12,7 +12,7 @@ public class Rule0068
     }
 
     [Test]
-    [TestCase("1")]
+    [TestCase("ProcedureCalls")]
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
@@ -34,7 +34,51 @@ public class Rule0068
     }
 
     [Test]
-    [TestCase("1")]
+    [TestCase("XmlPorts")]
+    public async Task HasDiagnosticXmlPort(string testCase)
+    {
+        var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
+            .ConfigureAwait(false);
+
+        var fixture = RoslynFixtureFactory.Create<Rule0068CheckObjectPermission>();
+        fixture.HasDiagnosticAtLine(code, Rule0068CheckObjectPermission.DiagnosticDescriptors.Rule0068CheckObjectPermission.Id, 12);
+        fixture.HasDiagnosticAtLine(code, Rule0068CheckObjectPermission.DiagnosticDescriptors.Rule0068CheckObjectPermission.Id, 31);
+        fixture.HasDiagnosticAtLine(code, Rule0068CheckObjectPermission.DiagnosticDescriptors.Rule0068CheckObjectPermission.Id, 49);
+        fixture.HasDiagnosticAtLine(code, Rule0068CheckObjectPermission.DiagnosticDescriptors.Rule0068CheckObjectPermission.Id, 67);
+    }
+
+    [Test]
+    [TestCase("Queries")]
+    public async Task HasDiagnosticQuery(string testCase)
+    {
+        var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
+            .ConfigureAwait(false);
+
+        var fixture = RoslynFixtureFactory.Create<Rule0068CheckObjectPermission>();
+        fixture.HasDiagnosticAtLine(code, Rule0068CheckObjectPermission.DiagnosticDescriptors.Rule0068CheckObjectPermission.Id, 6);
+    }
+
+    [Test]
+    [TestCase("Reports")]
+    public async Task HasDiagnosticReport(string testCase)
+    {
+        var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
+            .ConfigureAwait(false);
+
+        var fixture = RoslynFixtureFactory.Create<Rule0068CheckObjectPermission>();
+        fixture.HasDiagnosticAtLine(code, Rule0068CheckObjectPermission.DiagnosticDescriptors.Rule0068CheckObjectPermission.Id, 7);
+    }
+
+    [Test]
+    [TestCase("ProcedureCallsPermissionsProperty")]
+    [TestCase("XmlPortPermissionsProperty")]
+    [TestCase("QueryPermissionsProperty")]
+    [TestCase("XmlPortInherentPermissions")]
+    [TestCase("QueryInherentPermissions")]
+    [TestCase("ReportPermissionsProperty")]
+    [TestCase("ReportInherentPermissions")]
+    [TestCase("ProcedureCallsInherentPermissionsProperty")]
+    [TestCase("ProcedureCallsInherentPermissionsAttribute")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
