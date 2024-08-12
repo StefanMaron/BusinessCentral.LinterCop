@@ -183,6 +183,9 @@ jobs:
       - name: Build
         run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ matrix.featureflags }} --no-restore --configuration Release
 
+      - name: Test
+        run: dotnet test BusinessCentral.LinterCop.Test /p:FeatureFlags=#ManifestHelper
+
       - name: Upload build artifact
         id: upload-build-asset
         uses: actions/upload-artifact@v4
