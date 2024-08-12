@@ -160,7 +160,7 @@
     <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table because it is used in list page</value>
   </data>
   <data name="Rule0004LookupPageIdAndDrillDownPageIdFormat" xml:space="preserve">
-    <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table "{1}" because it is used in page "{2}" (list)</value>
+    <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table {0} because it is used in page {1} (list).</value>
   </data>
   <data name="Rule0004LookupPageIdAndDrillDownPageIdTitle" xml:space="preserve">
     <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table because it is used in list page</value>
@@ -228,13 +228,13 @@
   <data name="Rule0012DoNotUseObjectIdInSystemFunctionsTitle" xml:space="preserve">
     <value>Wrong Parameter detected.</value>
   </data>
-  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysDescription" xml:space="preserve">
+  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysTitle" xml:space="preserve">
     <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
   </data>
   <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysFormat" xml:space="preserve">
     <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
   </data>
-  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysTitle" xml:space="preserve">
+  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysDescription" xml:space="preserve">
     <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
   </data>
   <data name="Rule0014PermissionSetCaptionLengthDescription" xml:space="preserve">
@@ -705,6 +705,9 @@
   <data name="Rule0065EventSubscriberVarCheckDescription" xml:space="preserve">
     <value>Ensures that event subscriber methods use 'var' keyword for parameters as defined by event publisher.</value>
   </data>
+  <data name="Rule0065EventSubscriberVarCheckDescription" xml:space="preserve">
+    <value>Ensures that event subscriber methods use 'var' keyword for parameters as defined by event publisher.</value>
+  </data>
   <data name="Rule0066DuplicateToolTipBetweenPageAndTableTitle" xml:space="preserve">
     <value>Duplicate ToolTip between page and table field.</value>
   </data>
@@ -714,8 +717,14 @@
   <data name="Rule0066DuplicateToolTipBetweenPageAndTableDescription" xml:space="preserve">
     <value>Informs the user that it is better to only apply the ToolTip property on the table field when the page fields ToolTip is the same.</value>
   </data>
-  <data name="Rule0065EventSubscriberVarCheckDescription" xml:space="preserve">
-    <value>Ensures that event subscriber methods use 'var' keyword for parameters as defined by event publisher.</value>
+  <data name="Rule0067DisableNotBlankOnSingleFieldPrimaryKeyTitle" xml:space="preserve">
+    <value>Set NotBlank to false when 'No. Series' TableRelation exists.</value>
+  </data>
+  <data name="Rule0067DisableNotBlankOnSingleFieldPrimaryKeyFormat" xml:space="preserve">
+    <value>The NotBlank property should be set to false (or removed) if a TableRelation of 'No. Series' is present on the table.</value>
+  </data>
+  <data name="Rule0067DisableNotBlankOnSingleFieldPrimaryKeyDescription" xml:space="preserve">
+    <value>When the 'No. Series' TableRelation is present on the table, assigning the primary key might occur after inserting the record, which could cause an error due to the NotBlank property.</value>
   </data>
   <data name="Rule0068CheckObjectPermissionTitle" xml:space="preserve">
     <value>The Object has missing permissions</value>

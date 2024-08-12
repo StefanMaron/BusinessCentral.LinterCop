@@ -19,7 +19,7 @@ public class Rule0013
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0013CheckForNotBlankOnSingleFieldPrimaryKeys>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0013CheckForNotBlankOnSingleFieldPrimaryKeys.Id);
+        fixture.HasDiagnostic(code, Rule0013CheckForNotBlankOnSingleFieldPrimaryKeys.DiagnosticDescriptors.Rule0013CheckForNotBlankOnSingleFieldPrimaryKeys.Id);
     }
 
     [Test]
@@ -33,6 +33,6 @@ public class Rule0013
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0013CheckForNotBlankOnSingleFieldPrimaryKeys>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0013CheckForNotBlankOnSingleFieldPrimaryKeys.Id);
+        fixture.NoDiagnosticAtMarker(code, Rule0013CheckForNotBlankOnSingleFieldPrimaryKeys.DiagnosticDescriptors.Rule0013CheckForNotBlankOnSingleFieldPrimaryKeys.Id);
     }
 }

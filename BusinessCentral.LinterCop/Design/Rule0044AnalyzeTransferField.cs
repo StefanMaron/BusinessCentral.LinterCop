@@ -44,13 +44,20 @@ namespace BusinessCentral.LinterCop.Design
 
             foreach (Tuple<string, string> tablePair in tables)
             {
-                string tableName = baseObject.Equals(tablePair.Item1) ? tablePair.Item2 : tablePair.Item1;
+                try // Investigate https://github.com/StefanMaron/vsc-lintercop/issues/22
+                {
+                    string tableName = baseObject.Equals(tablePair.Item1) ? tablePair.Item2 : tablePair.Item1;
 
-                Table table2 = GetTableWithFieldsByTableName(ctx.SemanticModel.Compilation, tableName, tableExtensions);
+                    Table table2 = GetTableWithFieldsByTableName(ctx.SemanticModel.Compilation, tableName, tableExtensions);
 
-                List<IGrouping<int, Field>> fieldGroups = GetFieldsWithSameIDAndApplyFilter(table1.Fields, table2.Fields, DifferentNameAndTypeFilter);
+                    List<IGrouping<int, Field>> fieldGroups = GetFieldsWithSameIDAndApplyFilter(table1.Fields, table2.Fields, DifferentNameAndTypeFilter);
 
-                ReportFieldDiagnostics(ctx, table1, fieldGroups);
+                    ReportFieldDiagnostics(ctx, table1, fieldGroups);
+                }
+                catch (Exception)
+                {
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Node.GetLocation(), new Object[] { "Rule0044", "Exception", "at line 51" }));
+                }
             }
         }
 
@@ -77,14 +84,7 @@ namespace BusinessCentral.LinterCop.Design
             List<VariableDeclarationBaseSyntax> variables = new List<VariableDeclarationBaseSyntax>();
 
             SyntaxNode localVariables = await localVariablesTask;
-            try
-            {
-                variables.AddRange(FindLocalVariables(localVariables));
-            }
-            catch (InvalidCastException)
-            {
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0044", "InvalidCastException", "at Line 82" }));
-            }
+            variables.AddRange(FindLocalVariables(localVariables));
             SyntaxNode globalVariables = await globalVariablesTask;
             variables.AddRange(FindGlobalVariables(globalVariables));
 
@@ -118,19 +118,25 @@ namespace BusinessCentral.LinterCop.Design
                 return;
 
             Dictionary<string, TableExtensionSyntax> tableExtensions = GetTableExtensions(ctx.Compilation);
-
-            Table table1 = GetTableWithFieldsByTableName(ctx.Compilation, tableName1);
-            Table table2 = GetTableWithFieldsByTableName(ctx.Compilation, tableName2);
-
-            List<IGrouping<int, Field>> fieldGroups = GetFieldsWithSameIDAndApplyFilter(table1.Fields, table2.Fields, DifferentNameAndTypeFilter);
-
-            if (fieldGroups.Any())
+            try // Investigate https://github.com/StefanMaron/vsc-lintercop/issues/22
             {
-                ReportFieldDiagnostics(ctx, table1, fieldGroups);
-                ReportFieldDiagnostics(ctx, table2, fieldGroups);
+                Table table1 = GetTableWithFieldsByTableName(ctx.Compilation, tableName1);
+                Table table2 = GetTableWithFieldsByTableName(ctx.Compilation, tableName2);
 
-                if (table1.Fields.Any(x => x.Location != null) || table2.Fields.Any(x => x.Location != null))
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0044AnalyzeTransferFields, invocationExpression.GetLocation(), table1.Name, table2.Name));
+                List<IGrouping<int, Field>> fieldGroups = GetFieldsWithSameIDAndApplyFilter(table1.Fields, table2.Fields, DifferentNameAndTypeFilter);
+
+                if (fieldGroups.Any())
+                {
+                    ReportFieldDiagnostics(ctx, table1, fieldGroups);
+                    ReportFieldDiagnostics(ctx, table2, fieldGroups);
+
+                    if (table1.Fields.Any(x => x.Location != null) || table2.Fields.Any(x => x.Location != null))
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0044AnalyzeTransferFields, invocationExpression.GetLocation(), table1.Name, table2.Name));
+                }
+            }
+            catch (Exception)
+            {
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0044", "Exception", "at line 123/124" }));
             }
         }
 
