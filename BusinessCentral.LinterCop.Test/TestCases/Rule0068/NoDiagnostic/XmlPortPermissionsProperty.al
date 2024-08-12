@@ -7,9 +7,9 @@ xmlport 50000 MyXmlport
     {
         textelement(NodeName1)
         {
-            tableelement(NodeName2; MyTable)
+            [|tableelement(NodeName2; MyTable)|]
             {
-                fieldattribute(NodeName3; NodeName2.SourceFieldName)
+                fieldattribute(NodeName3; NodeName2.MyField)
                 {
 
                 }
@@ -26,9 +26,9 @@ xmlport 50001 MyXmlport2
     {
         textelement(NodeName1)
         {
-            tableelement(NodeName2; MyTable)
+            [|tableelement(NodeName2; MyTable)|]
             {
-                fieldattribute(NodeName3; NodeName2.SourceFieldName)
+                fieldattribute(NodeName3; NodeName2.MyField)
                 {
 
                 }
@@ -45,9 +45,9 @@ xmlport 50002 MyXmlport3
     {
         textelement(NodeName1)
         {
-            tableelement(NodeName2; MyTable)
+            [|tableelement(NodeName2; MyTable)|]
             {
-                fieldattribute(NodeName3; NodeName2.SourceFieldName)
+                fieldattribute(NodeName3; NodeName2.MyField)
                 {
 
                 }
@@ -65,9 +65,9 @@ xmlport 50003 MyXmlport4
     {
         textelement(NodeName1)
         {
-            tableelement(NodeName2; MyTable)
+            [|tableelement(NodeName2; MyTable)|]
             {
-                fieldattribute(NodeName3; NodeName2.SourceFieldName)
+                fieldattribute(NodeName3; NodeName2.MyField)
                 {
 
                 }

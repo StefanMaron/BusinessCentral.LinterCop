@@ -4,7 +4,7 @@ query 50000 MyQuery
 
     elements
     {
-        dataitem(DataItemName; MyTable)
+        [|dataitem(DataItemName; MyTable)|]
         {
             column(ColumnName; MyField)
             {

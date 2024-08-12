@@ -7,9 +7,9 @@ xmlport 50000 MyXmlport
     {
         textelement(NodeName1)
         {
-            tableelement(NodeName2; MyTable)
+            [|tableelement(NodeName2; MyTable)|]
             {
-                fieldattribute(NodeName3; NodeName2.SourceFieldName)
+                fieldattribute(NodeName3; NodeName2.MyField2)
                 {
 
                 }
@@ -20,15 +20,15 @@ xmlport 50000 MyXmlport
 xmlport 50001 MyXmlport2
 {
     Direction = Export;
-    Permissions = tabledata MyTable = w;
+    Permissions = tabledata MyTable = m;
 
     schema
     {
         textelement(NodeName1)
         {
-            tableelement(NodeName2; MyTable)
+            [|tableelement(NodeName2; MyTable)|]
             {
-                fieldattribute(NodeName3; NodeName2.SourceFieldName)
+                fieldattribute(NodeName3; NodeName2.MyField2)
                 {
 
                 }
@@ -44,9 +44,9 @@ xmlport 50002 MyXmlport3
     {
         textelement(NodeName1)
         {
-            tableelement(NodeName2; MyTable)
+            [|tableelement(NodeName2; MyTable)|]
             {
-                fieldattribute(NodeName3; NodeName2.SourceFieldName)
+                fieldattribute(NodeName3; NodeName2.MyField2)
                 {
 
                 }
@@ -62,9 +62,9 @@ xmlport 50003 MyXmlport4
     {
         textelement(NodeName1)
         {
-            tableelement(NodeName2; MyTable)
+            [|tableelement(NodeName2; MyTable)|]
             {
-                fieldattribute(NodeName3; NodeName2.SourceFieldName)
+                fieldattribute(NodeName3; NodeName2.MyField2)
                 {
 
                 }

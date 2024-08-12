@@ -114,20 +114,25 @@ namespace BusinessCentral.LinterCop.Design
             IPropertySymbol objectPermissions = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol().GetProperty(PropertyKind.Permissions);
 
             if (buildInTableDataReadMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
+            {
                 if (!ProcedureHasInherentPermission(inherentPermissions, variableType.Name, 'r'))
                     CheckProcedureInvocation(objectPermissions, variableType.Name, 'r', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
-
-                else if (buildInTableDataInsertMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
-                    if (!ProcedureHasInherentPermission(inherentPermissions, variableType.Name, 'i'))
-                        CheckProcedureInvocation(objectPermissions, variableType.Name, 'i', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
-
-                else if (buildInTableDataModifyMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
-                    if (!ProcedureHasInherentPermission(inherentPermissions, variableType.Name, 'm'))
-                        CheckProcedureInvocation(objectPermissions, variableType.Name, 'm', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
-
-                else if (buildInTableDataDeleteMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
-                    if (!ProcedureHasInherentPermission(inherentPermissions, variableType.Name, 'd'))
-                        CheckProcedureInvocation(objectPermissions, variableType.Name, 'd', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
+            }
+            else if (buildInTableDataInsertMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
+            {
+                if (!ProcedureHasInherentPermission(inherentPermissions, variableType.Name, 'i'))
+                    CheckProcedureInvocation(objectPermissions, variableType.Name, 'i', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
+            }
+            else if (buildInTableDataModifyMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
+            {
+                if (!ProcedureHasInherentPermission(inherentPermissions, variableType.Name, 'm'))
+                    CheckProcedureInvocation(objectPermissions, variableType.Name, 'm', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
+            }
+            else if (buildInTableDataDeleteMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
+            {
+                if (!ProcedureHasInherentPermission(inherentPermissions, variableType.Name, 'd'))
+                    CheckProcedureInvocation(objectPermissions, variableType.Name, 'd', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
+            }
         }
 
         private bool ProcedureHasInherentPermission(IEnumerable<IAttributeSymbol> inherentPermissions, string variableTypeName, char requestedPermission)

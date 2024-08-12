@@ -5,21 +5,21 @@ codeunit 50000 MyCodeunit
     var
         MyTable: Record MyTable;
     begin
-        MyTable.Insert();
-        MyTable.Modify();
+        [|MyTable.Insert();|]
+        [|MyTable.Modify();|]
 
-        MyTable.Rename(1);
-        MyTable.ModifyAll(MyField2, 2);
+        [|MyTable.Rename(1);|]
+        [|MyTable.ModifyAll(MyField2, 2);|]
 
-        MyTable.Find();
-        MyTable.FindFirst();
-        MyTable.FindLast();
-        MyTable.FindSet();
-        MyTable.IsEmpty();
+        [|MyTable.Find();|]
+        [|MyTable.FindFirst();|]
+        [|MyTable.FindLast();|]
+        [|MyTable.FindSet();|]
+        [|if MyTable.IsEmpty() then;|]
 
-        MyTable.Delete();
-        MyTable.Insert();
-        MyTable.DeleteAll();
+        [|MyTable.Delete();|]
+        [|MyTable.Insert();|]
+        [|MyTable.DeleteAll();|]
     end;
 }
 

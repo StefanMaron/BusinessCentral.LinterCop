@@ -4,7 +4,7 @@ report 50000 MyReport
 
     dataset
     {
-        dataitem(DataItemName; MyTable)
+        [|dataitem(DataItemName; MyTable)|]
         {
             column(ColumnName; MyField)
             {
