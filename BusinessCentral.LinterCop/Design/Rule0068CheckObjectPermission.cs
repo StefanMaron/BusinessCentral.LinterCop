@@ -124,7 +124,7 @@ namespace BusinessCentral.LinterCop.Design
                 else if (buildInTableDataModifyMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
                     if (!ProcedureHasInherentPermission(inherentPermissions, variableType.Name, 'm'))
                         CheckProcedureInvocation(objectPermissions, variableType.Name, 'm', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
-                        
+
                 else if (buildInTableDataDeleteMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
                     if (!ProcedureHasInherentPermission(inherentPermissions, variableType.Name, 'd'))
                         CheckProcedureInvocation(objectPermissions, variableType.Name, 'd', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
@@ -235,7 +235,7 @@ namespace BusinessCentral.LinterCop.Design
             title: LinterCopAnalyzers.GetLocalizableString("Rule0068CheckObjectPermissionTitle"),
             messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0068CheckObjectPermissionFormat"),
             category: "Design",
-            defaultSeverity: DiagnosticSeverity.Warning, isEnabledByDefault: true,
+            defaultSeverity: DiagnosticSeverity.Info, isEnabledByDefault: true,
             description: LinterCopAnalyzers.GetLocalizableString("Rule0068CheckObjectPermissionDescription"),
             helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0068");
         }
