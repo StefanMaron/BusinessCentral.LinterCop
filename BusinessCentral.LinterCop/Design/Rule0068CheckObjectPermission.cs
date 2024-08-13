@@ -108,8 +108,10 @@ namespace BusinessCentral.LinterCop.Design
 
             if (variableType.ToString().ToLower().EndsWith("temporary") || (targetTable.TableType == TableTypeKind.Temporary)) return;
 
-            IEnumerable<IAttributeSymbol> inherentPermissions = ((IMethodSymbol)ctx.ContainingSymbol).Attributes.Where(attribute => attribute.Name == "InherentPermissions");
+            IEnumerable<IAttributeSymbol> inherentPermissions = [];
 
+            if (ctx.ContainingSymbol is IMethodSymbol symbol)            
+               inherentPermissions = symbol.Attributes.Where(attribute => attribute.Name == "InherentPermissions");            
 
             IPropertySymbol objectPermissions = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol().GetProperty(PropertyKind.Permissions);
 
