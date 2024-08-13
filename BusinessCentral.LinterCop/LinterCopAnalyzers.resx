@@ -705,6 +705,9 @@
   <data name="Rule0065EventSubscriberVarCheckDescription" xml:space="preserve">
     <value>Ensures that event subscriber methods use 'var' keyword for parameters as defined by event publisher.</value>
   </data>
+  <data name="Rule0065EventSubscriberVarCheckDescription" xml:space="preserve">
+    <value>Ensures that event subscriber methods use 'var' keyword for parameters as defined by event publisher.</value>
+  </data>
   <data name="Rule0066DuplicateToolTipBetweenPageAndTableTitle" xml:space="preserve">
     <value>Duplicate ToolTip between page and table field.</value>
   </data>
@@ -722,5 +725,14 @@
   </data>
   <data name="Rule0067DisableNotBlankOnSingleFieldPrimaryKeyDescription" xml:space="preserve">
     <value>When the 'No. Series' TableRelation is present on the table, assigning the primary key might occur after inserting the record, which could cause an error due to the NotBlank property.</value>
+  </data>
+  <data name="Rule0068CheckObjectPermissionTitle" xml:space="preserve">
+    <value>The Object has missing permissions</value>
+  </data>
+  <data name="Rule0068CheckObjectPermissionFormat" xml:space="preserve">
+    <value>The current object is missing permission "{0}" for tabledata "{1}"</value>
+  </data>
+  <data name="Rule0068CheckObjectPermissionDescription" xml:space="preserve">
+    <value>Informs the user that there are missing permission to access tabledata.</value>
   </data>
 </root>
