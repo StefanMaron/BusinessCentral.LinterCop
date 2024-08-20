@@ -35,6 +35,10 @@ public class Rule0068
     [TestCase("ReportInherentPermissions")]
     [TestCase("ProcedureCallsInherentPermissionsProperty")]
     [TestCase("ProcedureCallsInherentPermissionsAttribute")]
+    [TestCase("PageSourceTable")]
+#if Fall2023RV1
+    [TestCase("ProcedureCallsPermissionsPropertyFullyQualified")]
+#endif
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
