@@ -705,9 +705,6 @@
   <data name="Rule0065EventSubscriberVarCheckDescription" xml:space="preserve">
     <value>Ensures that event subscriber methods use 'var' keyword for parameters as defined by event publisher.</value>
   </data>
-  <data name="Rule0065EventSubscriberVarCheckDescription" xml:space="preserve">
-    <value>Ensures that event subscriber methods use 'var' keyword for parameters as defined by event publisher.</value>
-  </data>
   <data name="Rule0066DuplicateToolTipBetweenPageAndTableTitle" xml:space="preserve">
     <value>Duplicate ToolTip between page and table field.</value>
   </data>
@@ -734,5 +731,14 @@
   </data>
   <data name="Rule0068CheckObjectPermissionDescription" xml:space="preserve">
     <value>Informs the user that there are missing permission to access tabledata.</value>
+  </data>
+  <data name="Rule0069EmptyStatementsTitle" xml:space="preserve">
+    <value>Avoid empty statements.</value>
+  </data>
+  <data name="Rule0069EmptyStatementsFormat" xml:space="preserve">
+    <value>Empty statements should be avoided.</value>
+  </data>
+  <data name="Rule0069EmptyStatementsDescription" xml:space="preserve">
+    <value>Empty statements should be avoided.</value>
   </data>
 </root>
