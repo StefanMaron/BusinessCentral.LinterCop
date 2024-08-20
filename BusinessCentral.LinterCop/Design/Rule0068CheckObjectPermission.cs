@@ -67,11 +67,11 @@ namespace BusinessCentral.LinterCop.Design
 
             if (direction == "import" || direction == "both")
             {
-                CheckProcedureInvocation(objectPermissions, targetSymbol.Name, 'm', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
-                CheckProcedureInvocation(objectPermissions, targetSymbol.Name, 'i', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
+                CheckProcedureInvocation(objectPermissions, targetSymbol, 'm', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
+                CheckProcedureInvocation(objectPermissions, targetSymbol, 'i', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
             }
             if (direction == "export" || direction == "both")
-                CheckProcedureInvocation(objectPermissions, targetSymbol.Name, 'r', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
+                CheckProcedureInvocation(objectPermissions, targetSymbol, 'r', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
         }
 
         private void CheckQueryDataItemObjectPermission(SymbolAnalysisContext ctx)
@@ -80,7 +80,7 @@ namespace BusinessCentral.LinterCop.Design
 
             IPropertySymbol objectPermissions = ctx.Symbol.GetContainingApplicationObjectTypeSymbol().GetProperty(PropertyKind.Permissions);
             ITypeSymbol targetSymbol = ((IQueryDataItemSymbol)ctx.Symbol).GetTypeSymbol();
-            CheckProcedureInvocation(objectPermissions, targetSymbol.Name, 'r', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
+            CheckProcedureInvocation(objectPermissions, targetSymbol, 'r', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
         }
 
         private void CheckReportDataItemObjectPermission(SymbolAnalysisContext ctx)
@@ -91,7 +91,7 @@ namespace BusinessCentral.LinterCop.Design
 
             IPropertySymbol objectPermissions = ctx.Symbol.GetContainingApplicationObjectTypeSymbol().GetProperty(PropertyKind.Permissions);
             ITypeSymbol targetSymbol = ((IReportDataItemSymbol)ctx.Symbol).GetTypeSymbol();
-            CheckProcedureInvocation(objectPermissions, targetSymbol.Name, 'r', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
+            CheckProcedureInvocation(objectPermissions, targetSymbol, 'r', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
         }
 
         private void CheckObjectPermission(OperationAnalysisContext ctx)
@@ -122,30 +122,30 @@ namespace BusinessCentral.LinterCop.Design
                inherentPermissions = symbol.Attributes.Where(attribute => attribute.Name == "InherentPermissions");            
 
             IPropertySymbol objectPermissions = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol().GetProperty(PropertyKind.Permissions);
-
+//variableType.OriginalDefinition.ContainingNamespace
             if (buildInTableDataReadMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
             {
-                if (!ProcedureHasInherentPermission(inherentPermissions, variableType.Name, 'r'))
-                    CheckProcedureInvocation(objectPermissions, variableType.Name, 'r', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
+                if (!ProcedureHasInherentPermission(inherentPermissions, variableType, 'r'))
+                    CheckProcedureInvocation(objectPermissions, variableType, 'r', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
             }
             else if (buildInTableDataInsertMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
             {
-                if (!ProcedureHasInherentPermission(inherentPermissions, variableType.Name, 'i'))
-                    CheckProcedureInvocation(objectPermissions, variableType.Name, 'i', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
+                if (!ProcedureHasInherentPermission(inherentPermissions, variableType, 'i'))
+                    CheckProcedureInvocation(objectPermissions, variableType, 'i', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
             }
             else if (buildInTableDataModifyMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
             {
-                if (!ProcedureHasInherentPermission(inherentPermissions, variableType.Name, 'm'))
-                    CheckProcedureInvocation(objectPermissions, variableType.Name, 'm', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
+                if (!ProcedureHasInherentPermission(inherentPermissions, variableType, 'm'))
+                    CheckProcedureInvocation(objectPermissions, variableType, 'm', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
             }
             else if (buildInTableDataDeleteMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
             {
-                if (!ProcedureHasInherentPermission(inherentPermissions, variableType.Name, 'd'))
-                    CheckProcedureInvocation(objectPermissions, variableType.Name, 'd', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
+                if (!ProcedureHasInherentPermission(inherentPermissions, variableType, 'd'))
+                    CheckProcedureInvocation(objectPermissions, variableType, 'd', ctx.ReportDiagnostic, ctx.Operation.Syntax.GetLocation(), targetTable);
             }
         }
 
-        private bool ProcedureHasInherentPermission(IEnumerable<IAttributeSymbol> inherentPermissions, string variableTypeName, char requestedPermission)
+        private bool ProcedureHasInherentPermission(IEnumerable<IAttributeSymbol> inherentPermissions, ITypeSymbol variableType, char requestedPermission)
         {
             //[InherentPermissions(PermissionObjectType::TableData, Database::"SomeTable", 'r'),InherentPermissions(PermissionObjectType::TableData, Database::"SomeOtherTable", 'w')]
 
@@ -167,7 +167,8 @@ namespace BusinessCentral.LinterCop.Design
                 if (typeParts.Length < 2) continue;
 
                 var objectName = typeParts[1].Trim().Trim('"');
-                if (objectName.ToLowerInvariant() != variableTypeName.ToLowerInvariant()) continue;
+                if (objectName.ToLowerInvariant() != variableType.Name.ToLowerInvariant()) 
+                    if (objectName.ToLowerInvariant() != (variableType.OriginalDefinition.ContainingNamespace.Name.ToLowerInvariant() + variableType.Name.ToLowerInvariant())) continue;
 
                 if (permissionValue.Contains(requestedPermission))
                 {
@@ -177,13 +178,13 @@ namespace BusinessCentral.LinterCop.Design
             return false;
         }
 
-        private void CheckProcedureInvocation(IPropertySymbol objectPermissions, string variableTypeName, char requestedPermission, Action<Diagnostic> ReportDiagnostic, Microsoft.Dynamics.Nav.CodeAnalysis.Text.Location location, ITableTypeSymbol targetTable)
+        private void CheckProcedureInvocation(IPropertySymbol objectPermissions, ITypeSymbol variableType, char requestedPermission, Action<Diagnostic> ReportDiagnostic, Microsoft.Dynamics.Nav.CodeAnalysis.Text.Location location, ITableTypeSymbol targetTable)
         {
             if (TableHasInherentPermission(targetTable, requestedPermission)) return;
 
             if (objectPermissions == null)
             {
-                ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, location, requestedPermission, variableTypeName));
+                ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, location, requestedPermission, variableType.Name));
                 return;
             }
 
@@ -213,20 +214,20 @@ namespace BusinessCentral.LinterCop.Design
                 var objectName = typeAndObjectName[typeEndIndex..].Trim().Trim('"');
 
                 // Match against the parameters of the procedure
-                if (type == "tabledata" && objectName == variableTypeName.ToLowerInvariant())
+                if (type == "tabledata" && (objectName == variableType.Name.ToLowerInvariant() || objectName.Replace("\"","") == (variableType.OriginalDefinition.ContainingNamespace.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant())))
                 {
                     permissionContainRequestedObject = true;
                     // Handle tabledata permissions
                     var permissions = permissionValue.ToCharArray();
                     if (!permissions.Contains(requestedPermission))
                     {
-                        ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, location, requestedPermission, variableTypeName));
+                        ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, location, requestedPermission, variableType.Name));
                     }
                 }
             }
             if (!permissionContainRequestedObject)
             {
-                ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, location, requestedPermission, variableTypeName));
+                ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, location, requestedPermission, variableType.Name));
             }
         }
 
