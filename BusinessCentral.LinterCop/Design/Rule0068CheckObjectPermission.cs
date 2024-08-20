@@ -106,6 +106,14 @@ namespace BusinessCentral.LinterCop.Design
 
             ITableTypeSymbol targetTable = (ITableTypeSymbol)((IRecordTypeSymbol)variableType).OriginalDefinition;
 
+            if (ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol().NavTypeKind == NavTypeKind.Page)
+            {
+                IPropertySymbol sourceTableProperty = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol().GetProperty(PropertyKind.SourceTable);
+                if (sourceTableProperty != null)
+                    if (sourceTableProperty.Value == targetTable)
+                        return;
+            }
+
             if (variableType.ToString().ToLower().EndsWith("temporary") || (targetTable.TableType == TableTypeKind.Temporary)) return;
 
             IEnumerable<IAttributeSymbol> inherentPermissions = [];
