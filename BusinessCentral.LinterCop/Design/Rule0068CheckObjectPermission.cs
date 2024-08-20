@@ -118,11 +118,11 @@ namespace BusinessCentral.LinterCop.Design
 
             IEnumerable<IAttributeSymbol> inherentPermissions = [];
 
-            if (ctx.ContainingSymbol is IMethodSymbol symbol)            
-               inherentPermissions = symbol.Attributes.Where(attribute => attribute.Name == "InherentPermissions");            
+            if (ctx.ContainingSymbol is IMethodSymbol symbol)
+                inherentPermissions = symbol.Attributes.Where(attribute => attribute.Name == "InherentPermissions");
 
             IPropertySymbol objectPermissions = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol().GetProperty(PropertyKind.Permissions);
-//variableType.OriginalDefinition.ContainingNamespace
+            //variableType.OriginalDefinition.ContainingNamespace
             if (buildInTableDataReadMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
             {
                 if (!ProcedureHasInherentPermission(inherentPermissions, variableType, 'r'))
@@ -167,8 +167,11 @@ namespace BusinessCentral.LinterCop.Design
                 if (typeParts.Length < 2) continue;
 
                 var objectName = typeParts[1].Trim().Trim('"');
-                if (objectName.ToLowerInvariant() != variableType.Name.ToLowerInvariant()) 
-                    if (objectName.ToLowerInvariant() != (variableType.OriginalDefinition.ContainingNamespace.Name.ToLowerInvariant() + variableType.Name.ToLowerInvariant())) continue;
+                if (objectName.ToLowerInvariant() != variableType.Name.ToLowerInvariant())
+#if Fall2023RV1
+                    if (objectName.Replace("\"","").ToLowerInvariant() != (variableType.OriginalDefinition.ContainingNamespace.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant())) 
+#endif
+                    continue;
 
                 if (permissionValue.Contains(requestedPermission))
                 {
@@ -213,8 +216,13 @@ namespace BusinessCentral.LinterCop.Design
                 var type = typeAndObjectName[..typeEndIndex].Trim();
                 var objectName = typeAndObjectName[typeEndIndex..].Trim().Trim('"');
 
+                bool nameSpaceNameMatch = false;
+#if Fall2023RV1
+                nameSpaceNameMatch  = objectName.Replace("\"","") == (variableType.OriginalDefinition.ContainingNamespace.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant());
+#endif
+
                 // Match against the parameters of the procedure
-                if (type == "tabledata" && (objectName == variableType.Name.ToLowerInvariant() || objectName.Replace("\"","") == (variableType.OriginalDefinition.ContainingNamespace.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant())))
+                if (type == "tabledata" && (objectName == variableType.Name.ToLowerInvariant() || nameSpaceNameMatch))
                 {
                     permissionContainRequestedObject = true;
                     // Handle tabledata permissions
