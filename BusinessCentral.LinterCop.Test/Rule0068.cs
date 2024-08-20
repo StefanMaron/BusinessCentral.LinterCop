@@ -12,26 +12,39 @@ public class Rule0068
     }
 
     [Test]
-    [TestCase("1")]
+    [TestCase("ProcedureCalls")]
+    [TestCase("XmlPorts")]
+    [TestCase("Queries")]
+    [TestCase("Reports")]
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
             .ConfigureAwait(false);
 
-        var fixture = RoslynFixtureFactory.Create<Rule0068EmptyStatements>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0068EmptyStatements.Id);
+        var fixture = RoslynFixtureFactory.Create<Rule0068CheckObjectPermission>();
+        fixture.HasDiagnostic(code, Rule0068CheckObjectPermission.DiagnosticDescriptors.Rule0068CheckObjectPermission.Id);
     }
 
     [Test]
-    [TestCase("1")]
-    [TestCase("2")]
-    [TestCase("3")]
+    [TestCase("ProcedureCallsPermissionsProperty")]
+    [TestCase("XmlPortPermissionsProperty")]
+    [TestCase("QueryPermissionsProperty")]
+    [TestCase("XmlPortInherentPermissions")]
+    [TestCase("QueryInherentPermissions")]
+    [TestCase("ReportPermissionsProperty")]
+    [TestCase("ReportInherentPermissions")]
+    [TestCase("ProcedureCallsInherentPermissionsProperty")]
+    [TestCase("ProcedureCallsInherentPermissionsAttribute")]
+    [TestCase("PageSourceTable")]
+#if Fall2023RV1
+    [TestCase("ProcedureCallsPermissionsPropertyFullyQualified")]
+#endif
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
             .ConfigureAwait(false);
 
-        var fixture = RoslynFixtureFactory.Create<Rule0068EmptyStatements>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0068EmptyStatements.Id);
+        var fixture = RoslynFixtureFactory.Create<Rule0068CheckObjectPermission>();
+        fixture.NoDiagnosticAtMarker(code, Rule0068CheckObjectPermission.DiagnosticDescriptors.Rule0068CheckObjectPermission.Id);
     }
 }
