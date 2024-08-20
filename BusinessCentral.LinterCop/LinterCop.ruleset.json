@@ -346,6 +346,11 @@
       "id": "LC0069",
       "action": "Info",
       "justification": "Avoid empty statements."
+    },
+    {
+      "id": "LC0070",
+      "action": "Warning",
+      "justification": "Zero index access on 1-based List objects."
     }
   ]
 }

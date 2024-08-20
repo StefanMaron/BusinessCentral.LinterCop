@@ -741,4 +741,13 @@
   <data name="Rule0069EmptyStatementsDescription" xml:space="preserve">
     <value>Empty statements should be avoided.</value>
   </data>
+  <data name="Rule0070ListObjectsAreOneBasedTitle" xml:space="preserve">
+    <value>Zero index access on 1-based List objects.</value>
+  </data>
+  <data name="Rule0070ListObjectsAreOneBasedFormat" xml:space="preserve">
+    <value>List objects are 1-based.</value>
+  </data>
+  <data name="Rule0070ListObjectsAreOneBasedDescription" xml:space="preserve">
+    <value>List objects are 1-based, meaning indexing starts from 1 instead of the conventional 0.</value>
+  </data>
 </root>

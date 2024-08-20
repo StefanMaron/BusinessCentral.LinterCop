@@ -223,3 +223,4 @@ For an example and the default values see: [LinterCop.ruleset.json](LinterCop.ru
 |[LC0067](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0067)|Set `NotBlank` property to `false` when 'No. Series' TableRelation exists.|Warning|
 |[LC0068](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0068)|Informs the user that there are missing permission to access tabledata.|Info|
 |[LC0069](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0069)|Avoid empty statements.|Info|
+|[LC0070](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0070)|Zero index access on 1-based List objects.|Warning|
