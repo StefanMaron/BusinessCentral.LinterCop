@@ -1,7 +1,6 @@
+#nullable enable
 using System.Collections.Immutable;
-using System.Dynamic;
 using BusinessCentral.LinterCop.AnalysisContextExtension;
-using Microsoft.Dynamics.Nav.Analyzers.Common;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
@@ -54,7 +53,7 @@ namespace BusinessCentral.LinterCop.Design
 
             IXmlPortTypeSymbol xmlPort = (IXmlPortTypeSymbol)ctx.Symbol.GetContainingObjectTypeSymbol();
 
-            IPropertySymbol objectPermissions = xmlPort.GetProperty(PropertyKind.Permissions);
+            IPropertySymbol? objectPermissions = xmlPort.GetProperty(PropertyKind.Permissions);
             ITypeSymbol targetSymbol = ((IXmlPortNodeSymbol)ctx.Symbol.OriginalDefinition).GetTypeSymbol();
             var directionProperty = xmlPort.Properties.FirstOrDefault(property => property.Name == "Direction");
 
@@ -78,7 +77,7 @@ namespace BusinessCentral.LinterCop.Design
         {
             if (ctx.IsObsoletePendingOrRemoved()) return;
 
-            IPropertySymbol objectPermissions = ctx.Symbol.GetContainingApplicationObjectTypeSymbol().GetProperty(PropertyKind.Permissions);
+            IPropertySymbol? objectPermissions = ctx.Symbol.GetContainingApplicationObjectTypeSymbol()?.GetProperty(PropertyKind.Permissions);
             ITypeSymbol targetSymbol = ((IQueryDataItemSymbol)ctx.Symbol).GetTypeSymbol();
             CheckProcedureInvocation(objectPermissions, targetSymbol, 'r', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
         }
@@ -89,7 +88,7 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.Symbol.GetBooleanPropertyValue(PropertyKind.UseTemporary) == true) return;
             if (((ITableTypeSymbol)((IRecordTypeSymbol)((IReportDataItemSymbol)ctx.Symbol).GetTypeSymbol()).OriginalDefinition).TableType == TableTypeKind.Temporary) return;
 
-            IPropertySymbol objectPermissions = ctx.Symbol.GetContainingApplicationObjectTypeSymbol().GetProperty(PropertyKind.Permissions);
+            IPropertySymbol? objectPermissions = ctx.Symbol.GetContainingApplicationObjectTypeSymbol()?.GetProperty(PropertyKind.Permissions);
             ITypeSymbol targetSymbol = ((IReportDataItemSymbol)ctx.Symbol).GetTypeSymbol();
             CheckProcedureInvocation(objectPermissions, targetSymbol, 'r', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
         }
@@ -101,14 +100,14 @@ namespace BusinessCentral.LinterCop.Design
             IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
             if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
 
-            ITypeSymbol variableType = operation.Instance?.GetSymbol().GetTypeSymbol();
-            if (variableType.GetNavTypeKindSafe() != NavTypeKind.Record) return;
+            ITypeSymbol? variableType = operation.Instance?.GetSymbol()?.GetTypeSymbol();
+            if (variableType?.GetNavTypeKindSafe() != NavTypeKind.Record) return;
 
             ITableTypeSymbol targetTable = (ITableTypeSymbol)((IRecordTypeSymbol)variableType).OriginalDefinition;
 
-            if (ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol().NavTypeKind == NavTypeKind.Page)
+            if (ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol()?.NavTypeKind == NavTypeKind.Page)
             {
-                IPropertySymbol sourceTableProperty = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol().GetProperty(PropertyKind.SourceTable);
+                IPropertySymbol? sourceTableProperty = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol()?.GetProperty(PropertyKind.SourceTable);
                 if (sourceTableProperty != null)
                     if (sourceTableProperty.Value == targetTable)
                         return;
@@ -121,7 +120,7 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.ContainingSymbol is IMethodSymbol symbol)
                 inherentPermissions = symbol.Attributes.Where(attribute => attribute.Name == "InherentPermissions");
 
-            IPropertySymbol objectPermissions = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol().GetProperty(PropertyKind.Permissions);
+            IPropertySymbol? objectPermissions = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol()?.GetProperty(PropertyKind.Permissions);
             //variableType.OriginalDefinition.ContainingNamespace
             if (buildInTableDataReadMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant()))
             {
@@ -153,12 +152,12 @@ namespace BusinessCentral.LinterCop.Design
 
             foreach (var inherentPermission in inherentPermissions)
             {
-                var inherentPermissionAsString = inherentPermission.DeclaringSyntaxReference.GetSyntax().ToString();
+                var inherentPermissionAsString = inherentPermission.DeclaringSyntaxReference?.GetSyntax().ToString();
 
 
 
-                var permissions = inherentPermissionAsString.Split(new[] { '[', ']', '(', ')', ',' }, StringSplitOptions.RemoveEmptyEntries);
-                if (permissions[1].Trim() != "PermissionObjectType::TableData") continue;
+                var permissions = inherentPermissionAsString?.Split(new[] { '[', ']', '(', ')', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                if (permissions?[1].Trim() != "PermissionObjectType::TableData") continue;
 
                 var typeAndObjectName = permissions[2].Trim();
                 var permissionValue = permissions[3].Trim().Trim(new[] { '\'', ' ' });
@@ -169,7 +168,7 @@ namespace BusinessCentral.LinterCop.Design
                 var objectName = typeParts[1].Trim().Trim('"');
                 if (objectName.ToLowerInvariant() != variableType.Name.ToLowerInvariant())
 #if Fall2023RV1
-                    if (objectName.Replace("\"","").ToLowerInvariant() != (variableType.OriginalDefinition.ContainingNamespace.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant())) 
+                    if (objectName.UnquoteIdentifier().ToLowerInvariant() != (variableType.OriginalDefinition.ContainingNamespace.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant())) 
 #endif
                     continue;
 
@@ -181,7 +180,7 @@ namespace BusinessCentral.LinterCop.Design
             return false;
         }
 
-        private void CheckProcedureInvocation(IPropertySymbol objectPermissions, ITypeSymbol variableType, char requestedPermission, Action<Diagnostic> ReportDiagnostic, Microsoft.Dynamics.Nav.CodeAnalysis.Text.Location location, ITableTypeSymbol targetTable)
+        private void CheckProcedureInvocation(IPropertySymbol? objectPermissions, ITypeSymbol variableType, char requestedPermission, Action<Diagnostic> ReportDiagnostic, Microsoft.Dynamics.Nav.CodeAnalysis.Text.Location location, ITableTypeSymbol targetTable)
         {
             if (TableHasInherentPermission(targetTable, requestedPermission)) return;
 
@@ -218,7 +217,7 @@ namespace BusinessCentral.LinterCop.Design
 
                 bool nameSpaceNameMatch = false;
 #if Fall2023RV1
-                nameSpaceNameMatch  = objectName.Replace("\"","") == (variableType.OriginalDefinition.ContainingNamespace.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant());
+                nameSpaceNameMatch  = objectName.UnquoteIdentifier() == (variableType.OriginalDefinition.ContainingNamespace.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant());
 #endif
 
                 // Match against the parameters of the procedure
@@ -241,12 +240,11 @@ namespace BusinessCentral.LinterCop.Design
 
         private bool TableHasInherentPermission(ITableTypeSymbol table, char requestedPermission)
         {
-            IPropertySymbol permissionProperty = table.GetProperty(PropertyKind.InherentPermissions);
-            if (permissionProperty == null) return false;
+            IPropertySymbol? permissionProperty = table.GetProperty(PropertyKind.InherentPermissions);
             // InherentPermissions = RIMD;
-            var permissions = permissionProperty.Value.ToString().ToLowerInvariant().Split(new[] { '=' }, 2)[0].Trim().ToCharArray();
+            char[]? permissions = permissionProperty?.Value.ToString().ToLowerInvariant().Split(new[] { '=' }, 2)[0].Trim().ToCharArray();
 
-            if (permissions.Contains(requestedPermission.ToString().ToLowerInvariant()[0]))
+            if (permissions is not null && permissions.Contains(requestedPermission.ToString().ToLowerInvariant()[0]))
                 return true;
 
             return false;
