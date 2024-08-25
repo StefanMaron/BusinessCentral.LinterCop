@@ -1,0 +1,44 @@
+name: Marketplace
+description: Get AL Language versions from the Visual Studio Marketplace
+
+outputs:
+  sources:
+    description: Stringified JSON object with VSIXPackages of the AL Language versions
+    value: ${{ steps.get-marketplace.outputs.sources }}
+  al-version-latest:
+    description: Version number of the Latest version
+    value: ${{ steps.get-marketplace.outputs.latest }}
+  al-version-prerelease:
+    description: Version number of the Pre-Release version
+    value: ${{ steps.get-marketplace.outputs.prerelease }}
+
+runs:
+  using: composite
+  steps:
+    - name: Get-Marketplace
+      id: get-marketplace
+      shell: pwsh
+      run: |
+        $listing = ${{github.action_path}}/Get-Marketplace.ps1 | ConvertFrom-Json
+
+        $versionLatest = $listing `
+         | Where-Object properties -ne $null `
+         | Where-Object { $_.properties.key -notcontains 'Microsoft.VisualStudio.Code.PreRelease' } | Select-Object -First 1 -ExpandProperty version
+        echo "latest=$($versionLatest)" >> $env:GITHUB_OUTPUT
+
+        $versionPreRelease = $listing `
+         | Where-Object properties -ne $null `
+         | Where-Object { $_.properties.key -contains 'Microsoft.VisualStudio.Code.PreRelease' } | Select-Object -First 1 -ExpandProperty version
+        echo "prerelease=$($versionPreRelease)" >> $env:GITHUB_OUTPUT
+
+        # Populate list of sources
+        $sources = foreach ($item in $listing) {
+            $VSIXPackage = $item.files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage" }
+            if ($VSIXPackage) {
+                [PSCustomObject]@{
+                    version = $item.version
+                    source  = $VSIXPackage.source
+                }
+            }
+        }
+        echo "sources=$($sources | ConvertTo-Json -Compress)" >> $env:GITHUB_OUTPUT
