@@ -42,11 +42,7 @@ runs:
             throw "Both release and pre-release cannot be false. One must be true."
         }
 
-        $prerelease = if ($releaseFlag) {
-            $false
-        } elseif ($prereleaseFlag) {
-            $true
-        }
+        $prerelease = $prereleaseFlag -and -not $releaseFlag
 
         $releases = Invoke-RestMethod `
             -Uri https://api.github.com/repos/${{ github.repository }}/releases?per_page=10 `
