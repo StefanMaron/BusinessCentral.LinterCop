@@ -67,6 +67,10 @@ runs:
       shell: pwsh
       run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }} --no-restore --configuration Release
 
+    - name: Test
+      shell: pwsh
+      run: dotnet test BusinessCentral.LinterCop.Test /p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }}
+
     - name: Upload build artifact
       id: upload-build-asset
       uses: actions/upload-artifact@v4
