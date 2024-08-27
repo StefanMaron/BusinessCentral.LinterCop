@@ -21,7 +21,8 @@ runs:
         TARGET_PATH: ${{ inputs.path }}
       run: |
         # Get list of artifacts files
-        $artifacts = Get-ChildItem -Path $env:SOURCE_PATH -Recurse | ForEach-Object { if (!($_.PSIsContainer)) { $_}} | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
+        $artifacts = Get-ChildItem -Path $env:SOURCE_PATH -Recurse -File
+        | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
 
         # Create folder if not exits
         if (!(Test-Path $env:TARGET_PATH)) {
