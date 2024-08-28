@@ -1,0 +1,21 @@
+name: Daily check for updates
+on:
+  schedule:
+    - cron: "0 0,6,12,18 * * *"
+  workflow_dispatch: null
+
+jobs:
+  setup-matrix:
+    name: Run
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Trigger for executing check of new release of the AL Language
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run NewReleaseAL.yml --ref master -f update-release=true
+          gh workflow run NewReleaseAL.yml --ref prerelease -f update-pre-release=true

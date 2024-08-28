@@ -1,0 +1,24 @@
+name: Feature Flags
+description: Composite Action to populate the Feature Flags based on the AL Language version
+
+inputs:
+  version-number:
+    required: true
+    description: version number of the AL Language
+
+outputs:
+  feature-flags:
+    description: string of feature flags
+    value: ${{ steps.populate-feature-flags.outputs.feature-flags }}
+
+runs:
+  using: composite
+  steps:
+    - name: Populate Feature Flags
+      id: populate-feature-flags
+      shell: pwsh
+      env:
+        VERSION_NUMBER: ${{ inputs.version-number}}
+      run: |
+        $result = ${{github.action_path}}/Get-FeatureFlags.ps1 $env:VERSION_NUMBER
+        echo "feature-flags=$($result)" >> $env:GITHUB_OUTPUT
