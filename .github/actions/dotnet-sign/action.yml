@@ -1,0 +1,41 @@
+name: Code Sign Assets
+description: ""
+
+inputs:
+  base-directory:
+    required: true
+    description: Path with the artifacts that need to be code signed
+  description:
+    required: true
+    description: ""
+  description-url:
+    required: true
+    description: ""
+  azure-key-vault-url:
+    required: true
+    description: ""
+  azure-key-vault-certificate:
+    required: true
+    description: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Install Sign CLI tool
+      shell: pwsh
+      run: dotnet tool install --tool-path . sign --version 0.9.0-beta.23127.3
+
+    - name: Sign artifacts
+      shell: pwsh
+      env:
+        KEY_VAULT_URL: ${{ inputs.azure-key-vault-url }}
+        KEY_VAULT_CERTIFICATE: ${{ inputs.azure-key-vault-certificate }}
+      run: >
+        ./sign code azure-key-vault
+        **/*.dll
+        --base-directory ${{ inputs.base-directory }}
+        --description ${{ inputs.description }}
+        --description-url ${{ inputs.description-url }}
+        --azure-key-vault-managed-identity true
+        --azure-key-vault-url $env:KEY_VAULT_URL
+        --azure-key-vault-certificate $env:KEY_VAULT_CERTIFICATE

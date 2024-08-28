@@ -1,0 +1,128 @@
+name: CICD
+on:
+  push:
+    branches:
+      - master
+      - prerelease
+  pull_request:
+  workflow_dispatch: null
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create Release
+        id: create-release
+        uses: release-drafter/release-drafter@v6
+        if: github.event_name != 'pull_request'
+        with:
+          prerelease: ${{ github.ref != 'refs/heads/master' }}
+          commitish: ${{ github.ref }}
+          disable-autolabeler: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get AL Language versions from Marketplace
+        id: marketplace
+        uses: ./.github/actions/marketplace
+
+      - name: Populate matrix for build job strategy
+        id: setup-build-matrix
+        uses: ./.github/actions/build-matrix
+        with:
+          sources: ${{ steps.marketplace.outputs.sources }}
+          al-version-latest: ${{ steps.marketplace.outputs.al-version-latest }}
+          al-version-prerelease: ${{ steps.marketplace.outputs.al-version-prerelease }}
+
+    outputs:
+      github-event-name: ${{ github.event_name }}
+      release-tag-name: ${{ steps.create-release.outputs.tag_name }}
+      release-upload-url: ${{ steps.create-release.outputs.upload_url }}
+      matrix: ${{ steps.setup-build-matrix.outputs.matrix }}
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: setup
+    strategy:
+      matrix: ${{ fromJson(needs.setup.outputs.matrix) }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build artifact
+        id: dotnet-build
+        uses: ./.github/actions/dotnet-build
+        with:
+          asset-version-number: ${{ needs.setup.outputs.release-tag-name }}
+          asset-name: ${{ matrix.assetname }}
+          asset-publish: ${{ needs.setup.outputs.github-event-name != 'pull_request' }}
+          al-version-number: ${{ matrix.version }}
+          al-asset-uri: ${{ matrix.assetUri }}
+          al-latest: ${{ matrix.latest }}
+          al-prerelease: ${{ matrix.prerelease }}
+
+  publish:
+    name: Publish
+    runs-on: windows-latest # Code signing must run on a Windows agent for Authenticode signing (dll/exe)
+    needs:
+      - setup
+      - build
+    if: github.event_name != 'pull_request' # Exclude this job for validation on the pull-request
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Download artifacts
+        id: download-artifacts
+        uses: ./.github/actions/download-artifacts
+        with:
+          path: ${{ github.workspace }}\BuildArtifacts
+
+      - name: Code Sign artifacts
+        id: code-sign
+        uses: ./.github/actions/dotnet-sign
+        with:
+          base-directory: ${{ github.workspace }}\BuildArtifacts
+          description: "BusinessCentral.LinterCop"
+          description-url: https://github.com/${{ github.repository }}
+          azure-key-vault-url: ${{ secrets.KEY_VAULT_URL }}
+          azure-key-vault-certificate: ${{ secrets.KEY_VAULT_CERTIFICATE }}
+
+      - name: Publish Assets
+        id: upload-release-assets
+        shell: pwsh
+        env:
+          ARTIFACTS_PATH: ${{ github.workspace }}\BuildArtifacts
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_UPLOAD_URL: ${{ needs.setup.outputs.release-upload-url }}
+        run: |
+          # The upload-url contains "{?name,label}" at the end, which needs to be removed
+          $upload_url = $env:RELEASE_UPLOAD_URL -replace '{\?name,label}', ''
+          Write-Host "upload-url: $($upload_url)" 
+
+          # Find all the .dll files in the directory
+          $artifacts = Get-ChildItem -Path $env:ARTIFACTS_PATH -Depth 0 -Filter *.dll
+
+          # Loop through each artifact and upload it using curl (which handles multipart form data)
+          $artifacts | ForEach-Object {
+              $asset_name = $_.Name
+              $asset_path = $_.FullName
+
+              Write-Host "Uploading $asset_name..."
+              curl -L `
+                -X POST `
+                -H "Accept: application/vnd.github+json" `
+                -H "Authorization: token $env:GITHUB_TOKEN" `
+                -H "X-GitHub-Api-Version: 2022-11-28" `
+                -H "Content-Type: application/octet-stream" `
+                "$($upload_url)?name=$($asset_name)" `
+                --data-binary `@"$asset_path"
+          }
