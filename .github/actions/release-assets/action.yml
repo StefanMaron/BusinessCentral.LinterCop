@@ -1,0 +1,68 @@
+name: LinterCop (Pre)Release Assets
+description: Get LinterCop (Pre)Release Assets
+
+inputs:
+  release:
+    required: false
+    default: "false"
+    description: Retrieve Release assets
+  pre-release:
+    required: false
+    default: "false"
+    description: Retrieve Pre-Release assets
+
+outputs:
+  tag-name:
+    description: Tag name of release
+    value: ${{ steps.get-release-assets.outputs.tag-name }}
+  upload-url:
+    description: Target url for uploading assets
+    value: ${{ steps.get-release-assets.outputs.upload-url }}
+  al-versions:
+    description: Stringified JSON object with version numbers of the AL Language
+    value: ${{ steps.get-release-assets.outputs.versions }}
+
+runs:
+  using: composite
+  steps:
+    - name: Get (Pre)Release Assets
+      id: get-release-assets
+      shell: pwsh
+      env:
+        RELEASE: ${{ inputs.release }}
+        PRERELEASE: ${{ inputs.pre-release }}
+      run: |
+        $releaseFlag = [System.Convert]::ToBoolean($env:RELEASE)
+        $prereleaseFlag = [System.Convert]::ToBoolean($env:PRERELEASE)
+
+        if ($releaseFlag -and $prereleaseFlag) {
+            throw "Both release and pre-release cannot be true at the same time."
+        }
+        if (-not $releaseFlag -and -not $prereleaseFlag) {
+            throw "Both release and pre-release cannot be false. One must be true."
+        }
+
+        $prerelease = $prereleaseFlag -and -not $releaseFlag
+
+        $releases = Invoke-RestMethod `
+            -Uri https://api.github.com/repos/${{ github.repository }}/releases?per_page=10 `
+            -UseBasicParsing
+
+        $releaseLatest = $releases
+        | Where-Object draft -eq $False
+        | Where-Object prerelease -eq $prerelease
+        | Select-Object -First 1
+
+        # Regular expression pattern to match version numbers
+        $pattern = 'AL-(\d+\.\d+\.\d+)'
+
+        # Extract version numbers
+        $versions = $releaseLatest.assets | ForEach-Object {
+            if ($_ -match $pattern) {
+                $matches[1]
+            }
+        }
+
+        echo "tag-name=$($releaseLatest.tag_name)" >> $env:GITHUB_OUTPUT
+        echo "upload-url=$($releaseLatest.upload_url -replace '{\?name,label}', '')" >> $env:GITHUB_OUTPUT
+        echo "versions=$($versions | ConvertTo-Json -Compress)" >> $env:GITHUB_OUTPUT

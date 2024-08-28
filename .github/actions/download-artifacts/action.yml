@@ -1,0 +1,33 @@
+name: Download artifacts
+description: Download artifacts
+
+inputs:
+  path:
+    required: true
+    description: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ${{ github.workspace }}\DownloadBuildArtifacts
+
+    - name: Rename artifacts
+      shell: pwsh
+      env:
+        SOURCE_PATH: ${{ github.workspace }}\DownloadBuildArtifacts
+        TARGET_PATH: ${{ inputs.path }}
+      run: |
+        # Get list of artifacts files
+        $artifacts = Get-ChildItem -Path $env:SOURCE_PATH -Recurse -File
+        | Where-Object { $_.Name -like 'BusinessCentral.LinterCop*.dll' -and  $_.Directory.Name -like 'BusinessCentral.LinterCop*.dll' }
+
+        # Create folder if not exits
+        if (!(Test-Path $env:TARGET_PATH)) {
+            New-Item -Path $env:TARGET_PATH -ItemType Directory -Force | Out-Null
+        }
+
+        # Move the artifacts (BusinessCentral.LinterCop.dll) in every directory to a combined folder and rename the file to the name of it's parent directory
+        $artifacts | ForEach-Object { Move-Item -Path $_ -Destination (Join-Path $env:TARGET_PATH $_.Directory.Name) }

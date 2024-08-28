@@ -1,0 +1,122 @@
+name: dotnet build
+description: Builds a .NET project and all of its dependencies.
+
+inputs:
+  asset-version-number:
+    required: false
+    description: The version number for the artifact
+  asset-name:
+    required: false
+    description: The name for the artifact
+  asset-publish:
+    required: false
+    default: "false"
+    description: Publish artifact as asset on workflow
+  al-version-number:
+    required: true
+    description: The version number of the corresponding AL Language
+  al-asset-uri:
+    required: true
+    description: The asset uri for retrieving the VSIXPackages of the AL Language
+  al-latest:
+    default: "false"
+    required: false
+    description: Set build as Latest version of the AL Language
+  al-prerelease:
+    default: "false"
+    required: false
+    description: Set build as Pre-Release version of the AL Language
+
+runs:
+  using: composite
+  steps:
+    - name: Restore dependencies
+      shell: pwsh
+      run: dotnet restore BusinessCentral.LinterCop
+
+    - name: Download platform artifact
+      shell: pwsh
+      env:
+        ASSET_URI: ${{ inputs.al-asset-uri }}
+      run: Invoke-WebRequest $env:ASSET_URI -OutFile ALLanguage.vsix
+
+    - name: Unzip vsix
+      shell: pwsh
+      run: 7z x ALLanguage.vsix "-oALLanguage" "extension/bin/Analyzers" -r
+
+    - name: Set AssemblyInfo
+      shell: pwsh
+      if: ${{ inputs.asset-publish == 'true' }}
+      env:
+        AL_VERSION: ${{ inputs.al-version-number }}
+        LC_VERSION: ${{ inputs.asset-version-number }}
+      run:
+        (Get-Content BusinessCentral.LinterCop/AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
+        ("Version(""" + ($env:LC_VERSION
+        -replace "v","") + """)]") | Out-File BusinessCentral.LinterCop/AssemblyInfo.cs
+
+        (Get-Content BusinessCentral.LinterCop/AssemblyInfo.cs) -replace 'AssemblyTitle\("([^"]*)"\)', "AssemblyTitle(`"AL-$env:AL_VERSION`")" | Out-File BusinessCentral.LinterCop/AssemblyInfo.cs
+
+    - name: Populate Feature Flags
+      id: get-feature-flags
+      uses: ./.github/actions/feature-flags
+      with:
+        version-number: ${{ inputs.al-version-number }}
+
+    - name: Build
+      shell: pwsh
+      run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }} --no-restore --configuration Release
+
+    - name: Test
+      shell: pwsh
+      run: dotnet test BusinessCentral.LinterCop.Test /p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }}
+
+    - name: Upload build artifact
+      id: upload-build-asset
+      uses: actions/upload-artifact@v4
+      if: ${{ inputs.asset-publish == 'true' }}
+      with:
+        name: ${{ inputs.asset-name }}
+        path: BusinessCentral.LinterCop/bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+        compression-level: 0 # no compression
+
+    ### Upload Asset as Latest
+    - name: Upload build artifact (Latest)
+      id: upload-build-asset-latest
+      uses: actions/upload-artifact@v4
+      if: ${{ inputs.asset-publish == 'true' && inputs.al-latest == 'true' }}
+      with:
+        name: BusinessCentral.LinterCop.dll
+        path: BusinessCentral.LinterCop/bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+        compression-level: 0 # no compression
+
+    ### Upload Asset as Pre-Release
+    - name: Upload build artifact (Pre-Release)
+      id: upload-build-asset-prerelease
+      uses: actions/upload-artifact@v4
+      if: ${{ inputs.asset-publish == 'true' && inputs.al-prerelease == 'true' }}
+      with:
+        name: BusinessCentral.LinterCop.AL-PreRelease.dll
+        path: BusinessCentral.LinterCop/bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+        compression-level: 0 # no compression
+
+    ### Compatibility with previous naming of files
+    ### Release Asset as Current
+    - name: Upload build artifact (Current)
+      id: upload-build-asset-current
+      uses: actions/upload-artifact@v4
+      if: ${{ inputs.asset-publish == 'true' && inputs.al-latest == 'true' }}
+      with:
+        name: BusinessCentral.LinterCop.current.dll
+        path: BusinessCentral.LinterCop/bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+        compression-level: 0 # no compression
+
+    ### Release Asset as Next
+    - name: Upload build artifact (Next)
+      id: upload-build-asset-next
+      uses: actions/upload-artifact@v4
+      if: ${{ inputs.asset-publish == 'true' && inputs.al-prerelease == 'true' }}
+      with:
+        name: BusinessCentral.LinterCop.next.dll
+        path: BusinessCentral.LinterCop/bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+        compression-level: 0 # no compression

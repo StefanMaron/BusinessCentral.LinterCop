@@ -1,0 +1,47 @@
+name: Setup Build Matrix
+description: Populate matrix for build job strategy
+
+inputs:
+  sources:
+    required: true
+    description: Stringified JSON object with VSIXPackages of the AL Language versions
+  al-version-latest:
+    required: true
+    description: Version number of the Latest version of the AL Language
+  al-version-prerelease:
+    required: true
+    description: Version number of the Pre-Release version of the AL Language
+
+outputs:
+  matrix:
+    description: Stringified JSON object with matrix for build job strategy
+    value: ${{ steps.get-matrix.outputs.matrix }}
+  isempty:
+    description: Boolean 'true'/'false' if the matrix is an empty result
+    value: ${{ steps.get-matrix.outputs.isempty }}
+
+runs:
+  using: composite
+  steps:
+    - name: Get Matrix
+      id: get-matrix
+      shell: pwsh
+      env:
+        AL_VERSION_LATEST: ${{ inputs.al-version-latest }}
+        AL_VERSION_PRERELEASE: ${{ inputs.al-version-prerelease }}
+      run: |
+        $matrix = @()
+        $sources = '${{ inputs.sources }}' | ConvertFrom-Json
+        foreach ($item in $sources) {
+            $matrix += [Ordered]@{
+                version      = $item.version;
+                assetname    = "BusinessCentral.LinterCop.AL-$($item.version).dll";
+                assetUri     = $item.source;
+                latest       = $($item.version -eq $env:AL_VERSION_LATEST);
+                prerelease   = $($item.version -eq $env:AL_VERSION_PRERELEASE);
+            }
+        }
+
+        echo "isempty=$([string]($matrix.Count -eq 0).ToString().ToLower())" >> $env:GITHUB_OUTPUT
+        $matrix = @{'include' = $matrix } | ConvertTo-Json -Compress
+        echo "matrix=$($matrix)" >> $env:GITHUB_OUTPUT
