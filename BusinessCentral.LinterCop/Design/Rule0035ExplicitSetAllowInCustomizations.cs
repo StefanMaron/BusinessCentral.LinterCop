@@ -1,4 +1,5 @@
 #if Fall2023RV1
+#nullable enable
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
@@ -34,7 +35,7 @@ namespace BusinessCentral.LinterCop.Design
                                                                 .ToList();
             if (!tableFields.Any()) return;
 
-            IEnumerable<IApplicationObjectTypeSymbol> relatedPages = GetRelatedPages(ctx);
+            IEnumerable<IApplicationObjectTypeSymbol>? relatedPages = GetRelatedPages(ctx);
 
             if (!relatedPages.Any())
             {
@@ -50,7 +51,7 @@ namespace BusinessCentral.LinterCop.Design
             ICollection<IFieldSymbol> pageFields = GetPageFields(relatedPages);
             ICollection<IFieldSymbol> fieldsNotReferencedOnPage = tableFields.Except(pageFields).ToList();
             foreach (IFieldSymbol field in fieldsNotReferencedOnPage)
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0035ExplicitSetAllowInCustomizations, field.Location));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0035ExplicitSetAllowInCustomizations, field.Location!));
         }
 
         private static ICollection<IFieldSymbol> GetTableFields(ISymbol symbol)
@@ -66,8 +67,11 @@ namespace BusinessCentral.LinterCop.Design
             }
         }
 
-        private static ICollection<IFieldSymbol> GetPageFields(IEnumerable<IApplicationObjectTypeSymbol> relatedPages)
+        private static ICollection<IFieldSymbol> GetPageFields(IEnumerable<IApplicationObjectTypeSymbol>? relatedPages)
         {
+            if (relatedPages == null)
+                return [];
+
             ICollection<IFieldSymbol> pageFields = new Collection<IFieldSymbol>();
             foreach (IApplicationObjectTypeSymbol relatedPageLike in relatedPages)
             {
@@ -75,12 +79,12 @@ namespace BusinessCentral.LinterCop.Design
                 {
                     case NavTypeKind.Page:
                         IEnumerable<IFieldSymbol> fields = ((IPageTypeSymbol)relatedPageLike).FlattenedControls.Where(x => x.ControlKind == ControlKind.Field && x.RelatedFieldSymbol != null)
-                                                            .Select(x => (IFieldSymbol)x.RelatedFieldSymbol.OriginalDefinition);
+                                                            .Select(x => (IFieldSymbol)x.RelatedFieldSymbol!.OriginalDefinition);
                         pageFields = pageFields.Union(fields).Distinct().ToList();
                         break;
                     case NavTypeKind.PageExtension:
                         IEnumerable<IFieldSymbol> extFields = ((IPageExtensionTypeSymbol)relatedPageLike).AddedControlsFlattened.Where(x => x.ControlKind == ControlKind.Field && x.RelatedFieldSymbol != null)
-                                                            .Select(x => (IFieldSymbol)x.RelatedFieldSymbol.OriginalDefinition);
+                                                            .Select(x => (IFieldSymbol)x.RelatedFieldSymbol!.OriginalDefinition);
 
                         pageFields = pageFields.Union(extFields).Distinct().ToList();
                         break;
@@ -89,21 +93,26 @@ namespace BusinessCentral.LinterCop.Design
             return pageFields;
         }
 
-        private static IEnumerable<IApplicationObjectTypeSymbol> GetRelatedPages(SymbolAnalysisContext ctx)
+        private static IEnumerable<IApplicationObjectTypeSymbol>? GetRelatedPages(SymbolAnalysisContext ctx)
         {
             // table and tableextension fields can each be referenced on both pages and pageextensions
-            ITableTypeSymbol table = null;
+            ITableTypeSymbol? table = null;
             switch (ctx.Symbol.GetContainingObjectTypeSymbol().GetNavTypeKindSafe())
             {
                 case NavTypeKind.Record:
-                    table = (ITableTypeSymbol)ctx.Symbol;
+                    table = ctx.Symbol as ITableTypeSymbol;
                     break;
                 case NavTypeKind.TableExtension:
-                    table = (ITableTypeSymbol)((IApplicationObjectExtensionTypeSymbol)ctx.Symbol).Target;
+                    if (ctx.Symbol is IApplicationObjectExtensionTypeSymbol typeSymbol)
+                        table = typeSymbol.Target as ITableTypeSymbol;
                     break;
                 default:
                     return null;
             }
+
+            if (table is null)
+                return [];
+
             IEnumerable<IApplicationObjectTypeSymbol> pages = ctx.Compilation.GetDeclaredApplicationObjectSymbols()
                                             .Where(x => x.GetNavTypeKindSafe() == NavTypeKind.Page)
                                             .Where(x => ((IPageTypeSymbol)x.GetTypeSymbol()).PageType != PageTypeKind.API)
@@ -111,7 +120,8 @@ namespace BusinessCentral.LinterCop.Design
 
             IEnumerable<IApplicationObjectTypeSymbol> pageExtensions = ctx.Compilation.GetDeclaredApplicationObjectSymbols()
                                             .Where(x => x.GetNavTypeKindSafe() == NavTypeKind.PageExtension)
-                                            .Where(x => ((IPageTypeSymbol)((IApplicationObjectExtensionTypeSymbol)x).Target.GetTypeSymbol()).RelatedTable == table);
+                                            .Where(x => ((IApplicationObjectExtensionTypeSymbol)x).Target != null)
+                                            .Where(x => ((IPageTypeSymbol)((IApplicationObjectExtensionTypeSymbol)x).Target!.GetTypeSymbol()).RelatedTable == table);
 
             return pages.Union(pageExtensions);
         }
@@ -132,8 +142,11 @@ namespace BusinessCentral.LinterCop.Design
             }
         }
 
-        private static bool LookupOrDrillDownPageIsSet(ITableTypeSymbol table)
+        private static bool LookupOrDrillDownPageIsSet(ITableTypeSymbol? table)
         {
+            if (table is null)
+                return false;
+
             return table.Properties.Any(e => e.PropertyKind == PropertyKind.DrillDownPageId || e.PropertyKind == PropertyKind.LookupPageId);
         }
     }
