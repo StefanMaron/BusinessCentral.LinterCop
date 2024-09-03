@@ -183,6 +183,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckProcedureInvocation(IPropertySymbol objectPermissions, ITypeSymbol variableType, char requestedPermission, Action<Diagnostic> ReportDiagnostic, Microsoft.Dynamics.Nav.CodeAnalysis.Text.Location location, ITableTypeSymbol targetTable)
         {
+            if (targetTable.Id > 2000000000) return;
             if (TableHasInherentPermission(targetTable, requestedPermission)) return;
 
             if (objectPermissions == null)

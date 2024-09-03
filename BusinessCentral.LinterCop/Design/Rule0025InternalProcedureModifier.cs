@@ -19,15 +19,20 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.IsObsoletePendingOrRemoved()) return;
 
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().DeclaredAccessibility != Accessibility.Public) return;
-
-            MethodDeclarationSyntax methodDeclarationSyntax = (MethodDeclarationSyntax)ctx.Node;
-            SyntaxNodeOrToken accessModifier = methodDeclarationSyntax.ProcedureKeyword.GetPreviousToken();
-
-            if (accessModifier.Kind == SyntaxKind.LocalKeyword || accessModifier.Kind == SyntaxKind.InternalKeyword) return;
-
-            if (methodDeclarationSyntax.GetLeadingTrivia().Where(x => x.Kind == SyntaxKind.SingleLineDocumentationCommentTrivia).Any()) return;
-
-            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0025InternalProcedureModifier, methodDeclarationSyntax.ProcedureKeyword.GetLocation()));
+            if (!ctx.Node.IsKind(SyntaxKind.MethodDeclaration)) return; 
+            
+            try
+            {
+                MethodDeclarationSyntax methodDeclarationSyntax = (MethodDeclarationSyntax)ctx.Node;            
+                SyntaxNodeOrToken accessModifier = methodDeclarationSyntax.ProcedureKeyword.GetPreviousToken();
+                if (accessModifier.Kind == SyntaxKind.LocalKeyword || accessModifier.Kind == SyntaxKind.InternalKeyword) return;
+                if (methodDeclarationSyntax.GetLeadingTrivia().Where(x => x.Kind == SyntaxKind.SingleLineDocumentationCommentTrivia).Any()) return;
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0025InternalProcedureModifier, methodDeclarationSyntax.ProcedureKeyword.GetLocation()));
+            }
+            catch (System.InvalidCastException)
+            {
+                return;
+            }
         }
     }
 }
