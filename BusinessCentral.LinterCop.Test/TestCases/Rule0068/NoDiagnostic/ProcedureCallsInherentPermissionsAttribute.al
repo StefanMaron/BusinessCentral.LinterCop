@@ -1,7 +1,7 @@
 codeunit 50000 MyCodeunit
 {
 
-    [InherentPermissions(PermissionObjectType::TableData, Database::MyTable, 'rimd')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::MyTable, 'RIMD')]
     local procedure Test()
     var
         MyTable: Record MyTable;

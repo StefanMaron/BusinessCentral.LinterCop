@@ -171,7 +171,7 @@ namespace BusinessCentral.LinterCop.Design
                 if (permissions[1].Trim() != "PermissionObjectType::TableData") continue;
 
                 var typeAndObjectName = permissions[2].Trim();
-                var permissionValue = permissions[3].Trim().Trim(new[] { '\'', ' ' });
+                var permissionValue = permissions[3].Trim().Trim(new[] { '\'', ' ' }).ToLowerInvariant();
 
                 var typeParts = typeAndObjectName.Split(new[] { "::" }, StringSplitOptions.RemoveEmptyEntries);
                 if (typeParts.Length < 2) continue;
@@ -183,7 +183,7 @@ namespace BusinessCentral.LinterCop.Design
 #endif
                     continue;
 
-                if (permissionValue.Contains(requestedPermission))
+                if (permissionValue.Contains(requestedPermission.ToString().ToLowerInvariant()[0]))
                 {
                     return true;
                 }
