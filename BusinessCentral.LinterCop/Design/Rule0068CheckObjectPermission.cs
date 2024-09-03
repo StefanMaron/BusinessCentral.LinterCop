@@ -63,12 +63,22 @@ namespace BusinessCentral.LinterCop.Design
             else
                 direction = directionProperty.ValueText;
 
+            bool? AutoReplace = (bool?)ctx.Symbol.Properties.FirstOrDefault(property => property.PropertyKind == PropertyKind.AutoReplace)?.Value; // modify permissions
+            bool? AutoUpdate = (bool?)ctx.Symbol.Properties.FirstOrDefault(property => property.PropertyKind == PropertyKind.AutoUpdate)?.Value; // modify permissions
+            bool? AutoSave = (bool?)ctx.Symbol.Properties.FirstOrDefault(property => property.PropertyKind == PropertyKind.AutoSave)?.Value; // insert permissions
+
+            AutoReplace ??= true;
+            AutoUpdate ??= true;
+            AutoSave ??= true;
+
             direction = direction.ToLowerInvariant();
 
             if (direction == "import" || direction == "both")
             {
-                CheckProcedureInvocation(objectPermissions, targetSymbol, 'm', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
-                CheckProcedureInvocation(objectPermissions, targetSymbol, 'i', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
+                if (AutoReplace == true || AutoUpdate == true)
+                    CheckProcedureInvocation(objectPermissions, targetSymbol, 'm', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
+                if (AutoSave == true)
+                    CheckProcedureInvocation(objectPermissions, targetSymbol, 'i', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
             }
             if (direction == "export" || direction == "both")
                 CheckProcedureInvocation(objectPermissions, targetSymbol, 'r', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
@@ -161,7 +171,7 @@ namespace BusinessCentral.LinterCop.Design
                 if (permissions?[1].Trim() != "PermissionObjectType::TableData") continue;
 
                 var typeAndObjectName = permissions[2].Trim();
-                var permissionValue = permissions[3].Trim().Trim(new[] { '\'', ' ' });
+                var permissionValue = permissions[3].Trim().Trim(new[] { '\'', ' ' }).ToLowerInvariant();
 
                 var typeParts = typeAndObjectName.Split(new[] { "::" }, StringSplitOptions.RemoveEmptyEntries);
                 if (typeParts.Length < 2) continue;
@@ -173,7 +183,7 @@ namespace BusinessCentral.LinterCop.Design
 #endif
                     continue;
 
-                if (permissionValue.Contains(requestedPermission))
+                if (permissionValue.Contains(requestedPermission.ToString().ToLowerInvariant()[0]))
                 {
                     return true;
                 }
@@ -183,6 +193,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckProcedureInvocation(IPropertySymbol? objectPermissions, ITypeSymbol variableType, char requestedPermission, Action<Diagnostic> ReportDiagnostic, Microsoft.Dynamics.Nav.CodeAnalysis.Text.Location location, ITableTypeSymbol targetTable)
         {
+            if (targetTable.Id > 2000000000) return;
             if (TableHasInherentPermission(targetTable, requestedPermission)) return;
 
             if (objectPermissions == null)
