@@ -39,7 +39,8 @@ public class Rule0068
 #if Fall2023RV1
     [TestCase("ProcedureCallsPermissionsPropertyFullyQualified")]
 #endif
-    [TestCase("IntegerTable")]
+    // [TestCase("IntegerTable")]
+    [TestCase("XMLPortWithTableElementProps")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))

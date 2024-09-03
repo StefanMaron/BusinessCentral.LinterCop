@@ -63,12 +63,22 @@ namespace BusinessCentral.LinterCop.Design
             else
                 direction = directionProperty.ValueText;
 
+            bool? AutoReplace = (bool?)ctx.Symbol.Properties.FirstOrDefault(property => property.PropertyKind == PropertyKind.AutoReplace)?.Value; // modify permissions
+            bool? AutoUpdate = (bool?)ctx.Symbol.Properties.FirstOrDefault(property => property.PropertyKind == PropertyKind.AutoUpdate)?.Value; // modify permissions
+            bool? AutoSave = (bool?)ctx.Symbol.Properties.FirstOrDefault(property => property.PropertyKind == PropertyKind.AutoSave)?.Value; // insert permissions
+
+            AutoReplace ??= true;
+            AutoUpdate ??= true;
+            AutoSave ??= true;
+
             direction = direction.ToLowerInvariant();
 
             if (direction == "import" || direction == "both")
             {
-                CheckProcedureInvocation(objectPermissions, targetSymbol, 'm', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
-                CheckProcedureInvocation(objectPermissions, targetSymbol, 'i', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
+                if (AutoReplace == true || AutoUpdate == true)
+                    CheckProcedureInvocation(objectPermissions, targetSymbol, 'm', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
+                if (AutoSave == true)
+                    CheckProcedureInvocation(objectPermissions, targetSymbol, 'i', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
             }
             if (direction == "export" || direction == "both")
                 CheckProcedureInvocation(objectPermissions, targetSymbol, 'r', ctx.ReportDiagnostic, ctx.Symbol.GetLocation(), (ITableTypeSymbol)targetSymbol.OriginalDefinition);
