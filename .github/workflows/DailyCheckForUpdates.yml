@@ -16,7 +16,16 @@ jobs:
           $results = Invoke-WebRequest -Method POST -UseBasicParsing `
               -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 `
               -Body '{"filters":[{"criteria":[{"filterType":8,"value":"Microsoft.VisualStudio.Code"},{"filterType":12,"value":"4096"},{"filterType":7,"value":"ms-dynamics-smb.al"}],"pageNumber":1,"pageSize":50,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":0x192}' `
-              -ContentType application/json
+              -ContentType application/json | ConvertFrom-Json
+
+          # Loop through results and remove the statistics property
+          foreach ($result in $results.results) {
+              foreach ($extension in $result.extensions) {
+                  $extension.PSObject.Properties.Remove("statistics")
+              }
+          }
+          $results = $($results | ConvertTo-Json -Compress -Depth 8)
+
           $md5 = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
           $utf8 = new-object -TypeName System.Text.UTF8Encoding
           $hash = [System.BitConverter]::ToString($md5.ComputeHash($utf8.GetBytes($results)))
