@@ -57,7 +57,7 @@ jobs:
           path: ${{ runner.temp }}/hash.txt
           key: al-marketplace-hash-${{ steps.generate_hash.outputs.hash }}
 
-      - name: Trigger for executing check of new release of the AL Language
+      - name: Trigger for executing builds for new release of the AL Language
         if: env.new_hash == 'true'
         shell: pwsh
         env:
