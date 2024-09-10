@@ -1,18 +1,67 @@
 name: Daily check for updates
 on:
   schedule:
-    - cron: "0 0,6,12,18 * * *"
+    - cron: "0 0,6,9,12,15,18 * * *"
   workflow_dispatch: null
 
 jobs:
-  setup-matrix:
+  job:
     name: Run
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Generate hash from Marketplace items
+        id: generate_hash
+        shell: pwsh
+        run: |
+          $results = Invoke-WebRequest -Method POST -UseBasicParsing `
+              -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 `
+              -Body '{"filters":[{"criteria":[{"filterType":8,"value":"Microsoft.VisualStudio.Code"},{"filterType":12,"value":"4096"},{"filterType":7,"value":"ms-dynamics-smb.al"}],"pageNumber":1,"pageSize":50,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":0x192}' `
+              -ContentType application/json
+          $md5 = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
+          $utf8 = new-object -TypeName System.Text.UTF8Encoding
+          $hash = [System.BitConverter]::ToString($md5.ComputeHash($utf8.GetBytes($results)))
+          $hashString = $hash.ToLower() -replace '-', ''
+          Write-Host "Calculated hash is: $($hashString)"
+          echo "hash=$($hashString)" >> $env:GITHUB_OUTPUT
 
-      - name: Trigger for executing check of new release of the AL Language
+      - name: Compare hash with cache list
+        id: compare_hash
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPO: ${{ github.repository }}
+          HASH: ${{ steps.generate_hash.outputs.hash }}
+          RUNNER_TEMP: ${{ runner.temp }}
+        run: |
+          $cacheList = gh cache list --repo $env:GITHUB_REPO --json id,key | ConvertFrom-Json
+          $cacheKeyList = $cacheList | ForEach-Object { $_.key }
+
+          Write-Host "Checking if 'al-marketplace-hash-$($env:HASH)' exists in cache for repository $($env:GITHUB_REPO)..."
+          if ($cacheKeyList -contains $('al-marketplace-hash-' + $env:HASH))
+          {
+              Write-Host "Cache hit: 'al-marketplace-hash-$($env:HASH)' exists in cache."
+              echo "new_hash=false" >> $env:GITHUB_ENV
+          } else {
+              Write-Host "Cache miss: 'al-marketplace-hash-$($env:HASH)' not found in cache."
+              $hashFilePath = Join-Path $env:RUNNER_TEMP 'hash.txt'
+              Write-Host "Saving new hash to $hashFilePath..."
+              $env:HASH | Set-Content -Path $hashFilePath
+              echo "new_hash=true" >> $env:GITHUB_ENV
+          }
+
+      - name: Add new hash value to cache
+        id: add_hash
+        if: env.new_hash == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/hash.txt
+          key: al-marketplace-hash-${{ steps.generate_hash.outputs.hash }}
+
+      - uses: actions/checkout@v4
+        if: env.new_hash == 'true'
+
+      - name: Trigger for executing builds for new release of the AL Language
+        if: env.new_hash == 'true'
         shell: pwsh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
