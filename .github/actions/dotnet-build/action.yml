@@ -65,6 +65,14 @@ runs:
       shell: pwsh
       run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }} --no-restore --configuration Release
 
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/BusinessCentral.LinterCop.Test/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
     - name: Test
       shell: pwsh
       run: dotnet test BusinessCentral.LinterCop.Test /p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }}
