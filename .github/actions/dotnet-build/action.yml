@@ -30,10 +30,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Restore dependencies
-      shell: pwsh
-      run: dotnet restore BusinessCentral.LinterCop
-
     - name: Get AL Language platform artifacts
       id: get-platform-artifacts
       uses: ./.github/actions/platform-artifacts
@@ -63,7 +59,7 @@ runs:
 
     - name: Build
       shell: pwsh
-      run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }} --no-restore --configuration Release
+      run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }} --configuration Release
 
     - name: Cache NuGet packages
       uses: actions/cache@v4
