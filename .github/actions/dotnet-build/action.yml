@@ -34,15 +34,13 @@ runs:
       shell: pwsh
       run: dotnet restore BusinessCentral.LinterCop
 
-    - name: Download platform artifact
-      shell: pwsh
-      env:
-        ASSET_URI: ${{ inputs.al-asset-uri }}
-      run: Invoke-WebRequest $env:ASSET_URI -OutFile ALLanguage.vsix
-
-    - name: Unzip vsix
-      shell: pwsh
-      run: 7z x ALLanguage.vsix "-oALLanguage" "extension/bin/Analyzers" -r
+    - name: Get AL Language platform artifacts
+      id: get-platform-artifacts
+      uses: ./.github/actions/platform-artifacts
+      with:
+        version-number: ${{ inputs.al-version-number }}
+        asset-uri: ${{ inputs.al-asset-uri }}
+        target-path: ALLanguage
 
     - name: Set AssemblyInfo
       shell: pwsh
