@@ -33,8 +33,9 @@ jobs:
           Write-Host "Calculated hash is: $($hashString)"
           echo "hash=$($hashString)" >> $env:GITHUB_OUTPUT
 
-      - uses: actions/cache/restore@v4
+      - name: Get hash value from cache
         id: get_hash
+        uses: actions/cache/restore@v4
         with:
           path: ${{ runner.temp }}/hash.txt
           key: al-marketplace-hash-${{ steps.generate_hash.outputs.hash }}
