@@ -1,3 +1,4 @@
+#nullable disable // TODO: Enable nullable and review rule
 #if Spring2024OrGreater
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;

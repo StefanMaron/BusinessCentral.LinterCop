@@ -1,4 +1,5 @@
-﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+﻿#nullable disable // TODO: Enable nullable and review rule
+using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;

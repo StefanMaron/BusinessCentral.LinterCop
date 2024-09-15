@@ -1,4 +1,5 @@
-﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+﻿#nullable disable // TODO: Enable nullable and review rule
+using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
@@ -19,7 +20,7 @@ namespace BusinessCentral.LinterCop.Design
 
             MethodOrTriggerDeclarationSyntax syntax = ctx.Node as MethodOrTriggerDeclarationSyntax;
             if (syntax == null) return;
-            
+
             if (syntax.SemicolonToken.Kind != SyntaxKind.None)
             {
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0024SemicolonAfterMethodOrTriggerDeclaration, syntax.SemicolonToken.GetLocation()));

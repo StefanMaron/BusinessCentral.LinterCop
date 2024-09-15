@@ -1,3 +1,4 @@
+#nullable disable // TODO: Enable nullable and review rule
 #if Fall2023RV1
 using System.Collections.Immutable;
 using BusinessCentral.LinterCop.AnalysisContextExtension;

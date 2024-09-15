@@ -1,4 +1,3 @@
-#nullable enable
 using System.Collections.Immutable;
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
