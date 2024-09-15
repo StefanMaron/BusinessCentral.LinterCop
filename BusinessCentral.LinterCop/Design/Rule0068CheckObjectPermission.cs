@@ -116,6 +116,11 @@ namespace BusinessCentral.LinterCop.Design
 
             ITableTypeSymbol targetTable = (ITableTypeSymbol)((IRecordTypeSymbol)variableType).OriginalDefinition;
 
+            // Exclude record objects outside the extensions in table(extension) objects
+            if (!targetTable.GetLocation().IsInSource)
+                if (ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol()?.GetNavTypeKindSafe() == NavTypeKind.Table || ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol()?.GetNavTypeKindSafe() == NavTypeKind.TableExtension)
+                    return;
+
             if (ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol()?.NavTypeKind == NavTypeKind.Page)
             {
                 IPropertySymbol? sourceTableProperty = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol()?.GetProperty(PropertyKind.SourceTable);
