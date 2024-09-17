@@ -733,13 +733,13 @@
     <value>Informs the user that there are missing permission to access tabledata.</value>
   </data>
   <data name="Rule0069EmptyStatementsTitle" xml:space="preserve">
-    <value>Avoid empty statements.</value>
+    <value>Empty statements should be avoided or should have a leading or trailing comment explaining their use.</value>
   </data>
   <data name="Rule0069EmptyStatementsFormat" xml:space="preserve">
-    <value>Empty statements should be avoided.</value>
+    <value>Empty statements should be avoided or should have a leading or trailing comment explaining their use.</value>
   </data>
   <data name="Rule0069EmptyStatementsDescription" xml:space="preserve">
-    <value>Empty statements should be avoided.</value>
+    <value>Empty statements should be avoided or should have a leading or trailing comment explaining their use.</value>
   </data>
   <data name="Rule0070ListObjectsAreOneBasedTitle" xml:space="preserve">
     <value>Zero index access on 1-based List objects.</value>
