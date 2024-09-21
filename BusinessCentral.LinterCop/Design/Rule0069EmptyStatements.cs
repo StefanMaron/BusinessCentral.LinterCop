@@ -2,6 +2,7 @@
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
@@ -17,8 +18,13 @@ namespace BusinessCentral.LinterCop.Design
         {
             if (ctx.IsObsoletePendingOrRemoved()) return;
 
-            // exclude empty ifs (runtime error guard) and empty case lines
-            if (ctx.Operation.Syntax.Parent.IsKind(SyntaxKind.IfStatement) || ctx.Operation.Syntax.Parent.IsKind(SyntaxKind.CaseLine)) return;
+            foreach (SyntaxTrivia trivia in ctx.Operation.Syntax.Parent.GetLeadingTrivia())
+                if (trivia.IsKind(SyntaxKind.LineCommentTrivia))
+                    return;
+
+            foreach (SyntaxTrivia trivia in ctx.Operation.Syntax.Parent.GetTrailingTrivia())
+                if (trivia.IsKind(SyntaxKind.LineCommentTrivia))
+                    return;
 
             ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0069EmptyStatements, ctx.Operation.Syntax.GetLocation()));
         }

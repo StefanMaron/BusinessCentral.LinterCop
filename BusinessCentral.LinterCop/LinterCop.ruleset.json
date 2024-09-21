@@ -345,7 +345,7 @@
     {
       "id": "LC0069",
       "action": "Info",
-      "justification": "Avoid empty statements."
+      "justification": "Empty statements should be avoided or should have a leading or trailing comment explaining their use."
     },
     {
       "id": "LC0070",
