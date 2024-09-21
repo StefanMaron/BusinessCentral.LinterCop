@@ -1,4 +1,3 @@
-#nullable enable
 using System.Collections.Immutable;
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
@@ -179,7 +178,7 @@ namespace BusinessCentral.LinterCop.Design
                 var objectName = typeParts[1].Trim().Trim('"');
                 if (objectName.ToLowerInvariant() != variableType.Name.ToLowerInvariant())
 #if Fall2023RV1
-                    if (objectName.UnquoteIdentifier().ToLowerInvariant() != (variableType.OriginalDefinition.ContainingNamespace.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant())) 
+                    if (objectName.UnquoteIdentifier().ToLowerInvariant() != (variableType.OriginalDefinition.ContainingNamespace?.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant())) 
 #endif
                     continue;
 
@@ -229,7 +228,7 @@ namespace BusinessCentral.LinterCop.Design
 
                 bool nameSpaceNameMatch = false;
 #if Fall2023RV1
-                nameSpaceNameMatch  = objectName.UnquoteIdentifier() == (variableType.OriginalDefinition.ContainingNamespace.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant());
+                nameSpaceNameMatch = objectName.UnquoteIdentifier() == (variableType.OriginalDefinition.ContainingNamespace?.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant());
 #endif
 
                 // Match against the parameters of the procedure

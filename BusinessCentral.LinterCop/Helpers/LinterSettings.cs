@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿#nullable disable // TODO: Enable nullable and review rule
+using Newtonsoft.Json;
 
 namespace BusinessCentral.LinterCop.Helpers
 {

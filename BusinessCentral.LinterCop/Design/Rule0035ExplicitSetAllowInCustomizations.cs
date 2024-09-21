@@ -1,5 +1,4 @@
 #if Fall2023RV1
-#nullable enable
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
@@ -42,7 +41,7 @@ namespace BusinessCentral.LinterCop.Design
                 if (ctx.Symbol.GetTypeSymbol().Kind != SymbolKind.TableExtension)
                     return;
                 ITableExtensionTypeSymbol tableExtension = (ITableExtensionTypeSymbol)ctx.Symbol;
-                if (!LookupOrDrillDownPageIsSet((ITableTypeSymbol)tableExtension.Target))
+                if (tableExtension.Target is not null && !LookupOrDrillDownPageIsSet((ITableTypeSymbol)tableExtension.Target))
                     return;
                 // allows diagnostic for table extension fields where base table has lookup or drilldown page set
                 // even if no relatedPages exist directly
@@ -142,11 +141,8 @@ namespace BusinessCentral.LinterCop.Design
             }
         }
 
-        private static bool LookupOrDrillDownPageIsSet(ITableTypeSymbol? table)
+        private static bool LookupOrDrillDownPageIsSet(ITableTypeSymbol table)
         {
-            if (table is null)
-                return false;
-
             return table.Properties.Any(e => e.PropertyKind == PropertyKind.DrillDownPageId || e.PropertyKind == PropertyKind.LookupPageId);
         }
     }
