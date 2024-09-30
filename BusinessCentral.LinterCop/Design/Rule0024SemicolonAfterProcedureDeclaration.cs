@@ -1,4 +1,5 @@
-﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+﻿#nullable disable // TODO: Enable nullable and review rule
+using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
@@ -18,6 +19,7 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.IsObsoletePendingOrRemoved()) return;
 
             MethodOrTriggerDeclarationSyntax syntax = ctx.Node as MethodOrTriggerDeclarationSyntax;
+            if (syntax == null) return;
 
             if (syntax.SemicolonToken.Kind != SyntaxKind.None)
             {

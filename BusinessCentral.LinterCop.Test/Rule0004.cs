@@ -19,17 +19,18 @@ public class Rule0004
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0004LookupPageIdAndDrillDownPageId>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0004LookupPageIdAndDrillDownPageId.Id);
+        fixture.HasDiagnostic(code, Rule0004LookupPageIdAndDrillDownPageId.DiagnosticDescriptors.Rule0004LookupPageIdAndDrillDownPageId.Id);
     }
 
     [Test]
     [TestCase("1")]
+    [TestCase("2")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0004LookupPageIdAndDrillDownPageId>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0004LookupPageIdAndDrillDownPageId.Id);
+        fixture.NoDiagnosticAtMarker(code, Rule0004LookupPageIdAndDrillDownPageId.DiagnosticDescriptors.Rule0004LookupPageIdAndDrillDownPageId.Id);
     }
 }

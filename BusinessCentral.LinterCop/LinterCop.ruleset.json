@@ -331,6 +331,26 @@
       "id": "LC0066",
       "action": "Info",
       "justification": "Duplicate ToolTip between page and table field."
+    },
+    {
+      "id": "LC0067",
+      "action": "Warning",
+      "justification": "Set NotBlank property to false when 'No. Series' TableRelation exists."
+    },
+    {
+      "id": "LC0068",
+      "action": "Warning",
+      "justification": "Informs the user that there are missing permission to access tabledata."
+    },
+    {
+      "id": "LC0069",
+      "action": "Info",
+      "justification": "Empty statements should be avoided or should have a leading or trailing comment explaining their use."
+    },
+    {
+      "id": "LC0070",
+      "action": "Warning",
+      "justification": "Zero index access on 1-based List objects."
     }
   ]
 }

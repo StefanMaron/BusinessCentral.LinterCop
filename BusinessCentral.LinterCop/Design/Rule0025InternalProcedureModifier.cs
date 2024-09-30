@@ -1,4 +1,5 @@
-﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+﻿#nullable disable // TODO: Enable nullable and review rule
+using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
@@ -19,15 +20,20 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.IsObsoletePendingOrRemoved()) return;
 
             if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().DeclaredAccessibility != Accessibility.Public) return;
+            if (!ctx.Node.IsKind(SyntaxKind.MethodDeclaration)) return;
 
-            MethodDeclarationSyntax methodDeclarationSyntax = (MethodDeclarationSyntax)ctx.Node;
-            SyntaxNodeOrToken accessModifier = methodDeclarationSyntax.ProcedureKeyword.GetPreviousToken();
-
-            if (accessModifier.Kind == SyntaxKind.LocalKeyword || accessModifier.Kind == SyntaxKind.InternalKeyword) return;
-
-            if (methodDeclarationSyntax.GetLeadingTrivia().Where(x => x.Kind == SyntaxKind.SingleLineDocumentationCommentTrivia).Any()) return;
-
-            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0025InternalProcedureModifier, methodDeclarationSyntax.ProcedureKeyword.GetLocation()));
+            try
+            {
+                MethodDeclarationSyntax methodDeclarationSyntax = (MethodDeclarationSyntax)ctx.Node;
+                SyntaxNodeOrToken accessModifier = methodDeclarationSyntax.ProcedureKeyword.GetPreviousToken();
+                if (accessModifier.Kind == SyntaxKind.LocalKeyword || accessModifier.Kind == SyntaxKind.InternalKeyword) return;
+                if (methodDeclarationSyntax.GetLeadingTrivia().Where(x => x.Kind == SyntaxKind.SingleLineDocumentationCommentTrivia).Any()) return;
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0025InternalProcedureModifier, methodDeclarationSyntax.ProcedureKeyword.GetLocation()));
+            }
+            catch (System.InvalidCastException)
+            {
+                return;
+            }
         }
     }
 }

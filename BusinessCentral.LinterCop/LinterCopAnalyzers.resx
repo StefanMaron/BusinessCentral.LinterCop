@@ -160,7 +160,7 @@
     <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table because it is used in list page</value>
   </data>
   <data name="Rule0004LookupPageIdAndDrillDownPageIdFormat" xml:space="preserve">
-    <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table "{1}" because it is used in page "{2}" (list)</value>
+    <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table {0} because it is used in page {1} (list).</value>
   </data>
   <data name="Rule0004LookupPageIdAndDrillDownPageIdTitle" xml:space="preserve">
     <value>Property "LookupPageID" and "DrilldownPageID" must be filled in table because it is used in list page</value>
@@ -228,13 +228,13 @@
   <data name="Rule0012DoNotUseObjectIdInSystemFunctionsTitle" xml:space="preserve">
     <value>Wrong Parameter detected.</value>
   </data>
-  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysDescription" xml:space="preserve">
+  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysTitle" xml:space="preserve">
     <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
   </data>
   <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysFormat" xml:space="preserve">
     <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
   </data>
-  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysTitle" xml:space="preserve">
+  <data name="Rule0013CheckForNotBlankOnSingleFieldPrimaryKeysDescription" xml:space="preserve">
     <value>NotBlank should be set explicitly for tables with a single-field primary key.</value>
   </data>
   <data name="Rule0014PermissionSetCaptionLengthDescription" xml:space="preserve">
@@ -713,5 +713,41 @@
   </data>
   <data name="Rule0066DuplicateToolTipBetweenPageAndTableDescription" xml:space="preserve">
     <value>Informs the user that it is better to only apply the ToolTip property on the table field when the page fields ToolTip is the same.</value>
+  </data>
+  <data name="Rule0067DisableNotBlankOnSingleFieldPrimaryKeyTitle" xml:space="preserve">
+    <value>Set NotBlank to false when 'No. Series' TableRelation exists.</value>
+  </data>
+  <data name="Rule0067DisableNotBlankOnSingleFieldPrimaryKeyFormat" xml:space="preserve">
+    <value>The NotBlank property should be set to false (or removed) if a TableRelation of 'No. Series' is present on the table.</value>
+  </data>
+  <data name="Rule0067DisableNotBlankOnSingleFieldPrimaryKeyDescription" xml:space="preserve">
+    <value>When the 'No. Series' TableRelation is present on the table, assigning the primary key might occur after inserting the record, which could cause an error due to the NotBlank property.</value>
+  </data>
+  <data name="Rule0068CheckObjectPermissionTitle" xml:space="preserve">
+    <value>The Object has missing permissions</value>
+  </data>
+  <data name="Rule0068CheckObjectPermissionFormat" xml:space="preserve">
+    <value>The current object is missing permission "{0}" for tabledata "{1}"</value>
+  </data>
+  <data name="Rule0068CheckObjectPermissionDescription" xml:space="preserve">
+    <value>Informs the user that there are missing permission to access tabledata.</value>
+  </data>
+  <data name="Rule0069EmptyStatementsTitle" xml:space="preserve">
+    <value>Empty statements should be avoided or should have a leading or trailing comment explaining their use.</value>
+  </data>
+  <data name="Rule0069EmptyStatementsFormat" xml:space="preserve">
+    <value>Empty statements should be avoided or should have a leading or trailing comment explaining their use.</value>
+  </data>
+  <data name="Rule0069EmptyStatementsDescription" xml:space="preserve">
+    <value>Empty statements should be avoided or should have a leading or trailing comment explaining their use.</value>
+  </data>
+  <data name="Rule0070ListObjectsAreOneBasedTitle" xml:space="preserve">
+    <value>Zero index access on 1-based List objects.</value>
+  </data>
+  <data name="Rule0070ListObjectsAreOneBasedFormat" xml:space="preserve">
+    <value>List objects are 1-based.</value>
+  </data>
+  <data name="Rule0070ListObjectsAreOneBasedDescription" xml:space="preserve">
+    <value>List objects are 1-based, meaning indexing starts from 1 instead of the conventional 0.</value>
   </data>
 </root>
