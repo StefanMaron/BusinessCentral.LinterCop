@@ -20,7 +20,7 @@ namespace BusinessCentral.LinterCop.Design
         private static readonly string[] _labelPropertyString = LabelPropertyHelper.GetAllLabelProperties();
         private static readonly string[] _navTypeKindStrings = GenerateNavTypeKindArray();
         private static readonly string[] _propertyKindStrings = Enum.GetValues(typeof(PropertyKind)).Cast<PropertyKind>().Select(x => x.ToString()).ToArray();
-        private static readonly string[] _symbolKinds = Enum.GetValues(typeof(SymbolKind)).Cast<SymbolKind>().Select(x => x.ToString()).ToArray();
+        private static readonly string[] _symbolKinds = GenerateSymbolKindArray();
         private static readonly Dictionary<TriggerTypeKind, string> _triggerTypeKinds = GenerateNTriggerTypeKindMappings();
 
 
@@ -36,6 +36,7 @@ namespace BusinessCentral.LinterCop.Design
             context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeQualifiedName), SyntaxKind.QualifiedName);
             context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeQualifiedNameWithoutNamespace), SyntaxKind.QualifiedName);
             context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeLengthDataType), SyntaxKind.LengthDataType);
+            context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeOptionAccessExpression), SyntaxKind.OptionAccessExpression);
 
             context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForBuiltInMethodsWithCasingMismatch), new OperationKind[] {
                 OperationKind.InvocationExpression,
@@ -72,9 +73,31 @@ namespace BusinessCentral.LinterCop.Design
 
         private static string[] GenerateNavTypeKindArray()
         {
-            var navTypeKinds = Enum.GetValues(typeof(NavTypeKind)).Cast<NavTypeKind>().Select(s => s.ToString()).ToList();
+            var navTypeKinds = Enum.GetValues(typeof(NavTypeKind))
+                .Cast<NavTypeKind>()
+                .Select(s => s.ToString())
+                .ToList();
+
             navTypeKinds.Add("Database"); // for Database::"G/L Entry" (there is no NavTypeKind for this)
             return navTypeKinds.ToArray();
+        }
+
+        private static string[] GenerateSymbolKindArray()
+        {
+            var symbolKinds = Enum.GetValues(typeof(SymbolKind))
+                .Cast<SymbolKind>()
+                .Select(x => x.ToString())
+                .ToList();
+
+            // Find the index of "XmlPort" and update it to "Xmlport"
+            int index = symbolKinds.FindIndex(s => s == "XmlPort");
+            if (index != -1)
+            {
+                symbolKinds[index] = "Xmlport";
+            }
+
+            symbolKinds.Add("Database"); // for Database::"G/L Entry" (there is no SymbolKind for this)
+            return symbolKinds.ToArray();
         }
 
         private static Dictionary<TriggerTypeKind, string> GenerateNTriggerTypeKindMappings()
@@ -176,14 +199,13 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeTriggerDeclaration(SyntaxNodeAnalysisContext ctx)
         {
-            TriggerDeclarationSyntax syntax = ctx.Node as TriggerDeclarationSyntax;
-            if (syntax == null)
+            if (ctx.Node is not TriggerDeclarationSyntax syntax)
                 return;
 
-            ISymbolWithTriggers symbolWithTriggers = ctx.ContainingSymbol.ContainingSymbol as ISymbolWithTriggers;
+            if (ctx.ContainingSymbol.ContainingSymbol is not ISymbolWithTriggers symbolWithTriggers)
+                return;
 
-            TriggerTypeInfo triggerTypeInfo = symbolWithTriggers.GetTriggerTypeInfo(syntax.Name.Identifier.ValueText);
-            if (triggerTypeInfo == null)
+            if (symbolWithTriggers.GetTriggerTypeInfo(syntax.Name.Identifier.ValueText) is not TriggerTypeInfo triggerTypeInfo)
                 return;
 
             if (!_triggerTypeKinds.TryGetValue(triggerTypeInfo.Kind, out string targetName))
@@ -201,8 +223,7 @@ namespace BusinessCentral.LinterCop.Design
             if (node.Parent.Kind == SyntaxKind.PragmaWarningDirectiveTrivia)
                 return;
 
-            ISymbol fieldSymbol = ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol;
-            if (fieldSymbol == null)
+            if (ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol is not ISymbol fieldSymbol)
                 return;
 
             // TODO: Support more SymbolKinds
@@ -220,8 +241,7 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.Node is not QualifiedNameSyntax node)
                 return;
 
-            ISymbol fieldSymbol = ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol;
-            if (fieldSymbol == null)
+            if (ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol is not ISymbol fieldSymbol)
                 return;
 
             string identifierName = StringExtensions.UnquoteIdentifier(node.Right.Identifier.ValueText);
@@ -238,8 +258,7 @@ namespace BusinessCentral.LinterCop.Design
             if (node.Left.Kind != SyntaxKind.IdentifierName)
                 return;
 
-            ISymbol fieldSymbol = ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol;
-            if (fieldSymbol == null)
+            if (ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol is not ISymbol fieldSymbol)
                 return;
 
             if (fieldSymbol.ContainingSymbol is not IObjectTypeSymbol objectTypeSymbol)
@@ -248,7 +267,11 @@ namespace BusinessCentral.LinterCop.Design
             if (fieldSymbol.ContainingSymbol.Kind == SymbolKind.TableExtension)
             {
                 ITableExtensionTypeSymbol tableExtension = (ITableExtensionTypeSymbol)fieldSymbol.ContainingSymbol;
-                objectTypeSymbol = tableExtension.Target as IObjectTypeSymbol;
+                if (tableExtension.Target is not IObjectTypeSymbol tableExtensionTypeSymbol)
+                {
+                    return;
+                }
+                objectTypeSymbol = tableExtensionTypeSymbol;
             }
 
             IdentifierNameSyntax identifierNameSyntax = (IdentifierNameSyntax)node.Left;
@@ -274,6 +297,25 @@ namespace BusinessCentral.LinterCop.Design
             ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, identifierToken.GetLocation(), new object[] { targetName, "" }));
         }
 
+        private void AnalyzeOptionAccessExpression(SyntaxNodeAnalysisContext ctx)
+        {
+            if (ctx.Node is not OptionAccessExpressionSyntax node)
+                return;
+
+            switch (node.Expression)
+            {
+                case IdentifierNameSyntax identifierNameSyntax:
+                    int result = Array.FindIndex(_symbolKinds, t => t.Equals(identifierNameSyntax.Identifier.ValueText, StringComparison.OrdinalIgnoreCase));
+                    if (result == -1)
+                        return;
+
+                    if (!identifierNameSyntax.Identifier.ValueText.AsSpan().Equals(_symbolKinds[result].ToString().AsSpan(), StringComparison.Ordinal))
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, identifierNameSyntax.Identifier.GetLocation(), new object[] { _symbolKinds[result].ToString(), "" }));
+
+                    break;
+            }
+        }
+
         private void CheckForBuiltInTypeCasingMismatch(SymbolAnalysisContext ctx)
         {
             AnalyseTokens(ctx);
@@ -282,12 +324,12 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyseTokens(SymbolAnalysisContext ctx)
         {
-            IEnumerable<SyntaxToken> descendantTokens = ctx.Symbol.DeclaringSyntaxReference.GetSyntax().DescendantTokens()
+            IEnumerable<SyntaxToken>? descendantTokens = ctx.Symbol.DeclaringSyntaxReference?.GetSyntax().DescendantTokens()
                                             .Where(t => t.Kind.IsKeyword())
                                             .Where(t => !_dataTypeSyntaxKinds.Contains(t.Parent.Kind))
                                             .Where(t => !string.IsNullOrEmpty(t.ToString()));
 
-            foreach (SyntaxToken descendantToken in descendantTokens)
+            foreach (SyntaxToken descendantToken in descendantTokens ?? Enumerable.Empty<SyntaxToken>())
             {
                 ctx.CancellationToken.ThrowIfCancellationRequested();
 
@@ -302,11 +344,11 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyseNodes(SymbolAnalysisContext ctx)
         {
-            IEnumerable<SyntaxNode> descendantNodes = ctx.Symbol.DeclaringSyntaxReference.GetSyntax().DescendantNodes()
+            IEnumerable<SyntaxNode>? descendantNodes = ctx.Symbol.DeclaringSyntaxReference?.GetSyntax().DescendantNodes()
                                             .Where(t => t.Kind != SyntaxKind.LengthDataType) // handeld on AnalyzeLengthDataType method
                                             .Where(n => !n.ToString().AsSpan().StartsWith("array"));
 
-            foreach (SyntaxNode descendantNode in descendantNodes)
+            foreach (SyntaxNode descendantNode in descendantNodes ?? Enumerable.Empty<SyntaxNode>())
             {
                 ctx.CancellationToken.ThrowIfCancellationRequested();
 
@@ -369,7 +411,6 @@ namespace BusinessCentral.LinterCop.Design
             {
                 case SyntaxKind.SubtypedDataType:
                 case SyntaxKind.GenericDataType:
-                case SyntaxKind.OptionAccessExpression:
                 case SyntaxKind.SimpleTypeReference:
                     return true;
             }

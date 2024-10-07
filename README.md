@@ -222,6 +222,6 @@ For an example and the default values see: [LinterCop.ruleset.json](LinterCop.ru
 |[LC0066](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0066)|Duplicate ToolTip between page and table field.|Info|
 |[LC0067](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0067)|Set `NotBlank` property to `false` when 'No. Series' TableRelation exists.|Warning|
 |[LC0068](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0068)|Informs the user that there are missing permission to access tabledata.|Info|
-|[LC0069](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0069)|Avoid empty statements.|Info|
+|[LC0069](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0069)|Empty statements should be avoided or should have a leading or trailing comment explaining their use.|Info|
 |[LC0070](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0070)|Zero index access on 1-based List objects.|Warning|
 |[LC0071](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0071)|Do not set IsHandled to false.|Info|

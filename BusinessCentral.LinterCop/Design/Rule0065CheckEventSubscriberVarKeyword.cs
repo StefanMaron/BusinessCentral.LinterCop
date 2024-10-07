@@ -1,4 +1,3 @@
-#nullable enable
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
@@ -49,7 +48,7 @@ public class Rule0065CheckEventSubscriberVarKeyword : DiagnosticAnalyzer
                 context.ReportDiagnostic(Diagnostic.Create(
                     DiagnosticDescriptors.Rule0065EventSubscriberVarCheck,
                     subscriberParameter.GetLocation(),
-                    new object[] { subscriberParameter.Name}));
+                    new object[] { subscriberParameter.Name }));
             }
         }
     }
@@ -66,14 +65,14 @@ public class Rule0065CheckEventSubscriberVarKeyword : DiagnosticAnalyzer
         {
             return null;
         }
-        
+
         var eventName = eventSubscriberAttribute.Arguments[2].ValueText;
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (eventName == null) 
+        if (eventName == null)
         {
             return null;
         }
-        
+
         return applicationObject.GetFirstMethod(eventName, context.Compilation);
     }
 
@@ -85,7 +84,7 @@ public class Rule0065CheckEventSubscriberVarKeyword : DiagnosticAnalyzer
             messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0065EventSubscriberVarCheckFormat"),
             category: "Design",
             defaultSeverity: DiagnosticSeverity.Warning, isEnabledByDefault: true,
-            description:  LinterCopAnalyzers.GetLocalizableString("Rule0065EventSubscriberVarCheckDescription"),
+            description: LinterCopAnalyzers.GetLocalizableString("Rule0065EventSubscriberVarCheckDescription"),
             helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0065");
     }
 }

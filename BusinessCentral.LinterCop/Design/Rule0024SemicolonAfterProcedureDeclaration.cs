@@ -15,11 +15,12 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeSemicolonAfterMethodOrTriggerDeclaration(SyntaxNodeAnalysisContext ctx)
         {
-            if (ctx.IsObsoletePendingOrRemoved()) return;
+            if (ctx.IsObsoletePendingOrRemoved())
+                return;
 
-            MethodOrTriggerDeclarationSyntax syntax = ctx.Node as MethodOrTriggerDeclarationSyntax;
-            if (syntax == null) return;
-            
+            if (ctx.Node is not MethodOrTriggerDeclarationSyntax syntax)
+                return;
+
             if (syntax.SemicolonToken.Kind != SyntaxKind.None)
             {
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0024SemicolonAfterMethodOrTriggerDeclaration, syntax.SemicolonToken.GetLocation()));

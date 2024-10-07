@@ -1,18 +1,62 @@
 name: Daily check for updates
 on:
   schedule:
-    - cron: "0 0,6,12,18 * * *"
+    - cron: "0 0,6,9,12,15,18 * * *"
   workflow_dispatch: null
 
 jobs:
-  setup-matrix:
+  job:
     name: Run
     runs-on: ubuntu-latest
-
     steps:
+      - name: Generate hash from Marketplace items
+        id: generate_hash
+        shell: pwsh
+        run: |
+          $results = Invoke-WebRequest -Method POST -UseBasicParsing `
+              -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 `
+              -Body '{"filters":[{"criteria":[{"filterType":4,"value":"fe889a8a-1498-4047-850d-eb8ea82de1d1"}],"pageNumber":1,"pageSize":10,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":0x0}' `
+              -ContentType application/json
+
+          $md5 = [System.Security.Cryptography.MD5]::Create()
+          $bytes = [System.Text.Encoding]::UTF8.GetBytes($results)
+          $hashBytes = $md5.ComputeHash($bytes)
+          $hashString = [BitConverter]::ToString($hashBytes).ToLower() -replace '-', ''
+          Write-Host "Calculated hash is: $($hashString)"
+          echo "hash=$($hashString)" >> $env:GITHUB_OUTPUT
+
+      - name: Get hash value from cache
+        id: get_hash
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/hash.txt
+          key: al-marketplace-hash-${{ steps.generate_hash.outputs.hash }}
+          fail-on-cache-miss: false
+
+      - name: Create file with hash value
+        id: create_file_with_hash
+        if: steps.get_hash.outputs.cache-hit != 'true'
+        shell: pwsh
+        env:
+          HASH: ${{ steps.generate_hash.outputs.hash }}
+          RUNNER_TEMP: ${{ runner.temp }}
+        run: |
+          $hashFilePath = Join-Path $env:RUNNER_TEMP 'hash.txt'
+          $env:HASH | Set-Content -Path $hashFilePath
+
+      - name: Add new hash value to cache
+        id: add_hash
+        if: steps.get_hash.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/hash.txt
+          key: al-marketplace-hash-${{ steps.generate_hash.outputs.hash }}
+
       - uses: actions/checkout@v4
+        if: steps.get_hash.outputs.cache-hit != 'true'
 
       - name: Trigger for executing check of new release of the AL Language
+        if: steps.get_hash.outputs.cache-hit != 'true'
         shell: pwsh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

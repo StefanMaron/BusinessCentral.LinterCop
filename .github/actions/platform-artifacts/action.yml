@@ -1,0 +1,51 @@
+name: Download AL Language platform artifacts
+description: ""
+
+inputs:
+  version-number:
+    required: true
+    description: The version number of the corresponding AL Language
+  asset-uri:
+    required: true
+    description: The asset uri for retrieving the VSIXPackages of the AL Language
+  target-path:
+    required: true
+    description: Path to store the artifacts
+
+runs:
+  using: composite
+  steps:
+    - name: Get platform artifact from cache
+      id: get_platform_artifact
+      uses: actions/cache/restore@v4
+      with:
+        path: ${{ inputs.target-path }}
+        key: al-platform-artifact-${{ inputs.version-number }}
+        fail-on-cache-miss: false
+
+    - name: Download platform artifact
+      id: download_platform_artifact
+      if: steps.get_platform_artifact.outputs.cache-hit != 'true'
+      shell: pwsh
+      env:
+        ASSET_URI: ${{ inputs.asset-uri }}
+        RUNNER_TEMP: ${{ runner.temp }}
+      run: |
+        $downloadFilePath = Join-Path $env:RUNNER_TEMP 'ALLanguage.vsix'
+        Invoke-WebRequest $env:ASSET_URI -OutFile $downloadFilePath
+        echo "path=$($downloadFilePath)" >> $env:GITHUB_OUTPUT
+
+    - name: Extract platform artifact
+      if: steps.get_platform_artifact.outputs.cache-hit != 'true'
+      shell: pwsh
+      env:
+        ARCHIVE_PATH: ${{ steps.download_platform_artifact.outputs.path }}
+      run: 7z x $env:ARCHIVE_PATH "-o${{ inputs.target-path }}" "extension/bin/Analyzers" -r
+
+    - name: Add platform artifact to cache
+      id: add_hash
+      if: steps.get_platform_artifact.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: ${{ inputs.target-path }}
+        key: al-platform-artifact-${{ inputs.version-number }}
