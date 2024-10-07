@@ -22,6 +22,7 @@ jobs:
           prerelease: ${{ github.ref != 'refs/heads/master' && 'true' || 'false' }}
           commitish: ${{ github.ref_name }}
           disable-autolabeler: true
+          config-name: '.github/release-drafter.yml'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
