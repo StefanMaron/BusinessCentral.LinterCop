@@ -224,4 +224,4 @@ For an example and the default values see: [LinterCop.ruleset.json](LinterCop.ru
 |[LC0068](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0068)|Informs the user that there are missing permission to access tabledata.|Info|
 |[LC0069](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0069)|Empty statements should be avoided or should have a leading or trailing comment explaining their use.|Info|
 |[LC0070](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0070)|Zero index access on 1-based List objects.|Warning|
-|[LC0071](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0071)|Do not set IsHandled to false.|Info|
+|[LC0071](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0071)|Incorrect 'IsHandled' parameter assignment.|Info|

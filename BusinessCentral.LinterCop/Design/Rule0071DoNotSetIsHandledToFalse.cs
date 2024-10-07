@@ -54,6 +54,8 @@ namespace BusinessCentral.LinterCop.Design
 
         private bool IsIsHandledEventSubscriberParameter(IParameterSymbol parameter)
         {
+            if (parameter.ContainingSymbol is null)
+                return false;
             // check for event subscriber method
             if (parameter.ContainingSymbol.Kind != SymbolKind.Method)
                 return false;
@@ -61,10 +63,17 @@ namespace BusinessCentral.LinterCop.Design
                 return false;
 
             // check for "var IsHandled: Boolean" parameter
-            if ((parameter.Name.ToLower() != "ishandled") || (parameter.ParameterType.NavTypeKind != NavTypeKind.Boolean) || !parameter.IsVar)
+            if (!CheckIsHandledName(parameter.Name) || (parameter.ParameterType.NavTypeKind != NavTypeKind.Boolean) || !parameter.IsVar)
                 return false;
 
             return true;
+        }
+
+        private bool CheckIsHandledName(string name)
+        {
+            // checks for name(s) used with the "IsHandled Pattern"
+            // "Handled" is also used in the Base / System App, see: https://github.com/search?q=repo%3AStefanMaron%2FMSDyn365BC.Code.History+%22var+Handled%3A+Boolean%22&type=code
+            return (name.ToLower() == "ishandled") || (name.ToLower() == "handled");
         }
     }
 }
