@@ -351,6 +351,11 @@
       "id": "LC0070",
       "action": "Warning",
       "justification": "Zero index access on 1-based List objects."
+    },
+    {
+      "id": "LC0071",
+      "action": "Info",
+      "justification": "The IsHandled event subscriber parameter reference value should never be set to a value that may be false."
     }
   ]
 }
