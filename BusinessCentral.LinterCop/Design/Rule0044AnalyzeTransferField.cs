@@ -25,38 +25,45 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeTableExtension(SyntaxNodeAnalysisContext ctx)
         {
-            TableExtensionSyntax tableExtensionSyntax = (TableExtensionSyntax)ctx.Node;
-            string? baseObject = GetIdentifierName(tableExtensionSyntax.BaseObject.Identifier);
-
-            if (baseObject == null)
-                return;
-
-            IEnumerable<Tuple<string, string>> tables = tablePairs.Where(x => x.Item1.Equals(baseObject) || x.Item2.Equals(baseObject));
-
-            if (tables.Count() == 0)
-                return;
-
-            Table table1 = new Table(baseObject);
-            table1.PopulateFields(tableExtensionSyntax.Fields);
-
-            Dictionary<string, TableExtensionSyntax> tableExtensions = GetTableExtensions(ctx.SemanticModel.Compilation);
-
-            foreach (Tuple<string, string> tablePair in tables)
+            try // Investigate https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/786
             {
-                try // Investigate https://github.com/StefanMaron/vsc-lintercop/issues/22
+                TableExtensionSyntax tableExtensionSyntax = (TableExtensionSyntax)ctx.Node;
+                string? baseObject = GetIdentifierName(tableExtensionSyntax.BaseObject.Identifier);
+
+                if (baseObject == null)
+                    return;
+
+                IEnumerable<Tuple<string, string>> tables = tablePairs.Where(x => x.Item1.Equals(baseObject) || x.Item2.Equals(baseObject));
+
+                if (tables.Count() == 0)
+                    return;
+
+                Table table1 = new Table(baseObject);
+                table1.PopulateFields(tableExtensionSyntax.Fields);
+
+                Dictionary<string, TableExtensionSyntax> tableExtensions = GetTableExtensions(ctx.SemanticModel.Compilation);
+
+                foreach (Tuple<string, string> tablePair in tables)
                 {
-                    string tableName = baseObject.Equals(tablePair.Item1) ? tablePair.Item2 : tablePair.Item1;
+                    try // Investigate https://github.com/StefanMaron/vsc-lintercop/issues/22
+                    {
+                        string tableName = baseObject.Equals(tablePair.Item1) ? tablePair.Item2 : tablePair.Item1;
 
-                    Table table2 = GetTableWithFieldsByTableName(ctx.SemanticModel.Compilation, tableName, tableExtensions);
+                        Table table2 = GetTableWithFieldsByTableName(ctx.SemanticModel.Compilation, tableName, tableExtensions);
 
-                    List<IGrouping<int, Field>> fieldGroups = GetFieldsWithSameIDAndApplyFilter(table1.Fields, table2.Fields, DifferentNameAndTypeFilter);
+                        List<IGrouping<int, Field>> fieldGroups = GetFieldsWithSameIDAndApplyFilter(table1.Fields, table2.Fields, DifferentNameAndTypeFilter);
 
-                    ReportFieldDiagnostics(ctx, table1, fieldGroups);
+                        ReportFieldDiagnostics(ctx, table1, fieldGroups);
+                    }
+                    catch (Exception)
+                    {
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Node.GetLocation(), new Object[] { "Rule0044", "Exception", "at line 51" }));
+                    }
                 }
-                catch (Exception)
-                {
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Node.GetLocation(), new Object[] { "Rule0044", "Exception", "at line 51" }));
-                }
+            }
+            catch (Exception)
+            {
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Node.GetLocation(), new Object[] { "Rule0044", "Exception", "at line 26" }));
             }
         }
 
