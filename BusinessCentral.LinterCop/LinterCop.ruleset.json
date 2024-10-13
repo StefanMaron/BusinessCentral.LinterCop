@@ -155,7 +155,7 @@
     {
       "id": "LC0031",
       "action": "Info",
-      "justification": "Set ReadIsolation property instead of LockTable method."
+      "justification": "Use ReadIsolation instead of LockTable."
     },
     {
       "id": "LC0032",

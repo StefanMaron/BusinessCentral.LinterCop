@@ -184,7 +184,7 @@ For an example and the default values see: [LinterCop.ruleset.json](LinterCop.ru
 |[LC0028](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0028)|Event subscriber arguments now use identifier syntax instead of string literals.|Info|
 |[LC0029](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0029)|Use `CompareDateTime` method in `Type Helper` codeunit for DateTime variable comparisons.|Info|
 |[LC0030](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0030)|Set Access property to Internal for Install/Upgrade codeunits.|Info|
-|[LC0031](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0031)|Set ReadIsolation property instead of LockTable method.|Info|
+|[LC0031](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0031)|Use ReadIsolation instead of LockTable.|Info|
 |[LC0032](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0032)|Clear(All) does not affect or change values for global variables in single instance codeunits.|Warning|
 |[LC0033](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0033)|The specified runtime version in app.json is falling behind.|Info|
 |[LC0034](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0034)|The property `Extensible` should be explicitly set for public objects.|Disabled|
