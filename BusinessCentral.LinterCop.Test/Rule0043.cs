@@ -1,3 +1,4 @@
+#if Spring2024
 namespace BusinessCentral.LinterCop.Test;
 
 public class Rule0043
@@ -39,3 +40,4 @@ public class Rule0043
         fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0043SecretText.Id);
     }
 }
+#endif
