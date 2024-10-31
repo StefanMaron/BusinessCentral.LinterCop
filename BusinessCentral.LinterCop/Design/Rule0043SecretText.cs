@@ -1,4 +1,3 @@
-#nullable disable // TODO: Enable nullable and review rule
 #if Fall2023RV1
 using System.Collections.Immutable;
 using BusinessCentral.LinterCop.AnalysisContextExtension;
@@ -30,37 +29,29 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeIsolatedStorage(OperationAnalysisContext ctx)
         {
-#if Spring2024OrGreater
+#if Spring2024
             if (!VersionChecker.IsSupported(ctx.ContainingSymbol, VersionCompatibility.Spring2024OrGreater)) return;
 
             if (ctx.IsObsoletePendingOrRemoved()) return;
 
-            IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
-            if (operation.Arguments.Count() < 3) return;
-
-            IMethodSymbol targetMethod = operation.TargetMethod;
-            if (targetMethod == null || targetMethod.ContainingSymbol.Kind != SymbolKind.Class) return;
+            if (ctx.Operation is not IInvocationExpression operation) return;
+            if (operation.TargetMethod is not IMethodSymbol targetMethod) return;
+            if (targetMethod.ContainingSymbol?.Kind != SymbolKind.Class) return;
             if (!SemanticFacts.IsSameName(targetMethod.ContainingSymbol.Name, "IsolatedStorage")) return;
 
-            int argumentIndex;
-            switch (operation.TargetMethod.Name.ToLowerInvariant())
+
+            IArgument? argument = operation.TargetMethod.Name.ToLowerInvariant() switch
             {
-                case "get":
-                    argumentIndex = 2;
-                    break;
-                case "set":
-                case "setencrypted":
-                    argumentIndex = 1;
-                    break;
-                default:
-                    argumentIndex = -1;
-                    break;
-            }
+                "get" => operation.Arguments.FirstOrDefault(a => a.Parameter.IsVar),
+                "set" or "setencrypted" when operation.Arguments.Count() > 1 => operation.Arguments[1],
+                _ => null
+            };
 
-            if (argumentIndex == -1 || operation.Arguments[argumentIndex].Parameter == null) return;
+            if (argument == null)
+                return;
 
-            if (!IsArgumentOfTypeSecretText(operation.Arguments[argumentIndex]))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0043SecretText, ctx.Operation.Syntax.GetLocation()));
+            if (!IsArgumentOfTypeSecretText(argument))
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0043SecretText, argument.Syntax.GetLocation()));
 #endif
         }
 
@@ -78,12 +69,12 @@ namespace BusinessCentral.LinterCop.Design
             {
                 case MethodKind.BuiltInMethod:
                     if (!buildInMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant())) return;
-                    if (!(operation.Instance?.GetSymbol().GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.HttpHeaders || operation.Instance?.GetSymbol().GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.HttpClient)) return;
+                    if (!(operation.Instance?.GetSymbol()?.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.HttpHeaders || operation.Instance?.GetSymbol()?.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.HttpClient)) return;
                     break;
                 case MethodKind.Method:
-                    if (operation.TargetMethod.ContainingType.GetNavTypeKindSafe() != NavTypeKind.Codeunit) return;
+                    if (operation.TargetMethod.ContainingType?.GetNavTypeKindSafe() != NavTypeKind.Codeunit) return;
                     ICodeunitTypeSymbol codeunitTypeSymbol = (ICodeunitTypeSymbol)operation.TargetMethod.GetContainingObjectTypeSymbol();
-                    if (!SemanticFacts.IsSameName(((INamespaceSymbol)codeunitTypeSymbol.ContainingSymbol).QualifiedName, "System.RestClient")) return;
+                    if (!SemanticFacts.IsSameName(((INamespaceSymbol)codeunitTypeSymbol.ContainingSymbol!).QualifiedName, "System.RestClient")) return;
                     if (!SemanticFacts.IsSameName(codeunitTypeSymbol.Name, "Rest Client")) return;
                     if (!SemanticFacts.IsSameName(operation.TargetMethod.Name, "SetDefaultRequestHeader")) return;
                     break;
@@ -111,8 +102,8 @@ namespace BusinessCentral.LinterCop.Design
                 case SyntaxKind.IdentifierName:
                     if (argument.Value.Kind != OperationKind.ConversionExpression) return false;
                     IOperation operand = ((IConversionExpression)argument.Value).Operand;
-                    if (operand.GetSymbol().OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Label) return false;
-                    ILabelTypeSymbol label = (ILabelTypeSymbol)operand.GetSymbol().OriginalDefinition.GetTypeSymbol();
+                    if (operand.GetSymbol()?.OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Label) return false;
+                    ILabelTypeSymbol label = (ILabelTypeSymbol)operand.GetSymbol()!.OriginalDefinition.GetTypeSymbol();
                     return SemanticFacts.IsSameName(label.GetLabelText(), authorization);
                 default:
                     return false;
