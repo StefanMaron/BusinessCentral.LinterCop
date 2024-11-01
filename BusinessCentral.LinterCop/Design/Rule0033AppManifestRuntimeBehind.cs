@@ -3,7 +3,7 @@ using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
 using System.Collections.Immutable;
-#if !Spring2024
+#if !Fall2023RV3OrLower
 using Microsoft.Dynamics.Nav.Analyzers.Common;
 #else
 using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
@@ -21,7 +21,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckAppManifestRuntime(CompilationAnalysisContext ctx)
         {
-#if !Spring2024
+#if !Fall2023RV3OrLower
             NavAppManifest manifest = ManifestHelper.GetManifest(ctx.Compilation);
 #else
             NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(ctx.Compilation);

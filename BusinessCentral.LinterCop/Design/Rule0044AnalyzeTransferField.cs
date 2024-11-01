@@ -747,7 +747,7 @@ namespace BusinessCentral.LinterCop.Design
                     string objtype = typeprop.GetValue(field).ToString();
                     string fieldClass = fieldClassProp.GetValue(field).ToString();
 
-#if !Fall2023RV1
+#if !Fall2023OrLower
                     // Remove the QualifiedName from the Enum for now.
                     // In the future refactor this to support Enums with the same object name cross different namespaces
                     IEnumBaseTypeSymbol? enumBaseTypeSymbol = typeprop.GetValue(field) as IEnumBaseTypeSymbol;

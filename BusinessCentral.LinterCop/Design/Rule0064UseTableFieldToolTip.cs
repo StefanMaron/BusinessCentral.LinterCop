@@ -1,5 +1,5 @@
 #nullable disable // TODO: Enable nullable and review rule
-#if !Spring2024
+#if !Fall2023RV3OrLower
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;

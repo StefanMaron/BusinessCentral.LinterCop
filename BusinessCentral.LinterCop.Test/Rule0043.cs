@@ -1,4 +1,4 @@
-#if !Spring2024
+#if !Fall2023RV3OrLower
 namespace BusinessCentral.LinterCop.Test;
 
 public class Rule0043

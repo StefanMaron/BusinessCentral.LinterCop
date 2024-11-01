@@ -36,7 +36,7 @@ namespace BusinessCentral.LinterCop.Design
                 SyntaxKind.ReportColumn,
                 SyntaxKind.EnumValue,
                 SyntaxKind.PageCustomAction,
-#if !Spring2024
+#if !Fall2023RV3OrLower
                 SyntaxKind.PageSystemAction,
 #endif
                 SyntaxKind.PageView,
