@@ -11,9 +11,11 @@ public class Rule0044
             "TestCases", "Rule0044");
     }
 
+#if !LessThenSpring2024
     [Test]
     [TestCase("1")]
     [TestCase("2")]
+#endif
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
@@ -23,9 +25,11 @@ public class Rule0044
         fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0044AnalyzeTransferFields.Id);
     }
 
+#if !LessThenSpring2024
     [Test]
     [TestCase("1")]
     [TestCase("2")]
+#endif
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
