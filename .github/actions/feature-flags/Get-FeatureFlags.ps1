@@ -29,33 +29,30 @@ function Get-FeatureFlags {
     $featureFlags = ""
 
     $RuntimeVersion = [Ordered]@{
-        'Spring2018'       = '1.0'
-        'Fall2018'         = '2.0'
-        'Spring2019'       = '3.0'
-        'Fall2019'         = '4.0'
-        'Spring2020'       = '5.0'
-        'Fall2020'         = '6.0'
-        'Spring2021'       = '7.0'
-        'Fall2021'         = '8.0'
-        'Spring2022'       = '9.0'
-        'Spring2022RV1'    = '9.1'
-        'Spring2022RV2'    = '9.2'
-        'Fall2022'         = '10.0'
-        'Spring2023'       = '11.0'
-        'Fall2023'         = '12.0'
-        'Fall2023RV1'      = '12.1'
-        'Fall2023RV2'      = '12.2'
-        'Fall2023RV3'      = '12.3'
-        'Spring2024'       = '13.0'
-        'Fall2024'         = '14.0'
-        'Spring2025'       = '15.0'
-        'Fall2025'         = '16.0'
-
-        'ManifestHelper'   = '13.0.937154'
-        'PageSystemAction' = '13.0.878831'
+        'Spring2018'    = '1.0'
+        'Fall2018'      = '2.0'
+        'Spring2019'    = '3.0'
+        'Fall2019'      = '4.0'
+        'Spring2020'    = '5.0'
+        'Fall2020'      = '6.0'
+        'Spring2021'    = '7.0'
+        'Fall2021'      = '8.0'
+        'Spring2022'    = '9.0'
+        'Spring2022RV1' = '9.1'
+        'Spring2022RV2' = '9.2'
+        'Fall2022'      = '10.0'
+        'Spring2023'    = '11.0'
+        'Fall2023'      = '12.0'
+        'Fall2023RV1'   = '12.1'
+        'Fall2023RV2'   = '12.2'
+        'Fall2023RV3'   = '12.3'
+        'Spring2024'    = '13.0'
+        'Fall2024'      = '14.0'
+        'Spring2025'    = '15.0'
+        'Fall2025'      = '16.0'
     }
 
-    $supportedRuntimeVersions = $RuntimeVersion.GetEnumerator() | Where-Object { $(ConvertTo-Version($_.Value)) -le $(ConvertTo-Version($version)) } | Foreach-Object { $_.Key } | ForEach-Object { "#$_" }
+    $supportedRuntimeVersions = $RuntimeVersion.GetEnumerator() | Where-Object { $(ConvertTo-Version($_.Value)) -ge $(ConvertTo-Version($version)) } | Foreach-Object { $_.Key } | ForEach-Object { "#$_" }
     if (![string]::IsNullOrEmpty($supportedRuntimeVersions)) {
         $featureFlags = [System.String]::Join("", $supportedRuntimeVersions)
     }

@@ -1,4 +1,4 @@
-#if Fall2023RV1
+#if !Fall2023RV1
 using System.Collections.Immutable;
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
@@ -29,7 +29,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeIsolatedStorage(OperationAnalysisContext ctx)
         {
-#if Spring2024
+#if !Spring2024
             if (!VersionChecker.IsSupported(ctx.ContainingSymbol, VersionCompatibility.Spring2024OrGreater)) return;
 
             if (ctx.IsObsoletePendingOrRemoved()) return;

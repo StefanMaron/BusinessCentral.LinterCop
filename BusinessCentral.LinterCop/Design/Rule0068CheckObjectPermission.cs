@@ -177,10 +177,10 @@ namespace BusinessCentral.LinterCop.Design
 
                 var objectName = typeParts[1].Trim().Trim('"');
                 if (objectName.ToLowerInvariant() != variableType.Name.ToLowerInvariant())
-#if Fall2023RV1
-                    if (objectName.UnquoteIdentifier().ToLowerInvariant() != (variableType.OriginalDefinition.ContainingNamespace?.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant())) 
+#if !Fall2023RV1
+                    if (objectName.UnquoteIdentifier().ToLowerInvariant() != (variableType.OriginalDefinition.ContainingNamespace?.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant()))
 #endif
-                    continue;
+                        continue;
 
                 if (permissionValue.Contains(requestedPermission.ToString().ToLowerInvariant()[0]))
                 {
@@ -227,7 +227,7 @@ namespace BusinessCentral.LinterCop.Design
                 var objectName = typeAndObjectName[typeEndIndex..].Trim().Trim('"');
 
                 bool nameSpaceNameMatch = false;
-#if Fall2023RV1
+#if !Fall2023RV1
                 nameSpaceNameMatch = objectName.UnquoteIdentifier() == (variableType.OriginalDefinition.ContainingNamespace?.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant());
 #endif
 
