@@ -701,7 +701,6 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
             }
         }
 
-
         public void PopulateFields(FieldExtensionListSyntax fieldList)
         {
             if (fieldList == null) return;
