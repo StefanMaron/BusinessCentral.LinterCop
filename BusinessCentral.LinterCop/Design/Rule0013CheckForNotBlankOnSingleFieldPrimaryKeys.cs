@@ -57,7 +57,7 @@ public class Rule0013CheckForNotBlankOnSingleFieldPrimaryKeys : DiagnosticAnalyz
         return table.Fields
             .Where(x => x.Id > 0 && x.Id < 2000000000)
             .Where(x => x.FieldClass == FieldClassKind.Normal)
-#if !Spring2024OrLower
+#if !Fall2024
             .Where(x => x.Type.GetNavTypeKindSafe() == NavTypeKind.Code)
 #endif
             .Any(field =>

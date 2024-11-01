@@ -1,4 +1,4 @@
-#if !Fall2023OrLower
+#if !Fall2023RV1
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
