@@ -52,7 +52,7 @@ function Get-FeatureFlags {
         'Fall2025OrLower'      = '16.0'
     }
 
-    $supportedRuntimeVersions = $RuntimeVersion.GetEnumerator() | Where-Object { $(ConvertTo-Version($_.Value)) -gt $(ConvertTo-Version($version)) } | Foreach-Object { $_.Key } | ForEach-Object { "#$_" }
+    $supportedRuntimeVersions = $RuntimeVersion.GetEnumerator() | Where-Object { $(ConvertTo-Version($_.Value)) -le $(ConvertTo-Version($version)) } | Foreach-Object { $_.Key } | ForEach-Object { "#$_" }
     if (![string]::IsNullOrEmpty($supportedRuntimeVersions)) {
         $featureFlags = [System.String]::Join("", $supportedRuntimeVersions)
     }
