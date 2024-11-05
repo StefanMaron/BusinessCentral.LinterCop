@@ -356,6 +356,11 @@
       "id": "LC0071",
       "action": "Info",
       "justification": "The IsHandled event subscriber parameter reference value should never be set to a value that may be false."
+    },
+    {
+      "id": "LC0072",
+      "action": "Info",
+      "justification": "The documentation comment of a procedure should match its snytax structure exactly."
     }
   ]
 }
