@@ -1,14 +1,16 @@
-codeunit 50100 MemberAccessExpression
+codeunit 50100 OptionAccessExpression
 {
     procedure MyProcedure()
     var
-        OutStr: OutStream;
+        i: Integer;
     begin
-        Codeunit.Run([|Codeunit|]::MyCodeunit);
-        Codeunit.Run([|Database|]::MyTable);
-        Query.SaveAsXml(Query::MyQuery, OutStr);
-        Report.Run([|Report|]::MyReport);
-        Xmlport.Run([|Xmlport|]::MyXmlport);
+        i := [|Codeunit|]::MyCodeunit;
+        i := [|Database|]::MyTable;
+        i := [|Enum|]::MyEnum::MyValue;
+        i := [|Page|]::MyPage;
+        i := [|Query|]::MyQuery;
+        i := [|Report|]::MyReport;
+        i := [|Xmlport|]::MyXmlport;
     end;
 }
 

@@ -14,7 +14,23 @@ public class Rule0005
     [Test]
     [TestCase("1")]
     [TestCase("2")]
-    [TestCase("OptionAccessExpression")]
+    [TestCase("LabelPropertyComment")]
+    [TestCase("LabelPropertyLocked")]
+    [TestCase("LabelPropertyMaxLength")]
+    [TestCase("MemberAccessExpressionCodeunit")]
+    [TestCase("MemberAccessExpressionDatabase")]
+    [TestCase("MemberAccessExpressionEnum")]
+    [TestCase("MemberAccessExpressionPage")]
+    [TestCase("MemberAccessExpressionQuery")]
+    [TestCase("MemberAccessExpressionReport")]
+    [TestCase("MemberAccessExpressionXmlport")]
+    [TestCase("OptionAccessExpressionCodeunit")]
+    [TestCase("OptionAccessExpressionDatabase")]
+    [TestCase("OptionAccessExpressionPage")]
+    [TestCase("OptionAccessExpressionQuery")]
+    [TestCase("OptionAccessExpressionReport")]
+    [TestCase("OptionAccessExpressionXmlport")]
+    [TestCase("PropertyName")]
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
@@ -26,7 +42,10 @@ public class Rule0005
 
     [Test]
     [TestCase("1")]
+    [TestCase("LabelProperty")]
+    [TestCase("MemberAccessExpression")]
     [TestCase("OptionAccessExpression")]
+    [TestCase("PropertyName")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
