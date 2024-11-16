@@ -184,7 +184,7 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0028](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0028)|Event subscriber arguments now use identifier syntax instead of string literals.|Info|
 |[LC0029](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0029)|Use `CompareDateTime` method in `Type Helper` codeunit for DateTime variable comparisons.|Info|
 |[LC0030](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0030)|Set Access property to Internal for Install/Upgrade codeunits.|Info|
-|[LC0031](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0031)|Set ReadIsolation property instead of LockTable method.|Info|
+|[LC0031](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0031)|Use ReadIsolation instead of LockTable.|Info|
 |[LC0032](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0032)|Clear(All) does not affect or change values for global variables in single instance codeunits.|Warning|
 |[LC0033](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0033)|The specified runtime version in app.json is falling behind.|Info|
 |[LC0034](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0034)|The property `Extensible` should be explicitly set for public objects.|Disabled|
@@ -224,3 +224,4 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0068](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0068)|Informs the user that there are missing permission to access tabledata.|Info|
 |[LC0069](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0069)|Empty statements should be avoided or should have a leading or trailing comment explaining their use.|Info|
 |[LC0070](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0070)|Zero index access on 1-based List objects.|Warning|
+|[LC0071](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0071)|Incorrect 'IsHandled' parameter assignment.|Info|

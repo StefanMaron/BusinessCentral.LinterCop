@@ -1,5 +1,4 @@
-﻿#nullable disable // TODO: Enable nullable and review rule
-using BusinessCentral.LinterCop.AnalysisContextExtension;
+﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
@@ -16,10 +15,11 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeSemicolonAfterMethodOrTriggerDeclaration(SyntaxNodeAnalysisContext ctx)
         {
-            if (ctx.IsObsoletePendingOrRemoved()) return;
+            if (ctx.IsObsoletePendingOrRemoved())
+                return;
 
-            MethodOrTriggerDeclarationSyntax syntax = ctx.Node as MethodOrTriggerDeclarationSyntax;
-            if (syntax == null) return;
+            if (ctx.Node is not MethodOrTriggerDeclarationSyntax syntax)
+                return;
 
             if (syntax.SemicolonToken.Kind != SyntaxKind.None)
             {

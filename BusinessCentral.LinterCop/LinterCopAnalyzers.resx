@@ -382,13 +382,13 @@
     <value>Set Access property to Internal for Install/Upgrade codeunits.</value>
   </data>
   <data name="Rule0031RecordInstanceIsolationLevelTitle" xml:space="preserve">
-    <value>Set ReadIsolation property instead of LockTable method.</value>
+    <value>Use ReadIsolation instead of LockTable.</value>
   </data>
   <data name="Rule0031RecordInstanceIsolationLevelFormat" xml:space="preserve">
-    <value>Set ReadIsolation property instead of LockTable method.</value>
+    <value>Use ReadIsolation(IsolationLevel::UpdLock) instead of LockTable().</value>
   </data>
   <data name="Rule0031RecordInstanceIsolationLevelDescription" xml:space="preserve">
-    <value>Set ReadIsolation property instead of LockTable method.</value>
+    <value>Use the ReadIsolation method to control isolation level on database transactions instead of the LockTable method.</value>
   </data>
   <data name="Rule0032ClearCodeunitSingleInstanceTitle" xml:space="preserve">
     <value>Clear(All) does not affect or change values for global variables in '{0}: Codeunit {1}'.</value>
@@ -749,5 +749,14 @@
   </data>
   <data name="Rule0070ListObjectsAreOneBasedDescription" xml:space="preserve">
     <value>List objects are 1-based, meaning indexing starts from 1 instead of the conventional 0.</value>
+  </data>
+  <data name="Rule0071DoNotSetIsHandledToFalseTitle" xml:space="preserve">
+    <value>Incorrect 'IsHandled' parameter assignment.</value>
+  </data>
+  <data name="Rule0071DoNotSetIsHandledToFalseFormat" xml:space="preserve">
+    <value>Do not set the 'IsHandled' parameter to 'false' or any value that may be evaluated as false.</value>
+  </data>
+  <data name="Rule0071DoNotSetIsHandledToFalseDescription" xml:space="preserve">
+    <value>The 'IsHandled' parameter must always be set to 'true' when handled. Avoid assigning 'false' or any value that may be evaluated as false.</value>
   </data>
 </root>

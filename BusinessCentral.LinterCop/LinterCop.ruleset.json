@@ -155,7 +155,7 @@
     {
       "id": "LC0031",
       "action": "Info",
-      "justification": "Set ReadIsolation property instead of LockTable method."
+      "justification": "Use ReadIsolation instead of LockTable."
     },
     {
       "id": "LC0032",
@@ -351,6 +351,11 @@
       "id": "LC0070",
       "action": "Warning",
       "justification": "Zero index access on 1-based List objects."
+    },
+    {
+      "id": "LC0071",
+      "action": "Info",
+      "justification": "The IsHandled event subscriber parameter reference value should never be set to a value that may be false."
     }
   ]
 }
