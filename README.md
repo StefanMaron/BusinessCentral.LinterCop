@@ -135,7 +135,7 @@ The LinterCop is compatible with various approaches and solutions for the AL Lan
 Some rules can be configured by adding a file named `LinterCop.json` in the root of your project.
 **Important:** The file will only be read on startup of the linter, meaning if you make any changes you need to reload VS Code once.
 
-For an example and the default values see: [LinterCop.json](LinterCop.json)
+For an example and the default values see: [LinterCop.json](./BusinessCentral.LinterCop/LinterCop.json)
 
 If you want to use the `LinterCop.json` file in a pipeline, using BcContainerHelper, you need to copy the file to `C:\build\vsix\extension\bin\win32\LinterCop.json` inside the container before calling `Compile-AppInBcContainer`. See [this issue](https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/263) for details on how to accomplish that.
 
@@ -147,7 +147,7 @@ https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/develope
 Of course you can also use pragmas for disabling a rule just for a certain place in code.
 https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/directives/devenv-directive-pragma-warning
 
-For an example and the default values see: [LinterCop.ruleset.json](LinterCop.ruleset.json)
+For an example and the default values see: [LinterCop.ruleset.json](./BusinessCentral.Lintercop/LinterCop.ruleset.json)
 
 ## Rules
 
