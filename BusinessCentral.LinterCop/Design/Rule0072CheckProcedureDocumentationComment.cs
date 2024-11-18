@@ -57,14 +57,14 @@ namespace BusinessCentral.LinterCop.Design
             // check documentation comment parameters against method syntax
             foreach (var docCommentParameter in docCommentParameters)
             {
-                if (!methodDeclarationSyntax.ParameterList.Parameters.Any(param => param.Name.Identifier.ValueText.UnquoteIdentifier().ToLowerInvariant() == docCommentParameter.Key))
+                if (!methodDeclarationSyntax.ParameterList.Parameters.Any(param => param.Name.Identifier.ValueText.UnquoteIdentifier().Equals(docCommentParameter.Key, StringComparison.OrdinalIgnoreCase)))
                     ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment, docCommentParameter.Value.GetLocation()));
             }
 
             // check method parameters against documentation comment syntax
             foreach (var methodParameter in methodDeclarationSyntax.ParameterList.Parameters)
             {
-                if (!docCommentParameters.Any(docParam => docParam.Key == methodParameter.Name.Identifier.ValueText.UnquoteIdentifier().ToLowerInvariant()))
+                if (!docCommentParameters.Any(docParam => docParam.Key.Equals(methodParameter.Name.Identifier.ValueText.UnquoteIdentifier(), StringComparison.OrdinalIgnoreCase)))
                     ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment, methodParameter.GetLocation()));
             }
         }
