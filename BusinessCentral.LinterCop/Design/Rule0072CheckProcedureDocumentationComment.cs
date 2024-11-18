@@ -18,7 +18,8 @@ namespace BusinessCentral.LinterCop.Design
         {
             if (ctx.IsObsoletePendingOrRemoved()) return;
 
-            var methodDeclarationSyntax = (MethodDeclarationSyntax)ctx.Node;
+            if (ctx.Node is not MethodDeclarationSyntax methodDeclarationSyntax)
+                return;
             var docCommentTrivia = methodDeclarationSyntax.GetLeadingTrivia().FirstOrDefault(trivia => trivia.Kind == SyntaxKind.SingleLineDocumentationCommentTrivia);
             if (docCommentTrivia.IsKind(SyntaxKind.None)) return; // no documentation comment exists
 
