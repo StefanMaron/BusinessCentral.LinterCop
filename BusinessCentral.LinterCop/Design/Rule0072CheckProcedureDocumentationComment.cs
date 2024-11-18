@@ -36,7 +36,7 @@ namespace BusinessCentral.LinterCop.Design
                 {
                     case "param":
                         var nameAttribute = (XmlNameAttributeSyntax)element.StartTag.Attributes.First(att => att.IsKind(SyntaxKind.XmlNameAttribute));
-                        var parameterName = nameAttribute.Identifier.Identifier.ValueText.ToLowerInvariant();
+                        var parameterName = nameAttribute.Identifier.Identifier.ValueText;
                         if (!docCommentParameters.ContainsKey(parameterName))
                             docCommentParameters.Add(parameterName, element);
                         break;
