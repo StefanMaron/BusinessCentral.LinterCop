@@ -23,7 +23,7 @@ namespace BusinessCentral.LinterCop.Design
             var docCommentTrivia = methodDeclarationSyntax.GetLeadingTrivia().FirstOrDefault(trivia => trivia.Kind == SyntaxKind.SingleLineDocumentationCommentTrivia);
             if (docCommentTrivia.IsKind(SyntaxKind.None)) return; // no documentation comment exists
 
-            Dictionary<string, XmlElementSyntax> docCommentParameters = new Dictionary<string, XmlElementSyntax>();
+            Dictionary<string, XmlElementSyntax> docCommentParameters = new Dictionary<string, XmlElementSyntax>(StringComparer.OrdinalIgnoreCase);
             XmlElementSyntax? docCommentReturns = null;
 
             var docCommentStructure = (DocumentationCommentTriviaSyntax)docCommentTrivia.GetStructure();
