@@ -101,6 +101,7 @@ namespace BusinessCentral.LinterCop.Design
             var numberOfBranches = nodesAndTokens.Count(syntaxNodeOrToken => IsComplexKind(syntaxNodeOrToken.Kind)) + 1;
             #if !LessThenFall2024
                 numberOfBranches += (nodesAndTokens.Count(syntaxNodeOrToken => syntaxNodeOrToken.Kind == SyntaxKind.ConditionalExpression) * 2);
+            #endif
             return numberOfBranches;
         }
 
