@@ -98,7 +98,10 @@ namespace BusinessCentral.LinterCop.Design
 
         private static int GetCyclomaticComplexity(SyntaxNodeOrToken[] nodesAndTokens)
         {
-            return nodesAndTokens.Count(syntaxNodeOrToken => IsComplexKind(syntaxNodeOrToken.Kind)) + 1;
+            var numberOfBranches = nodesAndTokens.Count(syntaxNodeOrToken => IsComplexKind(syntaxNodeOrToken.Kind)) + 1;
+            #if !LessThenFall2024
+                numberOfBranches += (nodesAndTokens.Count(syntaxNodeOrToken => syntaxNodeOrToken.Kind == SyntaxKind.ConditionalExpression) * 2);
+            return numberOfBranches;
         }
 
         private static bool IsOperandKind(SyntaxKind kind)
