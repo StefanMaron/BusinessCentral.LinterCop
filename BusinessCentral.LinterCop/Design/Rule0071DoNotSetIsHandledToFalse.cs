@@ -117,7 +117,7 @@ namespace BusinessCentral.LinterCop.Design
 
             IEnumerable<SyntaxNode> identifiers = parent.DescendantNodes()
                 .OfType<IdentifierNameSyntax>()
-                .Where(n => n.Identifier.ValueText == parameter.Name && n.SpanStart < operation.Syntax.Position);
+                .Where(n => n.Identifier.ValueText == parameter.Name && n.SpanStart < operation.Syntax.SpanStart);
 
             foreach (var identifier in identifiers)
             {
