@@ -361,6 +361,11 @@
       "id": "LC0072",
       "action": "Info",
       "justification": "The documentation comment of a procedure should match its snytax structure exactly."
+    },
+    {
+      "id": "LC0073",
+      "action": "Warning",
+      "justification": "Handled parameters in event signatures should be passed by var."
     }
   ]
 }
