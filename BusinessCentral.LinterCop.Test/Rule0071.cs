@@ -28,6 +28,8 @@ public class Rule0071
     [TestCase("Assignment")]
     [TestCase("Invocation")]
     [TestCase("NoEventSubscriberParameterReference")]
+    [TestCase("PrecedingExitOnAssignment")]
+    [TestCase("PrecedingExitOnInvocation")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
