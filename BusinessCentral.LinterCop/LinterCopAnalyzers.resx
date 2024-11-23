@@ -768,4 +768,13 @@
   <data name="Rule0072CheckProcedureDocumentationCommentDescription" xml:space="preserve">
     <value>The documentation comment must always match the procedure syntax structure exactly.</value>
   </data>
+  <data name="Rule0073EventPublisherIsHandledByVarTitle" xml:space="preserve">
+    <value>Handled parameters in event signatures should be passed by var.</value>
+  </data>
+  <data name="Rule0073EventPublisherIsHandledByVarFormat" xml:space="preserve">
+    <value>The Handled parameter in the event signature should be passed by var for proper event handling.</value>
+  </data>
+  <data name="Rule0073EventPublisherIsHandledByVarDescription" xml:space="preserve">
+    <value>Identifies event parameters of type boolean named IsHandled or Handled that are not passed by var.</value>
+  </data>
 </root>
