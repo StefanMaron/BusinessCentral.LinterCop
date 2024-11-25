@@ -14,7 +14,9 @@ public class Rule0026
     [Test]
     [TestCase("PageField")]
     [TestCase("PageAction")]
+#if !LessThenFall2023RV3
     [TestCase("TableField")]
+#endif
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
@@ -27,7 +29,9 @@ public class Rule0026
     [Test]
     [TestCase("PageField")]
     [TestCase("PageAction")]
+#if !LessThenFall2023RV3
     [TestCase("TableField")]
+#endif
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
