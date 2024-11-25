@@ -14,7 +14,7 @@ public class Rule0026
     [Test]
     [TestCase("PageField")]
     [TestCase("PageAction")]
-#if !LessThenFall2023RV3
+#if !LessThenSpring2024
     [TestCase("TableField")]
 #endif
     public async Task HasDiagnostic(string testCase)
@@ -29,7 +29,7 @@ public class Rule0026
     [Test]
     [TestCase("PageField")]
     [TestCase("PageAction")]
-#if !LessThenFall2023RV3
+#if !LessThenSpring2024
     [TestCase("TableField")]
 #endif
     public async Task NoDiagnostic(string testCase)
