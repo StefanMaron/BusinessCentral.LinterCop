@@ -6,7 +6,7 @@ page 50100 MyPage
         {
             action(MyAction)
             {
-                [|ToolTip = 'My action';|]
+                [|ToolTip = 'My ToolTip.';|]
             }
         }
     }

@@ -6,7 +6,7 @@ page 50100 MyPage
         {
             field(MyField; MyField)
             {
-                [|ToolTip = 'My tooltip';|]
+                [|ToolTip = 'My ToolTip.';|]
             }
         }
     }
