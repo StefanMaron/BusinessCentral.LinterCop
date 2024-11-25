@@ -11,6 +11,9 @@ namespace BusinessCentral.LinterCop.Design
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0026ToolTipMustEndWithDot, DiagnosticDescriptors.Rule0036ToolTipShouldStartWithSpecifies, DiagnosticDescriptors.Rule0037ToolTipDoNotUseLineBreaks, DiagnosticDescriptors.Rule0038ToolTipMaximumLength);
 
+        // https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/user-assistance#guidelines-for-tooltip-text
+        // Try to not exceed 200 characters including spaces.
+        // Including the double quote at the beginning and end of the string, makes this a total of 202
         private const int MaxTooltipLength = 202;
 
         public override void Initialize(AnalysisContext context) => context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeToolTipPunctuation), SyntaxKind.PageField, SyntaxKind.PageAction, SyntaxKind.Field);
