@@ -98,11 +98,7 @@ namespace BusinessCentral.LinterCop.Design
 
         private static int GetCyclomaticComplexity(SyntaxNodeOrToken[] nodesAndTokens)
         {
-            var numberOfBranches = nodesAndTokens.Count(syntaxNodeOrToken => IsComplexKind(syntaxNodeOrToken.Kind)) + 1;
-            #if !LessThenFall2024
-                numberOfBranches += (nodesAndTokens.Count(syntaxNodeOrToken => syntaxNodeOrToken.Kind == SyntaxKind.ConditionalExpression) * 2);
-            #endif
-            return numberOfBranches;
+            return nodesAndTokens.Count(syntaxNodeOrToken => IsComplexKind(syntaxNodeOrToken.Kind)) + 1;
         }
 
         private static bool IsOperandKind(SyntaxKind kind)
@@ -134,6 +130,9 @@ namespace BusinessCentral.LinterCop.Design
                 case SyntaxKind.ForEachKeyword:
                 case SyntaxKind.WhileKeyword:
                 case SyntaxKind.UntilKeyword:
+                #if !LessThenFall2024
+                case SyntaxKind.ConditionalExpression:
+                #endif
                     return true;
             }
 
