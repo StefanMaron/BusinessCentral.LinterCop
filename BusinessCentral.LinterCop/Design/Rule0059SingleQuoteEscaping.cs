@@ -32,7 +32,7 @@ namespace BusinessCentral.LinterCop.Design
             var calcFormulaPropertySyntax = fieldSyntax.PropertyList?.Properties
                 .OfType<PropertySyntax>()
                 .Select(p => p.Value)
-                .OfType<TableCalculationFormulaSyntax>()
+                .OfType<CalculationFormulaPropertyValueSyntax>()
                 .FirstOrDefault();
 
             if (calcFormulaPropertySyntax is null)

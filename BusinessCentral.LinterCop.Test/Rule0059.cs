@@ -12,7 +12,8 @@ public class Rule0059
     }
 
     [Test]
-    [TestCase("CalcFormulaWhere")]
+    [TestCase("CalcFormulaFieldWhere")]
+    [TestCase("CalcFormulaTableWhere")]
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
@@ -23,7 +24,8 @@ public class Rule0059
     }
 
     [Test]
-    [TestCase("CalcFormulaWhere")]
+    [TestCase("CalcFormulaFieldWhere")]
+    [TestCase("CalcFormulaTableWhere")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
