@@ -14,15 +14,12 @@ public class Rule0074FlowFilterAssignment : DiagnosticAnalyzer
 
     public override void Initialize(AnalysisContext context)
     {
-        context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeAssignmentStatement), new SyntaxKind[] {
-            SyntaxKind.AssignmentStatement,
-            SyntaxKind.CompoundAssignmentStatement
-            });
+        context.RegisterSyntaxNodeAction(AnalyzeAssignmentStatement, SyntaxKind.AssignmentStatement, SyntaxKind.CompoundAssignmentStatement);
     }
 
     private void AnalyzeAssignmentStatement(SyntaxNodeAnalysisContext ctx)
     {
-        if (ctx.IsObsoletePendingOrRemoved())
+        if (ctx.CancellationToken.IsCancellationRequested || ctx.IsObsoletePendingOrRemoved())
             return;
 
         var target = ctx.Node switch
@@ -32,7 +29,7 @@ public class Rule0074FlowFilterAssignment : DiagnosticAnalyzer
             _ => null
         };
 
-        if (target == null || target.Kind != SyntaxKind.MemberAccessExpression)
+        if (target is not { Kind: SyntaxKind.MemberAccessExpression })
             return;
 
         if (ctx.SemanticModel.GetSymbolInfo(target, ctx.CancellationToken).Symbol is not IFieldSymbol fieldSymbol)
@@ -42,7 +39,7 @@ public class Rule0074FlowFilterAssignment : DiagnosticAnalyzer
         {
             ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0074FlowFilterAssignment,
-                target.GetIdentifierNameSyntax().GetLocation(), new object[] { fieldSymbol.Name.ToString().QuoteIdentifierIfNeeded() }));
+                target.GetIdentifierNameSyntax().GetLocation(), new object[] { fieldSymbol.Name.QuoteIdentifierIfNeeded() }));
         }
     }
 
