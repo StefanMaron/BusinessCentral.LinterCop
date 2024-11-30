@@ -777,4 +777,13 @@
   <data name="Rule0073EventPublisherIsHandledByVarDescription" xml:space="preserve">
     <value>Identifies event parameters of type boolean named IsHandled or Handled that are not passed by var.</value>
   </data>
+  <data name="Rule0074FlowFilterAssignmentTitle" xml:space="preserve">
+    <value>Set values for FlowFilter fields using filtering methods.</value>
+  </data>
+  <data name="Rule0074FlowFilterAssignmentFormat" xml:space="preserve">
+    <value>Direct assignment to the {0} field of type FlowFilter invalidates the filter logic for calculations. Use .SetFilter() or .SetRange() to set the filter correctly.</value>
+  </data>
+  <data name="Rule0074FlowFilterAssignmentDescription" xml:space="preserve">
+    <value>Directly assigning values to FlowFilter fields bypasses their purpose and invalidates the filtering logic, resulting in incorrect or unintended calculations. Instead, use the .SetFilter() or .SetRange() methods to define the appropriate filters.</value>
+  </data>
 </root>
