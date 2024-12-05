@@ -14,7 +14,7 @@ namespace BusinessCentral.LinterCop.Design
     {
         private readonly Lazy<Regex> strSubstNoPatternLazy = new Lazy<Regex>((Func<Regex>)(() => new Regex("[#%](\\d+)", RegexOptions.Compiled)));
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0051SetFilterPossibleOverflow);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0051SetFilterPossibleOverflow, DiagnosticDescriptors.Rule0000ErrorInRule);
 
         private Regex StrSubstNoPattern => this.strSubstNoPatternLazy.Value;
 
@@ -22,32 +22,40 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeInvocation(OperationAnalysisContext ctx)
         {
-            if (ctx.IsObsoletePendingOrRemoved()) return;
-
-            IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
-            if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
-
-            if (operation.TargetMethod == null || !SemanticFacts.IsSameName(operation.TargetMethod.Name, "SetFilter") || operation.Arguments.Count() < 3)
-                return;
-
-            if (operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression) return;
-            IOperation fieldOperand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
-            ITypeSymbol fieldType = fieldOperand.Type;
-            if (fieldType.GetNavTypeKindSafe() == NavTypeKind.Text) return;
-
-            bool isError = false;
-            int typeLength = GetTypeLength(fieldType, ref isError);
-            if (isError || typeLength == int.MaxValue)
-                return;
-
-            foreach (int argIndex in GetArgumentIndexes(operation.Arguments[1].Value))
+            // Investigate https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/822
+            try
             {
-                int index = argIndex + 1; // The placeholders are defines as %1, %2, %3, where in case of %1 we need the second (zero based) index of the arguments of the SetFilter method
-                if (index < 2 || index >= operation.Arguments.Count()) continue;
+                if (ctx.IsObsoletePendingOrRemoved()) return;
 
-                int expressionLength = this.CalculateMaxExpressionLength(((IConversionExpression)operation.Arguments[index].Value).Operand, ref isError);
-                if (!isError && expressionLength > typeLength)
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0051SetFilterPossibleOverflow, operation.Syntax.GetLocation(), GetDisplayString(operation.Arguments[index], operation), GetDisplayString(operation.Arguments[0], operation)));
+                IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
+                if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
+
+                if (operation.TargetMethod == null || !SemanticFacts.IsSameName(operation.TargetMethod.Name, "SetFilter") || operation.Arguments.Count() < 3)
+                    return;
+
+                if (operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression) return;
+                IOperation fieldOperand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
+                ITypeSymbol fieldType = fieldOperand.Type;
+                if (fieldType.GetNavTypeKindSafe() == NavTypeKind.Text) return;
+
+                bool isError = false;
+                int typeLength = GetTypeLength(fieldType, ref isError);
+                if (isError || typeLength == int.MaxValue)
+                    return;
+
+                foreach (int argIndex in GetArgumentIndexes(operation.Arguments[1].Value))
+                {
+                    int index = argIndex + 1; // The placeholders are defines as %1, %2, %3, where in case of %1 we need the second (zero based) index of the arguments of the SetFilter method
+                    if (index < 2 || index >= operation.Arguments.Count()) continue;
+
+                    int expressionLength = this.CalculateMaxExpressionLength(((IConversionExpression)operation.Arguments[index].Value).Operand, ref isError);
+                    if (!isError && expressionLength > typeLength)
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0051SetFilterPossibleOverflow, operation.Syntax.GetLocation(), GetDisplayString(operation.Arguments[index], operation), GetDisplayString(operation.Arguments[0], operation)));
+                }
+            }
+            catch (InvalidCastException)
+            {
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0051", "InvalidCastException", "" }));
             }
         }
 
