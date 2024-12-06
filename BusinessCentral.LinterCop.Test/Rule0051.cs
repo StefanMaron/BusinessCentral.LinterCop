@@ -1,3 +1,4 @@
+#if !LessThenFall2023RV1
 namespace BusinessCentral.LinterCop.Test;
 
 public class Rule0051
@@ -23,9 +24,7 @@ public class Rule0051
     }
 
     [Test]
-#if !LessThenFall2023
     [TestCase("SetFilterFieldRef")]
-#endif
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
@@ -35,3 +34,4 @@ public class Rule0051
         fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0051SetFilterPossibleOverflow.Id);
     }
 }
+#endif
