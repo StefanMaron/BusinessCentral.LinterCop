@@ -23,7 +23,9 @@ public class Rule0051
     }
 
     [Test]
+#if !LessThenFall2023
     [TestCase("SetFilterFieldRef")]
+#endif
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
