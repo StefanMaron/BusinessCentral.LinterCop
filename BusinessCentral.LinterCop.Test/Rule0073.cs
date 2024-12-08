@@ -26,6 +26,8 @@ public class Rule0073
     [Test]
     [TestCase("BusinessEvent")]
     [TestCase("IntegrationEvent")]
+    [TestCase("ObsoleteMethod")]
+    [TestCase("ObsoleteObject")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
