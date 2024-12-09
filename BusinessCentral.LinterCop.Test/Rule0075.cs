@@ -1,3 +1,4 @@
+#if !LessThenSpring2024
 namespace BusinessCentral.LinterCop.Test;
 
 public class Rule0075
@@ -58,3 +59,4 @@ public class Rule0075
         fixture.NoDiagnosticAtMarker(code, Rule0075RecordGetProcedureArguments.DiagnosticDescriptors.Rule0075RecordGetProcedureArguments.Id);
     }
 }
+#endif

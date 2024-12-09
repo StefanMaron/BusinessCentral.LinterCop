@@ -1,3 +1,4 @@
+#if !LessThenSpring2024
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
@@ -157,3 +158,4 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
             helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0075");
     }
 }
+#endif
