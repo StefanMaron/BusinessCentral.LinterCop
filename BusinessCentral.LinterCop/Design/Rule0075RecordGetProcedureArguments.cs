@@ -1,5 +1,6 @@
 #if !LessThenSpring2024
 using BusinessCentral.LinterCop.AnalysisContextExtension;
+using BusinessCentral.LinterCop.ArgumentExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
@@ -57,7 +58,7 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
             return;
         }
 
-        if (operation.Instance?.Type.GetTypeSymbol().OriginalDefinition is not ITableTypeSymbol table)
+        if (operation.Instance?.Type.GetTypeSymbol()?.OriginalDefinition is not ITableTypeSymbol table)
             return;
 
         if (IsSingletonTable(table))
@@ -89,7 +90,7 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
         {
             if (!AreFieldCompatible(operation.Arguments[i], table.PrimaryKey.Fields[i]))
             {
-                var argumentType = GetTypeSymbol(operation.Arguments[i]);
+                var argumentType = operation.Arguments[i].GetTypeSymbol();
                 var fieldType = table.PrimaryKey.Fields[i].Type;
 
                 string expectedArgs = $"Argument at position {i + 1} has an invalid type; expected '{fieldType}', found '{argumentType}'";
@@ -104,7 +105,7 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
 
     private bool AreFieldCompatible(IArgument argument, IFieldSymbol field)
     {
-        var argumentType = GetTypeSymbol(argument);
+        var argumentType = argument.GetTypeSymbol();
         var fieldType = field.Type;
 
         if (argumentType == null || fieldType is null)
@@ -125,18 +126,6 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
             return false;
 
         return true;
-    }
-
-    private static ITypeSymbol? GetTypeSymbol(IArgument argument)
-    {
-        switch (argument.Value.Kind)
-        {
-            case OperationKind.ConversionExpression:
-                return ((IConversionExpression)argument.Value).Operand.Type;
-            case OperationKind.InvocationExpression:
-                return ((IInvocationExpression)argument.Value).TargetMethod.ReturnValueSymbol.ReturnType;
-        }
-        return null;
     }
 
     private static bool IsSingletonTable(ITableTypeSymbol table)
