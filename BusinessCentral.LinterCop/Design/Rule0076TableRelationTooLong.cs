@@ -11,15 +11,14 @@ public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0076TableRelationTooLong);
 
     public override void Initialize(AnalysisContext context) =>
-        context.RegisterSyntaxNodeAction(AnalyzeSyntaxNode, SyntaxKind.Field);
+        context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Field);
 
-    private void AnalyzeSyntaxNode(SyntaxNodeAnalysisContext context)
+    private void AnalyzeSymbol(SymbolAnalysisContext context)
     {
         if (context.IsObsoletePendingOrRemoved())
             return;
 
-        if (context.SemanticModel.GetDeclaredSymbol(context.Node) is not IFieldSymbol currentField)
-            return;
+        var currentField = (IFieldSymbol)context.Symbol;
 
         if (currentField.GetProperty(PropertyKind.TableRelation)?.GetPropertyValueSyntax<TableRelationPropertyValueSyntax>()
             is not TableRelationPropertyValueSyntax tableRelation)
@@ -28,7 +27,7 @@ public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
         AnalyzeTableRelations(context, currentField, tableRelation);
     }
 
-    private void AnalyzeTableRelations(SyntaxNodeAnalysisContext context, IFieldSymbol currentField, TableRelationPropertyValueSyntax? tableRelation)
+    private void AnalyzeTableRelations(SymbolAnalysisContext context, IFieldSymbol currentField, TableRelationPropertyValueSyntax? tableRelation)
     {
         while (tableRelation is not null)
         {
@@ -37,7 +36,7 @@ public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
                 var relatedFieldSymbol = GetRelatedFieldSymbol(
                     relatedField.Left as IdentifierNameSyntax,
                     relatedField.Right as IdentifierNameSyntax,
-                    context.SemanticModel.Compilation);
+                    context.Compilation);
 
                 if (relatedFieldSymbol is not null && ShouldReportDiagnostic(currentField, relatedFieldSymbol))
                 {
@@ -54,12 +53,12 @@ public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
         currentField.HasLength &&
         currentField.Length < relatedField.Length;
 
-    private static void ReportLengthMismatch(SyntaxNodeAnalysisContext context, IFieldSymbol currentField,
+    private static void ReportLengthMismatch(SymbolAnalysisContext context, IFieldSymbol currentField,
         IFieldSymbol relatedField, QualifiedNameSyntax relatedFieldSyntax)
     {
         context.ReportDiagnostic(Diagnostic.Create(
             DiagnosticDescriptors.Rule0076TableRelationTooLong,
-            ((FieldSyntax)context.Node).Type.GetLocation(),
+            currentField.GetLocation(),
             relatedField.Length,
             relatedFieldSyntax.ToString(),
             currentField.Length,
