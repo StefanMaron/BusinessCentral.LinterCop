@@ -786,4 +786,13 @@
   <data name="Rule0074FlowFilterAssignmentDescription" xml:space="preserve">
     <value>Directly assigning values to FlowFilter fields bypasses their purpose and invalidates the filtering logic, resulting in incorrect or unintended calculations. Instead, use the .SetFilter() or .SetRange() methods to define the appropriate filters.</value>
   </data>
+  <data name="Rule0076TableRelationTooLongTitle" xml:space="preserve">
+    <value>Table relation field length mismatch</value>
+  </data>
+  <data name="Rule0076TableRelationTooLongFormat" xml:space="preserve">
+    <value>The related field has length {0} ({1}) which is longer than the current field length {2} ({3})</value>
+  </data>
+  <data name="Rule0076TableRelationTooLongDescription" xml:space="preserve">
+    <value>The field with table relation should have at least the same length as the referenced field.</value>
+  </data>
 </root>
