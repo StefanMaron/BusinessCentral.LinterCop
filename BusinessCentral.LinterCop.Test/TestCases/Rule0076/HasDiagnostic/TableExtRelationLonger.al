@@ -4,14 +4,14 @@ table 50108 MyTable
     {
         field(1; [|MyText|]; Text[1])
         {
-            TableRelation = MyTable.MyTextExt;
+            TableRelation = MyTable2.MyTextExt;
         }
 
         field(2; [|MyCode|]; Text[1])
         {
-            TableRelation = if (MyCode = const('const')) MyTable.MyCodeExt 
+            TableRelation = if (MyCode = const('const')) MyTable2.MyCodeExt 
             else 
-            MyTable.MyTextExt;
+            MyTable2.MyTextExt;
         }
     }
 
@@ -22,7 +22,23 @@ table 50108 MyTable
 }
 
 
-tableextension 50108 MyExtension extends MyTable
+table 50107 MyTable2
+{
+    fields
+    {
+        field(1; MyText; Text[1]) { }
+
+        field(2; MyCode; Text[1]) { }
+    }
+
+    keys
+    {
+        key(PK; MyText) { Clustered = true; }
+    }
+}
+
+
+tableextension 50110 MyExtension extends MyTable2
 {
     fields
     {
