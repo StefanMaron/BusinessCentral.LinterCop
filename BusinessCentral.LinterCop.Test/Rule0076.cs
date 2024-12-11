@@ -13,7 +13,7 @@ public class Rule0076
 
     [Test]
     [TestCase("TableRelationLonger")]
-    [TestCase("TableExtRelationShorter")]
+    [TestCase("TableExtRelationLonger")]
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
@@ -27,7 +27,7 @@ public class Rule0076
     [TestCase("TableRelationEqual")]
     [TestCase("TableRelationShorter")]
     [TestCase("TableExtRelationEqual")]
-    [TestCase("TableExtRelationLonger")]
+    [TestCase("TableExtRelationShorter")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
