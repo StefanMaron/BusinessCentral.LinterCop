@@ -21,7 +21,7 @@ public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
         if (context.SemanticModel.GetDeclaredSymbol(context.Node) is not IFieldSymbol currentField)
             return;
 
-        if (currentField.GetProperty(PropertyKind.TableRelation)?.GetPropertyValueSyntax<TableRelationPropertyValueSyntax>() 
+        if (currentField.GetProperty(PropertyKind.TableRelation)?.GetPropertyValueSyntax<TableRelationPropertyValueSyntax>()
             is not TableRelationPropertyValueSyntax tableRelation)
             return;
 
@@ -50,11 +50,11 @@ public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
     }
 
     private static bool ShouldReportDiagnostic(IFieldSymbol currentField, IFieldSymbol? relatedField) =>
-        relatedField?.HasLength == true && 
-        currentField.HasLength && 
+        relatedField?.HasLength == true &&
+        currentField.HasLength &&
         currentField.Length < relatedField.Length;
 
-    private static void ReportLengthMismatch(SyntaxNodeAnalysisContext context, IFieldSymbol currentField, 
+    private static void ReportLengthMismatch(SyntaxNodeAnalysisContext context, IFieldSymbol currentField,
         IFieldSymbol relatedField, QualifiedNameSyntax relatedFieldSyntax)
     {
         context.ReportDiagnostic(Diagnostic.Create(
@@ -68,11 +68,11 @@ public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
 
     private IFieldSymbol? GetRelatedFieldSymbol(IdentifierNameSyntax? table, IdentifierNameSyntax? field, Compilation compilation)
     {
-        if (table?.GetIdentifierOrLiteralValue() is not string tableName || 
+        if (table?.GetIdentifierOrLiteralValue() is not string tableName ||
             field?.GetIdentifierOrLiteralValue() is not string fieldName)
             return null;
 
-        return GetFieldFromTable(tableName, fieldName, compilation) ?? 
+        return GetFieldFromTable(tableName, fieldName, compilation) ??
                GetFieldFromTableExtension(tableName, fieldName, compilation);
     }
 
@@ -95,17 +95,17 @@ public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
             .SelectMany(ext => ext.AddedFields)
             .FirstOrDefault(field => field.Name == fieldName);
     }
-}
 
-public static class DiagnosticDescriptors
-{
-    public static readonly DiagnosticDescriptor Rule0076TableRelationTooLong = new(
-        id: LinterCopAnalyzers.AnalyzerPrefix + "0076",
-        title: LinterCopAnalyzers.GetLocalizableString("Rule0076TableRelationTooLongTitle"),
-        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0076TableRelationTooLongFormat"),
-        category: "Design",
-        defaultSeverity: DiagnosticSeverity.Warning,
-        isEnabledByDefault: true,
-        description: LinterCopAnalyzers.GetLocalizableString("Rule0076TableRelationTooLongDescription"),
-        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0076");
+    public static class DiagnosticDescriptors
+    {
+        public static readonly DiagnosticDescriptor Rule0076TableRelationTooLong = new(
+            id: LinterCopAnalyzers.AnalyzerPrefix + "0076",
+            title: LinterCopAnalyzers.GetLocalizableString("Rule0076TableRelationTooLongTitle"),
+            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0076TableRelationTooLongFormat"),
+            category: "Design",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            description: LinterCopAnalyzers.GetLocalizableString("Rule0076TableRelationTooLongDescription"),
+            helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0076");
+    }
 }
