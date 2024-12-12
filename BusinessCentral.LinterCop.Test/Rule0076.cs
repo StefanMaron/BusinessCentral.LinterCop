@@ -13,7 +13,9 @@ public class Rule0076
 
     [Test]
     [TestCase("TableRelationLonger")]
+#if !LessThenSpring2024
     [TestCase("TableExtRelationLonger")]
+#endif
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
