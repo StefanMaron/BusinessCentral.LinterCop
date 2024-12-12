@@ -6,7 +6,7 @@ codeunit 50100 MyCodeunit
         myInteger: Integer;
         DocumentNo: Code[20];
     begin
-        [|SalesHeader.Get(myInteger, DocumentNo)|];
+        [|SalesHeader.Get("Sales Document Type".FromInteger(myInteger), DocumentNo)|];
     end;
 }
 
