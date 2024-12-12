@@ -31,8 +31,8 @@ public class Rule0077MissingParenthesis : DiagnosticAnalyzer
             operation.TargetMethod is not IMethodSymbol { MethodKind: MethodKind.BuiltInMethod } method)
             return;
 
-        if (!operation.Syntax.GetLastToken().IsKind(SyntaxKind.CloseParenToken) &&
-            MethodsRequiringParenthesis.Contains(method.Name))
+        if (MethodsRequiringParenthesis.Contains(method.Name) &&
+            !operation.Syntax.GetLastToken().IsKind(SyntaxKind.CloseParenToken))
         {
             var location = operation.Syntax.GetIdentifierNameSyntax()?.GetLocation() ?? operation.Syntax.GetLocation();
             ctx.ReportDiagnostic(Diagnostic.Create(
