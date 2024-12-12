@@ -225,3 +225,6 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0069](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0069)|Empty statements should be avoided or should have a leading or trailing comment explaining their use.|Info|
 |[LC0070](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0070)|Zero index access on 1-based List objects.|Warning|
 |[LC0071](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0071)|Incorrect 'IsHandled' parameter assignment.|Info|
+|[LC0072](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0072)|The documentation comment must match the procedure syntax.|Info|
+|[LC0073](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0073)|Handled parameters in event signatures should be passed by var.|Warning|
+|[LC0074](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0074)|Set values for FlowFilter fields using filtering methods.|Warning|

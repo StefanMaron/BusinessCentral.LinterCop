@@ -2,6 +2,7 @@ using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Semantics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
@@ -19,37 +20,67 @@ namespace BusinessCentral.LinterCop.Design
 
         private void CheckIsHandledInvocations(OperationAnalysisContext ctx)
         {
-            if (ctx.IsObsoletePendingOrRemoved()) return;
+            if (ctx.IsObsoletePendingOrRemoved())
+                return;
 
-            var invocation = (IInvocationExpression)ctx.Operation;
+            if (ctx.Operation is not IInvocationExpression invocation)
+                return;
+
+            // Ensure TargetMethod has valid parameters
+            if (invocation.TargetMethod.Parameters.Length != invocation.Arguments.Length)
+                return;
+
             for (int i = 0; i < invocation.Arguments.Length; i++)
             {
-                // check if IsHandled is passed to another method with var
-                var invocationValue = invocation.Arguments[i].Value;
-                if (invocationValue.Kind == OperationKind.ParameterReferenceExpression)
-                    if (IsIsHandledEventSubscriberParameter(((IParameterReferenceExpression)invocationValue).Parameter))
-                        if (invocation.TargetMethod.Parameters[i].IsVar)
-                            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0071DoNotSetIsHandledToFalse, invocationValue.Syntax.GetLocation()));
+                var argument = invocation.Arguments[i];
+                var parameter = invocation.TargetMethod.Parameters[i];
+
+                // Check if argument is a reference to IsHandled passed as a var parameter
+                if (argument.Value is not IParameterReferenceExpression parameterRef)
+                    return;
+
+                if (!parameter.IsVar)
+                    return;
+
+                if (!IsIsHandledEventSubscriberParameter(parameterRef.Parameter))
+                    return;
+
+                if (HasPrecedingExitStatement(ctx.Operation, parameterRef.Parameter))
+                    return;
+
+                // Report the diagnostic
+                ctx.ReportDiagnostic(Diagnostic.Create(
+                    DiagnosticDescriptors.Rule0071DoNotSetIsHandledToFalse,
+                    argument.Value.Syntax.GetLocation()));
             }
         }
 
         private void CheckIsHandledAssignments(OperationAnalysisContext ctx)
         {
-            if (ctx.IsObsoletePendingOrRemoved()) return;
+            if (ctx.IsObsoletePendingOrRemoved())
+                return;
 
-            var assignment = (IAssignmentStatement)ctx.Operation;
+            if (ctx.Operation is not IAssignmentStatement assignment)
+                return;
+
             if (assignment.Target.Kind != OperationKind.ParameterReferenceExpression)
                 return; // check the parameter is assigned a value
 
-            if (!IsIsHandledEventSubscriberParameter(((IParameterReferenceExpression)assignment.Target).Parameter))
+            IParameterSymbol parameter = ((IParameterReferenceExpression)assignment.Target).Parameter;
+
+            if (!IsIsHandledEventSubscriberParameter(parameter))
                 return;
 
-            if (assignment.Value.ConstantValue.HasValue)
-                if ((bool)assignment.Value.ConstantValue.Value)
-                    return; // check for true assignment
+            if (assignment.Value.ConstantValue.HasValue && (bool)assignment.Value.ConstantValue.Value)
+                return; // check for true assignment
+
+            if (HasPrecedingExitStatement(ctx.Operation, parameter))
+                return;
 
             // any other not true assignment should not be done
-            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0071DoNotSetIsHandledToFalse, assignment.Syntax.GetLocation()));
+            ctx.ReportDiagnostic(Diagnostic.Create(
+                    DiagnosticDescriptors.Rule0071DoNotSetIsHandledToFalse,
+                    assignment.Syntax.GetLocation()));
         }
 
         private bool IsIsHandledEventSubscriberParameter(IParameterSymbol parameter)
@@ -73,7 +104,41 @@ namespace BusinessCentral.LinterCop.Design
         {
             // checks for name(s) used with the "IsHandled Pattern"
             // "Handled" is also used in the Base / System App, see: https://github.com/search?q=repo%3AStefanMaron%2FMSDyn365BC.Code.History+%22var+Handled%3A+Boolean%22&type=code
-            return (name.ToLower() == "ishandled") || (name.ToLower() == "handled");
+            return SemanticFacts.IsSameName(name, "ishandled") || SemanticFacts.IsSameName(name, "handled");
+        }
+
+        private static bool HasPrecedingExitStatement(IOperation operation, IParameterSymbol parameter)
+        {
+            var parent = operation.Syntax.Parent;
+            while (parent.Kind != SyntaxKind.Block && parent.Kind != SyntaxKind.None)
+            {
+                parent = parent.Parent;
+            }
+
+            IEnumerable<SyntaxNode> identifiers = parent.DescendantNodes()
+                .OfType<IdentifierNameSyntax>()
+                .Where(n => n.Identifier.ValueText == parameter.Name && n.SpanStart < operation.Syntax.SpanStart);
+
+            foreach (var identifier in identifiers)
+            {
+                if (identifier.Parent is IfStatementSyntax ifStatement)
+                {
+                    // Check if the condition is the identifier "IsHandled"
+                    if (ifStatement.Condition is IdentifierNameSyntax condition &&
+                        condition.Identifier.ValueText == parameter.Name)
+                    {
+                        // Check if the body is a single "exit;" statement
+                        if (ifStatement.Statement is ExitStatementSyntax)
+                        {
+                            // Valid "if IsHandled then exit;" detected
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            // No valid preceding exit statement was found
+            return false;
         }
     }
 }

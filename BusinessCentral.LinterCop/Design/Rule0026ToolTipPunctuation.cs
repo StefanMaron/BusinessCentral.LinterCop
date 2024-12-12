@@ -1,9 +1,7 @@
-﻿#nullable disable // TODO: Enable nullable and review rule
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 
 namespace BusinessCentral.LinterCop.Design
@@ -13,28 +11,64 @@ namespace BusinessCentral.LinterCop.Design
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0026ToolTipMustEndWithDot, DiagnosticDescriptors.Rule0036ToolTipShouldStartWithSpecifies, DiagnosticDescriptors.Rule0037ToolTipDoNotUseLineBreaks, DiagnosticDescriptors.Rule0038ToolTipMaximumLength);
 
-        public override void Initialize(AnalysisContext context) => context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeToolTipPunctuation), SyntaxKind.PageField, SyntaxKind.PageAction);
+        // https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/user-assistance#guidelines-for-tooltip-text
+        // Try to not exceed 200 characters including spaces.
+        // Including the double quote at the beginning and end of the string, makes this a total of 202
+        private const int MaxTooltipLength = 202;
+
+        public override void Initialize(AnalysisContext context) => context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeToolTipPunctuation), SyntaxKind.PageField, SyntaxKind.PageAction, SyntaxKind.Field);
 
         private void AnalyzeToolTipPunctuation(SyntaxNodeAnalysisContext ctx)
         {
-            if (ctx.IsObsoletePendingOrRemoved()) return;
+            if (ctx.IsObsoletePendingOrRemoved())
+                return;
 
-            PropertyValueSyntax tooltipProperty = ctx.Node.GetPropertyValue(PropertyKind.ToolTip);
-            if (tooltipProperty == null) return;
+            var tooltipProperty = ctx.Node.GetPropertyValue(PropertyKind.ToolTip);
+            if (tooltipProperty == null)
+                return;
 
-            StringLiteralValueSyntax tooltipLabel = ((LabelPropertyValueSyntax)tooltipProperty).Value.LabelText;
-            if (!tooltipLabel.Value.ToString().EndsWith(".'"))
+            if (tooltipProperty is not LabelPropertyValueSyntax labelPropertyValueSyntax)
+                return;
+
+            string tooltipText = labelPropertyValueSyntax.Value.LabelText.Value.ToString();
+
+            CheckEndsWithDot(ctx, tooltipText, tooltipProperty);
+            CheckStartsWithSpecifies(ctx, tooltipText, tooltipProperty);
+            CheckNoLineBreaks(ctx, tooltipText, tooltipProperty);
+            CheckMaximumLength(ctx, tooltipText, tooltipProperty);
+        }
+
+        private static void CheckEndsWithDot(SyntaxNodeAnalysisContext ctx, string tooltipText, PropertyValueSyntax tooltipProperty)
+        {
+            if (!tooltipText.EndsWith(".'", StringComparison.OrdinalIgnoreCase))
+            {
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0026ToolTipMustEndWithDot, tooltipProperty.GetLocation()));
+            }
+        }
 
-            if (ctx.ContainingSymbol.Kind == SymbolKind.Control && ((IControlSymbol)ctx.ContainingSymbol).ControlKind == ControlKind.Field)
-                if (!tooltipLabel.Value.ToString().StartsWith("'Specifies"))
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0036ToolTipShouldStartWithSpecifies, tooltipProperty.GetLocation()));
+        private static void CheckStartsWithSpecifies(SyntaxNodeAnalysisContext ctx, string tooltipText, PropertyValueSyntax tooltipProperty)
+        {
+            if (ctx.ContainingSymbol.Kind == SymbolKind.Control &&
+                ((IControlSymbol)ctx.ContainingSymbol).ControlKind == ControlKind.Field &&
+                !tooltipText.StartsWith("'Specifies", StringComparison.Ordinal))
+            {
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0036ToolTipShouldStartWithSpecifies, tooltipProperty.GetLocation()));
+            }
+        }
 
-            if (tooltipLabel.Value.ToString().Contains("\\"))
+        private static void CheckNoLineBreaks(SyntaxNodeAnalysisContext ctx, string tooltipText, PropertyValueSyntax tooltipProperty)
+        {
+            if (tooltipText.Contains("\\"))
+            {
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0037ToolTipDoNotUseLineBreaks, tooltipProperty.GetLocation()));
-
-            if (tooltipLabel.Value.ToString().Length > 202)
+            }
+        }
+        private static void CheckMaximumLength(SyntaxNodeAnalysisContext ctx, string tooltipText, PropertyValueSyntax tooltipProperty)
+        {
+            if (tooltipText.Length > MaxTooltipLength)
+            {
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0038ToolTipMaximumLength, tooltipProperty.GetLocation()));
+            }
         }
     }
 }

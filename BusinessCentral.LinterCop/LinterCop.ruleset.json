@@ -356,6 +356,21 @@
       "id": "LC0071",
       "action": "Info",
       "justification": "The IsHandled event subscriber parameter reference value should never be set to a value that may be false."
+    },
+    {
+      "id": "LC0072",
+      "action": "Info",
+      "justification": "The documentation comment of a procedure should match its snytax structure exactly."
+    },
+    {
+      "id": "LC0073",
+      "action": "Warning",
+      "justification": "Handled parameters in event signatures should be passed by var."
+    },
+    {
+      "id": "LC0074",
+      "action": "Warning",
+      "justification": "Set values for FlowFilter fields using filtering methods."
     }
   ]
 }

@@ -1,4 +1,3 @@
-#nullable disable // TODO: Enable nullable and review rule
 #if !LessThenFall2023RV1
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
@@ -14,7 +13,7 @@ namespace BusinessCentral.LinterCop.Design
     {
         private readonly Lazy<Regex> strSubstNoPatternLazy = new Lazy<Regex>((Func<Regex>)(() => new Regex("[#%](\\d+)", RegexOptions.Compiled)));
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0051SetFilterPossibleOverflow);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0051SetFilterPossibleOverflow, DiagnosticDescriptors.Rule0000ErrorInRule);
 
         private Regex StrSubstNoPattern => this.strSubstNoPatternLazy.Value;
 
@@ -22,17 +21,21 @@ namespace BusinessCentral.LinterCop.Design
 
         private void AnalyzeInvocation(OperationAnalysisContext ctx)
         {
-            if (ctx.IsObsoletePendingOrRemoved()) return;
-
-            IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
-            if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
-
-            if (operation.TargetMethod == null || !SemanticFacts.IsSameName(operation.TargetMethod.Name, "SetFilter") || operation.Arguments.Count() < 3)
+            if (ctx.IsObsoletePendingOrRemoved())
                 return;
 
-            if (operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression) return;
-            IOperation fieldOperand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
-            ITypeSymbol fieldType = fieldOperand.Type;
+            if ((ctx.Operation is not IInvocationExpression operation)
+                || operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod
+                || operation.TargetMethod == null
+                || !SemanticFacts.IsSameName(operation.TargetMethod.Name, "SetFilter")
+                || operation.Arguments.Count() < 3
+                || operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression)
+                return;
+
+            var fieldOperand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
+            if (fieldOperand.Type is not ITypeSymbol fieldType)
+                return;
+
             if (fieldType.GetNavTypeKindSafe() == NavTypeKind.Text) return;
 
             bool isError = false;
@@ -43,7 +46,10 @@ namespace BusinessCentral.LinterCop.Design
             foreach (int argIndex in GetArgumentIndexes(operation.Arguments[1].Value))
             {
                 int index = argIndex + 1; // The placeholders are defines as %1, %2, %3, where in case of %1 we need the second (zero based) index of the arguments of the SetFilter method
-                if (index < 2 || index >= operation.Arguments.Count()) continue;
+                if ((index < 2)
+                     || (index >= operation.Arguments.Count())
+                     || (operation.Arguments[index].Value.Kind != OperationKind.ConversionExpression))
+                    continue;
 
                 int expressionLength = this.CalculateMaxExpressionLength(((IConversionExpression)operation.Arguments[index].Value).Operand, ref isError);
                 if (!isError && expressionLength > typeLength)
@@ -124,7 +130,7 @@ namespace BusinessCentral.LinterCop.Design
                                 break;
                             case "tolower":
                             case "toupper":
-                                if (invocation.Instance.IsBoundExpression())
+                                if (invocation.Instance != null && invocation.Instance.IsBoundExpression())
                                     return GetTypeLength(invocation.Instance.Type, ref isError);
                                 break;
                         }

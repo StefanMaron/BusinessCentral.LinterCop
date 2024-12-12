@@ -759,4 +759,31 @@
   <data name="Rule0071DoNotSetIsHandledToFalseDescription" xml:space="preserve">
     <value>The 'IsHandled' parameter must always be set to 'true' when handled. Avoid assigning 'false' or any value that may be evaluated as false.</value>
   </data>
+  <data name="Rule0072CheckProcedureDocumentationCommentTitle" xml:space="preserve">
+    <value>The documentation comment must match the procedure syntax.</value>
+  </data>
+  <data name="Rule0072CheckProcedureDocumentationCommentFormat" xml:space="preserve">
+    <value>The documentation comment does not match the procedure syntax.</value>
+  </data>
+  <data name="Rule0072CheckProcedureDocumentationCommentDescription" xml:space="preserve">
+    <value>The documentation comment must always match the procedure syntax structure exactly.</value>
+  </data>
+  <data name="Rule0073EventPublisherIsHandledByVarTitle" xml:space="preserve">
+    <value>Handled parameters in event signatures should be passed by var.</value>
+  </data>
+  <data name="Rule0073EventPublisherIsHandledByVarFormat" xml:space="preserve">
+    <value>The Handled parameter in the event signature should be passed by var for proper event handling.</value>
+  </data>
+  <data name="Rule0073EventPublisherIsHandledByVarDescription" xml:space="preserve">
+    <value>Identifies event parameters of type boolean named IsHandled or Handled that are not passed by var.</value>
+  </data>
+  <data name="Rule0074FlowFilterAssignmentTitle" xml:space="preserve">
+    <value>Set values for FlowFilter fields using filtering methods.</value>
+  </data>
+  <data name="Rule0074FlowFilterAssignmentFormat" xml:space="preserve">
+    <value>Direct assignment to the {0} field of type FlowFilter invalidates the filter logic for calculations. Use .SetFilter() or .SetRange() to set the filter correctly.</value>
+  </data>
+  <data name="Rule0074FlowFilterAssignmentDescription" xml:space="preserve">
+    <value>Directly assigning values to FlowFilter fields bypasses their purpose and invalidates the filtering logic, resulting in incorrect or unintended calculations. Instead, use the .SetFilter() or .SetRange() methods to define the appropriate filters.</value>
+  </data>
 </root>
