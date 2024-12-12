@@ -34,9 +34,10 @@ public class Rule0077MissingParenthesis : DiagnosticAnalyzer
         if (!operation.Syntax.GetLastToken().IsKind(SyntaxKind.CloseParenToken) &&
             MethodsRequiringParenthesis.Contains(method.Name))
         {
+            var location = operation.Syntax.GetIdentifierNameSyntax()?.GetLocation() ?? operation.Syntax.GetLocation();
             ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0077MissingParenthesis,
-                ctx.Operation.Syntax.GetIdentifierNameSyntax().GetLocation(),
+                location,
                 method.Name));
         }
     }
