@@ -10,7 +10,7 @@ public class Rule0079NonPublicEventPublisher : DiagnosticAnalyzer
 {
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0079NonPublicEventPublisher);
 
-    public override void Initialize(AnalysisContext context) => 
+    public override void Initialize(AnalysisContext context) =>
         context.RegisterSymbolAction(AnalyzeEventPublisher, SymbolKind.Method);
 
     private void AnalyzeEventPublisher(SymbolAnalysisContext ctx)

@@ -19,7 +19,7 @@ public class Rule0077MissingParenthesis : DiagnosticAnalyzer
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0077MissingParenthesis);
 
-    public override void Initialize(AnalysisContext context) => 
+    public override void Initialize(AnalysisContext context) =>
         context.RegisterOperationAction(AnalyzeParenthesis, OperationKind.InvocationExpression);
 
     private void AnalyzeParenthesis(OperationAnalysisContext ctx)
@@ -51,5 +51,5 @@ public class Rule0077MissingParenthesis : DiagnosticAnalyzer
             defaultSeverity: DiagnosticSeverity.Warning, isEnabledByDefault: true,
             description: LinterCopAnalyzers.GetLocalizableString("Rule0077MissingParenthesisDescription"),
             helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0077");
-    }    
+    }
 }
