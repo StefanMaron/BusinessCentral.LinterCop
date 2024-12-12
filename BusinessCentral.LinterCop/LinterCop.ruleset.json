@@ -371,6 +371,11 @@
       "id": "LC0074",
       "action": "Warning",
       "justification": "Set values for FlowFilter fields using filtering methods."
-    }
+    },
+    {
+      "id": "LC0076",
+      "action": "Warning",
+      "justification": "The field with table relation should have at least the same length as the referenced field."
+    }    
   ]
 }
