@@ -24,7 +24,9 @@ public class Rule0078TemporaryRecordsShouldNotTriggerTableTriggers : DiagnosticA
         if (!methodsToCheck.Contains(invocationExpression.TargetMethod.Name))
             return;
 
-        if (!(invocationExpression.Instance?.Type is IRecordTypeSymbol record) || !record.Temporary)
+        if (invocationExpression.Instance?.Type is not IRecordTypeSymbol record ||
+            !record.Temporary ||
+            record.BaseTable.TableType == TableTypeKind.Temporary)
             return;
 
         bool isExecutingTriggersOrValidation = invocationExpression.TargetMethod.Name switch

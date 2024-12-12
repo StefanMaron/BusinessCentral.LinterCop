@@ -26,6 +26,7 @@ public class Rule0078
     [TestCase("TempVarImplicit")]
     [TestCase("TempVarExplicit")]
     [TestCase("TempTable")]
+    [TestCase("TempTableExplicitTemp")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
