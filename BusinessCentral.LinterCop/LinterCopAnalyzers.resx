@@ -786,6 +786,15 @@
   <data name="Rule0074FlowFilterAssignmentDescription" xml:space="preserve">
     <value>Directly assigning values to FlowFilter fields bypasses their purpose and invalidates the filtering logic, resulting in incorrect or unintended calculations. Instead, use the .SetFilter() or .SetRange() methods to define the appropriate filters.</value>
   </data>
+  <data name="Rule0075RecordGetProcedureArgumentsTitle" xml:space="preserve">
+    <value>Incorrect number or type of arguments in .Get() method on Record object.</value>
+  </data>
+  <data name="Rule0075RecordGetProcedureArgumentsFormat" xml:space="preserve">
+    <value>Invalid arguments in .Get() method for record {0}: {1}.</value>
+  </data>
+  <data name="Rule0075RecordGetProcedureArgumentsDescription" xml:space="preserve">
+    <value>This rule ensures that calls to the built-in .Get() procedure on Record objects have the correct number and types of arguments matching the primary key (PK) of the record in question.</value>
+  </data>
   <data name="Rule0076TableRelationTooLongTitle" xml:space="preserve">
     <value>Table relation field length mismatch</value>
   </data>

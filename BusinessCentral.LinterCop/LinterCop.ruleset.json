@@ -373,9 +373,14 @@
       "justification": "Set values for FlowFilter fields using filtering methods."
     },
     {
+      "id": "LC0075",
+      "action": "Warning",
+      "justification": "Incorrect number or type of arguments in .Get() method on Record object."
+    },
+    {
       "id": "LC0076",
       "action": "Warning",
       "justification": "The field with table relation should have at least the same length as the referenced field."
-    }    
+    }
   ]
 }
