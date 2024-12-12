@@ -371,6 +371,21 @@
       "id": "LC0074",
       "action": "Warning",
       "justification": "Set values for FlowFilter fields using filtering methods."
-    }
+    },
+    {
+      "id": "LC0077",
+      "action": "Warning",
+      "justification": "Methods that require parenthesis should always be called with parenthesis."
+    },
+    {
+      "id": "LC0078",
+      "action": "Warning",
+      "justification": "Temporary records should not trigger table triggers."
+    },
+    {
+      "id": "LC0079",
+      "action": "Warning",
+      "justification": "Event publishers should not be public."
+    }    
   ]
 }
