@@ -1,4 +1,4 @@
-﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
@@ -21,8 +21,11 @@ public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
         if (context.Symbol is not IFieldSymbol currentField)
             return;
 
-        if (currentField.GetProperty(PropertyKind.TableRelation)?.GetPropertyValueSyntax<TableRelationPropertyValueSyntax>()
-            is not TableRelationPropertyValueSyntax tableRelation)
+        var tableRelation = currentField
+            .GetProperty(PropertyKind.TableRelation)
+            ?.GetPropertyValueSyntax<TableRelationPropertyValueSyntax>();
+            
+        if (tableRelation is null)
             return;
 
         AnalyzeTableRelations(context, currentField, tableRelation);
