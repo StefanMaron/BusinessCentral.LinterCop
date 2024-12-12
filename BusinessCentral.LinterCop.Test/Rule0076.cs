@@ -32,7 +32,6 @@ public class Rule0076
     [TestCase("TableExtRelationEqual")]
     [TestCase("TableExtRelationShorter")]
 #endif
-    [TestCase("TableExtRelationShorter")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
