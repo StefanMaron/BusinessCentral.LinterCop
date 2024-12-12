@@ -1,4 +1,4 @@
-using BusinessCentral.LinterCop.AnalysisContextExtension;
+﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
@@ -89,11 +89,8 @@ public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
 
     private static IFieldSymbol? GetFieldFromTableExtension(string tableName, string fieldName, Compilation compilation)
     {
-        var extensions = compilation.GetDeclaredApplicationObjectSymbols()
-            .Where(x => x.Kind == SymbolKind.TableExtension)
-            .Cast<ITableExtensionTypeSymbol>();
-
-        return extensions
+        return compilation.GetDeclaredApplicationObjectSymbols()
+            .OfType<ITableExtensionTypeSymbol>()
             .Where(ext => ext.Target?.Name == tableName)
             .SelectMany(ext => ext.AddedFields)
             .FirstOrDefault(field => field.Name == fieldName);
