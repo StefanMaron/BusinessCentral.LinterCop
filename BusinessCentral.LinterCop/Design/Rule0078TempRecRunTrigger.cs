@@ -20,7 +20,8 @@ public class Rule0078TemporaryRecordsShouldNotTriggerTableTriggers : DiagnosticA
         if (ctx.IsObsoletePendingOrRemoved())
             return;
 
-        var invocationExpression = (IInvocationExpression)ctx.Operation;
+        if (ctx.Operation is not IInvocationExpression invocationExpression)
+            return;
         if (!methodsToCheck.Contains(invocationExpression.TargetMethod.Name))
             return;
 
