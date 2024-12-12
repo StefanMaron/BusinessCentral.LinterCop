@@ -18,7 +18,8 @@ public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
         if (context.IsObsoletePendingOrRemoved())
             return;
 
-        var currentField = (IFieldSymbol)context.Symbol;
+        if (context.Symbol is not IFieldSymbol currentField)
+            return;
 
         if (currentField.GetProperty(PropertyKind.TableRelation)?.GetPropertyValueSyntax<TableRelationPropertyValueSyntax>()
             is not TableRelationPropertyValueSyntax tableRelation)
