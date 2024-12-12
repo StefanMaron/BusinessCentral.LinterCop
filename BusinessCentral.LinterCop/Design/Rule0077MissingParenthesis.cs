@@ -11,7 +11,10 @@ public class Rule0077MissingParenthesis : DiagnosticAnalyzer
 {
     private static readonly ImmutableHashSet<string> MethodsRequiringParenthesis = ImmutableHashSet.Create(
         "Count",
-        "IsEmpty"
+        "IsEmpty",
+        "Today",
+        "WorkDate",
+        "GuiAllowed"
     );
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0077MissingParenthesis);
@@ -38,7 +41,7 @@ public class Rule0077MissingParenthesis : DiagnosticAnalyzer
         }
     }
 
-    private static class DiagnosticDescriptors
+    public static class DiagnosticDescriptors
     {
         public static readonly DiagnosticDescriptor Rule0077MissingParenthesis = new(
             id: LinterCopAnalyzers.AnalyzerPrefix + "0077",

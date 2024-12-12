@@ -1,5 +1,4 @@
 ﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
-using CompanialCopAnalyzer.Design.Helper;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
@@ -10,8 +9,6 @@ namespace BusinessCentral.LinterCop.Design;
 public class Rule0078TemporaryRecordsShouldNotTriggerTableTriggers : DiagnosticAnalyzer
 {
     private static readonly HashSet<string> methodsToCheck = new() { "Insert", "Modify", "Delete", "DeleteAll", "Validate", "ModifyAll" };
-    private static readonly string validateMethod = "Validate";
-    private static readonly string modifyAllMethod = "ModifyAll";
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0078TemporaryRecordsShouldNotTriggerTableTriggers);
 
@@ -32,9 +29,9 @@ public class Rule0078TemporaryRecordsShouldNotTriggerTableTriggers : DiagnosticA
 
         bool isExecutingTriggersOrValidation = invocationExpression.TargetMethod.Name switch
         {
-            validateMethod => true,
-            modifyAllMethod => invocationExpression.Arguments.Length == 3 &&
-                               IsRunTriggerEnabled(invocationExpression.Arguments[2]),
+            "Validate" => true,
+            "ModifyAll" => invocationExpression.Arguments.Length == 3 &&
+                          IsRunTriggerEnabled(invocationExpression.Arguments[2]),
             _ => invocationExpression.Arguments.Length == 1 &&
                  IsRunTriggerEnabled(invocationExpression.Arguments[0])
         };

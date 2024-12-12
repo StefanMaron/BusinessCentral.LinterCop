@@ -1,5 +1,4 @@
 ﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
-using CompanialCopAnalyzer.Design.Helper;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
