@@ -32,7 +32,7 @@ public class Rule0079NonPublicEventPublisher : DiagnosticAnalyzer
             title: LinterCopAnalyzers.GetLocalizableString("Rule0079NonPublicEventPublisherTitle"),
             messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0079NonPublicEventPublisherFormat"),
             category: "Design",
-            defaultSeverity: DiagnosticSeverity.Warning, isEnabledByDefault: true,
+            defaultSeverity: DiagnosticSeverity.Info, isEnabledByDefault: true,
             description: LinterCopAnalyzers.GetLocalizableString("Rule0079NonPublicEventPublisherDescription"),
             helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0079");
     }

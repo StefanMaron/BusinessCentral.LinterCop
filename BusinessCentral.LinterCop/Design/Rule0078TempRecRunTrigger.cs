@@ -58,7 +58,7 @@ public class Rule0078TemporaryRecordsShouldNotTriggerTableTriggers : DiagnosticA
             title: LinterCopAnalyzers.GetLocalizableString("Rule0078TemporaryRecordsTitle"),
             messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0078TemporaryRecordsFormat"),
             category: "Design",
-            defaultSeverity: DiagnosticSeverity.Warning, isEnabledByDefault: true,
+            defaultSeverity: DiagnosticSeverity.Info, isEnabledByDefault: true,
             description: LinterCopAnalyzers.GetLocalizableString("Rule0078TemporaryRecordsDescription"),
             helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0078");
     }

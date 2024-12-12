@@ -384,17 +384,17 @@
     },
     {
       "id": "LC0077",
-      "action": "Warning",
+      "action": "Info",
       "justification": "Methods that require parenthesis should always be called with parenthesis."
     },
     {
       "id": "LC0078",
-      "action": "Warning",
+      "action": "Info",
       "justification": "Temporary records should not trigger table triggers."
     },
     {
       "id": "LC0079",
-      "action": "Warning",
+      "action": "Info",
       "justification": "Event publishers should not be public."
     }    
   ]

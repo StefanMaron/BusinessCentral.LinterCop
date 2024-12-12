@@ -48,7 +48,7 @@ public class Rule0077MissingParenthesis : DiagnosticAnalyzer
             title: LinterCopAnalyzers.GetLocalizableString("Rule0077MissingParenthesisTitle"),
             messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0077MissingParenthesisFormat"),
             category: "Design",
-            defaultSeverity: DiagnosticSeverity.Warning, isEnabledByDefault: true,
+            defaultSeverity: DiagnosticSeverity.Info, isEnabledByDefault: true,
             description: LinterCopAnalyzers.GetLocalizableString("Rule0077MissingParenthesisDescription"),
             helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0077");
     }
