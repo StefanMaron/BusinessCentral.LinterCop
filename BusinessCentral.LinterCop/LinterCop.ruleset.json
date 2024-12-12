@@ -371,6 +371,11 @@
       "id": "LC0074",
       "action": "Warning",
       "justification": "Set values for FlowFilter fields using filtering methods."
+    },
+    {
+      "id": "LC0075",
+      "action": "Warning",
+      "justification": "Incorrect number or type of arguments in .Get() method on Record object."
     }
   ]
 }
