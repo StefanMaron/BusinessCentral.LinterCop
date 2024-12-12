@@ -786,6 +786,24 @@
   <data name="Rule0074FlowFilterAssignmentDescription" xml:space="preserve">
     <value>Directly assigning values to FlowFilter fields bypasses their purpose and invalidates the filtering logic, resulting in incorrect or unintended calculations. Instead, use the .SetFilter() or .SetRange() methods to define the appropriate filters.</value>
   </data>
+  <data name="Rule0075RecordGetProcedureArgumentsTitle" xml:space="preserve">
+    <value>Incorrect number or type of arguments in .Get() method on Record object.</value>
+  </data>
+  <data name="Rule0075RecordGetProcedureArgumentsFormat" xml:space="preserve">
+    <value>Invalid arguments in .Get() method for record {0}: {1}.</value>
+  </data>
+  <data name="Rule0075RecordGetProcedureArgumentsDescription" xml:space="preserve">
+    <value>This rule ensures that calls to the built-in .Get() procedure on Record objects have the correct number and types of arguments matching the primary key (PK) of the record in question.</value>
+  </data>
+  <data name="Rule0076TableRelationTooLongTitle" xml:space="preserve">
+    <value>Table relation field length mismatch</value>
+  </data>
+  <data name="Rule0076TableRelationTooLongFormat" xml:space="preserve">
+    <value>The related field has length {0} ({1}) which is longer than the current field length {2} ({3})</value>
+  </data>
+  <data name="Rule0076TableRelationTooLongDescription" xml:space="preserve">
+    <value>The field with table relation should have at least the same length as the referenced field.</value>
+  </data>  
   <data name="Rule0077MissingParenthesisDescription" xml:space="preserve">
     <value>You must specify open and close parenthesis after '{0}'</value>
   </data>
