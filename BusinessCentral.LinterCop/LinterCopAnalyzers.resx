@@ -804,31 +804,31 @@
   <data name="Rule0076TableRelationTooLongDescription" xml:space="preserve">
     <value>The field with table relation should have at least the same length as the referenced field.</value>
   </data>  
-  <data name="Rule0077MissingParenthesisDescription" xml:space="preserve">
-    <value>You must specify open and close parenthesis after '{0}'</value>
+  <data name="Rule0077MissingParenthesisTitle" xml:space="preserve">
+    <value>Function calls should have parenthesis even if they do not have any parameters.</value>
   </data>
   <data name="Rule0077MissingParenthesisFormat" xml:space="preserve">
     <value>You must specify open and close parenthesis after '{0}'</value>
   </data>
-  <data name="Rule0077MissingParenthesisTitle" xml:space="preserve">
-    <value>Function calls should have parenthesis even if they do not have any parameters.</value>
+  <data name="Rule0077MissingParenthesisDescription" xml:space="preserve">
+    <value>You must specify open and close parenthesis after '{0}'</value>
   </data>
-  <data name="Rule0078TemporaryRecordsDescription" xml:space="preserve">
+  <data name="Rule0078TemporaryRecordsTitle" xml:space="preserve">
     <value>Temporary records should not trigger the table triggers.</value>
   </data>
   <data name="Rule0078TemporaryRecordsFormat" xml:space="preserve">
     <value>Temporary records should not trigger the table triggers.</value>
   </data>
-  <data name="Rule0078TemporaryRecordsTitle" xml:space="preserve">
+  <data name="Rule0078TemporaryRecordsDescription" xml:space="preserve">
     <value>Temporary records should not trigger the table triggers.</value>
-  </data>  
-  <data name="Rule0079NonPublicEventPublisherDescription" xml:space="preserve">
+  </data>
+  <data name="Rule0079NonPublicEventPublisherTitle" xml:space="preserve">
     <value>Event Publishers should be local or internal to allow for future parameter extensions.</value>
   </data>
   <data name="Rule0079NonPublicEventPublisherFormat" xml:space="preserve">
     <value>Event Publishers should be local or internal to allow for future parameter extensions.</value>
   </data>
-  <data name="Rule0079NonPublicEventPublisherTitle" xml:space="preserve">
+  <data name="Rule0079NonPublicEventPublisherDescription" xml:space="preserve">
     <value>Event Publishers should be local or internal to allow for future parameter extensions.</value>
   </data>
 </root>
