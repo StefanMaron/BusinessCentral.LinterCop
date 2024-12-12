@@ -54,11 +54,11 @@ public class Rule0078TemporaryRecordsShouldNotTriggerTableTriggers : DiagnosticA
     {
         public static readonly DiagnosticDescriptor Rule0078TemporaryRecordsShouldNotTriggerTableTriggers = new(
             id: LinterCopAnalyzers.AnalyzerPrefix + "0078",
-            title: LinterCopAnalyzers.GetLocalizableString("Rule0078TemporaryRecordsShouldNotTriggerTableTriggersTitle"),
-            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0078TemporaryRecordsShouldNotTriggerTableTriggersFormat"),
+            title: LinterCopAnalyzers.GetLocalizableString("Rule0078TemporaryRecordsTitle"),
+            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0078TemporaryRecordsFormat"),
             category: "Design",
             defaultSeverity: DiagnosticSeverity.Warning, isEnabledByDefault: true,
-            description: LinterCopAnalyzers.GetLocalizableString("Rule0078TemporaryRecordsShouldNotTriggerTableTriggersDescription"),
+            description: LinterCopAnalyzers.GetLocalizableString("Rule0078TemporaryRecordsDescription"),
             helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0078");
     }
 }
