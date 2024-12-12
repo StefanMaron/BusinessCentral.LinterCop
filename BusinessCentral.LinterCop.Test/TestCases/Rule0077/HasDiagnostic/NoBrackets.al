@@ -9,8 +9,8 @@ codeunit 50100 MyCodeunit
         [|Today|];
         [|WorkDate|];
         [|GuiAllowed|];
-        i := [|MyTable.Count|];
-        b := [|MyTable.IsEmpty|];
+        i := MyTable.[|Count|];
+        b := MyTable.[|IsEmpty|];
     end;
 }
 
