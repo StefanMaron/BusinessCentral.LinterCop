@@ -36,7 +36,7 @@ public class Rule0077MissingParenthesis : DiagnosticAnalyzer
         {
             ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0077MissingParenthesis,
-                ctx.Operation.Syntax.GetLocation(),
+                ctx.Operation.Syntax.GetIdentifierNameSyntax().GetLocation(),
                 method.Name));
         }
     }
