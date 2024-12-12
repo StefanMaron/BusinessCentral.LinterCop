@@ -28,7 +28,10 @@ public class Rule0076
     [Test]
     [TestCase("TableRelationEqual")]
     [TestCase("TableRelationShorter")]
+#if !LessThenSpring2024
     [TestCase("TableExtRelationEqual")]
+    [TestCase("TableExtRelationShorter")]
+#endif
     [TestCase("TableExtRelationShorter")]
     public async Task NoDiagnostic(string testCase)
     {
