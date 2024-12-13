@@ -381,6 +381,21 @@
       "id": "LC0076",
       "action": "Warning",
       "justification": "The field with table relation should have at least the same length as the referenced field."
-    }
+    },
+    {
+      "id": "LC0077",
+      "action": "Info",
+      "justification": "Methods that require parenthesis should always be called with parenthesis."
+    },
+    {
+      "id": "LC0078",
+      "action": "Info",
+      "justification": "Temporary records should not trigger table triggers."
+    },
+    {
+      "id": "LC0079",
+      "action": "Info",
+      "justification": "Event publishers should not be public."
+    }    
   ]
 }

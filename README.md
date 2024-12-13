@@ -230,3 +230,6 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0074](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0074)|Set values for FlowFilter fields using filtering methods.|Warning|
 |[LC0075](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0075)|Incorrect number or type of arguments in `.Get()` method on Record object.|Warning|13.0
 |[LC0076](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0076)|The field with table relation should have at least the same length as the referenced field.|Warning|
+|[LC0077](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0077)|Methods  should always be called with parenthesis.|Info|
+|[LC0078](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0078)|Temporary records should not trigger table triggers.|Info|
+|[LC0079](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0079)|Event publishers should not be public.|Info|
