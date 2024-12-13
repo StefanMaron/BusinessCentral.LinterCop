@@ -396,6 +396,11 @@
       "id": "LC0079",
       "action": "Info",
       "justification": "Event publishers should not be public."
-    }    
+    },
+    {
+      "id": "LC0080",
+      "action": "Warning",
+      "justification": "Replace double quotes in JPath expressions with two single quotes."
+    }
   ]
 }

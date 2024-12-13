@@ -233,3 +233,4 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0077](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0077)|Methods  should always be called with parenthesis.|Info|
 |[LC0078](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0078)|Temporary records should not trigger table triggers.|Info|
 |[LC0079](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0079)|Event publishers should not be public.|Info|
+|[LC0080](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0080)|Replace double quotes in JPath expressions with two single quotes.|Warning|
