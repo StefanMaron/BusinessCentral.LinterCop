@@ -831,4 +831,13 @@
   <data name="Rule0079NonPublicEventPublisherDescription" xml:space="preserve">
     <value>Event Publishers should be local or internal to allow for future parameter extensions.</value>
   </data>
+  <data name="Rule0080AnalyzeJsonTokenJPathTitle" xml:space="preserve">
+    <value>Replace double quotes in JPath expressions with two single quotes.</value>
+  </data>
+  <data name="Rule0080AnalyzeJsonTokenJPathFormat" xml:space="preserve">
+    <value>Double quote character detected in JPath expression. Replace all double quotes (") with two single quotes ('').</value>
+  </data>
+  <data name="Rule0080AnalyzeJsonTokenJPathDescription" xml:space="preserve">
+    <value>Detects and warns against the use of double-quote (") characters in JPath expressions.</value>
+  </data>
 </root>
