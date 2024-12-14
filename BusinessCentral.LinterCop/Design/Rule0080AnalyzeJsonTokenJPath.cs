@@ -48,10 +48,10 @@ namespace BusinessCentral.LinterCop.Design
             public static readonly DiagnosticDescriptor Rule0080AnalyzeJsonTokenJPath = new(
                 id: LinterCopAnalyzers.AnalyzerPrefix + "0080",
                 title: LinterCopAnalyzers.GetLocalizableString("Rule0080AnalyzeJsonTokenJPathTitle"),
-                messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0080AnalyzePathOnJsonTokenFormat"),
+                messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0080AnalyzeJsonTokenJPathFormat"),
                 category: "Design",
                 defaultSeverity: DiagnosticSeverity.Warning, isEnabledByDefault: true,
-                description: LinterCopAnalyzers.GetLocalizableString("Rule0080AnalyzePathOnJsonTokenDescription"),
+                description: LinterCopAnalyzers.GetLocalizableString("Rule0080AnalyzeJsonTokenJPathDescription"),
                 helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0080");
         }
     }
