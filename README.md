@@ -235,3 +235,4 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0079](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0079)|Event publishers should not be public.|Info|
 |[LC0080](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0080)|Replace double quotes in JPath expressions with two single quotes.|Warning|
 |[LC0081](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0081)|Use `Rec.IsEmpty()` for checking record existence.|Info|
+|[LC0082](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0082)|Use `Rec.Find('-')` with `Rec.Next()` for checking exactly one record.|Info|

@@ -406,6 +406,11 @@
       "id": "LC0081",
       "action": "Info",
       "justification": "Use Rec.IsEmpty() for checking record existence."
+    },
+    {
+      "id": "LC0082",
+      "action": "Info",
+      "justification": "Use Rec.Find('-') with Rec.Next() for checking exactly one record."
     }
   ]
 }
