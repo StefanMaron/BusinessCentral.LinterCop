@@ -840,4 +840,13 @@
   <data name="Rule0080AnalyzeJsonTokenJPathDescription" xml:space="preserve">
     <value>Detects and warns against the use of double-quote (") characters in JPath expressions.</value>
   </data>
+  <data name="Rule0081UseIsEmptyMethodTitle" xml:space="preserve">
+    <value>Use Rec.IsEmpty() for checking record existence.</value>
+  </data>
+  <data name="Rule0081UseIsEmptyMethodFormat" xml:space="preserve">
+    <value>Avoid using {0}.Count() for checking record existence. Use {0}.IsEmpty() instead for better performance.</value>
+  </data>
+  <data name="Rule0081UseIsEmptyMethodDescription" xml:space="preserve">
+    <value>To check for the existence of records, use the more efficient Rec.IsEmpty() function instead of Rec.Count().</value>
+  </data>
 </root>
