@@ -1,6 +1,6 @@
 namespace BusinessCentral.LinterCop.Test;
 
-public class Rule0081
+public class Rule0082
 {
     private string _testCaseDir = "";
 
@@ -8,36 +8,35 @@ public class Rule0081
     public void Setup()
     {
         _testCaseDir = Path.Combine(Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName,
-            "TestCases", "Rule0081");
+            "TestCases", "Rule0082");
     }
 
     [Test]
-    [TestCase("OneGreaterThanRecordCount")]
-    [TestCase("RecordCountEqualsZero")]
-    [TestCase("RecordCountGreaterThanOrEqualZero")]
-    [TestCase("RecordCountGreaterThanZero")]
-    [TestCase("RecordCountLessThanOne")]
+    [TestCase("RecordCountEqualsOne")]
+    [TestCase("RecordCountGreaterThanOne")]
+    [TestCase("RecordCountGreaterThanOrEqualOne")]
     [TestCase("RecordCountLessThanOrEqualZero")]
-    [TestCase("RecordCountLessThanZero")]
-    [TestCase("RecordCountNotEqualsZero")]
+    [TestCase("RecordCountLessThanTwo")]
+    [TestCase("RecordCountNotEqualsOne")]
+    [TestCase("TwoGreaterThanRecordCount")]
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0081AnalyzeCountMethod>();
-        fixture.HasDiagnostic(code, Rule0081AnalyzeCountMethod.DiagnosticDescriptors.Rule0081UseIsEmptyMethod.Id);
+        fixture.HasDiagnostic(code, Rule0081AnalyzeCountMethod.DiagnosticDescriptors.Rule0082UseFindWithNext.Id);
     }
 
     [Test]
-    [TestCase("RecordCountEqualsOne")]
-    [TestCase("RecordTemporaryCountEqualsZero")]
+    [TestCase("RecordCountEqualsTwo")]
+    [TestCase("RecordTemporaryCountEqualsOne")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0081AnalyzeCountMethod>();
-        fixture.NoDiagnosticAtMarker(code, Rule0081AnalyzeCountMethod.DiagnosticDescriptors.Rule0081UseIsEmptyMethod.Id);
+        fixture.NoDiagnosticAtMarker(code, Rule0081AnalyzeCountMethod.DiagnosticDescriptors.Rule0082UseFindWithNext.Id);
     }
 }
