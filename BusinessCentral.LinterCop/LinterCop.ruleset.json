@@ -401,6 +401,11 @@
       "id": "LC0080",
       "action": "Warning",
       "justification": "Replace double quotes in JPath expressions with two single quotes."
+    },
+    {
+      "id": "LC0081",
+      "action": "Info",
+      "justification": "Use Rec.IsEmpty() for checking record existence."
     }
   ]
 }
