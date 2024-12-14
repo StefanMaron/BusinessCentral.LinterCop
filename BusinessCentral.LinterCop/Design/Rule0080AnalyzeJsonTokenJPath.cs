@@ -12,9 +12,9 @@ namespace BusinessCentral.LinterCop.Design
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0080AnalyzeJsonTokenJPath);
 
         public override void Initialize(AnalysisContext context) =>
-            context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.SelectSingleNode), OperationKind.InvocationExpression);
+            context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeSelectToken), OperationKind.InvocationExpression);
 
-        private void SelectSingleNode(OperationAnalysisContext ctx)
+        private void AnalyzeSelectToken(OperationAnalysisContext ctx)
         {
             if (ctx.IsObsoletePendingOrRemoved())
                 return;
