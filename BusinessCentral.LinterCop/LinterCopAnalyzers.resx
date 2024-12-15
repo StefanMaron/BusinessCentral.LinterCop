@@ -795,4 +795,67 @@
   <data name="Rule0075RecordGetProcedureArgumentsDescription" xml:space="preserve">
     <value>This rule ensures that calls to the built-in .Get() procedure on Record objects have the correct number and types of arguments matching the primary key (PK) of the record in question.</value>
   </data>
+  <data name="Rule0076TableRelationTooLongTitle" xml:space="preserve">
+    <value>Table relation field length mismatch</value>
+  </data>
+  <data name="Rule0076TableRelationTooLongFormat" xml:space="preserve">
+    <value>The related field has length {0} ({1}) which is longer than the current field length {2} ({3})</value>
+  </data>
+  <data name="Rule0076TableRelationTooLongDescription" xml:space="preserve">
+    <value>The field with table relation should have at least the same length as the referenced field.</value>
+  </data>  
+  <data name="Rule0077MissingParenthesisTitle" xml:space="preserve">
+    <value>Function calls should have parenthesis even if they do not have any parameters.</value>
+  </data>
+  <data name="Rule0077MissingParenthesisFormat" xml:space="preserve">
+    <value>You must specify open and close parenthesis after '{0}'</value>
+  </data>
+  <data name="Rule0077MissingParenthesisDescription" xml:space="preserve">
+    <value>You must specify open and close parenthesis after '{0}'</value>
+  </data>
+  <data name="Rule0078TemporaryRecordsTitle" xml:space="preserve">
+    <value>Temporary records should not trigger the table triggers.</value>
+  </data>
+  <data name="Rule0078TemporaryRecordsFormat" xml:space="preserve">
+    <value>Temporary records should not trigger the table triggers.</value>
+  </data>
+  <data name="Rule0078TemporaryRecordsDescription" xml:space="preserve">
+    <value>Temporary records should not trigger the table triggers.</value>
+  </data>
+  <data name="Rule0079NonPublicEventPublisherTitle" xml:space="preserve">
+    <value>Event Publishers should be local or internal to allow for future parameter extensions.</value>
+  </data>
+  <data name="Rule0079NonPublicEventPublisherFormat" xml:space="preserve">
+    <value>Event Publishers should be local or internal to allow for future parameter extensions.</value>
+  </data>
+  <data name="Rule0079NonPublicEventPublisherDescription" xml:space="preserve">
+    <value>Event Publishers should be local or internal to allow for future parameter extensions.</value>
+  </data>
+  <data name="Rule0080AnalyzeJsonTokenJPathTitle" xml:space="preserve">
+    <value>Replace double quotes in JPath expressions with two single quotes.</value>
+  </data>
+  <data name="Rule0080AnalyzeJsonTokenJPathFormat" xml:space="preserve">
+    <value>Double quote character detected in JPath expression. Replace all double quotes (") with two single quotes ('').</value>
+  </data>
+  <data name="Rule0080AnalyzeJsonTokenJPathDescription" xml:space="preserve">
+    <value>Detects and warns against the use of double-quote (") characters in JPath expressions.</value>
+  </data>
+  <data name="Rule0081UseIsEmptyMethodTitle" xml:space="preserve">
+    <value>Use Rec.IsEmpty() for checking record existence.</value>
+  </data>
+  <data name="Rule0081UseIsEmptyMethodFormat" xml:space="preserve">
+    <value>Avoid using {0}.Count() for checking record existence. Use {0}.IsEmpty() instead for better performance.</value>
+  </data>
+  <data name="Rule0081UseIsEmptyMethodDescription" xml:space="preserve">
+    <value>To check for the existence of records, use the more efficient Rec.IsEmpty() function instead of Rec.Count().</value>
+  </data>
+  <data name="Rule0082UseFindWithNextTitle" xml:space="preserve">
+    <value>Use Rec.Find('-') with Rec.Next() for checking exactly one record.</value>
+  </data>
+  <data name="Rule0082UseFindWithNextFormat" xml:space="preserve">
+    <value>Use {0}.Find('-') together with {0}.Next() instead of {0}.Count() for performance optimization. Replace {0}.Count() with: {0}.Find('-') and (Rec.Next() {1} 0).</value>
+  </data>
+  <data name="Rule0082UseFindWithNextDescription" xml:space="preserve">
+    <value>Instead of relying on Rec.Count(), you should use a combination of Rec.Find('-') and Rec.Next() for faster and more efficient record checks.</value>
+  </data>
 </root>

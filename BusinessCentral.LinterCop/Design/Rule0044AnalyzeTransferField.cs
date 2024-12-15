@@ -55,72 +55,81 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
     private async void AnalyzeTransferFields(OperationAnalysisContext ctx)
     {
-        if (ctx.Operation.Syntax.GetType() != typeof(InvocationExpressionSyntax))
-            return;
-
-        if (((IInvocationExpression)ctx.Operation).TargetMethod.MethodKind != MethodKind.BuiltInMethod)
-            return;
-
-        if (ctx.Operation.Syntax is not InvocationExpressionSyntax invocationExpression)
-            return;
-
-        Tuple<string, string>? records = GetInvokingRecordNames(invocationExpression);
-
-        if (records == null)
-            return;
-
-        Task<SyntaxNode> localVariablesTask = ctx.ContainingSymbol.DeclaringSyntaxReference!.GetSyntaxAsync();
-        Task<SyntaxNode> globalVariablesTask = ctx.ContainingSymbol.ContainingSymbol!.DeclaringSyntaxReference!.GetSyntaxAsync();
-
-        List<VariableDeclarationBaseSyntax> variables = new List<VariableDeclarationBaseSyntax>();
-
-        SyntaxNode localVariables = await localVariablesTask;
-        variables.AddRange(FindVariables(localVariables, SyntaxKind.VarSection));
-        SyntaxNode globalVariables = await globalVariablesTask;
-        variables.AddRange(FindVariables(globalVariables, SyntaxKind.GlobalVarSection));
-
-        string? tableName1 = GetObjectName(variables.FirstOrDefault(x =>
+        // Investigate https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/828
+        try
         {
-            string? name = x.GetNameStringValue();
+         if (ctx.Operation.Syntax.GetType() != typeof(InvocationExpressionSyntax))
+             return;
 
-            if (name == null)
-                return false;
+         if (((IInvocationExpression)ctx.Operation).TargetMethod.MethodKind != MethodKind.BuiltInMethod)
+             return;
 
-            return name.Equals(records.Item1);
-        }));
+         if (ctx.Operation.Syntax is not InvocationExpressionSyntax invocationExpression)
+             return;
 
-        string? tableName2 = GetObjectName(variables.FirstOrDefault(x =>
+         Tuple<string, string>? records = GetInvokingRecordNames(invocationExpression);
+
+         if (records == null)
+             return;
+
+         Task<SyntaxNode> localVariablesTask = ctx.ContainingSymbol.DeclaringSyntaxReference!.GetSyntaxAsync();
+         Task<SyntaxNode> globalVariablesTask = ctx.ContainingSymbol.ContainingSymbol!.DeclaringSyntaxReference!.GetSyntaxAsync();
+
+         List<VariableDeclarationBaseSyntax> variables = new List<VariableDeclarationBaseSyntax>();
+
+         SyntaxNode localVariables = await localVariablesTask;
+         variables.AddRange(FindVariables(localVariables, SyntaxKind.VarSection));
+         SyntaxNode globalVariables = await globalVariablesTask;
+         variables.AddRange(FindVariables(globalVariables, SyntaxKind.GlobalVarSection));
+
+         string? tableName1 = GetObjectName(variables.FirstOrDefault(x =>
+         {
+             string? name = x.GetNameStringValue();
+
+             if (name == null)
+                 return false;
+
+             return name.Equals(records.Item1);
+         }));
+
+         string? tableName2 = GetObjectName(variables.FirstOrDefault(x =>
+         {
+             string? name = x.GetNameStringValue();
+
+             if (name == null)
+                 return false;
+
+             return name.Equals(records.Item2);
+         }));
+
+         if (tableName1 == null && (records.Item1.ToLower().Equals("rec") || records.Item1.ToLower().Equals("xrec")))
+             tableName1 = GetObjectSourceTable(globalVariables, ctx.Compilation);
+
+         if (tableName2 == null && (records.Item2.ToLower().Equals("rec") || records.Item2.ToLower().Equals("xrec")))
+             tableName2 = GetObjectSourceTable(globalVariables, ctx.Compilation);
+
+         if (tableName1 == tableName2 || tableName1 == null || tableName2 == null)
+             return;
+
+         Dictionary<string, TableExtensionSyntax> tableExtensions = GetTableExtensions(ctx.Compilation);
+         Table table1 = GetTableWithFieldsByTableName(ctx.Compilation, tableName1);
+         Table table2 = GetTableWithFieldsByTableName(ctx.Compilation, tableName2);
+
+         List<IGrouping<int, Field>> fieldGroups = GetFieldsWithSameIDAndApplyFilter(table1.Fields, table2.Fields, DifferentNameAndTypeFilter);
+
+         if (fieldGroups.Any())
+         {
+             ReportFieldDiagnostics(ctx, table1, fieldGroups);
+             ReportFieldDiagnostics(ctx, table2, fieldGroups);
+
+             if (table1.Fields.Any(x => x.Location != null) || table2.Fields.Any(x => x.Location != null))
+                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0044AnalyzeTransferFields, invocationExpression.GetLocation(), table1.Name, table2.Name));
+
+         }
+        }
+        catch (InvalidCastException)
         {
-            string? name = x.GetNameStringValue();
-
-            if (name == null)
-                return false;
-
-            return name.Equals(records.Item2);
-        }));
-
-        if (tableName1 == null && (records.Item1.ToLower().Equals("rec") || records.Item1.ToLower().Equals("xrec")))
-            tableName1 = GetObjectSourceTable(globalVariables, ctx.Compilation);
-
-        if (tableName2 == null && (records.Item2.ToLower().Equals("rec") || records.Item2.ToLower().Equals("xrec")))
-            tableName2 = GetObjectSourceTable(globalVariables, ctx.Compilation);
-
-        if (tableName1 == tableName2 || tableName1 == null || tableName2 == null)
-            return;
-
-        Dictionary<string, TableExtensionSyntax> tableExtensions = GetTableExtensions(ctx.Compilation);
-        Table table1 = GetTableWithFieldsByTableName(ctx.Compilation, tableName1);
-        Table table2 = GetTableWithFieldsByTableName(ctx.Compilation, tableName2);
-
-        List<IGrouping<int, Field>> fieldGroups = GetFieldsWithSameIDAndApplyFilter(table1.Fields, table2.Fields, DifferentNameAndTypeFilter);
-
-        if (fieldGroups.Any())
-        {
-            ReportFieldDiagnostics(ctx, table1, fieldGroups);
-            ReportFieldDiagnostics(ctx, table2, fieldGroups);
-
-            if (table1.Fields.Any(x => x.Location != null) || table2.Fields.Any(x => x.Location != null))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0044AnalyzeTransferFields, invocationExpression.GetLocation(), table1.Name, table2.Name));
+            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, ctx.Operation.Syntax.GetLocation(), new Object[] { "Rule0044", "InvalidCastException", "" }));
         }
     }
 

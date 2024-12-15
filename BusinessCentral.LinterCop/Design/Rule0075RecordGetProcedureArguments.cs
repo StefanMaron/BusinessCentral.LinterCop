@@ -17,8 +17,8 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
 
     private static readonly Dictionary<NavTypeKind, HashSet<NavTypeKind>> ImplicitConversions = new()
     {
-        // Integer can be converted to Option, BigInteger and/or Enum
-        { NavTypeKind.Integer, new HashSet<NavTypeKind> { NavTypeKind.Option, NavTypeKind.BigInteger, NavTypeKind.Enum } },
+        // Integer can be converted to Option and/or BigInteger
+        { NavTypeKind.Integer, new HashSet<NavTypeKind> { NavTypeKind.Option, NavTypeKind.BigInteger } },
 
         // BigInteger can be converted to Duration
         { NavTypeKind.BigInteger, new HashSet<NavTypeKind> { NavTypeKind.Duration } },
