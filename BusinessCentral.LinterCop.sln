@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessCentral.LinterCop", "BusinessCentral.LinterCop\BusinessCentral.LinterCop.csproj", "{5C8F1D53-3322-4AFC-9B63-002AABC90E7A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessCentral.LinterCop.Test", "BusinessCentral.LinterCop.Test\BusinessCentral.LinterCop.Test.csproj", "{6FFCE9A8-DD6E-47BC-8E3C-A89444BE6A3A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5C8F1D53-3322-4AFC-9B63-002AABC90E7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C8F1D53-3322-4AFC-9B63-002AABC90E7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C8F1D53-3322-4AFC-9B63-002AABC90E7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C8F1D53-3322-4AFC-9B63-002AABC90E7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FFCE9A8-DD6E-47BC-8E3C-A89444BE6A3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FFCE9A8-DD6E-47BC-8E3C-A89444BE6A3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FFCE9A8-DD6E-47BC-8E3C-A89444BE6A3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FFCE9A8-DD6E-47BC-8E3C-A89444BE6A3A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A990CCA1-4223-4A14-8BE1-B301282D9CD8}
+	EndGlobalSection
+EndGlobal

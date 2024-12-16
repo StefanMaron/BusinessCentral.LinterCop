@@ -570,13 +570,13 @@
   <data name="Rule0050OperatorAndPlaceholderInFilterExpressionDescription" xml:space="preserve">
     <value>Found operator '{0}' together with placeholder '{1}' in filter expression, which results in unexpected behavior. Use the StrSubstNo() method to circumvent this.</value>
   </data>
-  <data name="Rule0051SetFilterPossibleOverflowTitle" xml:space="preserve">
+  <data name="Rule0051PossibleOverflowAssigningTitle" xml:space="preserve">
     <value>Do not assign a text to a target with smaller size.</value>
   </data>
-  <data name="Rule0051SetFilterPossibleOverflowFormat" xml:space="preserve">
+  <data name="Rule0051PossibleOverflowAssigningFormat" xml:space="preserve">
     <value>Possible overflow assigning '{0}' to '{1}'.</value>
   </data>
-  <data name="Rule0051SetFilterPossibleOverflowDescription" xml:space="preserve">
+  <data name="Rule0051PossibleOverflowAssigningDescription" xml:space="preserve">
     <value>Do not assign a text to a target with smaller size.</value>
   </data>
   <data name="Rule0052InternalProceduresNotReferencedAnalyzerDescription" xml:space="preserve">
