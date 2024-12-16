@@ -1,108 +1,80 @@
-﻿#nullable disable // TODO: Enable nullable and review rule
-using BusinessCentral.LinterCop.AnalysisContextExtension;
+﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Semantics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 
-namespace BusinessCentral.LinterCop.Design
+namespace BusinessCentral.LinterCop.Design;
+
+[DiagnosticAnalyzer]
+public class Rule0017WriteToFlowField : DiagnosticAnalyzer
 {
-    [DiagnosticAnalyzer]
-    public class Rule0017WriteToFlowField : DiagnosticAnalyzer
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0017WriteToFlowField, DiagnosticDescriptors.Rule0000ErrorInRule);
+
+    public override void Initialize(AnalysisContext context)
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0017WriteToFlowField, DiagnosticDescriptors.Rule0000ErrorInRule);
-
-        public override void Initialize(AnalysisContext context)
-            => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForWriteToFlowField),
-                OperationKind.AssignmentStatement,
-                OperationKind.InvocationExpression
-            );
-
-        private void CheckForWriteToFlowField(OperationAnalysisContext context)
-        {
-            if (context.IsObsoletePendingOrRemoved()) return;
-
-            if (context.Operation.Kind == OperationKind.InvocationExpression)
-            {
-                try
-                {
-                    IInvocationExpression operation = (IInvocationExpression)context.Operation;
-                    if (operation.TargetMethod.Name == "Validate" && operation.TargetMethod.ContainingType.ToString() == "Table")
-                    {
-                        IFieldSymbol field = null;
-                        if (operation.Arguments[0].Value.GetType().GetProperty("Operand") != null)
-                            field = ((IFieldAccess)((IConversionExpression)operation.Arguments[0].Value).Operand).FieldSymbol;
-                        else
-                            field = ((IFieldAccess)operation.Arguments[0].Value).FieldSymbol;
-
-                        var FieldClass = field.FieldClass;
-                        if (FieldClass == FieldClassKind.FlowField)
-                            if (!HasExplainingComment(context.Operation))
-                                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0017WriteToFlowField, context.Operation.Syntax.GetLocation()));
-                    }
-                }
-                catch (InvalidCastException)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, context.Operation.Syntax.GetLocation(), new Object[] { "Rule0017", "InvalidCastException", "at Line 41" }));
-                }
-                catch (ArgumentException)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, context.Operation.Syntax.GetLocation(), new Object[] { "Rule0017", "ArgumentException", "at Line 45" }));
-                }
-            }
-            else
-            {
-                IAssignmentStatement operation = (IAssignmentStatement)context.Operation;
-                if (operation.Target.Kind == OperationKind.FieldAccess)
-                {
-                    try
-                    {
-                        var FieldClass = FieldClassKind.Normal;
-
-                        if (operation.Target.Syntax.Kind == SyntaxKind.ArrayIndexExpression)
-                        {
-                            if (((ITextIndexAccess)operation.Target).TextExpression.Kind != OperationKind.FieldAccess)
-                                return;
-
-                            FieldClass = ((IFieldAccess)((ITextIndexAccess)operation.Target).TextExpression).FieldSymbol.FieldClass;
-                        }
-                        else
-                            FieldClass = ((IFieldAccess)operation.Target).FieldSymbol.FieldClass;
-
-                        if (FieldClass == FieldClassKind.FlowField)
-                            if (!HasExplainingComment(context.Operation))
-                                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0017WriteToFlowField, context.Operation.Syntax.GetLocation()));
-                    }
-                    catch (InvalidCastException)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, context.Operation.Syntax.GetLocation(), new Object[] { "Rule0017", "InvalidCastException", "at Line 62" }));
-                    }
-                    catch (ArgumentException)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0000ErrorInRule, context.Operation.Syntax.GetLocation(), new Object[] { "Rule0017", "ArgumentException", "at Line 66" }));
-                    }
-                }
-            }
-        }
-
-        private bool HasExplainingComment(IOperation operation)
-        {
-            foreach (SyntaxTrivia trivia in operation.Syntax.GetLeadingTrivia())
-            {
-                if (trivia.IsKind(SyntaxKind.LineCommentTrivia))
-                {
-                    return true;
-                }
-            }
-            foreach (SyntaxTrivia trivia in operation.Syntax.GetTrailingTrivia())
-            {
-                if (trivia.IsKind(SyntaxKind.LineCommentTrivia))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeAssignmentStatement), OperationKind.AssignmentStatement);
+        context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeInvocationExpression), OperationKind.InvocationExpression);
     }
+
+    private void AnalyzeInvocationExpression(OperationAnalysisContext ctx)
+    {
+        if (ctx.IsObsoletePendingOrRemoved())
+            return;
+
+        if (ctx.Operation is not IInvocationExpression operation)
+            return;
+
+        if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod ||
+            operation.TargetMethod.Name != "Validate" ||
+            operation.TargetMethod.ContainingSymbol?.Name != "Table")
+            return;
+
+        if (operation.Arguments.Length < 1 ||
+            operation.Arguments[0].Value is not IConversionExpression conversionExpression ||
+            conversionExpression.Operand is not IFieldAccess fieldAccess ||
+            fieldAccess.FieldSymbol.FieldClass != FieldClassKind.FlowField ||
+            HasExplainingComment(operation))
+            return;
+
+        ctx.ReportDiagnostic(
+            Diagnostic.Create(DiagnosticDescriptors.Rule0017WriteToFlowField,
+            operation.Arguments[0].Value.Syntax.GetLocation()));
+    }
+
+    private void AnalyzeAssignmentStatement(OperationAnalysisContext ctx)
+    {
+        if (ctx.IsObsoletePendingOrRemoved())
+            return;
+
+        if (ctx.Operation is not IAssignmentStatement operation)
+            return;
+
+        if (operation.Target.Kind != OperationKind.FieldAccess)
+            return;
+
+        var fieldSymbol = ExtractFieldSymbolFromAssignment(operation);
+        if (fieldSymbol?.FieldClass != FieldClassKind.FlowField || HasExplainingComment(operation))
+            return;
+
+        ctx.ReportDiagnostic(
+            Diagnostic.Create(DiagnosticDescriptors.Rule0017WriteToFlowField,
+            operation.Target.Syntax.GetLocation()));
+    }
+
+    private IFieldSymbol? ExtractFieldSymbolFromAssignment(IAssignmentStatement operation)
+    {
+        if (operation.Target.Syntax.Kind == SyntaxKind.ArrayIndexExpression &&
+            operation.Target is ITextIndexAccess textIndexAccess &&
+            textIndexAccess.TextExpression is IFieldAccess fieldAccess)
+        {
+            return fieldAccess.FieldSymbol;
+        }
+
+        return operation.Target is IFieldAccess directFieldAccess ? directFieldAccess.FieldSymbol : null;
+    }
+
+    private bool HasExplainingComment(IOperation operation) =>
+        operation.Syntax.GetLeadingTrivia().Any(trivia => trivia.IsKind(SyntaxKind.LineCommentTrivia));
 }
