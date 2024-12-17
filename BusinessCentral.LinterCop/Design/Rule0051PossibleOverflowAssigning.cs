@@ -87,24 +87,21 @@ namespace BusinessCentral.LinterCop.Design
                 var fieldType = table.PrimaryKey.Fields[i].Type;
                 var argumentType = operation.Arguments[i].GetTypeSymbol();
 
-                if (fieldType is null || argumentType is null)
-                    return;
+                if (fieldType is null || argumentType is null || argumentType.HasLength)
+                    continue;
 
                 bool isError = false;
                 int fieldLength = GetTypeLength(fieldType, ref isError);
                 if (isError || fieldLength == 0)
                     continue;
 
-                int argumentLength = GetTypeLength(argumentType, ref isError);
-                if (isError || argumentLength == 0)
-                    continue;
-
-                if (argumentLength > fieldLength)
+                int expressionLength = this.CalculateMaxExpressionLength(((IConversionExpression)operation.Arguments[i].Value).Operand, ref isError);
+                if (!isError && expressionLength > fieldLength)
                 {
                     ctx.ReportDiagnostic(Diagnostic.Create(
                         DiagnosticDescriptors.Rule0051PossibleOverflowAssigning,
                         operation.Arguments[i].Syntax.GetLocation(),
-                        argumentType.ToDisplayString(),
+                        argumentType.ToDisplayString() + '[' + expressionLength + ']',
                         fieldType.ToDisplayString()));
                 }
             }
@@ -119,7 +116,19 @@ namespace BusinessCentral.LinterCop.Design
             }
             if (type.HasLength)
                 return type.Length;
-            return type.NavTypeKind == NavTypeKind.Label ? GetLabelTypeLength(type) : int.MaxValue;
+
+            switch (type.NavTypeKind)
+            {
+                case NavTypeKind.String:
+                    return GetTextTypeLength(type);
+                case NavTypeKind.Label:
+                    return GetLabelTypeLength(type);
+
+                default:
+                    return int.MaxValue;
+            }
+
+            // return type.NavTypeKind == NavTypeKind.Label ? GetLabelTypeLength(type) : int.MaxValue;
         }
 
         private static int GetLabelTypeLength(ITypeSymbol type)
@@ -130,6 +139,12 @@ namespace BusinessCentral.LinterCop.Design
                 return labelType.GetLabelText().Length;
 
             return labelType.MaxLength;
+        }
+
+        private static int GetTextTypeLength(ITypeSymbol type)
+        {
+            var test = type;
+            return int.MaxValue;
         }
 
         private int CalculateMaxExpressionLength(IOperation expression, ref bool isError)
