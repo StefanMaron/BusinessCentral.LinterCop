@@ -15,6 +15,7 @@ public class Rule0075
     [Test]
     [TestCase("ImplicitConversiontCodeToEnum")]
     [TestCase("ImplicitConversiontEnumToAnotherEnum")]
+    [TestCase("RecordGetCodeFieldLengthTooLong")]
     [TestCase("RecordGetGlobalVariable")]
     [TestCase("RecordGetLocalVariable")]
     [TestCase("RecordGetMethod")]
