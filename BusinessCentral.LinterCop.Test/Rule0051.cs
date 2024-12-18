@@ -13,8 +13,10 @@ public class Rule0051
     }
 
     [Test]
+#if !LessThenSpring2024
     [TestCase("GetMethodStringLiteral")]
     [TestCase("GetMethodStrSubstNo")]
+#endif
     [TestCase("SetFilterFieldCode")]
     public async Task HasDiagnostic(string testCase)
     {
@@ -26,8 +28,10 @@ public class Rule0051
     }
 
     [Test]
+#if !LessThenSpring2024
     [TestCase("GetMethodStringLiteral")]
     [TestCase("GetMethodStrSubstNo")]
+#endif
     [TestCase("SetFilterFieldRef")]
     public async Task NoDiagnostic(string testCase)
     {
