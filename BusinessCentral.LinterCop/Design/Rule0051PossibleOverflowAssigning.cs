@@ -3,6 +3,7 @@ using BusinessCentral.LinterCop.AnalysisContextExtension;
 using BusinessCentral.LinterCop.ArgumentExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Semantics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
@@ -20,11 +21,41 @@ namespace BusinessCentral.LinterCop.Design
 
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeAssignmentStatement), OperationKind.AssignmentStatement);
             context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeSetFilter), OperationKind.InvocationExpression);
 #if !LessThenSpring2024
             context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeGetMethod), OperationKind.InvocationExpression);
 #endif
         }
+
+        private void AnalyzeAssignmentStatement(OperationAnalysisContext ctx)
+        {
+            if (ctx.IsObsoletePendingOrRemoved())
+                return;
+
+            if (ctx.Operation is not IAssignmentStatement operation)
+                return;
+
+            var target = operation.Target.GetSymbol()?.GetTypeSymbol();
+            if (target is null || !target.HasLength)
+                return;
+
+            if (operation.Value is not IConversionExpression sourceValue)
+                return;
+
+            bool isError = false;
+            int sourceLength = this.CalculateMaxExpressionLength(sourceValue.Operand, ref isError);
+
+            if (!isError && sourceLength > target.Length)
+            {
+                ctx.ReportDiagnostic(Diagnostic.Create(
+                    DiagnosticDescriptors.Rule0051PossibleOverflowAssigning,
+                    operation.Value.Syntax.GetLocation(),
+                    $"{sourceValue.Operand.Type.ToDisplayString()}[{sourceLength}]",
+                    target.ToDisplayString()));
+            }
+        }
+
         private void AnalyzeSetFilter(OperationAnalysisContext ctx)
         {
             if (ctx.IsObsoletePendingOrRemoved())
@@ -63,7 +94,13 @@ namespace BusinessCentral.LinterCop.Design
 
                 int expressionLength = this.CalculateMaxExpressionLength(argValue.Operand, ref isError);
                 if (!isError && expressionLength > typeLength)
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0051PossibleOverflowAssigning, operation.Syntax.GetLocation(), GetDisplayString(operation.Arguments[index], operation), GetDisplayString(operation.Arguments[0], operation)));
+                {
+                    ctx.ReportDiagnostic(Diagnostic.Create(
+                        DiagnosticDescriptors.Rule0051PossibleOverflowAssigning,
+                        operation.Syntax.GetLocation(),
+                        GetDisplayString(operation.Arguments[index], operation),
+                        GetDisplayString(operation.Arguments[0], operation)));
+                }
             }
         }
 
@@ -147,7 +184,7 @@ namespace BusinessCentral.LinterCop.Design
             switch (expression.Kind)
             {
                 case OperationKind.LiteralExpression:
-                    if (expression.Type.IsTextType())
+                    if (expression.Type.IsTextType() || expression.Type.IsNumericType())
                         return expression.ConstantValue.Value.ToString().Length;
                     ITypeSymbol type = expression.Type;
                     if ((type != null ? (type.NavTypeKind == NavTypeKind.Char ? 1 : 0) : 0) != 0)

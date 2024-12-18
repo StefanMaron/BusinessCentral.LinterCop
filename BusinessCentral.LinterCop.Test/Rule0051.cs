@@ -13,6 +13,7 @@ public class Rule0051
     }
 
     [Test]
+    [TestCase("AssignStrSubstNo")]
 #if !LessThenSpring2024
     [TestCase("GetMethodStringLiteral")]
     [TestCase("GetMethodStrSubstNo")]
@@ -28,6 +29,7 @@ public class Rule0051
     }
 
     [Test]
+    [TestCase("AssignStrSubstNo")]
 #if !LessThenSpring2024
     [TestCase("GetMethodStringLiteral")]
     [TestCase("GetMethodStrSubstNo")]
