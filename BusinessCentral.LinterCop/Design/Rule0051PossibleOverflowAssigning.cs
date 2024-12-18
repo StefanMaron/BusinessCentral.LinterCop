@@ -58,7 +58,7 @@ namespace BusinessCentral.LinterCop.Design
                      (operation.Arguments[index].Value.Kind != OperationKind.ConversionExpression))
                     continue;
 
-                if (operation.Arguments[argIndex].Value is not IConversionExpression argValue)
+                if (operation.Arguments[index].Value is not IConversionExpression argValue)
                     continue;
 
                 int expressionLength = this.CalculateMaxExpressionLength(argValue.Operand, ref isError);
