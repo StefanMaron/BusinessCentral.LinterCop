@@ -21,7 +21,9 @@ namespace BusinessCentral.LinterCop.Design
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeSetFilter), OperationKind.InvocationExpression);
+#if !LessThenSpring2024
             context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeGetMethod), OperationKind.InvocationExpression);
+#endif
         }
         private void AnalyzeSetFilter(OperationAnalysisContext ctx)
         {
@@ -62,6 +64,7 @@ namespace BusinessCentral.LinterCop.Design
             }
         }
 
+#if !LessThenSpring2024
         private void AnalyzeGetMethod(OperationAnalysisContext ctx)
         {
             if (ctx.IsObsoletePendingOrRemoved())
@@ -104,6 +107,7 @@ namespace BusinessCentral.LinterCop.Design
                 }
             }
         }
+#endif
 
         private static int GetTypeLength(ITypeSymbol type, ref bool isError)
         {
