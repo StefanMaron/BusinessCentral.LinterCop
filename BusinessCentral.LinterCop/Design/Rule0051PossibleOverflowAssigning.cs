@@ -36,6 +36,9 @@ namespace BusinessCentral.LinterCop.Design
             if (ctx.Operation is not IAssignmentStatement operation)
                 return;
 
+            if (operation.Target.Syntax.Kind == SyntaxKind.ArrayIndexExpression)
+                return;
+
             var target = operation.Target.GetSymbol()?.GetTypeSymbol();
             if (target is null || !target.HasLength)
                 return;
