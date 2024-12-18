@@ -43,6 +43,9 @@ namespace BusinessCentral.LinterCop.Design
             if (operation.Value is not IConversionExpression sourceValue)
                 return;
 
+            if (sourceValue.Operand.Kind != OperationKind.InvocationExpression)
+                return;
+
             bool isError = false;
             int sourceLength = this.CalculateMaxExpressionLength(sourceValue.Operand, ref isError);
 

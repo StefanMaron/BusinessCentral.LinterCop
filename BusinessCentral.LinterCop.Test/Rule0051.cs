@@ -29,6 +29,7 @@ public class Rule0051
     }
 
     [Test]
+    [TestCase("AssignLabel")]
     [TestCase("AssignStrSubstNo")]
 #if !LessThenSpring2024
     [TestCase("GetMethodStringLiteral")]
