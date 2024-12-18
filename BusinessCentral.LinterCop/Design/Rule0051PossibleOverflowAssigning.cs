@@ -58,7 +58,10 @@ namespace BusinessCentral.LinterCop.Design
                      (operation.Arguments[index].Value.Kind != OperationKind.ConversionExpression))
                     continue;
 
-                int expressionLength = this.CalculateMaxExpressionLength(((IConversionExpression)operation.Arguments[index].Value).Operand, ref isError);
+                if (operation.Arguments[argIndex].Value is not IConversionExpression argValue)
+                    continue;
+
+                int expressionLength = this.CalculateMaxExpressionLength(argValue.Operand, ref isError);
                 if (!isError && expressionLength > typeLength)
                     ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0051PossibleOverflowAssigning, operation.Syntax.GetLocation(), GetDisplayString(operation.Arguments[index], operation), GetDisplayString(operation.Arguments[0], operation)));
             }
@@ -83,10 +86,10 @@ namespace BusinessCentral.LinterCop.Design
             if (operation.Arguments.Length < table.PrimaryKey.Fields.Length)
                 return;
 
-            for (int i = 0; i < operation.Arguments.Length; i++)
+            for (int argIndex = 0; argIndex < operation.Arguments.Length; argIndex++)
             {
-                var fieldType = table.PrimaryKey.Fields[i].Type;
-                var argumentType = operation.Arguments[i].GetTypeSymbol();
+                var fieldType = table.PrimaryKey.Fields[argIndex].Type;
+                var argumentType = operation.Arguments[argIndex].GetTypeSymbol();
 
                 if (fieldType is null || argumentType is null || argumentType.HasLength)
                     continue;
@@ -96,12 +99,15 @@ namespace BusinessCentral.LinterCop.Design
                 if (isError || fieldLength == 0)
                     continue;
 
-                int expressionLength = this.CalculateMaxExpressionLength(((IConversionExpression)operation.Arguments[i].Value).Operand, ref isError);
+                if (operation.Arguments[argIndex].Value is not IConversionExpression argValue)
+                    continue;
+
+                int expressionLength = this.CalculateMaxExpressionLength(argValue.Operand, ref isError);
                 if (!isError && expressionLength > fieldLength)
                 {
                     ctx.ReportDiagnostic(Diagnostic.Create(
                         DiagnosticDescriptors.Rule0051PossibleOverflowAssigning,
-                        operation.Arguments[i].Syntax.GetLocation(),
+                        operation.Arguments[argIndex].Syntax.GetLocation(),
                         $"{argumentType.ToDisplayString()}[{expressionLength}]",
                         fieldType.ToDisplayString()));
                 }
