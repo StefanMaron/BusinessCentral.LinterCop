@@ -86,10 +86,10 @@ namespace BusinessCentral.LinterCop.Design
             if (operation.Arguments.Length < table.PrimaryKey.Fields.Length)
                 return;
 
-            for (int argIndex = 0; argIndex < operation.Arguments.Length; argIndex++)
+            for (int index = 0; index < operation.Arguments.Length; index++)
             {
-                var fieldType = table.PrimaryKey.Fields[argIndex].Type;
-                var argumentType = operation.Arguments[argIndex].GetTypeSymbol();
+                var fieldType = table.PrimaryKey.Fields[index].Type;
+                var argumentType = operation.Arguments[index].GetTypeSymbol();
 
                 if (fieldType is null || argumentType is null || argumentType.HasLength)
                     continue;
@@ -99,7 +99,7 @@ namespace BusinessCentral.LinterCop.Design
                 if (isError || fieldLength == 0)
                     continue;
 
-                if (operation.Arguments[argIndex].Value is not IConversionExpression argValue)
+                if (operation.Arguments[index].Value is not IConversionExpression argValue)
                     continue;
 
                 int expressionLength = this.CalculateMaxExpressionLength(argValue.Operand, ref isError);
@@ -107,7 +107,7 @@ namespace BusinessCentral.LinterCop.Design
                 {
                     ctx.ReportDiagnostic(Diagnostic.Create(
                         DiagnosticDescriptors.Rule0051PossibleOverflowAssigning,
-                        operation.Arguments[argIndex].Syntax.GetLocation(),
+                        operation.Arguments[index].Syntax.GetLocation(),
                         $"{argumentType.ToDisplayString()}[{expressionLength}]",
                         fieldType.ToDisplayString()));
                 }
