@@ -4,7 +4,7 @@ codeunit 50100 MyCodeunit
     var
         Company: Record Company;
     begin
-        Company.Get({|Database.CompanyName()|]);
+        Company.Get([|Database.CompanyName()|]);
         exit(Company.Id);
     end;
 }
