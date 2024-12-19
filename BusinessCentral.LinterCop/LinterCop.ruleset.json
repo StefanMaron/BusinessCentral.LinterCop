@@ -411,6 +411,11 @@
       "id": "LC0082",
       "action": "Info",
       "justification": "Use Rec.Find('-') with Rec.Next() for checking exactly one record."
+    },
+    {
+      "id": "LC0083",
+      "action": "Info",
+      "justification": "Use new Date/Time/DateTime methods for extracting parts."
     }
   ]
 }

@@ -858,4 +858,13 @@
   <data name="Rule0082UseFindWithNextDescription" xml:space="preserve">
     <value>Instead of relying on Rec.Count(), you should use a combination of Rec.Find('-') and Rec.Next() for faster and more efficient record checks.</value>
   </data>
+  <data name="Rule0083BuiltInDateTimeMethodTitle" xml:space="preserve">
+    <value>Use new Date/Time/DateTime methods for extracting parts.</value>
+  </data>
+  <data name="Rule0083BuiltInDateTimeMethodFormat" xml:space="preserve">
+    <value>Use the new method '{0}.{1}' to extract specific parts of date/time values.</value>
+  </data>
+  <data name="Rule0083BuiltInDateTimeMethodDescription" xml:space="preserve">
+    <value>Replace outdated functions for extracting specific parts of Date, Time, and DateTime types (such as day, month, hour, or second) with the new, modernized methods.</value>
+  </data>
 </root>
