@@ -236,3 +236,6 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0080](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0080)|Replace double quotes in JPath expressions with two single quotes.|Warning|
 |[LC0081](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0081)|Use `Rec.IsEmpty()` for checking record existence.|Info|
 |[LC0082](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0082)|Use `Rec.Find('-')` with `Rec.Next()` for checking exactly one record.|Info|
+|[LC0083](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0083)|Use new Date/Time/DateTime methods for extracting parts.|Info|
+
+
