@@ -29,8 +29,10 @@ public class Rule0051
 
     [Test]
 #if !LessThenSpring2024
+    [TestCase("GetMethodCompanyName")]
     [TestCase("GetMethodStringLiteral")]
     [TestCase("GetMethodStrSubstNo")]
+    [TestCase("GetMethodUserId")]
 #endif
     [TestCase("SetFilterFieldRef")]
     public async Task NoDiagnostic(string testCase)
