@@ -172,7 +172,7 @@ namespace BusinessCentral.LinterCop.Design
                     IMethodSymbol targetMethod = invocation.TargetMethod;
                     if (targetMethod != null && targetMethod.ContainingSymbol?.Kind == SymbolKind.Class)
                     {
-                        if (IsBuiltInMethod(targetMethod, out int length))
+                        if (IsBuiltInMethodWithReturnLength(targetMethod, out int length))
                             return length;
 
                         switch (targetMethod.Name.ToLowerInvariant())
@@ -332,14 +332,14 @@ namespace BusinessCentral.LinterCop.Design
             return results;
         }
 
-        private static bool IsBuiltInMethod(IMethodSymbol targetMethod, out int length)
+        private static bool IsBuiltInMethodWithReturnLength(IMethodSymbol targetMethod, out int length)
         {
             length = 0;
 
-            if (targetMethod is not IBuiltInMethodTypeSymbol builtInMethod)
+            if (targetMethod.MethodKind != MethodKind.BuiltInMethod)
                 return false;
 
-            return BuiltInMethodNameWithReturnLength.TryGetValue(builtInMethod.Name, out length);
+            return BuiltInMethodNameWithReturnLength.TryGetValue(targetMethod.Name, out length);
         }
     }
 }
