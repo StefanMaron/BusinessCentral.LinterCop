@@ -125,8 +125,8 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
         if (ImplicitConversions.TryGetValue(argumentNavType, out var compatibleTypes) && !compatibleTypes.Contains(fieldNavType))
             return false;
 
-        if (argumentType.Length > 0 && fieldType.Length > 0 &&
-              argumentType.Length > fieldType.Length)
+        if (argumentType.HasLength && fieldType.HasLength &&
+            argumentType.Length > fieldType.Length)
             return false;
 
         return true;

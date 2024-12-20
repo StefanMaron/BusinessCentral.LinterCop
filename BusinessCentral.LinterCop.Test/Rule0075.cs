@@ -36,6 +36,7 @@ public class Rule0075
 
     [Test]
     [TestCase("ImplicitConversiontIntegerToEnum")]
+    [TestCase("ImplicitConversiontLabelToCode")]
     [TestCase("RecordGetBuiltInMethodRecordId")]
     [TestCase("RecordGetFieldRecordId")]
     [TestCase("RecordGetGlobalVariable")]
