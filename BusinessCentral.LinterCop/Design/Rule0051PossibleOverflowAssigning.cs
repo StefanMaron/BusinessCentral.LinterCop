@@ -4,6 +4,7 @@ using BusinessCentral.LinterCop.ArgumentExtension;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 
@@ -13,6 +14,13 @@ namespace BusinessCentral.LinterCop.Design
     public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
     {
         private readonly Lazy<Regex> strSubstNoPatternLazy = new Lazy<Regex>((Func<Regex>)(() => new Regex("[#%](\\d+)", RegexOptions.Compiled)));
+
+        // Build-in methods like Database.CompanyName() and Database.UserId() have indirectly a return length
+        private static readonly Dictionary<string, int> BuiltInMethodNameWithReturnLength = new()
+        {
+            { "CompanyName", 30 },
+            { "UserId", 50 }
+        };
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0051PossibleOverflowAssigning);
 
@@ -105,10 +113,14 @@ namespace BusinessCentral.LinterCop.Design
                 int expressionLength = this.CalculateMaxExpressionLength(argValue.Operand, ref isError);
                 if (!isError && expressionLength > fieldLength)
                 {
+                    string lengthSuffix = expressionLength < int.MaxValue
+                        ? $"[{expressionLength}]"
+                        : string.Empty;
+
                     ctx.ReportDiagnostic(Diagnostic.Create(
                         DiagnosticDescriptors.Rule0051PossibleOverflowAssigning,
                         operation.Arguments[index].Syntax.GetLocation(),
-                        $"{argumentType.ToDisplayString()}[{expressionLength}]",
+                        $"{argumentType.ToDisplayString()}{lengthSuffix}",
                         fieldType.ToDisplayString()));
                 }
             }
@@ -160,6 +172,9 @@ namespace BusinessCentral.LinterCop.Design
                     IMethodSymbol targetMethod = invocation.TargetMethod;
                     if (targetMethod != null && targetMethod.ContainingSymbol?.Kind == SymbolKind.Class)
                     {
+                        if (IsBuiltInMethodWithReturnLength(targetMethod, out int length))
+                            return length;
+
                         switch (targetMethod.Name.ToLowerInvariant())
                         {
                             case "convertstr":
@@ -315,6 +330,16 @@ namespace BusinessCentral.LinterCop.Design
             }
 
             return results;
+        }
+
+        private static bool IsBuiltInMethodWithReturnLength(IMethodSymbol targetMethod, out int length)
+        {
+            length = 0;
+
+            if (targetMethod.MethodKind != MethodKind.BuiltInMethod)
+                return false;
+
+            return BuiltInMethodNameWithReturnLength.TryGetValue(targetMethod.Name, out length);
         }
     }
 }
