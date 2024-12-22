@@ -143,7 +143,7 @@ public abstract class CodeFixTestFixture : BaseTestFixture
     {
         var codeFixes = GetCodeFixes(document, diagnostic);
         var codeAction = codeActionSelector.Find(codeFixes);
-        if (codeAction == null)
+        if (codeAction is null)
         {
             throw RoslynTestKitException.CodeFixNotFound(codeActionSelector, codeFixes, locator);
         }
