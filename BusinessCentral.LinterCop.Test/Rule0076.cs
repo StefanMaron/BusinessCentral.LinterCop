@@ -22,7 +22,7 @@ public class Rule0076
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0076TableRelationTooLong>();
-        fixture.HasDiagnostic(code, Rule0076TableRelationTooLong.DiagnosticDescriptors.Rule0076TableRelationTooLong.Id);
+        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0076TableRelationTooLong.Id);
     }
 
     [Test]
@@ -38,6 +38,6 @@ public class Rule0076
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0076TableRelationTooLong>();
-        fixture.NoDiagnosticAtMarker(code, Rule0076TableRelationTooLong.DiagnosticDescriptors.Rule0076TableRelationTooLong.Id);
+        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0076TableRelationTooLong.Id);
     }
 }

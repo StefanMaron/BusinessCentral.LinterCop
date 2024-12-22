@@ -1,38 +1,40 @@
-#nullable disable // TODO: Enable nullable and review rule
-using BusinessCentral.LinterCop.AnalysisContextExtension;
+using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
 using System.Collections.Immutable;
 
-namespace BusinessCentral.LinterCop.Design
+namespace BusinessCentral.LinterCop.Design;
+
+[DiagnosticAnalyzer]
+public class Rule0060PropertyApplicationAreaOnApiPage : DiagnosticAnalyzer
 {
-    [DiagnosticAnalyzer]
-    public class Rule0060PropertyApplicationAreaOnApiPage : DiagnosticAnalyzer
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0060PropertyApplicationAreaOnApiPage);
+
+    public override void Initialize(AnalysisContext context) =>
+        context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.AnalyzePropertyApplicationAreaOnApiPage), SymbolKind.Page);
+
+    private void AnalyzePropertyApplicationAreaOnApiPage(SymbolAnalysisContext ctx)
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0060PropertyApplicationAreaOnApiPage);
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not IPageTypeSymbol pageTypeSymbol)
+            return;
 
-        public override void Initialize(AnalysisContext context)
-            => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.AnalyzePropertyApplicationAreaOnApiPage), SymbolKind.Page);
+        if (pageTypeSymbol.PageType != PageTypeKind.API)
+            return;
 
-        private void AnalyzePropertyApplicationAreaOnApiPage(SymbolAnalysisContext ctx)
-        {
-            if (ctx.IsObsoletePendingOrRemoved()) return;
+        if (pageTypeSymbol.GetProperty(PropertyKind.ApplicationArea) is IPropertySymbol propertyApplicationArea)
+            ctx.ReportDiagnostic(Diagnostic.Create(
+                DiagnosticDescriptors.Rule0060PropertyApplicationAreaOnApiPage,
+                propertyApplicationArea.GetLocation()));
 
-            if (ctx.Symbol is not IPageTypeSymbol pageTypeSymbol)
-                return;
+        IEnumerable<Location> Locations = pageTypeSymbol.FlattenedControls
+                                                        .Where(e => e.ControlKind == ControlKind.Field && e.GetProperty(PropertyKind.ApplicationArea) is not null)
+                                                        .Select(e => e.GetLocation());
 
-            if (pageTypeSymbol.PageType != PageTypeKind.API)
-                return;
-
-            if (pageTypeSymbol.GetProperty(PropertyKind.ApplicationArea) is IPropertySymbol propertyApplicationArea)
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0060PropertyApplicationAreaOnApiPage, propertyApplicationArea.GetLocation()));
-
-            IEnumerable<IControlSymbol> pageFields = pageTypeSymbol.FlattenedControls
-                                                            .Where(e => e.ControlKind == ControlKind.Field)
-                                                            .Where(e => e.GetProperty(PropertyKind.ApplicationArea) is not null);
-
-            foreach (IControlSymbol pageField in pageFields)
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0060PropertyApplicationAreaOnApiPage, pageField.GetProperty(PropertyKind.ApplicationArea).GetLocation()));
-        }
+        foreach (Location location in Locations)
+            ctx.ReportDiagnostic(Diagnostic.Create(
+                DiagnosticDescriptors.Rule0060PropertyApplicationAreaOnApiPage,
+                location));
     }
 }

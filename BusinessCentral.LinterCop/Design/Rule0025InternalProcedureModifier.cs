@@ -1,39 +1,39 @@
-﻿#nullable disable // TODO: Enable nullable and review rule
-using BusinessCentral.LinterCop.AnalysisContextExtension;
+﻿using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 
-namespace BusinessCentral.LinterCop.Design
+namespace BusinessCentral.LinterCop.Design;
+
+[DiagnosticAnalyzer]
+public class Rule0025InternalProcedureModifier : DiagnosticAnalyzer
 {
-    [DiagnosticAnalyzer]
-    public class Rule0025InternalProcedureModifier : DiagnosticAnalyzer
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0025InternalProcedureModifier);
+
+    public override void Initialize(AnalysisContext context) =>
+        context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeInternalProcedures), SyntaxKind.MethodDeclaration);
+
+    private void AnalyzeInternalProcedures(SyntaxNodeAnalysisContext ctx)
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0025InternalProcedureModifier);
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Node is not MethodDeclarationSyntax methodDeclarationSyntax)
+            return;
 
-        public override void Initialize(AnalysisContext context) => context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeInternalProcedures), SyntaxKind.MethodDeclaration);
+        if (!ctx.Node.IsKind(SyntaxKind.MethodDeclaration) || ctx.ContainingSymbol.GetContainingObjectTypeSymbol().DeclaredAccessibility != Accessibility.Public)
+            return;
 
-        private void AnalyzeInternalProcedures(SyntaxNodeAnalysisContext ctx)
-        {
-            if (ctx.IsObsoletePendingOrRemoved()) return;
+        SyntaxNodeOrToken accessModifier = methodDeclarationSyntax.ProcedureKeyword.GetPreviousToken();
 
-            if (ctx.ContainingSymbol.GetContainingObjectTypeSymbol().DeclaredAccessibility != Accessibility.Public) return;
-            if (!ctx.Node.IsKind(SyntaxKind.MethodDeclaration)) return;
+        if (accessModifier.Kind == SyntaxKind.LocalKeyword || accessModifier.Kind == SyntaxKind.InternalKeyword)
+            return;
 
-            try
-            {
-                MethodDeclarationSyntax methodDeclarationSyntax = (MethodDeclarationSyntax)ctx.Node;
-                SyntaxNodeOrToken accessModifier = methodDeclarationSyntax.ProcedureKeyword.GetPreviousToken();
-                if (accessModifier.Kind == SyntaxKind.LocalKeyword || accessModifier.Kind == SyntaxKind.InternalKeyword) return;
-                if (methodDeclarationSyntax.GetLeadingTrivia().Where(x => x.Kind == SyntaxKind.SingleLineDocumentationCommentTrivia).Any()) return;
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0025InternalProcedureModifier, methodDeclarationSyntax.ProcedureKeyword.GetLocation()));
-            }
-            catch (System.InvalidCastException)
-            {
-                return;
-            }
-        }
+        if (methodDeclarationSyntax.GetLeadingTrivia().Where(x => x.Kind == SyntaxKind.SingleLineDocumentationCommentTrivia).Any())
+            return;
+
+        ctx.ReportDiagnostic(Diagnostic.Create(
+            DiagnosticDescriptors.Rule0025InternalProcedureModifier,
+            methodDeclarationSyntax.ProcedureKeyword.GetLocation()));
     }
 }

@@ -2,7 +2,7 @@ using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 using Microsoft.Dynamics.Nav.CodeAnalysis.InternalSyntax;
-using BusinessCentral.LinterCop.AnalysisContextExtension;
+using BusinessCentral.LinterCop.Helpers;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -10,7 +10,7 @@ namespace BusinessCentral.LinterCop.Design;
 public class Rule0073EventPublisherIsHandledByVar : DiagnosticAnalyzer
 {
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0073EventPublisherIsHandledByVar);
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0073EventPublisherIsHandledByVar);
 
     public override void Initialize(AnalysisContext context) =>
         context.RegisterSymbolAction(AnalyzerEventPublisher, SymbolKind.Method);
@@ -47,17 +47,5 @@ public class Rule0073EventPublisherIsHandledByVar : DiagnosticAnalyzer
                parameter.ParameterType.NavTypeKind == NavTypeKind.Boolean &&
                (SemanticFacts.IsSameName(parameter.Name, "IsHandled") ||
                 SemanticFacts.IsSameName(parameter.Name, "Handled"));
-    }
-
-    public static class DiagnosticDescriptors
-    {
-        public static readonly DiagnosticDescriptor Rule0073EventPublisherIsHandledByVar = new(
-            id: LinterCopAnalyzers.AnalyzerPrefix + "0073",
-            title: LinterCopAnalyzers.GetLocalizableString("Rule0073EventPublisherIsHandledByVarTitle"),
-            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0073EventPublisherIsHandledByVarFormat"),
-            category: "Design",
-            defaultSeverity: DiagnosticSeverity.Warning, isEnabledByDefault: true,
-            description: LinterCopAnalyzers.GetLocalizableString("Rule0073EventPublisherIsHandledByVarDescription"),
-            helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0073");
     }
 }

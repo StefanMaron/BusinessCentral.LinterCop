@@ -26,7 +26,7 @@ public class Rule0081
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0081AnalyzeCountMethod>();
-        fixture.HasDiagnostic(code, Rule0081AnalyzeCountMethod.DiagnosticDescriptors.Rule0081UseIsEmptyMethod.Id);
+        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0081UseIsEmptyMethod.Id);
     }
 
     [Test]
@@ -38,6 +38,6 @@ public class Rule0081
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0081AnalyzeCountMethod>();
-        fixture.NoDiagnosticAtMarker(code, Rule0081AnalyzeCountMethod.DiagnosticDescriptors.Rule0081UseIsEmptyMethod.Id);
+        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0081UseIsEmptyMethod.Id);
     }
 }

@@ -1,4 +1,4 @@
-﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+﻿using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
@@ -24,7 +24,7 @@ public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
         var tableRelation = currentField
             .GetProperty(PropertyKind.TableRelation)
             ?.GetPropertyValueSyntax<TableRelationPropertyValueSyntax>();
-            
+
         if (tableRelation is null)
             return;
 
@@ -94,18 +94,5 @@ public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
             .Where(ext => ext.Target?.Name == tableName)
             .SelectMany(ext => ext.AddedFields)
             .FirstOrDefault(field => field.Name == fieldName);
-    }
-
-    public static class DiagnosticDescriptors
-    {
-        public static readonly DiagnosticDescriptor Rule0076TableRelationTooLong = new(
-            id: LinterCopAnalyzers.AnalyzerPrefix + "0076",
-            title: LinterCopAnalyzers.GetLocalizableString("Rule0076TableRelationTooLongTitle"),
-            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0076TableRelationTooLongFormat"),
-            category: "Design",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true,
-            description: LinterCopAnalyzers.GetLocalizableString("Rule0076TableRelationTooLongDescription"),
-            helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0076");
     }
 }

@@ -25,7 +25,7 @@ namespace BusinessCentral.LinterCop
         {
             get
             {
-                if (LinterCopAnalyzers.resourceMan == null)
+                if (LinterCopAnalyzers.resourceMan is null)
                     LinterCopAnalyzers.resourceMan = new ResourceManager("BusinessCentral.LinterCop.LinterCopAnalyzers", typeof(LinterCopAnalyzers).Assembly);
                 return LinterCopAnalyzers.resourceMan;
             }
@@ -39,8 +39,6 @@ namespace BusinessCentral.LinterCop
         }
 
         internal static string AnalyzerPrefix => LinterCopAnalyzers.ResourceManager.GetString(nameof(AnalyzerPrefix), LinterCopAnalyzers.resourceCulture);
-
-        internal static string Fix0021ConfirmImplementConfirmManagementMessage => LinterCopAnalyzers.ResourceManager.GetString("Fix0021ConfirmImplementConfirmManagementMessage", LinterCopAnalyzers.resourceCulture);
 
         internal static LocalizableString GetLocalizableString(string nameOfLocalizableResource)
         {
