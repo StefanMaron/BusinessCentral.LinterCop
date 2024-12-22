@@ -14,7 +14,7 @@ namespace BusinessCentral.LinterCop.Helpers
 
         static public void Create(string WorkingDir)
         {
-            if (instance == null || instance.WorkingDir != WorkingDir)
+            if (instance is null || instance.WorkingDir != WorkingDir)
             {
                 try
                 {
@@ -24,8 +24,8 @@ namespace BusinessCentral.LinterCop.Helpers
                     instance = new LinterSettings();
 
                     InternalLinterSettings internalInstance = JsonConvert.DeserializeObject<InternalLinterSettings>(json);
-                    instance.cyclomaticComplexityThreshold = internalInstance.cyclomaticComplexityThreshold ?? internalInstance.cyclomaticComplexetyThreshold ?? instance.cyclomaticComplexityThreshold;
-                    instance.maintainabilityIndexThreshold = internalInstance.maintainabilityIndexThreshold ?? internalInstance.maintainablityIndexThreshold ?? instance.maintainabilityIndexThreshold;
+                    instance.cyclomaticComplexityThreshold = internalInstance.cyclomaticComplexityThreshold ?? instance.cyclomaticComplexityThreshold;
+                    instance.maintainabilityIndexThreshold = internalInstance.maintainabilityIndexThreshold ?? instance.maintainabilityIndexThreshold;
                     instance.enableRule0011ForTableFields = internalInstance.enableRule0011ForTableFields;
                     instance.enableRule0016ForApiObjects = internalInstance.enableRule0016ForApiObjects;
                     instance.WorkingDir = WorkingDir;
@@ -37,14 +37,12 @@ namespace BusinessCentral.LinterCop.Helpers
             }
         }
     }
+
     internal class InternalLinterSettings
     {
         public int? cyclomaticComplexityThreshold;
         public int? maintainabilityIndexThreshold;
-        public int? cyclomaticComplexetyThreshold; // Misspelled, deprecated
-        public int? maintainablityIndexThreshold; // Misspelled, deprecated
         public bool enableRule0011ForTableFields = false;
         public bool enableRule0016ForApiObjects = false;
-
     }
 }

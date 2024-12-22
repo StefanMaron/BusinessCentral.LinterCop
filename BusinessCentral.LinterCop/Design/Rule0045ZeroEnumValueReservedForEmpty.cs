@@ -1,38 +1,44 @@
-#nullable disable // TODO: Enable nullable and review rule
-using BusinessCentral.LinterCop.AnalysisContextExtension;
+using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 
-namespace BusinessCentral.LinterCop.Design
+namespace BusinessCentral.LinterCop.Design;
+
+[DiagnosticAnalyzer]
+public class Rule0045ZeroEnumValueReservedForEmpty : DiagnosticAnalyzer
 {
-    [DiagnosticAnalyzer]
-    public class Rule0045ZeroEnumValueReservedForEmpty : DiagnosticAnalyzer
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0045ZeroEnumValueReservedForEmpty);
+
+    public override void Initialize(AnalysisContext context) =>
+        context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeReservedEnum), SyntaxKind.EnumValue);
+
+    private void AnalyzeReservedEnum(SyntaxNodeAnalysisContext ctx)
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0045ZeroEnumValueReservedForEmpty);
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Node is not EnumValueSyntax enumValue)
+            return;
 
-        public override void Initialize(AnalysisContext context) => context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeReservedEnum), SyntaxKind.EnumValue);
+        if (ctx.ContainingSymbol.Kind != SymbolKind.Enum ||
+            enumValue.Id.ValueText != "0")
+            return;
 
-        private void AnalyzeReservedEnum(SyntaxNodeAnalysisContext ctx)
-        {
-            if (ctx.IsObsoletePendingOrRemoved()) return;
+        if (ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol() is not IEnumTypeSymbol enumTypeSymbol ||
+            enumTypeSymbol.ImplementedInterfaces.Any())
+            return;
 
-            IEnumTypeSymbol enumTypeSymbol = ctx.ContainingSymbol.GetContainingObjectTypeSymbol() as IEnumTypeSymbol;
-            if (enumTypeSymbol != null && enumTypeSymbol.ImplementedInterfaces.Any()) return;
+        if (enumValue.GetNameStringValue()?.Trim() != "")
+            ctx.ReportDiagnostic(Diagnostic.Create(
+                DiagnosticDescriptors.Rule0045ZeroEnumValueReservedForEmpty,
+                enumValue.Name.GetLocation()));
 
-            LabelPropertyValueSyntax captionProperty = ctx.Node?.GetProperty("Caption")?.Value as LabelPropertyValueSyntax;
-            EnumValueSyntax enumValue = ctx.Node as EnumValueSyntax;
+        if (ctx.Node?.GetProperty("Caption")?.Value is not LabelPropertyValueSyntax captionProperty)
+            return;
 
-            if (enumValue == null) return;
-
-            if (enumValue.Id.ValueText != "0" || ctx.ContainingSymbol.Kind != SymbolKind.Enum) return;
-
-            if (enumValue.GetNameStringValue().Trim() != "")
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0045ZeroEnumValueReservedForEmpty, enumValue.Name.GetLocation()));
-
-            if (captionProperty != null && captionProperty.Value.LabelText.Value.Value.ToString().Trim() != "")
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0045ZeroEnumValueReservedForEmpty, captionProperty.GetLocation()));
-        }
+        if (captionProperty.Value.LabelText.Value.Value.ToString().Trim() != "")
+            ctx.ReportDiagnostic(Diagnostic.Create(
+                DiagnosticDescriptors.Rule0045ZeroEnumValueReservedForEmpty,
+                captionProperty.GetLocation()));
     }
 }

@@ -1,6 +1,5 @@
 #if !LessThenSpring2024
-using BusinessCentral.LinterCop.AnalysisContextExtension;
-using BusinessCentral.LinterCop.ArgumentExtension;
+using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
@@ -40,11 +39,9 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
 
     private void AnalyzeAssignmentStatement(OperationAnalysisContext ctx)
     {
-        if (ctx.IsObsoletePendingOrRemoved())
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Operation is not IInvocationExpression operation)
             return;
 
-        if (ctx.Operation is not IInvocationExpression operation)
-            return;
 
         if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod ||
             !SemanticFacts.IsSameName(operation.TargetMethod.Name, "Get"))
@@ -82,7 +79,10 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
 
             ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0075RecordGetProcedureArguments,
-                ctx.Operation.Syntax.GetLocation(), new object[] { table.Name.QuoteIdentifierIfNeeded(), expectedArgs }));
+                ctx.Operation.Syntax.GetLocation(),
+                table.Name.QuoteIdentifierIfNeeded(),
+                expectedArgs));
+
             return;
         }
 
@@ -97,7 +97,9 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
 
                 ctx.ReportDiagnostic(Diagnostic.Create(
                     DiagnosticDescriptors.Rule0075RecordGetProcedureArguments,
-                    ctx.Operation.Syntax.GetLocation(), new object[] { table.Name.QuoteIdentifierIfNeeded(), expectedArgs }));
+                    ctx.Operation.Syntax.GetLocation(),
+                    table.Name.QuoteIdentifierIfNeeded(),
+                    expectedArgs));
                 return;
             }
         }
@@ -108,7 +110,7 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
         var argumentType = argument.GetTypeSymbol();
         var fieldType = field.Type;
 
-        if (argumentType == null || fieldType is null)
+        if (argumentType is null || fieldType is null)
             return true;
 
         var argumentNavType = argumentType.GetNavTypeKindSafe();
@@ -137,18 +139,6 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
         return table.PrimaryKey.Fields.Length == 1 &&
             table.PrimaryKey.Fields[0].OriginalDefinition.GetTypeSymbol() is { } typeSymbol &&
             typeSymbol.GetNavTypeKindSafe() == NavTypeKind.Code;
-    }
-
-    public static class DiagnosticDescriptors
-    {
-        public static readonly DiagnosticDescriptor Rule0075RecordGetProcedureArguments = new(
-            id: LinterCopAnalyzers.AnalyzerPrefix + "0075",
-            title: LinterCopAnalyzers.GetLocalizableString("Rule0075RecordGetProcedureArgumentsTitle"),
-            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0075RecordGetProcedureArgumentsFormat"),
-            category: "Design",
-            defaultSeverity: DiagnosticSeverity.Warning, isEnabledByDefault: true,
-            description: LinterCopAnalyzers.GetLocalizableString("Rule0075RecordGetProcedureArgumentsDescription"),
-            helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0075");
     }
 }
 #endif

@@ -1,72 +1,73 @@
-﻿using BusinessCentral.LinterCop.AnalysisContextExtension;
+﻿using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
 using System.Collections.Immutable;
 
-namespace BusinessCentral.LinterCop.Design
+namespace BusinessCentral.LinterCop.Design;
+
+[DiagnosticAnalyzer]
+public class Rule0072CheckProcedureDocumentationComment : DiagnosticAnalyzer
 {
-    [DiagnosticAnalyzer]
-    public class Rule0072CheckProcedureDocumentationComment : DiagnosticAnalyzer
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment);
+
+    public override void Initialize(AnalysisContext context) =>
+        context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeDocumentationComments), SyntaxKind.MethodDeclaration);
+
+    private void AnalyzeDocumentationComments(SyntaxNodeAnalysisContext ctx)
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment);
+        if (ctx.IsObsoletePendingOrRemoved()) return;
 
-        public override void Initialize(AnalysisContext context) => context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeDocumentationComments), SyntaxKind.MethodDeclaration);
+        if (ctx.Node is not MethodDeclarationSyntax methodDeclarationSyntax)
+            return;
+        var docCommentTrivia = methodDeclarationSyntax.GetLeadingTrivia().FirstOrDefault(trivia => trivia.Kind == SyntaxKind.SingleLineDocumentationCommentTrivia);
+        if (docCommentTrivia.IsKind(SyntaxKind.None)) return; // no documentation comment exists
 
-        private void AnalyzeDocumentationComments(SyntaxNodeAnalysisContext ctx)
+        Dictionary<string, XmlElementSyntax> docCommentParameters = new Dictionary<string, XmlElementSyntax>(StringComparer.OrdinalIgnoreCase);
+        XmlElementSyntax? docCommentReturns = null;
+
+        var docCommentStructure = (DocumentationCommentTriviaSyntax)docCommentTrivia.GetStructure();
+        var docCommentElements = docCommentStructure.Content.Where(xmlNode => xmlNode.Kind == SyntaxKind.XmlElement);
+
+        // evaluate documentation comment syntax
+        foreach (XmlElementSyntax element in docCommentElements.Cast<XmlElementSyntax>())
         {
-            if (ctx.IsObsoletePendingOrRemoved()) return;
-
-            if (ctx.Node is not MethodDeclarationSyntax methodDeclarationSyntax)
-                return;
-            var docCommentTrivia = methodDeclarationSyntax.GetLeadingTrivia().FirstOrDefault(trivia => trivia.Kind == SyntaxKind.SingleLineDocumentationCommentTrivia);
-            if (docCommentTrivia.IsKind(SyntaxKind.None)) return; // no documentation comment exists
-
-            Dictionary<string, XmlElementSyntax> docCommentParameters = new Dictionary<string, XmlElementSyntax>(StringComparer.OrdinalIgnoreCase);
-            XmlElementSyntax? docCommentReturns = null;
-
-            var docCommentStructure = (DocumentationCommentTriviaSyntax)docCommentTrivia.GetStructure();
-            var docCommentElements = docCommentStructure.Content.Where(xmlNode => xmlNode.Kind == SyntaxKind.XmlElement);
-
-            // evaluate documentation comment syntax
-            foreach (XmlElementSyntax element in docCommentElements.Cast<XmlElementSyntax>())
+            switch (element.StartTag.Name.LocalName.Text.ToLowerInvariant())
             {
-                switch (element.StartTag.Name.LocalName.Text.ToLowerInvariant())
-                {
-                    case "param":
-                        var nameAttribute = (XmlNameAttributeSyntax)element.StartTag.Attributes.First(att => att.IsKind(SyntaxKind.XmlNameAttribute));
-                        var parameterName = nameAttribute.Identifier.Identifier.ValueText;
-                        if (!docCommentParameters.ContainsKey(parameterName))
-                            docCommentParameters.Add(parameterName, element);
-                        break;
-                    case "returns":
-                        docCommentReturns = element;
-                        break;
-                }
+                case "param":
+                    var nameAttribute = (XmlNameAttributeSyntax)element.StartTag.Attributes.First(att => att.IsKind(SyntaxKind.XmlNameAttribute));
+                    var parameterName = nameAttribute.Identifier.Identifier.ValueText;
+                    if (!docCommentParameters.ContainsKey(parameterName))
+                        docCommentParameters.Add(parameterName, element);
+                    break;
+                case "returns":
+                    docCommentReturns = element;
+                    break;
             }
+        }
 
-            // excess documentation comment return value
-            if (docCommentReturns is not null && methodDeclarationSyntax.ReturnValue is null)
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment, docCommentReturns.GetLocation()));
+        // excess documentation comment return value
+        if (docCommentReturns is not null && methodDeclarationSyntax.ReturnValue is null)
+            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment, docCommentReturns.GetLocation()));
 
-            // return value without documentation comment
-            if (docCommentReturns is null && methodDeclarationSyntax.ReturnValue is not null)
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment, methodDeclarationSyntax.ReturnValue.GetLocation()));
+        // return value without documentation comment
+        if (docCommentReturns is null && methodDeclarationSyntax.ReturnValue is not null)
+            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment, methodDeclarationSyntax.ReturnValue.GetLocation()));
 
-            // check documentation comment parameters against method syntax
-            foreach (var docCommentParameter in docCommentParameters)
-            {
-                if (!methodDeclarationSyntax.ParameterList.Parameters.Any(param => param.Name.Identifier.ValueText.UnquoteIdentifier().Equals(docCommentParameter.Key, StringComparison.OrdinalIgnoreCase)))
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment, docCommentParameter.Value.GetLocation()));
-            }
+        // check documentation comment parameters against method syntax
+        foreach (var docCommentParameter in docCommentParameters)
+        {
+            if (!methodDeclarationSyntax.ParameterList.Parameters.Any(param => param.Name.Identifier.ValueText.UnquoteIdentifier().Equals(docCommentParameter.Key, StringComparison.OrdinalIgnoreCase)))
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment, docCommentParameter.Value.GetLocation()));
+        }
 
-            // check method parameters against documentation comment syntax
-            foreach (var methodParameter in methodDeclarationSyntax.ParameterList.Parameters)
-            {
-                if (!docCommentParameters.Any(docParam => docParam.Key.Equals(methodParameter.Name.Identifier.ValueText.UnquoteIdentifier(), StringComparison.OrdinalIgnoreCase)))
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment, methodParameter.GetLocation()));
-            }
+        // check method parameters against documentation comment syntax
+        foreach (var methodParameter in methodDeclarationSyntax.ParameterList.Parameters)
+        {
+            if (!docCommentParameters.Any(docParam => docParam.Key.Equals(methodParameter.Name.Identifier.ValueText.UnquoteIdentifier(), StringComparison.OrdinalIgnoreCase)))
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment, methodParameter.GetLocation()));
         }
     }
 }

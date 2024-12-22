@@ -19,7 +19,7 @@ public class Rule0077
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0077MissingParenthesis>();
-        fixture.HasDiagnostic(code, Rule0077MissingParenthesis.DiagnosticDescriptors.Rule0077MissingParenthesis.Id);
+        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0077MissingParenthesis.Id);
     }
 
     [Test]
@@ -30,6 +30,6 @@ public class Rule0077
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0077MissingParenthesis>();
-        fixture.NoDiagnosticAtMarker(code, Rule0077MissingParenthesis.DiagnosticDescriptors.Rule0077MissingParenthesis.Id);
+        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0077MissingParenthesis.Id);
     }
 }

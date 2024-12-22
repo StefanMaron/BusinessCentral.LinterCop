@@ -1,5 +1,5 @@
 ﻿#nullable disable // TODO: Enable nullable and review rule
-using BusinessCentral.LinterCop.AnalysisContextExtension;
+using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
@@ -9,13 +9,15 @@ namespace BusinessCentral.LinterCop.Design
     [DiagnosticAnalyzer]
     public class Rule0012DoNotUseObjectIdInSystemFunctions : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+            ImmutableArray.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions);
 
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForObjectIdsInFunctionInvocations), OperationKind.InvocationExpression);
             context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForObjectIdsEventSubscribers), SymbolKind.Method);
         }
+
         private void CheckForObjectIdsEventSubscribers(SymbolAnalysisContext context)
         {
             IMethodSymbol method = (IMethodSymbol)context.Symbol;
@@ -23,7 +25,7 @@ namespace BusinessCentral.LinterCop.Design
                 return;
 
             var ObjectAccessToUse = method.Attributes[0].DeclaringSyntaxReference.GetSyntax().DescendantNodes(o => true).FirstOrDefault(n => n.IsKind(SyntaxKind.OptionAccessExpression));
-            if (ObjectAccessToUse == null)
+            if (ObjectAccessToUse is null)
                 return;
 
             var ObjectAccessToUseText = ObjectAccessToUse.DescendantNodes().ToArray()[1].ToString();
@@ -32,20 +34,21 @@ namespace BusinessCentral.LinterCop.Design
 
             var wrongSyntaxLiteral = method.Attributes[0].DeclaringSyntaxReference.GetSyntax().DescendantNodes(o => true).FirstOrDefault(n => n.IsKind(SyntaxKind.Int32SignedLiteralValue));
 
-            if (wrongSyntaxLiteral != null)
+            if (wrongSyntaxLiteral is not null)
                 context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, wrongSyntaxLiteral.GetLocation(), new object[] { ObjectAccessToUseText, "" }));
         }
 
-        private void CheckForObjectIdsInFunctionInvocations(OperationAnalysisContext context)
+        private void CheckForObjectIdsInFunctionInvocations(OperationAnalysisContext ctx)
         {
-            if (context.IsObsoletePendingOrRemoved()) return;
+            if (ctx.IsObsoletePendingOrRemoved() || ctx.Operation is not IInvocationExpression operation)
+                return;
 
-            IInvocationExpression operation = (IInvocationExpression)context.Operation;
-            if (operation.TargetMethod.Parameters.Length == 0) return;
-            if (operation.Arguments.Length == 0) return;
+            if (operation.TargetMethod.Parameters.Length == 0 ||
+                operation.Arguments.Length == 0)
+                return;
 
             RelevantFuntion CurrentFunction = FunctionCallsWithIDParamaters.RelevantFunctions.FirstOrDefault(o => (o.ObjectType.ToString().ToUpper() == operation.TargetMethod.ContainingSymbol.Name.ToUpper() && o.FunctionName == operation.TargetMethod.Name));
-            if (CurrentFunction == null) return;
+            if (CurrentFunction is null) return;
 
             SyntaxKind[] AllowedParameterKinds = { SyntaxKind.MemberAccessExpression, SyntaxKind.IdentifierName, SyntaxKind.InvocationExpression, SyntaxKind.QualifiedName };
             if (!AllowedParameterKinds.Contains(operation.Arguments[0].Syntax.Kind) && (operation.Arguments[0].Syntax.ToString() != "0" || !CurrentFunction.ZeroIDAllowed))
@@ -53,10 +56,10 @@ namespace BusinessCentral.LinterCop.Design
                 if (operation.TargetMethod.Parameters[0].ParameterType.NavTypeKind == NavTypeKind.Integer)
                 {
                     if (int.TryParse(operation.Arguments[0].Syntax.ToString(), out int tempint))
-                        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, context.Operation.Syntax.GetLocation(), new object[] { CurrentFunction.CorrectAccessSymbol, "" }));
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, ctx.Operation.Syntax.GetLocation(), new object[] { CurrentFunction.CorrectAccessSymbol, "" }));
                     else
                         if (!operation.Arguments[0].Syntax.ToString().ToUpper().StartsWith(CurrentFunction.CorrectAccessSymbol.ToUpper()))
-                        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, context.Operation.Syntax.GetLocation(), new object[] { CurrentFunction.CorrectAccessSymbol, "" }));
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, ctx.Operation.Syntax.GetLocation(), new object[] { CurrentFunction.CorrectAccessSymbol, "" }));
                 }
             }
         }

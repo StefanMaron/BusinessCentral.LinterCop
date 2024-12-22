@@ -19,7 +19,7 @@ public class Rule0078
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0078TemporaryRecordsShouldNotTriggerTableTriggers>();
-        fixture.HasDiagnostic(code, Rule0078TemporaryRecordsShouldNotTriggerTableTriggers.DiagnosticDescriptors.Rule0078TemporaryRecordsShouldNotTriggerTableTriggers.Id);
+        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0078TemporaryRecordsShouldNotTriggerTableTriggers.Id);
     }
 
     [Test]
@@ -33,6 +33,6 @@ public class Rule0078
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0078TemporaryRecordsShouldNotTriggerTableTriggers>();
-        fixture.NoDiagnosticAtMarker(code, Rule0078TemporaryRecordsShouldNotTriggerTableTriggers.DiagnosticDescriptors.Rule0078TemporaryRecordsShouldNotTriggerTableTriggers.Id);
+        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0078TemporaryRecordsShouldNotTriggerTableTriggers.Id);
     }
 }

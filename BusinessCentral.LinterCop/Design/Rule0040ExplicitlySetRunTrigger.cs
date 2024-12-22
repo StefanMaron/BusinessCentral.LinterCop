@@ -1,39 +1,46 @@
-#nullable disable // TODO: Enable nullable and review rule
 using System.Collections.Immutable;
-using BusinessCentral.LinterCop.AnalysisContextExtension;
+using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 
-namespace BusinessCentral.LinterCop.Design
-{
-    [DiagnosticAnalyzer]
-    public class Rule0040ExplicitlySetRunTrigger : DiagnosticAnalyzer
-    {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0040ExplicitlySetRunTrigger);
+namespace BusinessCentral.LinterCop.Design;
 
-        private static readonly List<string> buildInMethodNames = new List<string>
+[DiagnosticAnalyzer]
+public class Rule0040ExplicitlySetRunTrigger : DiagnosticAnalyzer
+{
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0040ExplicitlySetRunTrigger);
+
+    private static readonly HashSet<string> buildInMethodNames = new()
         {
-            "insert",
-            "modify",
-            "modifyall",
-            "delete",
-            "deleteall"
+            "Insert",
+            "Modify",
+            "ModifyAll",
+            "Delete",
+            "DeleteAll"
         };
 
-        public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeRunTriggerParameters), OperationKind.InvocationExpression);
+    public override void Initialize(AnalysisContext context) =>
+        context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeRunTriggerParameters), OperationKind.InvocationExpression);
 
-        private void AnalyzeRunTriggerParameters(OperationAnalysisContext ctx)
-        {
-            if (ctx.IsObsoletePendingOrRemoved()) return;
+    private void AnalyzeRunTriggerParameters(OperationAnalysisContext ctx)
+    {
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Operation is not IInvocationExpression operation)
+            return;
 
-            IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
-            if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
-            if (!buildInMethodNames.Contains(operation.TargetMethod.Name.ToLowerInvariant())) return;
-            if (!(operation.Instance?.GetSymbol().GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Record || operation.Instance?.GetSymbol().GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.RecordRef)) return;
+        if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod ||
+            !buildInMethodNames.Contains(operation.TargetMethod.Name))
+            return;
 
-            if (operation.Arguments.Where(args => SemanticFacts.IsSameName(args.Parameter.Name, "RunTrigger")).SingleOrDefault() == null)
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0040ExplicitlySetRunTrigger, ctx.Operation.Syntax.GetLocation()));
-        }
+        var operationTypeSymbolNavType = operation.Instance?.GetSymbol()?.GetTypeSymbol().GetNavTypeKindSafe();
+        if (operationTypeSymbolNavType is null ||
+            !(operationTypeSymbolNavType == NavTypeKind.Record || operationTypeSymbolNavType == NavTypeKind.RecordRef))
+            return;
+
+        if (operation.Arguments.Where(args => args.Parameter.Name.Equals("RunTrigger")).SingleOrDefault() is null)
+            ctx.ReportDiagnostic(Diagnostic.Create(
+                DiagnosticDescriptors.Rule0040ExplicitlySetRunTrigger,
+                ctx.Operation.Syntax.GetLocation()));
     }
 }

@@ -19,7 +19,7 @@ public class Rule0080
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0080AnalyzeJsonTokenJPath>();
-        fixture.HasDiagnostic(code, Rule0080AnalyzeJsonTokenJPath.DiagnosticDescriptors.Rule0080AnalyzeJsonTokenJPath.Id);
+        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0080AnalyzeJsonTokenJPath.Id);
     }
 
     [Test]
@@ -30,6 +30,6 @@ public class Rule0080
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0080AnalyzeJsonTokenJPath>();
-        fixture.NoDiagnosticAtMarker(code, Rule0080AnalyzeJsonTokenJPath.DiagnosticDescriptors.Rule0080AnalyzeJsonTokenJPath.Id);
+        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0080AnalyzeJsonTokenJPath.Id);
     }
 }

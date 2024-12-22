@@ -19,7 +19,7 @@ public class Rule0065
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0065CheckEventSubscriberVarKeyword>();
-        fixture.HasDiagnostic(code, Rule0065CheckEventSubscriberVarKeyword.DiagnosticDescriptors.Rule0065EventSubscriberVarCheck.Id);
+        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0065EventSubscriberVarCheck.Id);
     }
 
     [Test]
@@ -30,6 +30,6 @@ public class Rule0065
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0065CheckEventSubscriberVarKeyword>();
-        fixture.NoDiagnosticAtMarker(code, Rule0065CheckEventSubscriberVarKeyword.DiagnosticDescriptors.Rule0065EventSubscriberVarCheck.Id);
+        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0065EventSubscriberVarCheck.Id);
     }
 }

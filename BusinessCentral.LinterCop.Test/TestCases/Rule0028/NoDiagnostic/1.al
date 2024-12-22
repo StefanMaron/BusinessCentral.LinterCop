@@ -16,8 +16,8 @@ table 50100 MyTable
 
 codeunit 50100 MyCodeunit
 {
-    [EventSubscriber(ObjectType::Table, Database::MyTable, OnAfterDeleteEvent, '', false, false)]
-    [|local procedure OnAfterDeleteEvent(var Rec: Record MyTable; RunTrigger: Boolean)|]
+    [|[EventSubscriber(ObjectType::Table, Database::MyTable, OnAfterDeleteEvent, '', false, false)]|]
+    local procedure OnAfterDeleteEvent(var Rec: Record MyTable; RunTrigger: Boolean)
     begin
 
     end;

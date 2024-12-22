@@ -2,22 +2,29 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
-using BusinessCentral.LinterCop.AnalysisContextExtension;
+using BusinessCentral.LinterCop.Helpers;
 
 namespace BusinessCentral.LinterCop.Design;
 
 [DiagnosticAnalyzer]
 public class Rule0077MissingParenthesis : DiagnosticAnalyzer
 {
-    private static readonly ImmutableHashSet<string> MethodsRequiringParenthesis = ImmutableHashSet.Create(
+    private static readonly HashSet<string> MethodsRequiringParenthesis = [
+        "CurrentDateTime",
+        "CompanyName",
         "Count",
+        "GetLastErrorCallStack",
+        "GetLastErrorCode",
+        "GuiAllowed",
+        "HasCollectedErrors",
         "IsEmpty",
         "Today",
-        "WorkDate",
-        "GuiAllowed"
-    );
+        "UserId",
+        "WorkDate"
+    ];
 
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0077MissingParenthesis);
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0077MissingParenthesis);
 
     public override void Initialize(AnalysisContext context) =>
         context.RegisterOperationAction(AnalyzeParenthesis, OperationKind.InvocationExpression);
@@ -40,17 +47,5 @@ public class Rule0077MissingParenthesis : DiagnosticAnalyzer
                 location,
                 method.Name));
         }
-    }
-
-    public static class DiagnosticDescriptors
-    {
-        public static readonly DiagnosticDescriptor Rule0077MissingParenthesis = new(
-            id: LinterCopAnalyzers.AnalyzerPrefix + "0077",
-            title: LinterCopAnalyzers.GetLocalizableString("Rule0077MissingParenthesisTitle"),
-            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0077MissingParenthesisFormat"),
-            category: "Design",
-            defaultSeverity: DiagnosticSeverity.Info, isEnabledByDefault: true,
-            description: LinterCopAnalyzers.GetLocalizableString("Rule0077MissingParenthesisDescription"),
-            helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0077");
     }
 }
