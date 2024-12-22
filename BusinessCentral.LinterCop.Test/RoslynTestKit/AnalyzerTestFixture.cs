@@ -16,7 +16,7 @@ public abstract class AnalyzerTestFixture : BaseTestFixture
         var document = CreateDocumentFromCode(code);
         var diagnostics = GetDiagnostics(document);
         var diagnostic = diagnostics.FirstOrDefault(d => d.Id == "AD0001");
-        if (diagnostic is not null)
+        if (diagnostic != null)
         {
             throw RoslynTestKitException.ExceptionInAnalyzer(diagnostic);
         }
@@ -56,7 +56,7 @@ public abstract class AnalyzerTestFixture : BaseTestFixture
     public void NoDiagnostic(Document document, string[] diagnosticIds, IDiagnosticLocator locator = null)
     {
         var diagnostics = GetDiagnostics(document);
-        if (locator is not null)
+        if (locator != null)
         {
             diagnostics = diagnostics.Where(x => locator.Match(x.Location)).ToImmutableArray();
         }
@@ -110,7 +110,7 @@ public abstract class AnalyzerTestFixture : BaseTestFixture
         var analyzers = ImmutableArray.Create(CreateAnalyzer());
         var compilation = document.Project.GetCompilationAsync(CancellationToken.None).Result;
         var compilationWithAnalyzers = new CompilationWithAnalyzers(compilation, analyzers,
-            AdditionalFiles is not null ? new AnalyzerOptions(AdditionalFiles.ToImmutableArray()) : null,
+            AdditionalFiles != null ? new AnalyzerOptions(AdditionalFiles.ToImmutableArray()) : null,
             cancellationToken: CancellationToken.None);
         var discarded = compilation.GetDiagnostics(CancellationToken.None);
         var errorsInDocument = discarded.Where(x => x.Severity == DiagnosticSeverity.Error).ToArray();

@@ -130,7 +130,7 @@ public abstract class CodeFixTestFixture : BaseTestFixture
     {
         var reportedDiagnostics = GetReportedDiagnostics(document, locator).ToArray();
         var diagnostic = reportedDiagnostics.FirstOrDefault(x => x.Id == diagnosticId);
-        if (diagnostic is null)
+        if (diagnostic == null)
         {
             throw RoslynTestKitException.DiagnosticNotFound(diagnosticId, locator, reportedDiagnostics);
         }
@@ -143,7 +143,7 @@ public abstract class CodeFixTestFixture : BaseTestFixture
     {
         var codeFixes = GetCodeFixes(document, diagnostic);
         var codeAction = codeActionSelector.Find(codeFixes);
-        if (codeAction is null)
+        if (codeAction == null)
         {
             throw RoslynTestKitException.CodeFixNotFound(codeActionSelector, codeFixes, locator);
         }
@@ -171,7 +171,7 @@ public abstract class CodeFixTestFixture : BaseTestFixture
     private IEnumerable<Diagnostic> GetAllReportedDiagnostics(Document document)
     {
         var additionalAnalyzers = CreateAdditionalAnalyzers();
-        if (additionalAnalyzers is not null)
+        if (additionalAnalyzers != null)
         {
             var documentTree = document.GetSyntaxTreeAsync().GetAwaiter().GetResult();
 
@@ -201,7 +201,7 @@ public abstract class CodeFixTestFixture : BaseTestFixture
     {
         var reportedDiagnostics = GetReportedDiagnostics(document, locator).ToList();
         var diagnostic = reportedDiagnostics.FirstOrDefault(x => x.Id == descriptor.Id);
-        if (diagnostic is not null)
+        if (diagnostic != null)
         {
             return diagnostic;
         }

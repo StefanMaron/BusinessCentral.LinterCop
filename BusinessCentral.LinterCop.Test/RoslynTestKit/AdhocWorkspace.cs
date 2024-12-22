@@ -37,7 +37,7 @@ public sealed class AdhocWorkspace(HostServices host, string workspaceKind = "Cu
     /// </summary>
     public Solution AddSolution(SolutionInfo solutionInfo)
     {
-        if (solutionInfo is null)
+        if (solutionInfo == null)
         {
             throw new ArgumentNullException(nameof(solutionInfo));
         }
@@ -63,7 +63,7 @@ public sealed class AdhocWorkspace(HostServices host, string workspaceKind = "Cu
     /// </summary>
     public Project AddProject(ProjectInfo projectInfo)
     {
-        if (projectInfo is null)
+        if (projectInfo == null)
         {
             throw new ArgumentNullException(nameof(projectInfo));
         }
@@ -81,7 +81,7 @@ public sealed class AdhocWorkspace(HostServices host, string workspaceKind = "Cu
     /// <param name="projectInfos"></param>
     public void AddProjects(IEnumerable<ProjectInfo> projectInfos)
     {
-        if (projectInfos is null)
+        if (projectInfos == null)
         {
             throw new ArgumentNullException(nameof(projectInfos));
         }
@@ -99,17 +99,17 @@ public sealed class AdhocWorkspace(HostServices host, string workspaceKind = "Cu
     /// </summary>
     public Document AddDocument(ProjectId projectId, string name, SourceText text)
     {
-        if (projectId is null)
+        if (projectId == null)
         {
             throw new ArgumentNullException(nameof(projectId));
         }
 
-        if (name is null)
+        if (name == null)
         {
             throw new ArgumentNullException(nameof(name));
         }
 
-        if (text is null)
+        if (text == null)
         {
             throw new ArgumentNullException(nameof(text));
         }
@@ -125,7 +125,7 @@ public sealed class AdhocWorkspace(HostServices host, string workspaceKind = "Cu
     /// </summary>
     public Document AddDocument(DocumentInfo documentInfo)
     {
-        if (documentInfo is null)
+        if (documentInfo == null)
         {
             throw new ArgumentNullException(nameof(documentInfo));
         }
@@ -141,7 +141,7 @@ public sealed class AdhocWorkspace(HostServices host, string workspaceKind = "Cu
     public override void OpenDocument(DocumentId documentId, bool activate = true)
     {
         var doc = CurrentSolution.GetDocument(documentId);
-        if (doc is not null)
+        if (doc != null)
         {
             var text = doc.GetTextAsync(CancellationToken.None).Result;
             OnDocumentOpened(documentId, text.Container, activate);
@@ -154,7 +154,7 @@ public sealed class AdhocWorkspace(HostServices host, string workspaceKind = "Cu
     public override void CloseDocument(DocumentId documentId)
     {
         var doc = CurrentSolution.GetDocument(documentId);
-        if (doc is not null)
+        if (doc != null)
         {
             var text = doc.GetTextAsync(CancellationToken.None).Result;
             var version = doc.GetTextVersionAsync(CancellationToken.None).Result;
@@ -169,7 +169,7 @@ public sealed class AdhocWorkspace(HostServices host, string workspaceKind = "Cu
     public override void OpenAdditionalDocument(DocumentId documentId, bool activate = true)
     {
         var doc = CurrentSolution.GetAdditionalDocument(documentId);
-        if (doc is not null)
+        if (doc != null)
         {
             var text = doc.GetTextAsync(CancellationToken.None).Result;
             OnAdditionalDocumentOpened(documentId, text.Container, activate);
@@ -182,7 +182,7 @@ public sealed class AdhocWorkspace(HostServices host, string workspaceKind = "Cu
     public override void CloseAdditionalDocument(DocumentId documentId)
     {
         var doc = CurrentSolution.GetAdditionalDocument(documentId);
-        if (doc is not null)
+        if (doc != null)
         {
             var text = doc.GetTextAsync(CancellationToken.None).Result;
             var version = doc.GetTextVersionAsync(CancellationToken.None).Result;
@@ -197,7 +197,7 @@ public sealed class AdhocWorkspace(HostServices host, string workspaceKind = "Cu
     //public override void OpenAnalyzerConfigDocument(DocumentId documentId, bool activate = true)
     //{
     //    var doc = this.CurrentSolution.GetAnalyzerConfigDocument(documentId);
-    //    if (doc is not null)
+    //    if (doc != null)
     //    {
     //        var text = doc.GetTextSynchronously(CancellationToken.None);
     //        this.OnAnalyzerConfigDocumentOpened(documentId, text.Container, activate);
@@ -210,7 +210,7 @@ public sealed class AdhocWorkspace(HostServices host, string workspaceKind = "Cu
     //public override void CloseAnalyzerConfigDocument(DocumentId documentId)
     //{
     //    var doc = this.CurrentSolution.GetAnalyzerConfigDocument(documentId);
-    //    if (doc is not null)
+    //    if (doc != null)
     //    {
     //        var text = doc.GetTextSynchronously(CancellationToken.None);
     //        var version = doc.GetTextVersionSynchronously(CancellationToken.None);

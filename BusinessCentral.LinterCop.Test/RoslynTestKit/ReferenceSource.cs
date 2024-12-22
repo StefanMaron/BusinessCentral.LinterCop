@@ -15,7 +15,7 @@ public static class ReferenceSource
     static ReferenceSource()
     {
         var trustedPlatformAssemblies = AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
-        if (trustedPlatformAssemblies is not null)
+        if (trustedPlatformAssemblies != null)
         {
             NetCoreAssemblies = ((String)trustedPlatformAssemblies)?.Split(Path.PathSeparator);
             NetStandardCore =
@@ -32,7 +32,7 @@ public static class ReferenceSource
 
     internal static IEnumerable<MetadataReference?> GetNetStandardCoreLibs()
     {
-        if (NetStandardCore is null) yield break;
+        if (NetStandardCore == null) yield break;
         yield return NetStandardCore;
 
         var mscorlibFile = NetCoreAssemblies.FirstOrDefault(x => x.EndsWith("mscorlib.dll"));

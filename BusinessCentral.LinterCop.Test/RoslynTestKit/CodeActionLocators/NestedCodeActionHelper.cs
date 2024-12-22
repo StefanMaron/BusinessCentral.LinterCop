@@ -12,7 +12,7 @@ internal static class NestedCodeActionHelper
         {
             var nestedCodeActionObj = groupType.GetProperty("NestedCodeActions",
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)?.GetValue(group);
-            if (nestedCodeActionObj is not null)
+            if (nestedCodeActionObj != null)
             {
                 return (ImmutableArray<CodeAction>)nestedCodeActionObj;
             }

@@ -26,7 +26,7 @@ public static class Verify
 
         var newDocument = workspace.CurrentSolution.GetDocument(document.Id);
 
-        if (newDocument is null)
+        if (newDocument == null)
         {
             throw new InvalidOperationException("Resulting solution does not have the original document");
         }
