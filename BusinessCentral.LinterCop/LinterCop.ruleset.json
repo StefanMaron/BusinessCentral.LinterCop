@@ -416,6 +416,11 @@
       "id": "LC0083",
       "action": "Info",
       "justification": "Use new Date/Time/DateTime methods for extracting parts."
+    },
+    {
+      "id": "LC0084",
+      "action": "Info",
+      "justification": "Use return value for better error handling."
     }
   ]
 }
