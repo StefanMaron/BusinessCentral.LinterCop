@@ -13,6 +13,7 @@ public class Rule0076
 
     [Test]
     [TestCase("TableRelationLonger")]
+    [TestCase("TableRelationImplicitFieldPrimaryKey")]
 #if !LessThenSpring2024
     [TestCase("TableExtRelationLonger")]
 #endif

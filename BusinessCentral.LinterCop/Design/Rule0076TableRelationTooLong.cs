@@ -2,88 +2,115 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design;
 [DiagnosticAnalyzer]
 public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
 {
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0076TableRelationTooLong);
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0076TableRelationTooLong);
 
     public override void Initialize(AnalysisContext context) =>
         context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Field);
 
-    private void AnalyzeSymbol(SymbolAnalysisContext context)
+    private void AnalyzeSymbol(SymbolAnalysisContext ctx)
     {
-        if (context.IsObsoletePendingOrRemoved())
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not IFieldSymbol field)
             return;
 
-        if (context.Symbol is not IFieldSymbol currentField)
+        if (!field.HasLength)
             return;
 
-        var tableRelation = currentField
+        var tableRelation = field
             .GetProperty(PropertyKind.TableRelation)
             ?.GetPropertyValueSyntax<TableRelationPropertyValueSyntax>();
-
         if (tableRelation is null)
             return;
 
-        AnalyzeTableRelations(context, currentField, tableRelation);
+        AnalyzeTableRelations(ctx, field, tableRelation);
     }
 
-    private void AnalyzeTableRelations(SymbolAnalysisContext context, IFieldSymbol currentField, TableRelationPropertyValueSyntax? tableRelation)
+    private void AnalyzeTableRelations(SymbolAnalysisContext ctx, IFieldSymbol field, TableRelationPropertyValueSyntax? tableRelation)
     {
         while (tableRelation is not null)
         {
-            if (tableRelation.RelatedTableField is QualifiedNameSyntax relatedField)
-            {
-                var relatedFieldSymbol = GetRelatedFieldSymbol(
-                    relatedField.Left as IdentifierNameSyntax,
-                    relatedField.Right as IdentifierNameSyntax,
-                    context.Compilation);
+            var relatedFieldSymbol = ResolveRelatedField(ctx, tableRelation);
 
-                if (relatedFieldSymbol is not null && ShouldReportDiagnostic(currentField, relatedFieldSymbol))
-                {
-                    ReportLengthMismatch(context, currentField, relatedFieldSymbol, relatedField);
-                }
+            if (relatedFieldSymbol is not null && ShouldReportDiagnostic(field, relatedFieldSymbol))
+            {
+                ReportLengthMismatch(ctx, field, relatedFieldSymbol);
             }
 
             tableRelation = tableRelation.ElseExpression?.ElseTableRelationCondition;
         }
     }
 
-    private static bool ShouldReportDiagnostic(IFieldSymbol currentField, IFieldSymbol? relatedField) =>
-        relatedField?.HasLength == true &&
-        currentField.HasLength &&
-        currentField.Length < relatedField.Length;
+    private static bool ShouldReportDiagnostic(IFieldSymbol currentField, IFieldSymbol relatedField) =>
+        relatedField.HasLength && currentField.Length < relatedField.Length;
 
-    private static void ReportLengthMismatch(SymbolAnalysisContext context, IFieldSymbol currentField,
-        IFieldSymbol relatedField, QualifiedNameSyntax relatedFieldSyntax)
+    private static void ReportLengthMismatch(SymbolAnalysisContext ctx, IFieldSymbol currentField, IFieldSymbol relatedField)
     {
-        context.ReportDiagnostic(Diagnostic.Create(
+        ctx.ReportDiagnostic(Diagnostic.Create(
             DiagnosticDescriptors.Rule0076TableRelationTooLong,
             currentField.GetLocation(),
             relatedField.Length,
-            relatedFieldSyntax.ToString(),
+            relatedField.ToDisplayString().QuoteIdentifierIfNeeded(),
             currentField.Length,
-            currentField.Name));
+            currentField.ToDisplayString().QuoteIdentifierIfNeeded()));
     }
 
-    private IFieldSymbol? GetRelatedFieldSymbol(IdentifierNameSyntax? table, IdentifierNameSyntax? field, Compilation compilation)
+    private IFieldSymbol? ResolveRelatedField(SymbolAnalysisContext ctx, TableRelationPropertyValueSyntax tableRelation)
     {
-        if (table?.GetIdentifierOrLiteralValue() is not string tableName ||
-            field?.GetIdentifierOrLiteralValue() is not string fieldName)
+        return tableRelation.RelatedTableField switch
+        {
+            QualifiedNameSyntax qualifiedName =>
+                ResolveQualifiedField(qualifiedName, ctx.Compilation),
+
+            IdentifierNameSyntax identifierName =>
+                ResolvePrimaryKeyField(identifierName.Identifier.ValueText, ctx.Compilation),
+
+            _ => null
+        };
+    }
+
+    private IFieldSymbol? ResolveQualifiedField(QualifiedNameSyntax qualifiedName, Compilation compilation)
+    {
+        if (qualifiedName.Left is IdentifierNameSyntax tableNameSyntax &&
+            qualifiedName.Right is IdentifierNameSyntax fieldNameSyntax)
+        {
+            var tableName = tableNameSyntax.GetIdentifierOrLiteralValue();
+            var fieldName = fieldNameSyntax.GetIdentifierOrLiteralValue();
+
+            if (tableName != null && fieldName != null)
+            {
+                return GetFieldFromTable(tableName, fieldName, compilation)
+                    ?? GetFieldFromTableExtension(tableName, fieldName, compilation);
+            }
+        }
+
+        return null;
+    }
+
+    private static IFieldSymbol? ResolvePrimaryKeyField(string? tableName, Compilation compilation)
+    {
+        if (string.IsNullOrEmpty(tableName))
             return null;
 
-        return GetFieldFromTable(tableName, fieldName, compilation) ??
-               GetFieldFromTableExtension(tableName, fieldName, compilation);
+        var tableSymbols = compilation.GetApplicationObjectTypeSymbolsByNameAcrossModules(SymbolKind.Table, tableName);
+
+        return tableSymbols.FirstOrDefault() is ITableTypeSymbol table && table.PrimaryKey.Fields.Length == 1
+            ? table.PrimaryKey.Fields[0]
+            : null;
     }
 
     private static IFieldSymbol? GetFieldFromTable(string tableName, string fieldName, Compilation compilation)
     {
-        var tables = compilation.GetApplicationObjectTypeSymbolsByNameAcrossModules(SymbolKind.Table, tableName);
-        return tables.FirstOrDefault() is ITableTypeSymbol tableSymbol
-            ? tableSymbol.Fields.FirstOrDefault(x => x.Name == fieldName)
+        var tableSymbols = compilation.GetApplicationObjectTypeSymbolsByNameAcrossModules(SymbolKind.Table, tableName);
+
+        return tableSymbols.FirstOrDefault() is ITableTypeSymbol table
+            ? table.Fields.FirstOrDefault(f => f.Name == fieldName)
             : null;
     }
 
