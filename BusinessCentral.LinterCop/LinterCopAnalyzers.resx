@@ -867,4 +867,13 @@
   <data name="Rule0083BuiltInDateTimeMethodDescription" xml:space="preserve">
     <value>Replace outdated functions for extracting specific parts of Date, Time, and DateTime types (such as day, month, hour, or second) with the new, modernized methods.</value>
   </data>
+  <data name="Rule0084UseReturnValueForErrorHandlingTitle" xml:space="preserve">
+    <value>Use return value for better error handling.</value>
+  </data>
+  <data name="Rule0084UseReturnValueForErrorHandlingFormat" xml:space="preserve">
+    <value>The return value of the '{0}' method must be used to improve error handling or provide meaningful feedback to the user.</value>
+  </data>
+  <data name="Rule0084UseReturnValueForErrorHandlingDescription" xml:space="preserve">
+    <value>Database read methods, like Record.Get(), returns a boolean indicating whether the record was successfully retrieved. Failing to use this return value can lead to uncaught errors, poor error handling, and a lack of actionable feedback for users when something goes wrong.</value>
+  </data>
 </root>

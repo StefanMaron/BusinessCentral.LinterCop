@@ -854,4 +854,15 @@ public static class DiagnosticDescriptors
         isEnabledByDefault: true,
         description: LinterCopAnalyzers.GetLocalizableString("Rule0083BuiltInDateTimeMethodDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0083");
+
+    public static readonly DiagnosticDescriptor Rule0084UseReturnValueForErrorHandling = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "0084",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0084UseReturnValueForErrorHandlingTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0084UseReturnValueForErrorHandlingFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: true,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0084UseReturnValueForErrorHandlingDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0084");
+
 }
