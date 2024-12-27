@@ -430,7 +430,7 @@
     {
       "id": "LC0086",
       "action": "Info",
-      "justification": "Use the new PageStyle datatype instead of page style string literals."
+      "justification": "Use the new PageStyle datatype instead string literals."
     }
   ]
 }
