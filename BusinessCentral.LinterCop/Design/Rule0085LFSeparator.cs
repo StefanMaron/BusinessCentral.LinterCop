@@ -32,39 +32,54 @@ public class Rule0085LFSeparator : DiagnosticAnalyzer
 
     private static bool IsLFSeparatorAssignment(IAssignmentStatement operation)
     {
-        // Right side needs to be := 10;
-        if (operation.Value.Syntax is not LiteralExpressionSyntax sourceLiteral)
+        // Ensure the right side of the assignment is the literal value "10"
+        if (!IsValidLFSeparatorValue(operation.Value))
             return false;
 
-        if (sourceLiteral.Literal is not Int32SignedLiteralValueSyntax sourceInt)
-            return false;
+        // Validate the left-hand side for specific cases
+        return IsValidLFSeparatorTarget(operation.Target);
+    }
 
-        if (sourceInt.GetIdentifierOrLiteralValue() != "10")
-            return false;
+    private static bool IsValidLFSeparatorValue(IOperation valueOperation)
+    {
+        return valueOperation.Syntax is LiteralExpressionSyntax sourceLiteral &&
+               sourceLiteral.Literal is Int32SignedLiteralValueSyntax sourceInt &&
+               sourceInt.GetIdentifierOrLiteralValue() == "10";
+    }
 
-        // Left side needs to be Code[1], Text[1] or a Char
-        switch (operation.Target.Kind)
+    private static bool IsValidLFSeparatorTarget(IOperation targetOperation)
+    {
+        return targetOperation.Kind switch
         {
-            case OperationKind.FieldAccess:
-                if (operation.Target.Syntax is not ElementAccessExpressionSyntax elementAccess ||
-                    elementAccess.ArgumentList.Arguments.Count != 1 ||
-                    elementAccess.ArgumentList.Arguments[0] is not LiteralExpressionSyntax targetLiteral)
-                    return false;
+            // Case: Code[1], Code[2], Text[1], Text[2]
+            OperationKind.FieldAccess => IsValidTextOrCodeArrayAccess(targetOperation),
 
-                if (targetLiteral.Literal is not Int32SignedLiteralValueSyntax targetInt)
-                    return false;
+            // Case: Char variable
+            OperationKind.LocalReferenceExpression or OperationKind.GlobalReferenceExpression =>
+                IsValidCharVariable(targetOperation),
 
-                return targetInt.GetIdentifierOrLiteralValue() == "1";
+            _ => false
+        };
+    }
 
-            case OperationKind.LocalReferenceExpression:
-            case OperationKind.GlobalReferenceExpression:
-                if (operation.Target.Syntax.Kind != SyntaxKind.IdentifierName ||
-                    operation.Target.GetSymbol() is not IVariableSymbol identifierNameSymbol)
-                    return false;
-
-                return identifierNameSymbol.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Char;
+    private static bool IsValidTextOrCodeArrayAccess(IOperation targetOperation)
+    {
+        if (targetOperation.Syntax is not ElementAccessExpressionSyntax elementAccess ||
+            elementAccess.ArgumentList.Arguments.Count != 1 ||
+            elementAccess.ArgumentList.Arguments[0] is not LiteralExpressionSyntax indexLiteral ||
+            indexLiteral.Literal is not Int32SignedLiteralValueSyntax indexInt)
+        {
+            return false;
         }
 
-        return false;
+        var indexValue = indexInt.GetIdentifierOrLiteralValue();
+        return indexValue == "1" || indexValue == "2";
+    }
+
+    private static bool IsValidCharVariable(IOperation targetOperation)
+    {
+        return targetOperation.Syntax.Kind == SyntaxKind.IdentifierName &&
+               targetOperation.GetSymbol() is IVariableSymbol variableSymbol &&
+               variableSymbol.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Char;
     }
 }

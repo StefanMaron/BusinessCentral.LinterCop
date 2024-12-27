@@ -4,6 +4,6 @@ codeunit 50100 MyCodeunit
     var
         MyText: Text;
     begin
-        [|MyText[2] := 10|];
+        [|MyText[3] := 10|];
     end;
 }

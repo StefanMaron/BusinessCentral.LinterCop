@@ -2,8 +2,8 @@ codeunit 50100 MyCodeunit
 {
     procedure MyProcedure()
     var
-        MyText: Text;
+        MyCode: Code[3];
     begin
-        [|MyText[2] := 10|];
+        [|MyCode[3] := 10|];
     end;
 }
