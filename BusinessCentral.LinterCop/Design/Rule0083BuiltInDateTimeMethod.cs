@@ -78,18 +78,16 @@ public class Rule0083BuiltInDateTimeMethod : DiagnosticAnalyzer
 
     private string? GetFormatReplacement(IInvocationExpression operation)
     {
-        string? formatSpecifier = string.Empty;
+        if (operation.Arguments.Length < 3)
+            return string.Empty;
 
-        if (operation.Arguments.Length >= 3)
-            formatSpecifier = operation.Arguments[2].Value.ConstantValue.Value?.ToString();
-
-        return formatSpecifier switch
+        return  operation.Arguments[2].Value.ConstantValue.Value?.ToString() switch
         {
             "<HOURS24>" => "Hour",
             "<MINUTES>" => "Minute",
             "<SECONDS>" => "Second",
             "<THOUSANDS>" => "Millisecond",
-            _ => "<Hour/Minute/Second/Millisecond>"
+            _ => string.Empty
         };
     }
 }
