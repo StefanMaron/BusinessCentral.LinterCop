@@ -885,4 +885,13 @@
   <data name="Rule0085LFSeparatorDescription" xml:space="preserve">
     <value>Avoid manually creating helper methods or assigning character values (e.g., Char := 10 or Text[1] := 10) to define line feed (LF) or carriage return (CR) variables. Instead, use the LFSeparator and CRLFSeparator constants provided by the "Type Helper" codeunit from the Base Application.</value>
   </data>
+  <data name="Rule0086PageStyleDataTypeTitle" xml:space="preserve">
+    <value>Use the new PageStyle datatype instead string literals.</value>
+  </data>
+  <data name="Rule0086PageStyleDataTypeFormat" xml:space="preserve">
+    <value>Avoid using the string literal '{0}' for page styling. Use the PageStyle datatype instead (PageStyle::{1}).</value>
+  </data>
+  <data name="Rule0086PageStyleDataTypeDescription" xml:space="preserve">
+    <value>Adopting the use of the new PageStyle datatype allows to more easily get the supported pagestyles via IntelliSense and avoids incorrect behaviour when a typo is made in hardcoded strings or label variables.</value>
+  </data>
 </root>

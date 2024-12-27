@@ -875,4 +875,13 @@ public static class DiagnosticDescriptors
         description: LinterCopAnalyzers.GetLocalizableString("Rule0085LFSeparatorDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0085");
 
+    public static readonly DiagnosticDescriptor Rule0086PageStyleDataType = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "0086",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0086PageStyleDataTypeTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0086PageStyleDataTypeFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: true,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0086PageStyleDataTypeDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0086");
 }

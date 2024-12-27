@@ -239,3 +239,4 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0083](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0083)|Use new Date/Time/DateTime methods for extracting parts.|Info|
 |[LC0084](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0084)|Use return value for better error handling.|Info|
 |[LC0085](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0085)|Use the (CR)LFSeparator from the "Type Helper" codeunit.|Info|
+|[LC0086](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0086)|Use the new `PageStyle` datatype instead string literals.|Info|14.0|
