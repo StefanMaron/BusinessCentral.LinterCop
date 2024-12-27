@@ -421,6 +421,11 @@
       "id": "LC0084",
       "action": "Info",
       "justification": "Use return value for better error handling."
+    },
+    {
+      "id": "LC0085",
+      "action": "Info",
+      "justification": "Use the (CR)LFSeparator from the Type Helper codeunit."
     }
   ]
 }

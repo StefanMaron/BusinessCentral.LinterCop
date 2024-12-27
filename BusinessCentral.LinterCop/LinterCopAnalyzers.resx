@@ -876,4 +876,13 @@
   <data name="Rule0084UseReturnValueForErrorHandlingDescription" xml:space="preserve">
     <value>Database read methods, like Record.Get(), returns a boolean indicating whether the record was successfully retrieved. Failing to use this return value can lead to uncaught errors, poor error handling, and a lack of actionable feedback for users when something goes wrong.</value>
   </data>
+  <data name="Rule0085LFSeparatorTitle" xml:space="preserve">
+    <value>Use the (CR)LFSeparator from the "Type Helper" codeunit.</value>
+  </data>
+  <data name="Rule0085LFSeparatorFormat" xml:space="preserve">
+    <value>Use the (CR)LFSeparator from the "Type Helper" codeunit from the Base Application to define a line feed (LF) or carriage return (CR) variable.</value>
+  </data>
+  <data name="Rule0085LFSeparatorDescription" xml:space="preserve">
+    <value>Avoid manually creating helper methods or assigning character values (e.g., Char := 10 or Text[1] := 10) to define line feed (LF) or carriage return (CR) variables. Instead, use the LFSeparator and CRLFSeparator constants provided by the "Type Helper" codeunit from the Base Application.</value>
+  </data>
 </root>
