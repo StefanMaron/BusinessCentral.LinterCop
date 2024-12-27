@@ -1,3 +1,4 @@
+#if !LessThenFall2024
 namespace BusinessCentral.LinterCop.Test;
 
 public class Rule0086
@@ -36,3 +37,4 @@ public class Rule0086
         fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0086PageStyleDataType.Id);
     }
 }
+#endif

@@ -1,3 +1,4 @@
+#if !LessThenFall2024
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
@@ -70,3 +71,4 @@ public class Rule0086PageStyleDataType : DiagnosticAnalyzer
         return !isLocked;
     }
 }
+#endif
