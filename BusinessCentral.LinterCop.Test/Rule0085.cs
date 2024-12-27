@@ -25,9 +25,8 @@ public class Rule0085
     }
 
     [Test]
-    [TestCase("LFSeparatorCode")]
-    [TestCase("LFSeparatorText")]
-    [TestCase("LFSeparatorTextElementAccess2")]
+    [TestCase("LFSeparatorCodeElementAccess3")]
+    [TestCase("LFSeparatorTextElementAccess3")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
