@@ -865,4 +865,14 @@ public static class DiagnosticDescriptors
         description: LinterCopAnalyzers.GetLocalizableString("Rule0084UseReturnValueForErrorHandlingDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0084");
 
+    public static readonly DiagnosticDescriptor Rule0085LFSeparator = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "0085",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0085LFSeparatorTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0085LFSeparatorFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: true,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0085LFSeparatorDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0085");
+
 }
