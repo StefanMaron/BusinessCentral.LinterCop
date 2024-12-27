@@ -10,31 +10,39 @@ namespace BusinessCentral.LinterCop.Design;
 public class Rule0086PageStyleDataType : DiagnosticAnalyzer
 {
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0086PageStyleDataType);
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0086PageStyleDataType);
 
     public override VersionCompatibility SupportedVersions => VersionCompatibility.Fall2024OrGreater;
 
-    private static readonly Dictionary<string, string> styleKindDictionary
-        = Enum.GetValues(typeof(StyleKind))
+    private static readonly IReadOnlyDictionary<string, string> StyleKindDictionary =
+        Enum.GetValues(typeof(StyleKind))
             .Cast<StyleKind>()
-            .Select(item => item.ToString())
-            .ToDictionary(item => item, item => item, StringComparer.Ordinal);
+            .ToDictionary(
+                styleKind => styleKind.ToString(),
+                styleKind => styleKind.ToString(),
+                StringComparer.Ordinal);
 
     public override void Initialize(AnalysisContext context) =>
       context.RegisterSyntaxNodeAction(AnalyzeStringLiteralToken, SyntaxKind.StringLiteralValue);
 
     private void AnalyzeStringLiteralToken(SyntaxNodeAnalysisContext ctx)
     {
-        if (ctx.IsObsoletePendingOrRemoved() || ctx.Node is not StringLiteralValueSyntax stringLiteralValueSyntax)
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Node is not StringLiteralValueSyntax stringLiteralNode)
             return;
 
-        if (stringLiteralValueSyntax.GetFirstParent(SyntaxKind.Label) is not null)
+        if (ctx.ContainingSymbol is IPropertySymbol { PropertyKind: PropertyKind.Caption } ||
+            ctx.ContainingSymbol is ISymbol { Kind: SymbolKind.Enum or SymbolKind.EnumValue })
             return;
 
-        var stringLiteralValue = stringLiteralValueSyntax.Value.Value.ToString();
+        var labelSyntax = GetLabelSyntax(stringLiteralNode);
+        if (labelSyntax is not null && IsUnlockedLabel(labelSyntax))
+            return;
 
-        // Try to get the value from the dictionary
-        if (styleKindDictionary.TryGetValue(stringLiteralValue, out string styleKind))
+        var stringLiteralValue = stringLiteralNode.Value.Value?.ToString();
+        if (string.IsNullOrEmpty(stringLiteralValue))
+            return;
+
+        if (StyleKindDictionary.TryGetValue(stringLiteralValue, out string styleKind))
         {
             ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0086PageStyleDataType,
@@ -42,5 +50,23 @@ public class Rule0086PageStyleDataType : DiagnosticAnalyzer
                 stringLiteralValue,
                 styleKind));
         }
+    }
+
+    private static LabelSyntax? GetLabelSyntax(StringLiteralValueSyntax stringLiteralNode)
+    {
+        if (stringLiteralNode.GetFirstParent(SyntaxKind.Label) is LabelSyntax parentNode)
+            return parentNode;
+
+        return null;
+    }
+
+    private static bool IsUnlockedLabel(LabelSyntax labelSyntax)
+    {
+        // Check if the label has a "Locked" property set to true
+        bool isLocked = labelSyntax.Properties?.Values
+            .Any(prop => string.Equals(prop.Identifier.ValueText, "Locked", StringComparison.OrdinalIgnoreCase)) ?? false;
+
+        // If it's locked, return false (i.e., not unlocked), otherwise true
+        return !isLocked;
     }
 }

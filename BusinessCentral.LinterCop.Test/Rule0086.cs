@@ -12,7 +12,8 @@ public class Rule0086
     }
 
     [Test]
-    [TestCase("StyleExpr")]
+    [TestCase("Label")]
+    [TestCase("Page")]
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
@@ -23,8 +24,9 @@ public class Rule0086
     }
 
     [Test]
-    [TestCase("Caption")]
-    [TestCase("StyleExpr")]
+    [TestCase("Enum")]
+    [TestCase("Label")]
+    [TestCase("Page")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))

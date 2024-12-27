@@ -880,7 +880,8 @@ public static class DiagnosticDescriptors
         title: LinterCopAnalyzers.GetLocalizableString("Rule0086PageStyleDataTypeTitle"),
         messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0086PageStyleDataTypeFormat"),
         category: "Design",
-        defaultSeverity: DiagnosticSeverity.Warning, isEnabledByDefault: true,
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: true,
         description: LinterCopAnalyzers.GetLocalizableString("Rule0086PageStyleDataTypeDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0086");
 }
