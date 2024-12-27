@@ -426,6 +426,11 @@
       "id": "LC0085",
       "action": "Info",
       "justification": "Use the (CR)LFSeparator from the Type Helper codeunit."
+    },
+    {
+      "id": "LC0086",
+      "action": "Info",
+      "justification": "Use the new PageStyle datatype instead of page style string literals."
     }
   ]
 }
