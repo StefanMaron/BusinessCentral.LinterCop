@@ -26,17 +26,27 @@ public class Rule0003DoNotUseObjectIDsInVariablesOrProperties : DiagnosticAnalyz
         if (ctx.IsObsoletePendingOrRemoved())
             return;
 
-        string correctName;
+        string correctName = string.Empty;
         if (ctx.ContainingSymbol.Kind == SymbolKind.LocalVariable || ctx.ContainingSymbol.Kind == SymbolKind.GlobalVariable)
         {
             IVariableSymbol variable = (IVariableSymbol)ctx.ContainingSymbol;
             if (variable.Type.IsErrorType() || variable.Type.GetNavTypeKindSafe() == NavTypeKind.DotNet)
                 return;
 
-            if (variable.Type.GetNavTypeKindSafe() == NavTypeKind.Array)
-                correctName = ((IArrayTypeSymbol)variable.Type).ElementType.Name.ToString();
-            else
-                correctName = variable.Type.Name;
+            switch (variable.Type.GetNavTypeKindSafe())
+            {
+                case NavTypeKind.Array:
+                    correctName = ((IArrayTypeSymbol)variable.Type).ElementType.Name.ToString();
+                    break;
+
+                case NavTypeKind.List:
+                    //TODO: Find a way to access variable.Type.TypeArguments[0].OriginalDefinition
+                    return;
+
+                default:
+                    correctName = variable.Type.Name;
+                    break;
+            }
 
             if (ctx.Node.GetLastToken().ToString().Trim('"').ToUpper() != correctName.ToUpper())
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
