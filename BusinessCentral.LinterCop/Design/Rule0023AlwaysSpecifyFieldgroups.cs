@@ -2,6 +2,7 @@ using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
 using System.Collections.Immutable;
 
@@ -11,7 +12,7 @@ namespace BusinessCentral.LinterCop.Design;
 public class Rule0023AlwaysSpecifyFieldgroups : DiagnosticAnalyzer
 {
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        ImmutableArray.Create(DiagnosticDescriptors.Rule0023AlwaysSpecifyFieldgroups, DiagnosticDescriptors.Rule0000ErrorInRule);
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0023AlwaysSpecifyFieldgroups);
 
     public override void Initialize(AnalysisContext context) =>
         context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckFieldgroups), SymbolKind.Table);
@@ -24,21 +25,49 @@ public class Rule0023AlwaysSpecifyFieldgroups : DiagnosticAnalyzer
         if (IsTableOfTypeSetupTable(table))
             return;
 
-        Location FieldGroupLocation = table.GetLocation();
-        if (!table.Keys.IsEmpty)
+        var fieldGroupLocation = GetFieldGroupLocation(ctx, table);
+
+        CheckFieldGroup(ctx, table, "Brick", fieldGroupLocation);
+        CheckFieldGroup(ctx, table, "DropDown", fieldGroupLocation);
+    }
+
+    private static Location GetFieldGroupLocation(SymbolAnalysisContext ctx, ITableTypeSymbol table)
+    {
+        var location = table.GetLocation();
+
+        if (ctx.Symbol.DeclaringSyntaxReference?.GetSyntax(ctx.CancellationToken) is not TableSyntax tableSyntax)
+            return location;
+
+        if (tableSyntax.FieldGroups is not null)
         {
-            FieldGroupLocation = table.Keys.Last().GetLocation();
-            var span = FieldGroupLocation.SourceSpan;
-            FieldGroupLocation = Location.Create(FieldGroupLocation.SourceTree!, new TextSpan(span.End + 9, 1)); // Should result in the blank line right after the keys section
+            var fieldGroupNode = tableSyntax.FieldGroups
+                  .ChildNodesAndTokens()
+                  .FirstOrDefault(node => node.Kind == SyntaxKind.FieldGroupsKeyword);
+
+            var fieldGroupNodeLocation = fieldGroupNode.GetLocation();
+            if (fieldGroupNodeLocation is not null)
+                return fieldGroupNode.GetLocation()!;
         }
 
-        if (!table.FieldGroups.Any(item => item.Name == "Brick"))
-            ctx.ReportDiagnostic(Diagnostic.Create(
-                DiagnosticDescriptors.Rule0023AlwaysSpecifyFieldgroups, FieldGroupLocation, "Brick", table.Name));
+        if (tableSyntax.Keys is not null && table.GetLocation().SourceTree is SyntaxTree sourceTree)
+        {
+            var startPos = tableSyntax.Keys.Span.End + 2; // Should result in the blank line right after the keys section
+            return Location.Create(sourceTree, new TextSpan(startPos, 1));
+        }
 
-        if (!table.FieldGroups.Any(item => item.Name == "DropDown"))
+        return location;
+    }
+
+    private static void CheckFieldGroup(SymbolAnalysisContext ctx, ITableTypeSymbol table, string fieldGroupName, Location location)
+    {
+        if (!table.FieldGroups.Any(item => item.Name == fieldGroupName && item.Fields.Length > 0))
+        {
             ctx.ReportDiagnostic(Diagnostic.Create(
-                DiagnosticDescriptors.Rule0023AlwaysSpecifyFieldgroups, FieldGroupLocation, "DropDown", table.Name));
+                DiagnosticDescriptors.Rule0023AlwaysSpecifyFieldgroups,
+                location,
+                fieldGroupName,
+                table.Name));
+        }
     }
 
     private static bool IsTableOfTypeSetupTable(ITableTypeSymbol table)
