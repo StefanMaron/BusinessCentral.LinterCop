@@ -42,7 +42,6 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
         if (ctx.IsObsoletePendingOrRemoved() || ctx.Operation is not IInvocationExpression operation)
             return;
 
-
         if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod ||
             !SemanticFacts.IsSameName(operation.TargetMethod.Name, "Get"))
             return;
@@ -117,7 +116,7 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
         var fieldNavType = fieldType.GetNavTypeKindSafe();
 
         if (argumentNavType == NavTypeKind.Enum && fieldNavType == NavTypeKind.Enum)
-            return argumentType.OriginalDefinition == fieldType.OriginalDefinition;
+            return argumentType.OriginalDefinition.Equals(fieldType.OriginalDefinition);
 
         if ((argumentNavType == fieldNavType && argumentType.Length <= fieldType.Length) ||
            argumentNavType == NavTypeKind.None ||
