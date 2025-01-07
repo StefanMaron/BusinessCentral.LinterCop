@@ -119,7 +119,7 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
         if (argumentNavType == NavTypeKind.Enum && fieldNavType == NavTypeKind.Enum)
             return argumentType.OriginalDefinition == fieldType.OriginalDefinition;
 
-        if ((argumentNavType == fieldNavType && argumentType.Length == fieldType.Length) ||
+        if ((argumentNavType == fieldNavType && argumentType.Length <= fieldType.Length) ||
            argumentNavType == NavTypeKind.None ||
            argumentNavType == NavTypeKind.Joker)
             return true;
