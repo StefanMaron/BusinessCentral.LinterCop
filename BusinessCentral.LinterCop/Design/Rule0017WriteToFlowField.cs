@@ -76,5 +76,6 @@ public class Rule0017WriteToFlowField : DiagnosticAnalyzer
     }
 
     private bool HasExplainingComment(IOperation operation) =>
-        operation.Syntax.GetLeadingTrivia().Any(trivia => trivia.IsKind(SyntaxKind.LineCommentTrivia));
+        operation.Syntax.GetLeadingTrivia().Any(trivia => trivia.IsKind(SyntaxKind.LineCommentTrivia)) ||
+        operation.Syntax.GetTrailingTrivia().Any(trivia => trivia.IsKind(SyntaxKind.LineCommentTrivia));
 }
