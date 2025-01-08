@@ -25,37 +25,9 @@ public class Rule0023AlwaysSpecifyFieldgroups : DiagnosticAnalyzer
         if (IsTableOfTypeSetupTable(table))
             return;
 
-        var fieldGroupLocation = GetFieldGroupLocation(ctx, table);
 
-        CheckFieldGroup(ctx, table, "Brick", fieldGroupLocation);
-        CheckFieldGroup(ctx, table, "DropDown", fieldGroupLocation);
-    }
-
-    private static Location GetFieldGroupLocation(SymbolAnalysisContext ctx, ITableTypeSymbol table)
-    {
-        var location = table.GetLocation();
-
-        if (ctx.Symbol.DeclaringSyntaxReference?.GetSyntax(ctx.CancellationToken) is not TableSyntax tableSyntax)
-            return location;
-
-        if (tableSyntax.FieldGroups is not null)
-        {
-            var fieldGroupNode = tableSyntax.FieldGroups
-                  .ChildNodesAndTokens()
-                  .FirstOrDefault(node => node.Kind == SyntaxKind.FieldGroupsKeyword);
-
-            var fieldGroupNodeLocation = fieldGroupNode.GetLocation();
-            if (fieldGroupNodeLocation is not null)
-                return fieldGroupNode.GetLocation()!;
-        }
-
-        if (tableSyntax.Keys is not null && table.GetLocation().SourceTree is SyntaxTree sourceTree)
-        {
-            var startPos = tableSyntax.Keys.Span.End + 2; // Should result in the blank line right after the keys section
-            return Location.Create(sourceTree, new TextSpan(startPos, 1));
-        }
-
-        return location;
+        CheckFieldGroup(ctx, table, "Brick", table.GetLocation());
+        CheckFieldGroup(ctx, table, "DropDown", table.GetLocation());
     }
 
     private static void CheckFieldGroup(SymbolAnalysisContext ctx, ITableTypeSymbol table, string fieldGroupName, Location location)
