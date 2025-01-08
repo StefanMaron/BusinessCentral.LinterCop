@@ -11,19 +11,17 @@ public class Rule0023
             "TestCases", "Rule0023");
     }
 
-    //TODO: Resolve "There is no issue reported for LC0023 at [96...107]." for these tests.
-    // [Test]
-    // [TestCase("BrickIsMissing")]
-    // [TestCase("DropDownIsMissing")]
-    // [TestCase("FieldgroupsIsMissing")]
-    // public async Task HasDiagnostic(string testCase)
-    // {
-    //     var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
-    //         .ConfigureAwait(false);
+    [Test]
+    [TestCase("BrickIsMissing")]
+    [TestCase("DropDownIsMissing")]
+    public async Task HasDiagnostic(string testCase)
+    {
+        var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
+            .ConfigureAwait(false);
 
-    //     var fixture = RoslynFixtureFactory.Create<BuiltInMethodImplementThroughCodeunit>();
-    //     fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0023AlwaysSpecifyFieldgroups.Id);
-    // }
+        var fixture = RoslynFixtureFactory.Create<BuiltInMethodImplementThroughCodeunit>();
+        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0023AlwaysSpecifyFieldgroups.Id);
+    }
 
     [Test]
     [TestCase("HasBrickAndDropDown")]
