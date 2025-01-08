@@ -19,7 +19,7 @@ public class Rule0023
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
             .ConfigureAwait(false);
 
-        var fixture = RoslynFixtureFactory.Create<BuiltInMethodImplementThroughCodeunit>();
+        var fixture = RoslynFixtureFactory.Create<Rule0023AlwaysSpecifyFieldgroups>();
         fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0023AlwaysSpecifyFieldgroups.Id);
     }
 
@@ -30,7 +30,7 @@ public class Rule0023
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
             .ConfigureAwait(false);
 
-        var fixture = RoslynFixtureFactory.Create<BuiltInMethodImplementThroughCodeunit>();
+        var fixture = RoslynFixtureFactory.Create<Rule0023AlwaysSpecifyFieldgroups>();
         fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0023AlwaysSpecifyFieldgroups.Id);
     }
 }
