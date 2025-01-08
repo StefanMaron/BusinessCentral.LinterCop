@@ -853,7 +853,7 @@
     <value>Use Rec.Find('-') with Rec.Next() for checking exactly one record.</value>
   </data>
   <data name="Rule0082UseFindWithNextFormat" xml:space="preserve">
-    <value>Use {0}.Find('-') together with {0}.Next() instead of {0}.Count() for performance optimization. Replace {0}.Count() with: {0}.Find('-') and (Rec.Next() {1} 0).</value>
+    <value>Use {0}.Find('-') together with {0}.Next() instead of {0}.Count() for performance optimization. Replace {0}.Count() with: {0}.Find('-') and ({0}.Next() {1} 0).</value>
   </data>
   <data name="Rule0082UseFindWithNextDescription" xml:space="preserve">
     <value>Instead of relying on Rec.Count(), you should use a combination of Rec.Find('-') and Rec.Next() for faster and more efficient record checks.</value>
