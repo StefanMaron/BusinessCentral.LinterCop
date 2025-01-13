@@ -1,25 +1,30 @@
-﻿#nullable disable // TODO: Enable nullable and review rule
-using BusinessCentral.LinterCop.AnalysisContextExtension;
+﻿using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 
-namespace BusinessCentral.LinterCop.Design
+namespace BusinessCentral.LinterCop.Design;
+
+[DiagnosticAnalyzer]
+public class Rule0001FlowFieldsShouldNotBeEditable : DiagnosticAnalyzer
 {
-    [DiagnosticAnalyzer]
-    public class Rule0001FlowFieldsShouldNotBeEditable : DiagnosticAnalyzer
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0001FlowFieldsShouldNotBeEditable);
+
+    public override void Initialize(AnalysisContext context) =>
+        context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.AnalyzeFlowFieldEditable), SymbolKind.Field);
+
+    private void AnalyzeFlowFieldEditable(SymbolAnalysisContext ctx)
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0001FlowFieldsShouldNotBeEditable);
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not IFieldSymbol field)
+            return;
 
-        public override void Initialize(AnalysisContext context) => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.AnalyzeFlowFieldEditable), SymbolKind.Field);
-
-        private void AnalyzeFlowFieldEditable(SymbolAnalysisContext ctx)
+        if (field.FieldClass == FieldClassKind.FlowField &&
+            field.GetBooleanPropertyValue(PropertyKind.Editable).GetValueOrDefault())
         {
-            if (ctx.IsObsoletePendingOrRemoved()) return;
-
-            IFieldSymbol field = (IFieldSymbol)ctx.Symbol;
-            if (field.FieldClass == FieldClassKind.FlowField && field.GetBooleanPropertyValue(PropertyKind.Editable).Value)
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0001FlowFieldsShouldNotBeEditable, field.Location));
+            ctx.ReportDiagnostic(Diagnostic.Create(
+                DiagnosticDescriptors.Rule0001FlowFieldsShouldNotBeEditable,
+                field.GetLocation()));
         }
     }
 }

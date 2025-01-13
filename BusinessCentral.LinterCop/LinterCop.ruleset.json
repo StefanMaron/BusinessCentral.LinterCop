@@ -371,6 +371,66 @@
       "id": "LC0074",
       "action": "Warning",
       "justification": "Set values for FlowFilter fields using filtering methods."
+    },
+    {
+      "id": "LC0075",
+      "action": "Warning",
+      "justification": "Incorrect number or type of arguments in .Get() method on Record object."
+    },
+    {
+      "id": "LC0076",
+      "action": "Warning",
+      "justification": "The field with table relation should have at least the same length as the referenced field."
+    },
+    {
+      "id": "LC0077",
+      "action": "Info",
+      "justification": "Methods that require parenthesis should always be called with parenthesis."
+    },
+    {
+      "id": "LC0078",
+      "action": "Info",
+      "justification": "Temporary records should not trigger table triggers."
+    },
+    {
+      "id": "LC0079",
+      "action": "Info",
+      "justification": "Event publishers should not be public."
+    },
+    {
+      "id": "LC0080",
+      "action": "Warning",
+      "justification": "Replace double quotes in JPath expressions with two single quotes."
+    },
+    {
+      "id": "LC0081",
+      "action": "Info",
+      "justification": "Use Rec.IsEmpty() for checking record existence."
+    },
+    {
+      "id": "LC0082",
+      "action": "Info",
+      "justification": "Use Rec.Find('-') with Rec.Next() for checking exactly one record."
+    },
+    {
+      "id": "LC0083",
+      "action": "Info",
+      "justification": "Use new Date/Time/DateTime methods for extracting parts."
+    },
+    {
+      "id": "LC0084",
+      "action": "Info",
+      "justification": "Use return value for better error handling."
+    },
+    {
+      "id": "LC0085",
+      "action": "Info",
+      "justification": "Use the (CR)LFSeparator from the Type Helper codeunit."
+    },
+    {
+      "id": "LC0086",
+      "action": "Info",
+      "justification": "Use the new PageStyle datatype instead string literals."
     }
   ]
 }

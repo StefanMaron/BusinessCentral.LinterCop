@@ -1,40 +1,39 @@
-﻿#nullable disable // TODO: Enable nullable and review rule
+﻿using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 
-namespace BusinessCentral.LinterCop.Design
+namespace BusinessCentral.LinterCop.Design;
+
+[DiagnosticAnalyzer]
+public class Rule0019DataClassificationFieldEqualsTable : DiagnosticAnalyzer
 {
-    [DiagnosticAnalyzer]
-    public class Rule0019DataClassificationFieldEqualsTable : DiagnosticAnalyzer
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0019DataClassificationFieldEqualsTable);
+
+    public override void Initialize(AnalysisContext context) =>
+        context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(CheckDataClassificationRedundancy), SymbolKind.Field);
+
+    private void CheckDataClassificationRedundancy(SymbolAnalysisContext ctx)
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0019DataClassificationFieldEqualsTable);
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not IFieldSymbol field)
+            return;
 
-        public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(CheckDataClassificationRedundancy), SymbolKind.Field);
-        }
+        IApplicationObjectTypeSymbol? applicationObject = field.GetContainingApplicationObjectTypeSymbol();
+        if (applicationObject is not ITableTypeSymbol || applicationObject.IsObsoletePendingOrRemoved() || field.ContainingSymbol is not ITableTypeSymbol table)
+            return;
 
-        private void CheckDataClassificationRedundancy(SymbolAnalysisContext symbolAnalysisContext)
-        {
-            IFieldSymbol Field = (IFieldSymbol)symbolAnalysisContext.Symbol;
-            if (Field == null || Field.IsObsoleteRemoved || Field.IsObsoletePending)
-                return;
+        IPropertySymbol? fieldClassification = field.GetProperty(PropertyKind.DataClassification);
+        if (fieldClassification is null)
+            return;
 
-            IApplicationObjectTypeSymbol applicationObject = Field.GetContainingApplicationObjectTypeSymbol();
-            if (!(applicationObject is ITableTypeSymbol) || applicationObject.IsObsoleteRemoved || applicationObject.IsObsoletePending)
-                return;
+        IPropertySymbol? tableClassification = table.GetProperty(PropertyKind.DataClassification);
+        if (tableClassification is null)
+            return;
 
-            ITableTypeSymbol Table = (ITableTypeSymbol)Field.ContainingSymbol;
-            IPropertySymbol fieldClassification = Field.GetProperty(PropertyKind.DataClassification) as IPropertySymbol;
-            IPropertySymbol tableClassification = Table.GetProperty(PropertyKind.DataClassification) as IPropertySymbol;
-
-            if (fieldClassification == null || tableClassification == null)
-                return;
-
-            if (fieldClassification.ValueText == tableClassification.ValueText)
-                symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0019DataClassificationFieldEqualsTable, fieldClassification.GetLocation()));
-        }
-
+        if (fieldClassification.ValueText == tableClassification.ValueText)
+            ctx.ReportDiagnostic(Diagnostic.Create(
+                DiagnosticDescriptors.Rule0019DataClassificationFieldEqualsTable,
+                fieldClassification.GetLocation()));
     }
 }

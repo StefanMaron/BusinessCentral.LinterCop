@@ -570,13 +570,13 @@
   <data name="Rule0050OperatorAndPlaceholderInFilterExpressionDescription" xml:space="preserve">
     <value>Found operator '{0}' together with placeholder '{1}' in filter expression, which results in unexpected behavior. Use the StrSubstNo() method to circumvent this.</value>
   </data>
-  <data name="Rule0051SetFilterPossibleOverflowTitle" xml:space="preserve">
+  <data name="Rule0051PossibleOverflowAssigningTitle" xml:space="preserve">
     <value>Do not assign a text to a target with smaller size.</value>
   </data>
-  <data name="Rule0051SetFilterPossibleOverflowFormat" xml:space="preserve">
+  <data name="Rule0051PossibleOverflowAssigningFormat" xml:space="preserve">
     <value>Possible overflow assigning '{0}' to '{1}'.</value>
   </data>
-  <data name="Rule0051SetFilterPossibleOverflowDescription" xml:space="preserve">
+  <data name="Rule0051PossibleOverflowAssigningDescription" xml:space="preserve">
     <value>Do not assign a text to a target with smaller size.</value>
   </data>
   <data name="Rule0052InternalProceduresNotReferencedAnalyzerDescription" xml:space="preserve">
@@ -785,5 +785,113 @@
   </data>
   <data name="Rule0074FlowFilterAssignmentDescription" xml:space="preserve">
     <value>Directly assigning values to FlowFilter fields bypasses their purpose and invalidates the filtering logic, resulting in incorrect or unintended calculations. Instead, use the .SetFilter() or .SetRange() methods to define the appropriate filters.</value>
+  </data>
+  <data name="Rule0075RecordGetProcedureArgumentsTitle" xml:space="preserve">
+    <value>Incorrect number or type of arguments in .Get() method on Record object.</value>
+  </data>
+  <data name="Rule0075RecordGetProcedureArgumentsFormat" xml:space="preserve">
+    <value>Invalid arguments in .Get() method for record {0}: {1}.</value>
+  </data>
+  <data name="Rule0075RecordGetProcedureArgumentsDescription" xml:space="preserve">
+    <value>This rule ensures that calls to the built-in .Get() procedure on Record objects have the correct number and types of arguments matching the primary key (PK) of the record in question.</value>
+  </data>
+  <data name="Rule0076TableRelationTooLongTitle" xml:space="preserve">
+    <value>Table relation field length mismatch</value>
+  </data>
+  <data name="Rule0076TableRelationTooLongFormat" xml:space="preserve">
+    <value>The related field has length {0} ({1}) which is longer than the current field length {2} ({3})</value>
+  </data>
+  <data name="Rule0076TableRelationTooLongDescription" xml:space="preserve">
+    <value>The field with table relation should have at least the same length as the referenced field.</value>
+  </data>  
+  <data name="Rule0077MissingParenthesisTitle" xml:space="preserve">
+    <value>Function calls should have parenthesis even if they do not have any parameters.</value>
+  </data>
+  <data name="Rule0077MissingParenthesisFormat" xml:space="preserve">
+    <value>You must specify open and close parenthesis after '{0}'</value>
+  </data>
+  <data name="Rule0077MissingParenthesisDescription" xml:space="preserve">
+    <value>You must specify open and close parenthesis after '{0}'</value>
+  </data>
+  <data name="Rule0078TemporaryRecordsTitle" xml:space="preserve">
+    <value>Temporary records should not trigger the table triggers.</value>
+  </data>
+  <data name="Rule0078TemporaryRecordsFormat" xml:space="preserve">
+    <value>Temporary records should not trigger the table triggers.</value>
+  </data>
+  <data name="Rule0078TemporaryRecordsDescription" xml:space="preserve">
+    <value>Temporary records should not trigger the table triggers.</value>
+  </data>
+  <data name="Rule0079NonPublicEventPublisherTitle" xml:space="preserve">
+    <value>Event Publishers should be local or internal to allow for future parameter extensions.</value>
+  </data>
+  <data name="Rule0079NonPublicEventPublisherFormat" xml:space="preserve">
+    <value>Event Publishers should be local or internal to allow for future parameter extensions.</value>
+  </data>
+  <data name="Rule0079NonPublicEventPublisherDescription" xml:space="preserve">
+    <value>Event Publishers should be local or internal to allow for future parameter extensions.</value>
+  </data>
+  <data name="Rule0080AnalyzeJsonTokenJPathTitle" xml:space="preserve">
+    <value>Replace double quotes in JPath expressions with two single quotes.</value>
+  </data>
+  <data name="Rule0080AnalyzeJsonTokenJPathFormat" xml:space="preserve">
+    <value>Double quote character detected in JPath expression. Replace all double quotes (") with two single quotes ('').</value>
+  </data>
+  <data name="Rule0080AnalyzeJsonTokenJPathDescription" xml:space="preserve">
+    <value>Detects and warns against the use of double-quote (") characters in JPath expressions.</value>
+  </data>
+  <data name="Rule0081UseIsEmptyMethodTitle" xml:space="preserve">
+    <value>Use Rec.IsEmpty() for checking record existence.</value>
+  </data>
+  <data name="Rule0081UseIsEmptyMethodFormat" xml:space="preserve">
+    <value>Avoid using {0}.Count() for checking record existence. Use {0}.IsEmpty() instead for better performance.</value>
+  </data>
+  <data name="Rule0081UseIsEmptyMethodDescription" xml:space="preserve">
+    <value>To check for the existence of records, use the more efficient Rec.IsEmpty() function instead of Rec.Count().</value>
+  </data>
+  <data name="Rule0082UseFindWithNextTitle" xml:space="preserve">
+    <value>Use Rec.Find('-') with Rec.Next() for checking exactly one record.</value>
+  </data>
+  <data name="Rule0082UseFindWithNextFormat" xml:space="preserve">
+    <value>Use {0}.Find('-') together with {0}.Next() instead of {0}.Count() for performance optimization. Replace {0}.Count() with: {0}.Find('-') and ({0}.Next() {1} 0).</value>
+  </data>
+  <data name="Rule0082UseFindWithNextDescription" xml:space="preserve">
+    <value>Instead of relying on Rec.Count(), you should use a combination of Rec.Find('-') and Rec.Next() for faster and more efficient record checks.</value>
+  </data>
+  <data name="Rule0083BuiltInDateTimeMethodTitle" xml:space="preserve">
+    <value>Use new Date/Time/DateTime methods for extracting parts.</value>
+  </data>
+  <data name="Rule0083BuiltInDateTimeMethodFormat" xml:space="preserve">
+    <value>Use the new method '{0}.{1}' to extract specific parts of date/time values.</value>
+  </data>
+  <data name="Rule0083BuiltInDateTimeMethodDescription" xml:space="preserve">
+    <value>Replace outdated functions for extracting specific parts of Date, Time, and DateTime types (such as day, month, hour, or second) with the new, modernized methods.</value>
+  </data>
+  <data name="Rule0084UseReturnValueForErrorHandlingTitle" xml:space="preserve">
+    <value>Use return value for better error handling.</value>
+  </data>
+  <data name="Rule0084UseReturnValueForErrorHandlingFormat" xml:space="preserve">
+    <value>The return value of the '{0}' method must be used to improve error handling or provide meaningful feedback to the user.</value>
+  </data>
+  <data name="Rule0084UseReturnValueForErrorHandlingDescription" xml:space="preserve">
+    <value>Database read methods, like Record.Get(), returns a boolean indicating whether the record was successfully retrieved. Failing to use this return value can lead to uncaught errors, poor error handling, and a lack of actionable feedback for users when something goes wrong.</value>
+  </data>
+  <data name="Rule0085LFSeparatorTitle" xml:space="preserve">
+    <value>Use the (CR)LFSeparator from the "Type Helper" codeunit.</value>
+  </data>
+  <data name="Rule0085LFSeparatorFormat" xml:space="preserve">
+    <value>Use the (CR)LFSeparator from the "Type Helper" codeunit from the Base Application to define a line feed (LF) or carriage return (CR) variable.</value>
+  </data>
+  <data name="Rule0085LFSeparatorDescription" xml:space="preserve">
+    <value>Avoid manually creating helper methods or assigning character values (e.g., Char := 10 or Text[1] := 10) to define line feed (LF) or carriage return (CR) variables. Instead, use the LFSeparator and CRLFSeparator constants provided by the "Type Helper" codeunit from the Base Application.</value>
+  </data>
+  <data name="Rule0086PageStyleDataTypeTitle" xml:space="preserve">
+    <value>Use the new PageStyle datatype instead string literals.</value>
+  </data>
+  <data name="Rule0086PageStyleDataTypeFormat" xml:space="preserve">
+    <value>Avoid using the string literal '{0}' for page styling. Use the PageStyle datatype instead (PageStyle::{1}).</value>
+  </data>
+  <data name="Rule0086PageStyleDataTypeDescription" xml:space="preserve">
+    <value>Adopting the use of the new PageStyle datatype allows to more easily get the supported pagestyles via IntelliSense and avoids incorrect behaviour when a typo is made in hardcoded strings or label variables.</value>
   </data>
 </root>

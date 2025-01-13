@@ -14,7 +14,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 {
     private List<Tuple<string, string>> tablePairs = new List<Tuple<string, string>>();
 
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0044AnalyzeTransferFields, DiagnosticDescriptors.Rule0000ErrorInRule);
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0044AnalyzeTransferFields, DiagnosticDescriptors.Rule0000ErrorInRule);
 
     public override void Initialize(AnalysisContext context)
     {
@@ -29,7 +29,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
             return;
 
         string? baseObject = GetIdentifierName(tableExtensionSyntax.BaseObject.Identifier);
-        if (baseObject == null)
+        if (baseObject is null)
             return;
 
         IEnumerable<Tuple<string, string>> tables = tablePairs.Where(x => x.Item1.Equals(baseObject) || x.Item2.Equals(baseObject));
@@ -58,74 +58,74 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
         // Investigate https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/828
         try
         {
-         if (ctx.Operation.Syntax.GetType() != typeof(InvocationExpressionSyntax))
-             return;
+            if (ctx.Operation.Syntax.GetType() != typeof(InvocationExpressionSyntax))
+                return;
 
-         if (((IInvocationExpression)ctx.Operation).TargetMethod.MethodKind != MethodKind.BuiltInMethod)
-             return;
+            if (((IInvocationExpression)ctx.Operation).TargetMethod.MethodKind != MethodKind.BuiltInMethod)
+                return;
 
-         if (ctx.Operation.Syntax is not InvocationExpressionSyntax invocationExpression)
-             return;
+            if (ctx.Operation.Syntax is not InvocationExpressionSyntax invocationExpression)
+                return;
 
-         Tuple<string, string>? records = GetInvokingRecordNames(invocationExpression);
+            Tuple<string, string>? records = GetInvokingRecordNames(invocationExpression);
 
-         if (records == null)
-             return;
+            if (records is null)
+                return;
 
-         Task<SyntaxNode> localVariablesTask = ctx.ContainingSymbol.DeclaringSyntaxReference!.GetSyntaxAsync();
-         Task<SyntaxNode> globalVariablesTask = ctx.ContainingSymbol.ContainingSymbol!.DeclaringSyntaxReference!.GetSyntaxAsync();
+            Task<SyntaxNode> localVariablesTask = ctx.ContainingSymbol.DeclaringSyntaxReference!.GetSyntaxAsync();
+            Task<SyntaxNode> globalVariablesTask = ctx.ContainingSymbol.ContainingSymbol!.DeclaringSyntaxReference!.GetSyntaxAsync();
 
-         List<VariableDeclarationBaseSyntax> variables = new List<VariableDeclarationBaseSyntax>();
+            List<VariableDeclarationBaseSyntax> variables = new List<VariableDeclarationBaseSyntax>();
 
-         SyntaxNode localVariables = await localVariablesTask;
-         variables.AddRange(FindVariables(localVariables, SyntaxKind.VarSection));
-         SyntaxNode globalVariables = await globalVariablesTask;
-         variables.AddRange(FindVariables(globalVariables, SyntaxKind.GlobalVarSection));
+            SyntaxNode localVariables = await localVariablesTask;
+            variables.AddRange(FindVariables(localVariables, SyntaxKind.VarSection));
+            SyntaxNode globalVariables = await globalVariablesTask;
+            variables.AddRange(FindVariables(globalVariables, SyntaxKind.GlobalVarSection));
 
-         string? tableName1 = GetObjectName(variables.FirstOrDefault(x =>
-         {
-             string? name = x.GetNameStringValue();
+            string? tableName1 = GetObjectName(variables.FirstOrDefault(x =>
+            {
+                string? name = x.GetNameStringValue();
 
-             if (name == null)
-                 return false;
+                if (name is null)
+                    return false;
 
-             return name.Equals(records.Item1);
-         }));
+                return name.Equals(records.Item1);
+            }));
 
-         string? tableName2 = GetObjectName(variables.FirstOrDefault(x =>
-         {
-             string? name = x.GetNameStringValue();
+            string? tableName2 = GetObjectName(variables.FirstOrDefault(x =>
+            {
+                string? name = x.GetNameStringValue();
 
-             if (name == null)
-                 return false;
+                if (name is null)
+                    return false;
 
-             return name.Equals(records.Item2);
-         }));
+                return name.Equals(records.Item2);
+            }));
 
-         if (tableName1 == null && (records.Item1.ToLower().Equals("rec") || records.Item1.ToLower().Equals("xrec")))
-             tableName1 = GetObjectSourceTable(globalVariables, ctx.Compilation);
+            if (tableName1 is null && (records.Item1.ToLower().Equals("rec") || records.Item1.ToLower().Equals("xrec")))
+                tableName1 = GetObjectSourceTable(globalVariables, ctx.Compilation);
 
-         if (tableName2 == null && (records.Item2.ToLower().Equals("rec") || records.Item2.ToLower().Equals("xrec")))
-             tableName2 = GetObjectSourceTable(globalVariables, ctx.Compilation);
+            if (tableName2 is null && (records.Item2.ToLower().Equals("rec") || records.Item2.ToLower().Equals("xrec")))
+                tableName2 = GetObjectSourceTable(globalVariables, ctx.Compilation);
 
-         if (tableName1 == tableName2 || tableName1 == null || tableName2 == null)
-             return;
+            if (tableName1 == tableName2 || tableName1 is null || tableName2 is null)
+                return;
 
-         Dictionary<string, TableExtensionSyntax> tableExtensions = GetTableExtensions(ctx.Compilation);
-         Table table1 = GetTableWithFieldsByTableName(ctx.Compilation, tableName1);
-         Table table2 = GetTableWithFieldsByTableName(ctx.Compilation, tableName2);
+            Dictionary<string, TableExtensionSyntax> tableExtensions = GetTableExtensions(ctx.Compilation);
+            Table table1 = GetTableWithFieldsByTableName(ctx.Compilation, tableName1);
+            Table table2 = GetTableWithFieldsByTableName(ctx.Compilation, tableName2);
 
-         List<IGrouping<int, Field>> fieldGroups = GetFieldsWithSameIDAndApplyFilter(table1.Fields, table2.Fields, DifferentNameAndTypeFilter);
+            List<IGrouping<int, Field>> fieldGroups = GetFieldsWithSameIDAndApplyFilter(table1.Fields, table2.Fields, DifferentNameAndTypeFilter);
 
-         if (fieldGroups.Any())
-         {
-             ReportFieldDiagnostics(ctx, table1, fieldGroups);
-             ReportFieldDiagnostics(ctx, table2, fieldGroups);
+            if (fieldGroups.Any())
+            {
+                ReportFieldDiagnostics(ctx, table1, fieldGroups);
+                ReportFieldDiagnostics(ctx, table2, fieldGroups);
 
-             if (table1.Fields.Any(x => x.Location != null) || table2.Fields.Any(x => x.Location != null))
-                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0044AnalyzeTransferFields, invocationExpression.GetLocation(), table1.Name, table2.Name));
+                if (table1.Fields.Any(x => x.Location is not null) || table2.Fields.Any(x => x.Location is not null))
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0044AnalyzeTransferFields, invocationExpression.GetLocation(), table1.Name, table2.Name));
 
-         }
+            }
         }
         catch (InvalidCastException)
         {
@@ -141,7 +141,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
             Field field = fieldGroupValues.First(x => x.Table.Equals(table));
 
-            if (field.Location == null)
+            if (field.Location is null)
                 continue;
 
             foreach (Field fieldGroupValue in fieldGroupValues)
@@ -162,7 +162,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
             Field field = fieldGroupValues.First(x => x.Table.Equals(table));
 
-            if (field.Location == null)
+            if (field.Location is null)
                 continue;
 
             foreach (Field fieldGroupValue in fieldGroupValues)
@@ -203,7 +203,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
             case PageExtensionSyntax pageExtensionSyntax:
                 string? pageExtensionName = GetIdentifierName(pageExtensionSyntax.BaseObject.Identifier);
-                if (pageExtensionName == null)
+                if (pageExtensionName is null)
                     return null;
 
                 return GetSourceTableByPageName(compilation, pageExtensionName);
@@ -263,7 +263,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
                 string? extendedTable = GetIdentifierName(tableExtension.BaseObject.Identifier);
 
-                if (extendedTable == null)
+                if (extendedTable is null)
                     continue;
 
                 if (!tableExtensions.ContainsKey(extendedTable))
@@ -282,11 +282,11 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
         Table table = new Table(tableName);
 
-        if (tableSymbol != null)
+        if (tableSymbol is not null)
         {
             SyntaxReference? syntaxReference = tableSymbol.DeclaringSyntaxReference;
 
-            if (syntaxReference != null)
+            if (syntaxReference is not null)
             {
                 TableSyntax tableSyntax = (TableSyntax)syntaxReference.GetSyntax();
 
@@ -296,7 +296,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
                 table.PopulateFields(tableSymbol);
         }
 
-        if (tableExtensions == null)
+        if (tableExtensions is null)
             return table;
 
         TableExtensionSyntax? tableExtension;
@@ -312,11 +312,11 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
     {
         IApplicationObjectTypeSymbol? pageSymbol = compilation.GetApplicationObjectTypeSymbolsByNameAcrossModules(SymbolKind.Page, pageName).FirstOrDefault();
 
-        if (pageSymbol != null)
+        if (pageSymbol is not null)
         {
             SyntaxReference? syntaxReference = pageSymbol.DeclaringSyntaxReference;
 
-            if (syntaxReference != null)
+            if (syntaxReference is not null)
             {
                 PageSyntax pageSyntax = (PageSyntax)syntaxReference.GetSyntax();
 
@@ -344,7 +344,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
                 object obj = method.Invoke(pageSymbol, null);
 
-                if (obj == null)
+                if (obj is null)
                     return null;
 
                 type = assembly.GetType(obj.GetType().ToString());
@@ -384,7 +384,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
     private string? GetObjectName(VariableDeclarationBaseSyntax variable)
     {
-        if (variable == null || variable.Type.DataType.GetType() == typeof(SimpleNamedDataTypeSyntax))
+        if (variable is null || variable.Type.DataType.GetType() == typeof(SimpleNamedDataTypeSyntax))
             return null;
 
         SubtypedDataTypeSyntax subtypedData = (SubtypedDataTypeSyntax)variable.Type.DataType;
@@ -395,7 +395,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
     {
         var nodeFound = node.DescendantNodes().FirstOrDefault(x => x.Kind == syntaxKind);
 
-        if (nodeFound == null || nodeFound is not VarSectionBaseSyntax varSection)
+        if (nodeFound is null || nodeFound is not VarSectionBaseSyntax varSection)
             return new List<VariableDeclarationBaseSyntax>();
 
         return varSection.Variables.ToList();
@@ -669,7 +669,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
         public void PopulateFields(IApplicationObjectTypeSymbol table)
         {
-            if (table == null)
+            if (table is null)
                 return;
 
             Assembly assembly = typeof(Microsoft.Dynamics.Nav.CodeAnalysis.Symbols.VariableKind).Assembly;
@@ -698,10 +698,10 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
                 // Remove the QualifiedName from the Enum for now.
                 // In the future refactor this to support Enums with the same object name cross different namespaces
                 IEnumBaseTypeSymbol? enumBaseTypeSymbol = typeprop.GetValue(field) as IEnumBaseTypeSymbol;
-                if (enumBaseTypeSymbol != null)
+                if (enumBaseTypeSymbol is not null)
                 {
                     INamespaceSymbol? namespaceSymbol = enumBaseTypeSymbol.ContainingSymbol as INamespaceSymbol;
-                    if (namespaceSymbol != null)
+                    if (namespaceSymbol is not null)
                         objtype = objtype.Replace(namespaceSymbol.QualifiedName + '.', "");
                 }
 #endif
@@ -712,7 +712,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
         public void PopulateFields(FieldExtensionListSyntax fieldList)
         {
-            if (fieldList == null) return;
+            if (fieldList is null) return;
 
             foreach (FieldSyntax field in fieldList.Fields.Where(fld => fld.IsKind(SyntaxKind.Field)))
             {
@@ -723,7 +723,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
         public void PopulateFields(FieldListSyntax fieldList)
         {
-            if (fieldList == null) return;
+            if (fieldList is null) return;
 
             foreach (FieldSyntax field in fieldList.Fields)
             {
@@ -775,7 +775,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
                                                                                              .Where(prop => ((PropertySyntax)prop).Name.Identifier.ToString().Equals("FieldClass"))
                                                                                              .Where(prop => ((PropertySyntax)prop).Value.GetType() == typeof(EnumPropertyValueSyntax))
                                                                                              .SingleOrDefault();
-            if (fieldClassProperty == null)
+            if (fieldClassProperty is null)
                 return FieldClassKind.Normal;
 
             EnumPropertyValueSyntax fieldClassPropertyValue = (EnumPropertyValueSyntax)fieldClassProperty.Value;

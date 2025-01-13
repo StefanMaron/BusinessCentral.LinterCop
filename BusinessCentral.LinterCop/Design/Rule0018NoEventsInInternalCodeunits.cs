@@ -1,54 +1,52 @@
-﻿#nullable disable // TODO: Enable nullable and review rule
+﻿using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.InternalSyntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using System.Collections.Immutable;
 
-namespace BusinessCentral.LinterCop.Design
+namespace BusinessCentral.LinterCop.Design;
+
+[DiagnosticAnalyzer]
+public class Rule0018NoEventsInInternalCodeunits : DiagnosticAnalyzer
 {
-    [DiagnosticAnalyzer]
-    public class Rule0018NoEventsInInternalCodeunits : DiagnosticAnalyzer
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0018NoEventsInInternalCodeunitsAnalyzerDescriptor);
+
+    public override void Initialize(AnalysisContext context) =>
+        context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(CheckPublicEventInInternalCodeunit), SymbolKind.Method);
+
+    private void CheckPublicEventInInternalCodeunit(SymbolAnalysisContext ctx)
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0018NoEventsInInternalCodeunitsAnalyzerDescriptor);
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not IMethodSymbol methodSymbol)
+            return;
 
-        public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(CheckPublicEventInInternalCodeunit), SymbolKind.Method);
-        }
+        if (!methodSymbol.IsEvent)
+            return;
 
-        private void CheckPublicEventInInternalCodeunit(SymbolAnalysisContext symbolAnalysisContext)
-        {
-            IMethodSymbol methodSymbol = symbolAnalysisContext.Symbol as IMethodSymbol;
-            if (methodSymbol == null || !methodSymbol.IsEvent || methodSymbol.IsObsoleteRemoved || methodSymbol.IsObsoletePending)
-                return;
+        IApplicationObjectTypeSymbol? applicationObject = methodSymbol.GetContainingApplicationObjectTypeSymbol();
+        if (applicationObject is null || !IsInternalCodeunit(applicationObject))
+            return;
 
-            IApplicationObjectTypeSymbol applicationObject = methodSymbol.GetContainingApplicationObjectTypeSymbol();
-            if (!(applicationObject is ICodeunitTypeSymbol) || applicationObject.DeclaredAccessibility != Accessibility.Internal || applicationObject.IsObsoleteRemoved || applicationObject.IsObsoletePending)
-                return;
+        IAttributeSymbol? attributeSymbol;
+        if (!TryGetEventAttribute(methodSymbol, out attributeSymbol) || attributeSymbol?.AttributeKind == AttributeKind.InternalEvent)
+            return;
 
-            IAttributeSymbol attributeSymbol;
-            if (!TryGetEventAttribute(methodSymbol, out attributeSymbol) || attributeSymbol.AttributeKind == AttributeKind.InternalEvent)
-                return;
+        ctx.ReportDiagnostic(Diagnostic.Create(
+            DiagnosticDescriptors.Rule0018NoEventsInInternalCodeunitsAnalyzerDescriptor,
+            methodSymbol.GetLocation(),
+            methodSymbol.Name,
+            applicationObject.Name));
+    }
 
-            symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0018NoEventsInInternalCodeunitsAnalyzerDescriptor, methodSymbol.GetLocation(), new Object[] { methodSymbol.Name, applicationObject.Name }));
-        }
+    private bool IsInternalCodeunit(IApplicationObjectTypeSymbol applicationObject) =>
+        applicationObject is ICodeunitTypeSymbol &&
+        applicationObject.DeclaredAccessibility == Accessibility.Internal &&
+        !applicationObject.IsObsoletePendingOrRemoved();
 
-        private bool TryGetEventAttribute(IMethodSymbol methodSymbol, out IAttributeSymbol attribute)
-        {
-            ImmutableArray<IAttributeSymbol>.Enumerator enumerator = methodSymbol.Attributes.GetEnumerator();
-            while (enumerator.MoveNext())
-            {
-                IAttributeSymbol current = enumerator.Current;
-                AttributeKind attributeKind = current.AttributeKind;
-                if (attributeKind == AttributeKind.IntegrationEvent)
-                {
-                    attribute = current;
-                    return true;
-                }
-            }
-            attribute = null;
-            return false;
-        }
+    private bool TryGetEventAttribute(IMethodSymbol methodSymbol, out IAttributeSymbol? attribute)
+    {
+        attribute = methodSymbol.Attributes.FirstOrDefault(attr => attr.AttributeKind == AttributeKind.IntegrationEvent);
+        return attribute is not null;
     }
 }

@@ -1,29 +1,31 @@
-#nullable disable // TODO: Enable nullable and review rule
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
-using BusinessCentral.LinterCop.AnalysisContextExtension;
+using BusinessCentral.LinterCop.Helpers;
 
-namespace BusinessCentral.LinterCop.Design
+namespace BusinessCentral.LinterCop.Design;
+
+[DiagnosticAnalyzer]
+public class Rule0030AccessInternalForInstallAndUpgradeCodeunits : DiagnosticAnalyzer
 {
-    [DiagnosticAnalyzer]
-    public class Rule0030AccessInternalForInstallAndUpgradeCodeunits : DiagnosticAnalyzer
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0030AccessInternalForInstallAndUpgradeCodeunits);
+
+    public override void Initialize(AnalysisContext context) =>
+        context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckAccessOnInstallAndUpgradeCodeunits), SymbolKind.Codeunit);
+
+    private void CheckAccessOnInstallAndUpgradeCodeunits(SymbolAnalysisContext ctx)
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0030AccessInternalForInstallAndUpgradeCodeunits);
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not ICodeunitTypeSymbol symbol)
+            return;
 
-        public override void Initialize(AnalysisContext context) => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckAccessOnInstallAndUpgradeCodeunits), SymbolKind.Codeunit);
+        if (symbol.Subtype != CodeunitSubtypeKind.Install && symbol.Subtype != CodeunitSubtypeKind.Upgrade)
+            return;
 
-        private void CheckAccessOnInstallAndUpgradeCodeunits(SymbolAnalysisContext context)
-        {
-            if (context.IsObsoletePendingOrRemoved()) return;
-
-            ICodeunitTypeSymbol symbol = (ICodeunitTypeSymbol)context.Symbol;
-            if (symbol.Subtype != CodeunitSubtypeKind.Install && symbol.Subtype != CodeunitSubtypeKind.Upgrade)
-                return;
-
-            if (symbol.DeclaredAccessibility == Accessibility.Public)
-                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0030AccessInternalForInstallAndUpgradeCodeunits, symbol.GetLocation()));
-        }
+        if (symbol.DeclaredAccessibility == Accessibility.Public)
+            ctx.ReportDiagnostic(Diagnostic.Create(
+                DiagnosticDescriptors.Rule0030AccessInternalForInstallAndUpgradeCodeunits,
+                symbol.GetLocation()));
     }
 }
