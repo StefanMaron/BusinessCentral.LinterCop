@@ -25,8 +25,6 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
 
     private void AnalyzeFlowFieldEditable(SymbolAnalysisContext ctx)
     {
-        ISymbol? label;
-
         switch (ctx.Symbol.Kind)
         {
             case SymbolKind.LocalVariable:
@@ -38,16 +36,21 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
                 {
                     return;
                 }
-                
-                label = ctx.Symbol;
+
+                ReportDiagnostic(ctx, ctx.Symbol);
                 break;
             case SymbolKind.Field:
-                label = ctx.Symbol.GetProperty(PropertyKind.Caption);
+                ReportDiagnostic(ctx, ctx.Symbol.GetProperty(PropertyKind.Caption));
+                ReportDiagnostic(ctx, ctx.Symbol.GetProperty(PropertyKind.ToolTip));
                 break;
             default:
                 return;
         }
 
+    }
+
+    private static void ReportDiagnostic(SymbolAnalysisContext ctx, ISymbol? label)
+    {
         if (label == null)
         {
             return;
@@ -64,35 +67,56 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
 
         IEnumerable<string> xliffs = LanguageFileUtilities.GetXliffLanguageFiles(fileSystem, manifest.AppName);
 
-        fileSystem.OpenRead(xliffs.First());
-        using (var stream = fileSystem.OpenRead(xliffs.First()))
+        foreach (string xliff in xliffs)
         {
-            var doc = new XmlDocument();
-            doc.Load(stream);
-            XmlNode root = doc.DocumentElement;
-
-            // Add XML namespace manager for XPath query
-            var nsManager = new XmlNamespaceManager(doc.NameTable);
-            nsManager.AddNamespace("x", "urn:oasis:names:tc:xliff:document:1.2");
-
-            // Find trans-unit by ID using XPath
-            var transUnit = root.SelectSingleNode(
-                $"//x:trans-unit[@id='{labelValue}']",
-                nsManager
-            );
-
-            if (transUnit == null)
+            using (var stream = fileSystem.OpenRead(xliff))
             {
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0075LabelsShouldBeTranslated, label.Location, label.Name));
+                var doc = new XmlDocument();
+                doc.Load(stream);
+
+                AnalyzeXML(ctx, doc, labelValue, label);
             }
-            else
+        }
+    }
+
+    private static void AnalyzeXML(SymbolAnalysisContext ctx, XmlDocument doc, string labelValue, ISymbol label)
+    {
+        XmlNode root = doc.DocumentElement;
+        var nsManager = new XmlNamespaceManager(doc.NameTable);
+        nsManager.AddNamespace("x", "urn:oasis:names:tc:xliff:document:1.2");
+
+        // Find trans-unit by ID using XPath
+        var transUnit = root.SelectSingleNode(
+            $"//x:trans-unit[@id='{labelValue}']",
+            nsManager
+        );
+
+        // Add XML namespace manager for XPath query
+        nsManager.AddNamespace("x", "urn:oasis:names:tc:xliff:document:1.2");
+
+        // Find trans-unit by ID using XPath
+        var language = root.SelectSingleNode(
+            $"//x:file/@target-language",
+            nsManager
+        ).InnerText;
+
+        var location = label.Location;
+        if (location == null)
+        {
+            return;
+        }
+
+        if (transUnit == null)
+        {
+            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0075LabelsShouldBeTranslated, location, new object[] { label.Name, language }));
+        }
+        else
+        {
+            var targetNode = transUnit.SelectSingleNode("x:target", nsManager);
+            if (targetNode == null || string.IsNullOrEmpty(targetNode.InnerText) ||
+                targetNode.Attributes["state"]?.Value == "needs-translation")
             {
-                var targetNode = transUnit.SelectSingleNode("x:target", nsManager);
-                if (targetNode == null || string.IsNullOrEmpty(targetNode.InnerText) ||
-                    targetNode.Attributes["state"]?.Value == "needs-translation")
-                {
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0075LabelsShouldBeTranslated, label.Location, label.Name));
-                }
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0075LabelsShouldBeTranslated, location, new object[] { label.Name, language }));
             }
         }
     }
@@ -100,12 +124,12 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
     public static class DiagnosticDescriptors
     {
         public static readonly DiagnosticDescriptor Rule0075LabelsShouldBeTranslated = new(
-            id: LinterCopAnalyzers.AnalyzerPrefix + "0074",
-            title: LinterCopAnalyzers.GetLocalizableString("Rule0074FlowFilterAssignmentTitle"),
-            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0074FlowFilterAssignmentFormat"),
+            id: LinterCopAnalyzers.AnalyzerPrefix + "0075",
+            title: LinterCopAnalyzers.GetLocalizableString("Rule0075LabelsShouldBeTranslatedTitle"),
+            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0075LabelsShouldBeTranslatedFormat"),
             category: "Design",
             defaultSeverity: DiagnosticSeverity.Info, isEnabledByDefault: true,
-            description: LinterCopAnalyzers.GetLocalizableString("Rule0074FlowFilterAssignmentDescription"),
+            description: LinterCopAnalyzers.GetLocalizableString("Rule0075LabelsShouldBeTranslatedDescription"),
             helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0075");
     }
 }
