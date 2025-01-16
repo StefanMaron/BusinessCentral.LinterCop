@@ -144,8 +144,11 @@ public class Rule0052InternalProceduresNotReferencedAnalyzer : DiagnosticAnalyze
                     {
                         return;
                     }
-                    IdentifierNameSyntax identifierNameSyntax = (IdentifierNameSyntax)syntaxNode;
-                    if (methodSymbols.ContainsValue(identifierNameSyntax.Identifier.ValueText.ToLowerInvariant()) && TryGetSymbolFromIdentifier(semanticModel, (IdentifierNameSyntax)syntaxNode, SymbolKind.Method, out var methodSymbol))
+                    if (syntaxNode is not IdentifierNameSyntax identifierNameSyntax)
+                    {
+                        return;
+                    }
+                    if (methodSymbols.ContainsValue(identifierNameSyntax.Identifier.ValueText.ToLowerInvariant()) && TryGetSymbolFromIdentifier(semanticModel, identifierNameSyntax, SymbolKind.Method, out var methodSymbol))
                     {
                         if (methodSymbol.IsInternal)
                         {
