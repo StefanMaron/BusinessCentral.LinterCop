@@ -51,7 +51,7 @@ public class Rule0027RunPageImplementPageManagement : DiagnosticAnalyzer
             return;
 
         if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod ||
-            operation.TargetMethod.Name != "EnqueueBackgroundTask" ||                                           // do not execute on CurrPage.EnqueueBackgroundTask
+            operation.TargetMethod.Name == "EnqueueBackgroundTask" ||                                           // do not execute on CurrPage.EnqueueBackgroundTask
             operation.TargetMethod.ContainingType?.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Page ||
             operation.TargetMethod.ReturnValueSymbol.ReturnType.GetNavTypeKindSafe() == NavTypeKind.Action ||   // Page Management Codeunit doesn't support returntype Action
             operation.Arguments.Length < 2)
