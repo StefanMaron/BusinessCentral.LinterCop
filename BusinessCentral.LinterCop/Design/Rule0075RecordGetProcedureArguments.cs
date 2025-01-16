@@ -137,7 +137,7 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
     {
         return table.PrimaryKey.Fields.Length == 1 &&
             table.PrimaryKey.Fields[0].OriginalDefinition.GetTypeSymbol() is { } typeSymbol &&
-            typeSymbol.GetNavTypeKindSafe() == NavTypeKind.Code;
+            (typeSymbol.GetNavTypeKindSafe() == NavTypeKind.Code || SemanticFacts.IsSameName(table.PrimaryKey.Fields[0].Name, "Primary Key"));
     }
 }
 #endif
