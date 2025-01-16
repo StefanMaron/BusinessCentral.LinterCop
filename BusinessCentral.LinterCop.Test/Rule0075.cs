@@ -40,6 +40,7 @@ public class Rule0075
     [TestCase("PrimaryKeyAsInteger")]
     [TestCase("RecordGetBuiltInMethodRecordId")]
     [TestCase("RecordGetCode10ToCode20")]
+    [TestCase("RecordGetDecimalToInteger")]
     [TestCase("RecordGetFieldRecordId")]
     [TestCase("RecordGetGlobalVariable")]
     [TestCase("RecordGetLocalVariable")]
