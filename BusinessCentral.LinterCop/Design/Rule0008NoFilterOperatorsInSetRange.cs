@@ -67,5 +67,5 @@ public class Rule0008NoFilterOperatorsInSetRange : DiagnosticAnalyzer
     }
 
     private static bool ContainsFilterOperators(string parameterString) =>
-        parameterString.IndexOfAny(new[] { '<', '>', '.', '*', '&', '|' }) >= 0 || parameterString.Contains("..");
+        parameterString.IndexOfAny(['<', '>', '*', '&', '|']) >= 0 || parameterString.Contains("..");
 }
