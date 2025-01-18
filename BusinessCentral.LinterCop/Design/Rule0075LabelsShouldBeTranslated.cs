@@ -10,22 +10,72 @@ using BusinessCentral.LinterCop.AnalysisContextExtension;
 using System.Xml;
 using BusinessCentral.LinterCop;
 using System.Net.Http.Headers;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
 
 namespace CustomCodeCop;
 
 [DiagnosticAnalyzer]
 public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
 {
+    private IEnumerable<XmlDocument>? xliffs;
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0075LabelsShouldBeTranslated);
 
     public override void Initialize(AnalysisContext context)
     {
-        context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.AnalyzeFlowFieldEditable), SymbolKind.Field, SymbolKind.LocalVariable, SymbolKind.GlobalVariable);
+        context.RegisterCompilationAction(new Action<CompilationAnalysisContext>(this.UpdateCache));
+        context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.AnalyzeFlowFieldEditable),
+            SymbolKind.Field,
+            SymbolKind.LocalVariable,
+            SymbolKind.GlobalVariable,
+            SymbolKind.Parameter,
+            SymbolKind.Option,
+            SymbolKind.Table,
+            SymbolKind.Page,
+            SymbolKind.Report,
+            SymbolKind.XmlPort,
+            SymbolKind.EnumValue,
+            SymbolKind.Query,
+            SymbolKind.Profile,
+            SymbolKind.Permission
+        );
+    }
+
+    private void UpdateCache(CompilationAnalysisContext ctx)
+    {
+        UpdateCache(ctx.Compilation);
+    }
+
+    private void UpdateCache(Compilation compilation)
+    {
+        NavAppManifest? manifest = ManifestHelper.GetManifest(compilation);
+        if (manifest == null)
+        {
+            return;
+        }
+
+        this.xliffs = new List<XmlDocument>();
+
+        IFileSystem fileSystem = new FileSystem();
+
+        IEnumerable<string> xliffFiles = LanguageFileUtilities.GetXliffLanguageFiles(fileSystem, manifest.AppName);
+
+        foreach (string xliff in xliffFiles)
+        {
+            using (var stream = fileSystem.OpenRead(xliff))
+            {
+                var doc = new XmlDocument();
+                doc.Load(stream);
+
+                this.xliffs = this.xliffs.Append(doc);
+            }
+        }
     }
 
     private void AnalyzeFlowFieldEditable(SymbolAnalysisContext ctx)
     {
+        UpdateCache(ctx.Compilation);
         switch (ctx.Symbol.Kind)
         {
             case SymbolKind.LocalVariable:
@@ -40,9 +90,33 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
 
                 ReportDiagnostic(ctx, ctx.Symbol);
                 break;
+
             case SymbolKind.Field:
                 ReportDiagnostic(ctx, ctx.Symbol.GetProperty(PropertyKind.Caption));
                 ReportDiagnostic(ctx, ctx.Symbol.GetProperty(PropertyKind.ToolTip));
+                break;
+
+            case SymbolKind.Table:
+            case SymbolKind.Page:
+            case SymbolKind.Report:
+            case SymbolKind.XmlPort:
+            case SymbolKind.EnumValue:
+            case SymbolKind.Query:
+            case SymbolKind.Profile:
+            case SymbolKind.Permission:
+                ReportDiagnostic(ctx, ctx.Symbol.GetProperty(PropertyKind.Caption));
+                break;
+
+            case SymbolKind.Option:
+            case SymbolKind.Parameter:
+                if (ctx.Symbol.Kind != SymbolKind.Option)
+                {
+                    return;
+                }
+                ;
+
+                IOptionSymbol OptionString = (IOptionSymbol)ctx.Symbol;
+                // todo: optiona values
                 break;
             default:
                 return;
@@ -50,7 +124,7 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
 
     }
 
-    private static void ReportDiagnostic(SymbolAnalysisContext ctx, ISymbol? label)
+    private void ReportDiagnostic(SymbolAnalysisContext ctx, ISymbol? label)
     {
         if (label == null)
         {
@@ -58,29 +132,20 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
         }
 
         string labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, null);
-        IFileSystem fileSystem = new FileSystem();
-
-        NavAppManifest? manifest = ManifestHelper.GetManifest(ctx.Compilation);
-        if (manifest == null)
+        if (this.xliffs == null)
         {
-            return;
+            this.UpdateCache(ctx.Compilation);
         }
-
-        IEnumerable<string> xliffs = LanguageFileUtilities.GetXliffLanguageFiles(fileSystem, manifest.AppName);
         string languages = "";
 
-        foreach (string xliff in xliffs)
+        foreach (XmlDocument doc in this.xliffs ?? [])
         {
-            using (var stream = fileSystem.OpenRead(xliff))
-            {
-                var doc = new XmlDocument();
-                doc.Load(stream);
-
-                languages += AnalyzeXML(ctx, doc, labelValue, label);
-            }
+            languages += AnalyzeXML(ctx, doc, labelValue, label);
         }
+        
         languages = languages.TrimStart(' ').TrimStart(',');
-        if(languages != "")
+
+        if (languages != "")
         {
             ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0075LabelsShouldBeTranslated, label.Location, new object[] { label.Name, languages }));
         }
@@ -115,7 +180,7 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
 
         if (transUnit == null)
         {
-            return ", "  + language;
+            return ", " + language;
         }
         else
         {
@@ -123,7 +188,7 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
             if (targetNode == null || string.IsNullOrEmpty(targetNode.InnerText) ||
                 targetNode.Attributes["state"]?.Value == "needs-translation")
             {
-                return ", "  + language;
+                return ", " + language;
             }
         }
         return "";
