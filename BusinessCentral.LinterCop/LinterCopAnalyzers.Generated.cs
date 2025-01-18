@@ -884,4 +884,14 @@ public static class DiagnosticDescriptors
         isEnabledByDefault: true,
         description: LinterCopAnalyzers.GetLocalizableString("Rule0086PageStyleDataTypeDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0086");
+
+    public static readonly DiagnosticDescriptor Rule0087UseIsNullGuid = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "0087",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0087UseIsNullGuidTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0087UseIsNullGuidFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0087UseIsNullGuidDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0087");
 }
