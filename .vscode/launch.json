@@ -10,6 +10,11 @@
             "request": "attach",
             "preLaunchTask": "build",
             "processName": "Microsoft.Dynamics.Nav.EditorServices.Host.exe"
+        },        
+        {
+            "name": "Debug Codespace",
+            "type": "coreclr",
+            "request": "attach"
         }
     ]
 }

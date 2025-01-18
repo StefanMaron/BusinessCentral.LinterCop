@@ -9,6 +9,7 @@ using System.Collections.Immutable;
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using System.Xml;
 using BusinessCentral.LinterCop;
+using System.Net.Http.Headers;
 
 namespace CustomCodeCop;
 
@@ -66,6 +67,7 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
         }
 
         IEnumerable<string> xliffs = LanguageFileUtilities.GetXliffLanguageFiles(fileSystem, manifest.AppName);
+        string languages = "";
 
         foreach (string xliff in xliffs)
         {
@@ -74,12 +76,17 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
                 var doc = new XmlDocument();
                 doc.Load(stream);
 
-                AnalyzeXML(ctx, doc, labelValue, label);
+                languages += AnalyzeXML(ctx, doc, labelValue, label);
             }
+        }
+        languages = languages.TrimStart(' ').TrimStart(',');
+        if(languages != "")
+        {
+            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0075LabelsShouldBeTranslated, label.Location, new object[] { label.Name, languages }));
         }
     }
 
-    private static void AnalyzeXML(SymbolAnalysisContext ctx, XmlDocument doc, string labelValue, ISymbol label)
+    private static string AnalyzeXML(SymbolAnalysisContext ctx, XmlDocument doc, string labelValue, ISymbol label)
     {
         XmlNode root = doc.DocumentElement;
         var nsManager = new XmlNamespaceManager(doc.NameTable);
@@ -103,12 +110,12 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
         var location = label.Location;
         if (location == null)
         {
-            return;
+            return "";
         }
 
         if (transUnit == null)
         {
-            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0075LabelsShouldBeTranslated, location, new object[] { label.Name, language }));
+            return ", "  + language;
         }
         else
         {
@@ -116,9 +123,10 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
             if (targetNode == null || string.IsNullOrEmpty(targetNode.InnerText) ||
                 targetNode.Attributes["state"]?.Value == "needs-translation")
             {
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0075LabelsShouldBeTranslated, location, new object[] { label.Name, language }));
+                return ", "  + language;
             }
         }
+        return "";
     }
 
     public static class DiagnosticDescriptors
