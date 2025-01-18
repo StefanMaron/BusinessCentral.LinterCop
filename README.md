@@ -240,4 +240,4 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0084](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0084)|Use return value for better error handling.|Info|
 |[LC0085](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0085)|Use the (CR)LFSeparator from the "Type Helper" codeunit.|Info|
 |[LC0086](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0086)|Use the new `PageStyle` datatype instead string literals.|Info|14.0|
-|[LC0087](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0087)|Use `IsNullGuid()` to check for empty Guid values.|Warning|
+|[LC0087](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0087)|Use `IsNullGuid()` to check for empty GUID values.|Warning|

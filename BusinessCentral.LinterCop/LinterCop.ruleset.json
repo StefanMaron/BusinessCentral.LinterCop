@@ -435,7 +435,7 @@
     {
       "id": "LC0087",
       "action": "Warning",
-      "justification": "Use IsNullGuid() to check for empty Guid values."
+      "justification": "Use IsNullGuid() to check for empty GUID values."
     }
   ]
 }
