@@ -75,7 +75,8 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
 
     private void AnalyzeFlowFieldEditable(SymbolAnalysisContext ctx)
     {
-        UpdateCache(ctx.Compilation);
+        List<Diagnostic?> diagnostics = new List<Diagnostic?>();
+
         switch (ctx.Symbol.Kind)
         {
             case SymbolKind.LocalVariable:
@@ -88,23 +89,48 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
                     return;
                 }
 
-                ReportDiagnostic(ctx, ctx.Symbol);
+                diagnostics.Add(ReportDiagnostic(ctx.Symbol));
                 break;
 
             case SymbolKind.Field:
-                ReportDiagnostic(ctx, ctx.Symbol.GetProperty(PropertyKind.Caption));
-                ReportDiagnostic(ctx, ctx.Symbol.GetProperty(PropertyKind.ToolTip));
+                diagnostics.Add(ReportDiagnostic(ctx.Symbol.GetProperty(PropertyKind.Caption)));
+                diagnostics.Add(ReportDiagnostic(ctx.Symbol.GetProperty(PropertyKind.ToolTip)));
+                break;
+
+            case SymbolKind.Page:
+            case SymbolKind.PageExtension:
+                diagnostics.Add(ReportDiagnostic(ctx.Symbol.GetProperty(PropertyKind.Caption)));
+
+                IEnumerable<IControlSymbol> pageFields = GetFlattenedControls(ctx.Symbol)
+                                                .Where(e => e.ControlKind == ControlKind.Field)
+                                                .Where(e => e.GetProperty(PropertyKind.ToolTip) != null)
+                                                .Where(e => e.RelatedFieldSymbol != null);
+
+                foreach (IControlSymbol pageField in pageFields!)
+                {
+                    IPropertySymbol? pageToolTip = pageField.GetProperty(PropertyKind.ToolTip);
+                    IPropertySymbol? pageCaption = pageField.GetProperty(PropertyKind.Caption);
+
+                    if (pageToolTip != null)
+                    {
+                        diagnostics.Add(ReportDiagnostic(pageToolTip));
+                    }
+                    if(pageCaption != null)
+                    {
+                        diagnostics.Add(ReportDiagnostic(pageCaption));
+                    }                    
+                }
+
                 break;
 
             case SymbolKind.Table:
-            case SymbolKind.Page:
             case SymbolKind.Report:
             case SymbolKind.XmlPort:
             case SymbolKind.EnumValue:
             case SymbolKind.Query:
             case SymbolKind.Profile:
             case SymbolKind.Permission:
-                ReportDiagnostic(ctx, ctx.Symbol.GetProperty(PropertyKind.Caption));
+                diagnostics.Add(ReportDiagnostic(ctx.Symbol.GetProperty(PropertyKind.Caption)));
                 break;
 
             case SymbolKind.Option:
@@ -122,36 +148,38 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
                 return;
         }
 
+        foreach (Diagnostic diagnostic in diagnostics.Where(d => d != null).Cast<Diagnostic>().ToList())
+        {
+            ctx.ReportDiagnostic(diagnostic);
+        }
     }
 
-    private void ReportDiagnostic(SymbolAnalysisContext ctx, ISymbol? label)
+    private Diagnostic? ReportDiagnostic(ISymbol? label)
     {
         if (label == null)
         {
-            return;
+            return null;
         }
 
         string labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, null);
-        if (this.xliffs == null)
-        {
-            this.UpdateCache(ctx.Compilation);
-        }
         string languages = "";
 
         foreach (XmlDocument doc in this.xliffs ?? [])
         {
-            languages += AnalyzeXML(ctx, doc, labelValue, label);
+            languages += AnalyzeXML(doc, labelValue, label);
         }
-        
+
         languages = languages.TrimStart(' ').TrimStart(',');
 
         if (languages != "")
         {
-            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0075LabelsShouldBeTranslated, label.Location, new object[] { label.Name, languages }));
+            return Diagnostic.Create(DiagnosticDescriptors.Rule0075LabelsShouldBeTranslated, label.Location, new object[] { label.Name, languages });
         }
+
+        return null;
     }
 
-    private static string AnalyzeXML(SymbolAnalysisContext ctx, XmlDocument doc, string labelValue, ISymbol label)
+    private static string AnalyzeXML(XmlDocument doc, string labelValue, ISymbol label)
     {
         XmlNode root = doc.DocumentElement;
         var nsManager = new XmlNamespaceManager(doc.NameTable);
@@ -192,6 +220,18 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
             }
         }
         return "";
+    }
+    private static IEnumerable<IControlSymbol>? GetFlattenedControls(ISymbol symbol)
+    {
+        switch (symbol.Kind)
+        {
+            case SymbolKind.Page:
+                return ((IPageBaseTypeSymbol)symbol).FlattenedControls;
+            case SymbolKind.PageExtension:
+                return ((IPageExtensionBaseTypeSymbol)symbol).AddedControlsFlattened;
+            default:
+                return null;
+        }
     }
 
     public static class DiagnosticDescriptors
