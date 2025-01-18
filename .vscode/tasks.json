@@ -27,7 +27,7 @@
             "type": "shell",
             "command": "code",
             "args": [
-                "C:/Users/Stefan/Documents/AL/ALProject1/"
+                "../AlDebugProject/"
             ],
             "problemMatcher": [],
             "presentation": {
@@ -35,7 +35,8 @@
                 "revealProblems": "onProblem",
                 "close": true
             }
-        },{
+        },
+        {
             "label": "build",
             "dependsOn": [
                 "build_dotnet",
