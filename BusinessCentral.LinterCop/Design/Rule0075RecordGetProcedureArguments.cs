@@ -16,8 +16,8 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
 
     private static readonly Dictionary<NavTypeKind, HashSet<NavTypeKind>> ImplicitConversions = new()
     {
-        // Integer can be converted to Option and/or BigInteger
-        { NavTypeKind.Integer, new HashSet<NavTypeKind> { NavTypeKind.Option, NavTypeKind.BigInteger } },
+        // Integer can be converted to Decimal, Option and/or BigInteger
+        { NavTypeKind.Integer, new HashSet<NavTypeKind> { NavTypeKind.Decimal, NavTypeKind.Option, NavTypeKind.BigInteger } },
 
         // BigInteger can be converted to Duration
         { NavTypeKind.BigInteger, new HashSet<NavTypeKind> { NavTypeKind.Duration } },
@@ -137,7 +137,7 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
     {
         return table.PrimaryKey.Fields.Length == 1 &&
             table.PrimaryKey.Fields[0].OriginalDefinition.GetTypeSymbol() is { } typeSymbol &&
-            typeSymbol.GetNavTypeKindSafe() == NavTypeKind.Code;
+            (typeSymbol.GetNavTypeKindSafe() == NavTypeKind.Code || SemanticFacts.IsSameName(table.PrimaryKey.Fields[0].Name, "Primary Key"));
     }
 }
 #endif

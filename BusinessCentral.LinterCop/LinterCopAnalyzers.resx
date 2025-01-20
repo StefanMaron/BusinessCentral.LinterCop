@@ -894,4 +894,13 @@
   <data name="Rule0086PageStyleDataTypeDescription" xml:space="preserve">
     <value>Adopting the use of the new PageStyle datatype allows to more easily get the supported pagestyles via IntelliSense and avoids incorrect behaviour when a typo is made in hardcoded strings or label variables.</value>
   </data>
+  <data name="Rule0087UseIsNullGuidTitle" xml:space="preserve">
+    <value>Use IsNullGuid() to check for empty GUID values.</value>
+  </data>
+  <data name="Rule0087UseIsNullGuidFormat" xml:space="preserve">
+    <value>Use 'IsNullGuid({0})' method instead of comparing the GUID '{0}' with {1}, as this will result in a runtime error.</value>
+  </data>
+  <data name="Rule0087UseIsNullGuidDescription" xml:space="preserve">
+    <value>When checking if a GUID is empty, avoid using direct comparisons such as MyGuid = '', as this will result in a runtime error due to the invalid GUID format. Instead, use the IsNullGuid() method to perform the check safely and correctly.</value>
+  </data>
 </root>

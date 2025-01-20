@@ -4,11 +4,14 @@ codeunit 50100 MyCodeunit
     var
         MyTable: Record MyTable;
     begin
-        [|Page.Run(0, MyTable)|];
+        [|MyTable.Get()|];
     end;
 }
 
 table 50100 MyTable
 {
-    fields { field(1; MyField; Integer) { } }
+    fields
+    {
+        field(1; "Primary Key"; Integer) { }
+    }
 }

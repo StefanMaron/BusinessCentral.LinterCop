@@ -431,6 +431,11 @@
       "id": "LC0086",
       "action": "Info",
       "justification": "Use the new PageStyle datatype instead string literals."
+    },
+    {
+      "id": "LC0087",
+      "action": "Warning",
+      "justification": "Use IsNullGuid() to check for empty GUID values."
     }
   ]
 }
