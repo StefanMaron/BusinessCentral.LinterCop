@@ -27,7 +27,7 @@
             "type": "shell",
             "command": "code",
             "args": [
-                "C:/Users/Stefan/Documents/AL/ALProject1/"
+                "../AlDebugProject/"
             ],
             "problemMatcher": [],
             "presentation": {
@@ -48,6 +48,12 @@
             "label": "LoadALLanguageDependency",
             "type": "shell",
             "command": "Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process; ./.vscode/LoadALLanguage.ps1",
+            "problemMatcher": []
+        },
+        {
+            "label": "Prep Codespace",
+            "type": "shell",
+            "command": "pwsh ./.devcontainer/ContainerPrep.ps1",
             "problemMatcher": []
         }
     ]
