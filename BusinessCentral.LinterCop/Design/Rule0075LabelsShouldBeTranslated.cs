@@ -2,23 +2,20 @@ using Microsoft.Dynamics.Nav.Analyzers.Common;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
-using Microsoft.Dynamics.Nav.CodeAnalysis.SymbolReference;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Translation;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Translation.LanguageFile;
 using System.Collections.Immutable;
 using BusinessCentral.LinterCop.AnalysisContextExtension;
 using System.Xml;
 using BusinessCentral.LinterCop;
-using System.Net.Http.Headers;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 
 namespace CustomCodeCop;
 
 [DiagnosticAnalyzer]
 public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
 {
-    private IEnumerable<XmlDocument>? xliffs;
+    private List<XmlDocument>? _xliffs;
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0075LabelsShouldBeTranslated);
 
@@ -29,8 +26,6 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
             SymbolKind.Field,
             SymbolKind.LocalVariable,
             SymbolKind.GlobalVariable,
-            SymbolKind.Parameter,
-            SymbolKind.Option,
             SymbolKind.Table,
             SymbolKind.Page,
             SymbolKind.Report,
@@ -38,7 +33,7 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
             SymbolKind.EnumValue,
             SymbolKind.Query,
             SymbolKind.Profile,
-            SymbolKind.Permission
+            SymbolKind.PermissionSet
         );
     }
 
@@ -55,7 +50,7 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
             return;
         }
 
-        this.xliffs = new List<XmlDocument>();
+        this._xliffs = new List<XmlDocument>();
 
         IFileSystem fileSystem = new FileSystem();
 
@@ -68,7 +63,7 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
                 var doc = new XmlDocument();
                 doc.Load(stream);
 
-                this.xliffs = this.xliffs.Append(doc);
+                this._xliffs.Add(doc);
             }
         }
     }
@@ -82,12 +77,8 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
             case SymbolKind.LocalVariable:
             case SymbolKind.GlobalVariable:
                 IVariableSymbol symbol = (IVariableSymbol)ctx.Symbol;
-                ITypeSymbol type = symbol.Type;
 
-                if (type == null || type.NavTypeKind != NavTypeKind.Label)
-                {
-                    return;
-                }
+                if (symbol.Type.NavTypeKind != NavTypeKind.Label) return;
 
                 diagnostics.Add(ReportDiagnostic(ctx.Symbol));
                 break;
@@ -108,19 +99,15 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
 
                 foreach (IControlSymbol pageField in pageFields!)
                 {
+                    IPropertySymbol? optionCaption = pageField.GetProperty(PropertyKind.OptionCaption);
+                    if (optionCaption != null) diagnostics.Add(ReportDiagnostic(optionCaption));
+
                     IPropertySymbol? pageToolTip = pageField.GetProperty(PropertyKind.ToolTip);
+                    if (pageToolTip != null) diagnostics.Add(ReportDiagnostic(pageToolTip));
+
                     IPropertySymbol? pageCaption = pageField.GetProperty(PropertyKind.Caption);
-
-                    if (pageToolTip != null)
-                    {
-                        diagnostics.Add(ReportDiagnostic(pageToolTip));
-                    }
-                    if(pageCaption != null)
-                    {
-                        diagnostics.Add(ReportDiagnostic(pageCaption));
-                    }                    
+                    if (pageCaption != null) diagnostics.Add(ReportDiagnostic(pageCaption));
                 }
-
                 break;
 
             case SymbolKind.Table:
@@ -129,42 +116,31 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
             case SymbolKind.EnumValue:
             case SymbolKind.Query:
             case SymbolKind.Profile:
-            case SymbolKind.Permission:
+            case SymbolKind.PermissionSet:
                 diagnostics.Add(ReportDiagnostic(ctx.Symbol.GetProperty(PropertyKind.Caption)));
                 break;
 
-            case SymbolKind.Option:
-            case SymbolKind.Parameter:
-                if (ctx.Symbol.Kind != SymbolKind.Option)
-                {
-                    return;
-                }
-                ;
-
-                IOptionSymbol OptionString = (IOptionSymbol)ctx.Symbol;
-                // todo: optiona values
-                break;
             default:
                 return;
         }
 
-        foreach (Diagnostic diagnostic in diagnostics.Where(d => d != null).Cast<Diagnostic>().ToList())
-        {
-            ctx.ReportDiagnostic(diagnostic);
-        }
+        diagnostics.Where(d => d != null).Cast<Diagnostic>().ToList().ForEach(ctx.ReportDiagnostic);
     }
 
     private Diagnostic? ReportDiagnostic(ISymbol? label)
     {
-        if (label == null)
+        if (label == null) return null;
+        if (label.IsObsoletePendingOrRemoved()) return null;
+        if (label.GetTypeSymbol() != null) // does not work on caption properties
         {
-            return null;
+            if (((ILabelTypeSymbol)label.GetTypeSymbol()).Locked) return null; 
         }
+
 
         string labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, null);
         string languages = "";
 
-        foreach (XmlDocument doc in this.xliffs ?? [])
+        foreach (XmlDocument doc in this._xliffs ?? Enumerable.Empty<XmlDocument>())
         {
             languages += AnalyzeXML(doc, labelValue, label);
         }
@@ -201,10 +177,7 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
         ).InnerText;
 
         var location = label.Location;
-        if (location == null)
-        {
-            return "";
-        }
+        if (location == null) return "";
 
         if (transUnit == null)
         {
