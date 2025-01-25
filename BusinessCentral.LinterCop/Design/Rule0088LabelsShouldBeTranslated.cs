@@ -9,6 +9,7 @@ using System.Xml;
 using BusinessCentral.LinterCop;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
+using Microsoft.Dynamics.Nav.CodeAnalysis.SymbolReference;
 
 namespace CustomCodeCop;
 
@@ -38,7 +39,11 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
             SymbolKind.EnumValue,
             SymbolKind.Query,
             SymbolKind.Profile,
-            SymbolKind.PermissionSet
+            SymbolKind.PermissionSet,
+            SymbolKind.Action,
+            SymbolKind.RequestPage,
+            SymbolKind.RequestPageExtension,
+            SymbolKind.ReportLabel //TODO: Add ReportLabel
         );
     }
 
@@ -102,14 +107,19 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
 
             case SymbolKind.Page:
             case SymbolKind.PageExtension:
+            case SymbolKind.Action:
+            case SymbolKind.RequestPageExtension:
                 diagnostics.Add(ReportDiagnostic(ctx.Symbol.GetProperty(PropertyKind.Caption)));
 
-                IEnumerable<IControlSymbol> pageFields = GetFlattenedControls(ctx.Symbol)
-                            .Where(e => e.ControlKind == ControlKind.Field &&
-                                   e.GetProperty(PropertyKind.ToolTip) != null &&
-                                   e.RelatedFieldSymbol != null);
+                IEnumerable<IControlSymbol>? pageFields = GetFlattenedControls(ctx.Symbol)?.
+                            Where(e => e.ControlKind == ControlKind.Field &&
+                                    (e.GetProperty(PropertyKind.ToolTip) != null ||
+                                     e.GetProperty(PropertyKind.Caption) != null ||
+                                     e.GetProperty(PropertyKind.GroupName) != null // TOOD: Group captions not working yet
+                                  ) &&
+                                  e.RelatedFieldSymbol != null);
 
-                foreach (IControlSymbol pageField in pageFields!)
+                foreach (IControlSymbol pageField in pageFields ?? [])
                 {
                     IPropertySymbol? optionCaption = pageField.GetProperty(PropertyKind.OptionCaption);
                     if (optionCaption != null) diagnostics.Add(ReportDiagnostic(optionCaption));
@@ -119,15 +129,18 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
 
                     IPropertySymbol? pageCaption = pageField.GetProperty(PropertyKind.Caption);
                     if (pageCaption != null) diagnostics.Add(ReportDiagnostic(pageCaption));
+
+                    IPropertySymbol? pageGroupName = pageField.GetProperty(PropertyKind.GroupName);
+                    if (pageGroupName != null) diagnostics.Add(ReportDiagnostic(pageGroupName));
                 }
                 break;
 
             case SymbolKind.Table:
-            case SymbolKind.Report:
             case SymbolKind.XmlPort:
             case SymbolKind.EnumValue:
             case SymbolKind.Query:
             case SymbolKind.Profile:
+            case SymbolKind.Report:
             case SymbolKind.PermissionSet:
                 diagnostics.Add(ReportDiagnostic(ctx.Symbol.GetProperty(PropertyKind.Caption)));
                 break;
@@ -147,7 +160,6 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
         {
             if (((ILabelTypeSymbol)label.GetTypeSymbol()).Locked) return null;
         }
-
 
         string labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, null);
         string languages = "";
@@ -201,6 +213,8 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
         {
             IPageBaseTypeSymbol page => page.FlattenedControls,
             IPageExtensionBaseTypeSymbol pageExtension => pageExtension.AddedControlsFlattened,
+            IRequestPageExtensionTypeSymbol requestPageExtension => requestPageExtension.AddedControlsFlattened,
+            // IRequestPageBaseTypeSymbol requestPage => requestPage.FlattenedControls, //TODO: No request page available??
             _ => null
         };
 
