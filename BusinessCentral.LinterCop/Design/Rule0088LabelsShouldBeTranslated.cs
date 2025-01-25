@@ -13,11 +13,11 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 namespace CustomCodeCop;
 
 [DiagnosticAnalyzer]
-public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
+public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
 {
     private List<XmlDocument>? _xliffs;
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0075LabelsShouldBeTranslated);
+        ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0088LabelsShouldBeTranslated);
 
     public override void Initialize(AnalysisContext context)
     {
@@ -44,17 +44,24 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
 
     private void UpdateCache(Compilation compilation)
     {
-        NavAppManifest? manifest = ManifestHelper.GetManifest(compilation);
-        if (manifest == null)
-        {
-            return;
-        }
-
         this._xliffs = new List<XmlDocument>();
 
-        IFileSystem fileSystem = new FileSystem();
+        NavAppManifest? manifest = ManifestHelper.GetManifest(compilation);
+        if (manifest == null) return;
+        if (!manifest.CompilerFeatures.ShouldGenerateTranslationFile()) return;
 
-        IEnumerable<string> xliffFiles = LanguageFileUtilities.GetXliffLanguageFiles(fileSystem, manifest.AppName);
+
+        IFileSystem fileSystem = new FileSystem();
+        IEnumerable<string> xliffFiles = Enumerable.Empty<string>();
+
+        try
+        {
+            xliffFiles = LanguageFileUtilities.GetXliffLanguageFiles(fileSystem, manifest.AppName);
+        }
+        catch (Exception exception)
+        {
+            if (exception.GetType() == typeof(System.IO.DirectoryNotFoundException)) return; // no Translations folder exists
+        }
 
         foreach (string xliff in xliffFiles)
         {
@@ -133,7 +140,7 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
         if (label.IsObsoletePendingOrRemoved()) return null;
         if (label.GetTypeSymbol() != null) // does not work on caption properties
         {
-            if (((ILabelTypeSymbol)label.GetTypeSymbol()).Locked) return null; 
+            if (((ILabelTypeSymbol)label.GetTypeSymbol()).Locked) return null;
         }
 
 
@@ -149,7 +156,7 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
 
         if (languages != "")
         {
-            return Diagnostic.Create(DiagnosticDescriptors.Rule0075LabelsShouldBeTranslated, label.Location, new object[] { label.Name, languages });
+            return Diagnostic.Create(DiagnosticDescriptors.Rule0088LabelsShouldBeTranslated, label.GetLocation(), new object[] { label.Name, languages });
         }
 
         return null;
@@ -209,13 +216,13 @@ public class Rule0075LabelsShouldBeTranslated : DiagnosticAnalyzer
 
     public static class DiagnosticDescriptors
     {
-        public static readonly DiagnosticDescriptor Rule0075LabelsShouldBeTranslated = new(
-            id: LinterCopAnalyzers.AnalyzerPrefix + "0075",
-            title: LinterCopAnalyzers.GetLocalizableString("Rule0075LabelsShouldBeTranslatedTitle"),
-            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0075LabelsShouldBeTranslatedFormat"),
+        public static readonly DiagnosticDescriptor Rule0088LabelsShouldBeTranslated = new(
+            id: LinterCopAnalyzers.AnalyzerPrefix + "0088",
+            title: LinterCopAnalyzers.GetLocalizableString("Rule0088LabelsShouldBeTranslatedTitle"),
+            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0088LabelsShouldBeTranslatedFormat"),
             category: "Design",
             defaultSeverity: DiagnosticSeverity.Info, isEnabledByDefault: true,
-            description: LinterCopAnalyzers.GetLocalizableString("Rule0075LabelsShouldBeTranslatedDescription"),
-            helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0075");
+            description: LinterCopAnalyzers.GetLocalizableString("Rule0088LabelsShouldBeTranslatedDescription"),
+            helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0088");
     }
 }
