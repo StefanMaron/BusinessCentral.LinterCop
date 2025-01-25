@@ -21,7 +21,7 @@ public class Rule0013CheckForNotBlankOnSingleFieldPrimaryKeys : DiagnosticAnalyz
         if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not ITableTypeSymbol table)
             return;
 
-        if (table.PrimaryKey.Fields == null || table.PrimaryKey.Fields.Length != 1)
+        if (table.PrimaryKey?.Fields == null || table.PrimaryKey.Fields.Length != 1)
             return;
 
         var field = table.PrimaryKey.Fields[0];
