@@ -15,14 +15,19 @@ namespace CustomCodeCop;
 [DiagnosticAnalyzer]
 public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
 {
-    private List<XmlDocument>? _xliffs;
+    public Rule0088LabelsShouldBeTranslated()
+    {
+        xliffs = new List<XmlDocument>();
+    }
+    private List<XmlDocument> xliffs;
+
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0088LabelsShouldBeTranslated);
 
     public override void Initialize(AnalysisContext context)
     {
-        context.RegisterCompilationAction(new Action<CompilationAnalysisContext>(this.UpdateCache));
-        context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.AnalyzeFlowFieldEditable),
+        context.RegisterCompilationAction(new Action<CompilationAnalysisContext>(UpdateCache));
+        context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(AnalyzeLabelTranslation),
             SymbolKind.Field,
             SymbolKind.LocalVariable,
             SymbolKind.GlobalVariable,
@@ -44,7 +49,7 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
 
     private void UpdateCache(Compilation compilation)
     {
-        this._xliffs = new List<XmlDocument>();
+        this.xliffs = new List<XmlDocument>();
 
         NavAppManifest? manifest = ManifestHelper.GetManifest(compilation);
         if (manifest == null) return;
@@ -58,9 +63,9 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
         {
             xliffFiles = LanguageFileUtilities.GetXliffLanguageFiles(fileSystem, manifest.AppName);
         }
-        catch (Exception exception)
+        catch (DirectoryNotFoundException)
         {
-            if (exception.GetType() == typeof(System.IO.DirectoryNotFoundException)) return; // no Translations folder exists
+            return; // no Translations folder exists
         }
 
         foreach (string xliff in xliffFiles)
@@ -70,12 +75,12 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
                 var doc = new XmlDocument();
                 doc.Load(stream);
 
-                this._xliffs.Add(doc);
+                this.xliffs.Add(doc);
             }
         }
     }
 
-    private void AnalyzeFlowFieldEditable(SymbolAnalysisContext ctx)
+    private void AnalyzeLabelTranslation(SymbolAnalysisContext ctx)
     {
         List<Diagnostic?> diagnostics = new List<Diagnostic?>();
 
@@ -100,9 +105,9 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
                 diagnostics.Add(ReportDiagnostic(ctx.Symbol.GetProperty(PropertyKind.Caption)));
 
                 IEnumerable<IControlSymbol> pageFields = GetFlattenedControls(ctx.Symbol)
-                                                .Where(e => e.ControlKind == ControlKind.Field)
-                                                .Where(e => e.GetProperty(PropertyKind.ToolTip) != null)
-                                                .Where(e => e.RelatedFieldSymbol != null);
+                            .Where(e => e.ControlKind == ControlKind.Field &&
+                                   e.GetProperty(PropertyKind.ToolTip) != null &&
+                                   e.RelatedFieldSymbol != null);
 
                 foreach (IControlSymbol pageField in pageFields!)
                 {
@@ -147,7 +152,7 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
         string labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, null);
         string languages = "";
 
-        foreach (XmlDocument doc in this._xliffs ?? Enumerable.Empty<XmlDocument>())
+        foreach (XmlDocument doc in this.xliffs ?? Enumerable.Empty<XmlDocument>())
         {
             languages += AnalyzeXML(doc, labelValue, label);
         }
@@ -166,53 +171,38 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
     {
         XmlNode root = doc.DocumentElement;
         var nsManager = new XmlNamespaceManager(doc.NameTable);
+
+        // Find translation unit
         nsManager.AddNamespace("x", "urn:oasis:names:tc:xliff:document:1.2");
+        var transUnitNode = root.SelectSingleNode($"//x:trans-unit[@id='{labelValue}']", nsManager);
 
-        // Find trans-unit by ID using XPath
-        var transUnit = root.SelectSingleNode(
-            $"//x:trans-unit[@id='{labelValue}']",
-            nsManager
-        );
-
-        // Add XML namespace manager for XPath query
+        // find target language
         nsManager.AddNamespace("x", "urn:oasis:names:tc:xliff:document:1.2");
+        var language = root.SelectSingleNode($"//x:file/@target-language", nsManager)?.InnerText ?? string.Empty;
 
-        // Find trans-unit by ID using XPath
-        var language = root.SelectSingleNode(
-            $"//x:file/@target-language",
-            nsManager
-        ).InnerText;
-
-        var location = label.Location;
-        if (location == null) return "";
-
-        if (transUnit == null)
+        if (transUnitNode == null && language != string.Empty)
         {
-            return ", " + language;
+            return $",{language}";
         }
         else
         {
-            var targetNode = transUnit.SelectSingleNode("x:target", nsManager);
+            var targetNode = transUnitNode?.SelectSingleNode("x:target", nsManager);
             if (targetNode == null || string.IsNullOrEmpty(targetNode.InnerText) ||
                 targetNode.Attributes["state"]?.Value == "needs-translation")
             {
-                return ", " + language;
+                return $",{language}";
             }
         }
-        return "";
+
+        return string.Empty;
     }
-    private static IEnumerable<IControlSymbol>? GetFlattenedControls(ISymbol symbol)
-    {
-        switch (symbol.Kind)
+    static IEnumerable<IControlSymbol>? GetFlattenedControls(ISymbol symbol) =>
+        symbol switch
         {
-            case SymbolKind.Page:
-                return ((IPageBaseTypeSymbol)symbol).FlattenedControls;
-            case SymbolKind.PageExtension:
-                return ((IPageExtensionBaseTypeSymbol)symbol).AddedControlsFlattened;
-            default:
-                return null;
-        }
-    }
+            IPageBaseTypeSymbol page => page.FlattenedControls,
+            IPageExtensionBaseTypeSymbol pageExtension => pageExtension.AddedControlsFlattened,
+            _ => null
+        };
 
     public static class DiagnosticDescriptors
     {
