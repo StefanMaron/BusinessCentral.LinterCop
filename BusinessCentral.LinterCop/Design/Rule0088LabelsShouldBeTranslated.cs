@@ -9,7 +9,6 @@ using System.Xml;
 using BusinessCentral.LinterCop;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
-using Microsoft.Dynamics.Nav.CodeAnalysis.SymbolReference;
 
 namespace CustomCodeCop;
 
@@ -33,17 +32,19 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
             SymbolKind.LocalVariable,
             SymbolKind.GlobalVariable,
             SymbolKind.Table,
+            SymbolKind.TableExtension,
             SymbolKind.Page,
+            SymbolKind.PageExtension,
             SymbolKind.Report,
             SymbolKind.XmlPort,
             SymbolKind.EnumValue,
-            SymbolKind.Query,
+            SymbolKind.Query, //TODO: daitem captions
             SymbolKind.Profile,
             SymbolKind.PermissionSet,
-            SymbolKind.Action,
+            SymbolKind.Action, //TODO: page actions
             SymbolKind.RequestPage,
             SymbolKind.RequestPageExtension,
-            SymbolKind.ReportLabel //TODO: Add ReportLabel
+            SymbolKind.ReportLabel
         );
     }
 
@@ -100,6 +101,10 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
                 diagnostics.Add(ReportDiagnostic(ctx.Symbol));
                 break;
 
+            case SymbolKind.ReportLabel:
+                diagnostics.Add(ReportDiagnostic(ctx.Symbol));
+                break;
+
             case SymbolKind.Field:
                 diagnostics.Add(ReportDiagnostic(ctx.Symbol.GetProperty(PropertyKind.Caption)));
                 diagnostics.Add(ReportDiagnostic(ctx.Symbol.GetProperty(PropertyKind.ToolTip)));
@@ -109,36 +114,32 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
             case SymbolKind.PageExtension:
             case SymbolKind.Action:
             case SymbolKind.RequestPageExtension:
+            case SymbolKind.RequestPage:
+            case SymbolKind.Query:
                 diagnostics.Add(ReportDiagnostic(ctx.Symbol.GetProperty(PropertyKind.Caption)));
 
-                IEnumerable<IControlSymbol>? pageFields = GetFlattenedControls(ctx.Symbol)?.
-                            Where(e => e.ControlKind == ControlKind.Field &&
-                                    (e.GetProperty(PropertyKind.ToolTip) != null ||
-                                     e.GetProperty(PropertyKind.Caption) != null ||
-                                     e.GetProperty(PropertyKind.GroupName) != null // TOOD: Group captions not working yet
-                                  ) &&
-                                  e.RelatedFieldSymbol != null);
+                IEnumerable<IControlSymbol>? flattenedControls = GetFlattenedControls(ctx.Symbol)?.
+                            Where(e => e.GetProperty(PropertyKind.ToolTip) != null || e.GetProperty(PropertyKind.Caption) != null);
 
-                foreach (IControlSymbol pageField in pageFields ?? [])
+                foreach (IControlSymbol flattenedControl in flattenedControls ?? [])
                 {
-                    IPropertySymbol? optionCaption = pageField.GetProperty(PropertyKind.OptionCaption);
+                    IPropertySymbol? optionCaption = flattenedControl.GetProperty(PropertyKind.OptionCaption);
                     if (optionCaption != null) diagnostics.Add(ReportDiagnostic(optionCaption));
 
-                    IPropertySymbol? pageToolTip = pageField.GetProperty(PropertyKind.ToolTip);
-                    if (pageToolTip != null) diagnostics.Add(ReportDiagnostic(pageToolTip));
+                    IPropertySymbol? toolTip = flattenedControl.GetProperty(PropertyKind.ToolTip);
+                    if (toolTip != null) diagnostics.Add(ReportDiagnostic(toolTip));
 
-                    IPropertySymbol? pageCaption = pageField.GetProperty(PropertyKind.Caption);
-                    if (pageCaption != null) diagnostics.Add(ReportDiagnostic(pageCaption));
+                    IPropertySymbol? caption = flattenedControl.GetProperty(PropertyKind.Caption);
+                    if (caption != null) diagnostics.Add(ReportDiagnostic(caption));
 
-                    IPropertySymbol? pageGroupName = pageField.GetProperty(PropertyKind.GroupName);
-                    if (pageGroupName != null) diagnostics.Add(ReportDiagnostic(pageGroupName));
+                    IPropertySymbol? groupName = flattenedControl.GetProperty(PropertyKind.GroupName);
+                    if (groupName != null) diagnostics.Add(ReportDiagnostic(groupName));
                 }
                 break;
 
             case SymbolKind.Table:
             case SymbolKind.XmlPort:
             case SymbolKind.EnumValue:
-            case SymbolKind.Query:
             case SymbolKind.Profile:
             case SymbolKind.Report:
             case SymbolKind.PermissionSet:
@@ -156,10 +157,7 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
     {
         if (label == null) return null;
         if (label.IsObsoletePendingOrRemoved()) return null;
-        if (label.GetTypeSymbol() != null) // does not work on caption properties
-        {
-            if (((ILabelTypeSymbol)label.GetTypeSymbol()).Locked) return null;
-        }
+        if(LabelIsLocked(label)) return null;
 
         string labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, null);
         string languages = "";
@@ -179,6 +177,43 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
         return null;
     }
 
+    private bool LabelIsLocked(ISymbol label)
+    {
+        IEnumerable<SyntaxNode> subProperties;
+
+        // checks local and global Label variables
+        if (label.GetTypeSymbol() is ILabelTypeSymbol labelTypeSymbol)
+        {
+            if (labelTypeSymbol.Locked) return true;
+        }
+        else
+        {
+            // checks syntax nodes like Page.Caption, Page.ToolTip, ReportLabels
+            if (label is IPropertySymbol) subProperties = ExtractSubProperties(((IPropertySymbol)label).DeclaringSyntaxReference);
+            else if (label is IReportLabelSymbol) subProperties = ExtractSubProperties(((IReportLabelSymbol)label).DeclaringSyntaxReference);
+            else return true;
+
+            if (subProperties is null || subProperties.Any(node => node.ToString().Contains("Locked", StringComparison.OrdinalIgnoreCase)))
+                return true;
+        }
+
+        return false;
+    }
+
+    private IEnumerable<SyntaxNode> ExtractSubProperties(SyntaxReference? syntaxReference)
+    {
+        if (syntaxReference is null)
+            return Enumerable.Empty<SyntaxNode>();
+
+        var syntaxNode = syntaxReference.GetSyntax();
+        if (syntaxNode is null)
+            return Enumerable.Empty<SyntaxNode>();
+
+        var subPropertyNode = syntaxNode.DescendantNodes()
+            .FirstOrDefault(e => e.Kind == SyntaxKind.CommaSeparatedIdentifierEqualsLiteralList);
+
+        return subPropertyNode?.DescendantNodes() ?? Enumerable.Empty<SyntaxNode>();
+    }
     private static string AnalyzeXML(XmlDocument doc, string labelValue, ISymbol label)
     {
         XmlNode root = doc.DocumentElement;
@@ -214,7 +249,6 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
             IPageBaseTypeSymbol page => page.FlattenedControls,
             IPageExtensionBaseTypeSymbol pageExtension => pageExtension.AddedControlsFlattened,
             IRequestPageExtensionTypeSymbol requestPageExtension => requestPageExtension.AddedControlsFlattened,
-            // IRequestPageBaseTypeSymbol requestPage => requestPage.FlattenedControls, //TODO: No request page available??
             _ => null
         };
 
