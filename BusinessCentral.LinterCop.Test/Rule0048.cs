@@ -29,7 +29,9 @@ public class Rule0048
     [Test]
     [TestCase("ErrorWithErrorInfo")]
     [TestCase("ErrorWithLabel")]
+#if !LessThenFall2024
     [TestCase("ErrorWiththisLabel")]
+#endif
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
