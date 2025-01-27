@@ -18,6 +18,7 @@ public class Rule0051
     [TestCase("GetMethodStrSubstNo")]
 #endif
     [TestCase("SetFilterFieldCode")]
+    [TestCase("ValidateFieldCode")]
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
@@ -35,6 +36,7 @@ public class Rule0051
     [TestCase("GetMethodUserId")]
 #endif
     [TestCase("SetFilterFieldRef")]
+    [TestCase("ValidateFieldCode")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
