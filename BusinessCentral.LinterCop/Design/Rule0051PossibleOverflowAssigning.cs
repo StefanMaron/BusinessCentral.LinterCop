@@ -75,12 +75,12 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
 #if !LessThenSpring2024
     private void AnalyzeGetMethod(OperationAnalysisContext ctx)
     {
-        if (ctx.IsObsoletePendingOrRemoved())
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Operation is not IInvocationExpression operation)
             return;
 
-        if ((ctx.Operation is not IInvocationExpression operation) ||
-            operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod ||
-            !SemanticFacts.IsSameName(operation.TargetMethod.Name, "Get") ||
+        if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod ||
+            operation.TargetMethod.Name != "Get" ||
+            operation.TargetMethod.ContainingSymbol?.Name != "Table" ||
             operation.Arguments.Length < 1)
             return;
 
@@ -90,7 +90,7 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
         if (operation.Arguments.Length < table.PrimaryKey.Fields.Length)
             return;
 
-        for (int index = 0; index < operation.Arguments.Length; index++)
+        for (int index = 0; index < table.PrimaryKey.Fields.Length; index++)
         {
             var fieldType = table.PrimaryKey.Fields[index].Type;
             var argumentType = operation.Arguments[index].GetTypeSymbol();
