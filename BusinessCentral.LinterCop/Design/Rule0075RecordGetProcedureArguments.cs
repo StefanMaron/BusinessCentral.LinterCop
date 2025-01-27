@@ -29,13 +29,14 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
         { NavTypeKind.Text, new HashSet<NavTypeKind> { NavTypeKind.Code } },
 
         // String(literal) can be converted to Text and/or Code
-        { NavTypeKind.String, new HashSet<NavTypeKind> { NavTypeKind.Text, NavTypeKind.Code } }
+        { NavTypeKind.String, new HashSet<NavTypeKind> { NavTypeKind.Text, NavTypeKind.Code } },
+
+        // Explicity set Enum can not be converted
+        { NavTypeKind.Enum, new HashSet<NavTypeKind>() }
     };
 
-    public override void Initialize(AnalysisContext context)
-    {
+    public override void Initialize(AnalysisContext context) =>
         context.RegisterOperationAction(AnalyzeAssignmentStatement, OperationKind.InvocationExpression);
-    }
 
     private void AnalyzeAssignmentStatement(OperationAnalysisContext ctx)
     {
@@ -43,7 +44,7 @@ public class Rule0075RecordGetProcedureArguments : DiagnosticAnalyzer
             return;
 
         if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod ||
-            !SemanticFacts.IsSameName(operation.TargetMethod.Name, "Get"))
+            operation.TargetMethod.Name != "Get")
             return;
 
         // Skip unsupported single argument scenarios, like Record.Get(RecordId)
