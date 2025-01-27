@@ -13,7 +13,7 @@ namespace BusinessCentral.LinterCop.Design;
 public class Rule0005VariableCasingShouldNotDifferFromDeclaration : DiagnosticAnalyzer
 {
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; }
-        = ImmutableArray.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, DiagnosticDescriptors.Rule0000ErrorInRule);
+        = ImmutableArray.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration);
 
     private static readonly HashSet<SyntaxKind> _dataTypeSyntaxKinds = Enum.GetValues(typeof(SyntaxKind)).Cast<SyntaxKind>().Where(x => x.ToString().AsSpan().EndsWith("DataType")).ToHashSet();
     private static readonly string[] _areaKinds = Enum.GetValues(typeof(AreaKind)).Cast<AreaKind>().Select(x => x.ToString()).ToArray();
@@ -217,36 +217,23 @@ public class Rule0005VariableCasingShouldNotDifferFromDeclaration : DiagnosticAn
 
     private void AnalyzeIdentifierName(SyntaxNodeAnalysisContext ctx)
     {
-        try // Investigate https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/898
-        {
-            if (ctx.Node is not IdentifierNameSyntax node)
-                return;
+        if (ctx.Node is not IdentifierNameSyntax node)
+            return;
 
-            if (node.Parent.Kind == SyntaxKind.PragmaWarningDirectiveTrivia)
-                return;
+        if (node.Parent.Kind == SyntaxKind.PragmaWarningDirectiveTrivia)
+            return;
 
-            if (ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol is not ISymbol fieldSymbol)
-                return;
+        if (ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol is not ISymbol fieldSymbol)
+            return;
 
-            // TODO: Support more SymbolKinds
-            if (fieldSymbol.Kind != SymbolKind.Field)
-                return;
+        // TODO: Support more SymbolKinds
+        if (fieldSymbol.Kind != SymbolKind.Field)
+            return;
 
-            string identifierName = StringExtensions.UnquoteIdentifier(node.Identifier.ValueText);
+        string identifierName = StringExtensions.UnquoteIdentifier(node.Identifier.ValueText);
 
-            if (!identifierName.AsSpan().Equals(fieldSymbol.Name.AsSpan(), StringComparison.Ordinal))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.GetLocation(), new object[] { fieldSymbol.Name.QuoteIdentifierIfNeeded(), "" }));
-
-        }
-        catch (NullReferenceException)
-        {
-            ctx.ReportDiagnostic(Diagnostic.Create(
-                DiagnosticDescriptors.Rule0000ErrorInRule,
-                ctx.Node.GetLocation(),
-                "Rule0005",
-                "NullReferenceException",
-                "AnalyzeIdentifierName"));
-        }
+        if (!identifierName.AsSpan().Equals(fieldSymbol.Name.AsSpan(), StringComparison.Ordinal))
+            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.GetLocation(), new object[] { fieldSymbol.Name.QuoteIdentifierIfNeeded(), "" }));
     }
 
     private void AnalyzeQualifiedName(SyntaxNodeAnalysisContext ctx)
