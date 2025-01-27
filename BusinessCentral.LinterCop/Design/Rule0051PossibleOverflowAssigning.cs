@@ -28,6 +28,7 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
     public override void Initialize(AnalysisContext context)
     {
         context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeSetFilter), OperationKind.InvocationExpression);
+        context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeValidate), OperationKind.InvocationExpression);
 #if !LessThenSpring2024
         context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeGetMethod), OperationKind.InvocationExpression);
 #endif
@@ -68,8 +69,46 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
 
             int expressionLength = this.CalculateMaxExpressionLength(argValue.Operand, ref isError);
             if (!isError && expressionLength > typeLength)
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0051PossibleOverflowAssigning, operation.Syntax.GetLocation(), GetDisplayString(operation.Arguments[index], operation), GetDisplayString(operation.Arguments[0], operation)));
+                ctx.ReportDiagnostic(Diagnostic.Create(
+                    DiagnosticDescriptors.Rule0051PossibleOverflowAssigning,
+                    operation.Arguments[index].Syntax.GetLocation(),
+                    GetDisplayString(operation.Arguments[index], operation),
+                    GetDisplayString(operation.Arguments[0], operation)));
         }
+    }
+
+    private void AnalyzeValidate(OperationAnalysisContext ctx)
+    {
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Operation is not IInvocationExpression operation)
+            return;
+
+        if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod ||
+            operation.TargetMethod.Name != "Validate" ||
+            operation.TargetMethod.ContainingSymbol?.Name != "Table" ||
+            operation.Arguments.Length < 2 ||
+            operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression)
+            return;
+
+        var fieldOperand = ((IConversionExpression)operation.Arguments[0].Value).Operand;
+        if (fieldOperand.Type is not ITypeSymbol fieldType)
+            return;
+
+        bool isError = false;
+        int typeLength = GetTypeLength(fieldType, ref isError);
+        if (isError || typeLength == int.MaxValue)
+            return;
+
+        if (operation.Arguments[1].Value is not IConversionExpression argValue)
+            return;
+
+        int expressionLength = this.CalculateMaxExpressionLength(argValue.Operand, ref isError);
+        if (!isError && expressionLength > typeLength)
+            ctx.ReportDiagnostic(
+                Diagnostic.Create(
+                    DiagnosticDescriptors.Rule0051PossibleOverflowAssigning,
+                    operation.Arguments[1].Syntax.GetLocation(),
+                    GetDisplayString(operation.Arguments[1], operation),
+                    GetDisplayString(operation.Arguments[0], operation)));
     }
 
 #if !LessThenSpring2024
