@@ -85,7 +85,7 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
         if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod ||
             operation.TargetMethod.Name != "Validate" ||
             operation.TargetMethod.ContainingSymbol?.Name != "Table" ||
-            operation.Arguments.Length < 1 ||
+            operation.Arguments.Length < 2 ||
             operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression)
             return;
 
