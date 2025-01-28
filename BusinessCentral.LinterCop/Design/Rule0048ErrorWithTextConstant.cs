@@ -30,6 +30,7 @@ public class Rule0048ErrorWithTextConstant : DiagnosticAnalyzer
         switch (operation.Arguments[0].Syntax.Kind)
         {
             case SyntaxKind.IdentifierName:
+            case SyntaxKind.MemberAccessExpression:
                 if (operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression)
                     break;
 
