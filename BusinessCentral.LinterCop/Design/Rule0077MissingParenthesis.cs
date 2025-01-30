@@ -18,6 +18,7 @@ public class Rule0077MissingParenthesis : DiagnosticAnalyzer
         "GuiAllowed",
         "HasCollectedErrors",
         "IsEmpty",
+        "Time",
         "Today",
         "UserId",
         "WorkDate"
