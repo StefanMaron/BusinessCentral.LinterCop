@@ -31,8 +31,8 @@ public class Rule0083BuiltInDateTimeMethod : DiagnosticAnalyzer
         {
             "Date2DMY" => GetDate2DMYReplacement(operation),
             "Date2DWY" => GetDate2DWYReplacement(operation),
-            "DT2Date" => "Date",
-            "DT2Time" => "Time",
+            "DT2Date" => "Date()",
+            "DT2Time" => "Time()",
             "Format" => GetFormatReplacement(operation),
             _ => null
         };
@@ -43,7 +43,7 @@ public class Rule0083BuiltInDateTimeMethod : DiagnosticAnalyzer
         ctx.ReportDiagnostic(Diagnostic.Create(
             DiagnosticDescriptors.Rule0083BuiltInDateTimeMethod,
             ctx.Operation.Syntax.GetLocation(),
-            operation.Arguments[0].Value.Syntax.ToString().QuoteIdentifierIfNeeded(),
+            operation.Arguments[0].Value.Syntax.ToString(),
             recommendedMethod));
     }
 
@@ -54,9 +54,9 @@ public class Rule0083BuiltInDateTimeMethod : DiagnosticAnalyzer
 
         return operation.Arguments[1].Value.ConstantValue.Value switch
         {
-            1 => "Day",
-            2 => "Month",
-            3 => "Year",
+            1 => "Day()",
+            2 => "Month()",
+            3 => "Year()",
             _ => "<Day/Month/Year>"
         };
     }
@@ -70,8 +70,8 @@ public class Rule0083BuiltInDateTimeMethod : DiagnosticAnalyzer
 
         return formatSpecifier switch
         {
-            1 => "DayOfWeek",
-            2 => "Year",
+            1 => "DayOfWeek()",
+            2 => "Year()",
             _ => "<DayOfWeek/Year>"
         };
     }
@@ -81,12 +81,12 @@ public class Rule0083BuiltInDateTimeMethod : DiagnosticAnalyzer
         if (operation.Arguments.Length < 3)
             return string.Empty;
 
-        return  operation.Arguments[2].Value.ConstantValue.Value?.ToString() switch
+        return operation.Arguments[2].Value.ConstantValue.Value?.ToString() switch
         {
-            "<HOURS24>" => "Hour",
-            "<MINUTES>" => "Minute",
-            "<SECONDS>" => "Second",
-            "<THOUSANDS>" => "Millisecond",
+            "<HOURS24>" => "Hour()",
+            "<MINUTES>" => "Minute()",
+            "<SECONDS>" => "Second()",
+            "<THOUSANDS>" => "Millisecond()",
             _ => string.Empty
         };
     }

@@ -3,9 +3,9 @@ codeunit 50100 MyCodeunit
     procedure MyProcedure()
     var
         MyTable: Record MyTable;
-        MyFilterValue: Code[50];
+        UnexpectedErr: Label '%1 is not an valid Record.';
     begin
-        MyTable.SetFilter(MyField, '<>%1', [|MyFilterValue|]);
+        [|Error(StrSubstNo(UnexpectedErr, MyTable.MyField))|];
     end;
 }
 
@@ -13,6 +13,6 @@ table 50100 MyTable
 {
     fields
     {
-        field(1; MyField; Code[20]) { }
+        field(1; MyField; Integer) { }
     }
 }

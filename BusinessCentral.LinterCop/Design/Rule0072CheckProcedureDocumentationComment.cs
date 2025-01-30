@@ -38,7 +38,7 @@ public class Rule0072CheckProcedureDocumentationComment : DiagnosticAnalyzer
             {
                 case "param":
                     var nameAttribute = (XmlNameAttributeSyntax)element.StartTag.Attributes.First(att => att.IsKind(SyntaxKind.XmlNameAttribute));
-                    var parameterName = nameAttribute.Identifier.Identifier.ValueText;
+                    var parameterName = nameAttribute.Identifier.GetText().ToString();
                     if (!docCommentParameters.ContainsKey(parameterName))
                         docCommentParameters.Add(parameterName, element);
                     break;
