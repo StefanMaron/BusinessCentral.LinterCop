@@ -6,10 +6,12 @@ codeunit 50100 MyCodeunit
         i: Integer;
         b: Boolean;
         d: Date;
+        t: Time;
     begin
         d := [|Today()|];
         d := [|WorkDate()|];
         b := [|GuiAllowed()|];
+        t := [|Time()|];
         i := MyTable.[|Count()|];
         b := MyTable.[|IsEmpty()|];
     end;
