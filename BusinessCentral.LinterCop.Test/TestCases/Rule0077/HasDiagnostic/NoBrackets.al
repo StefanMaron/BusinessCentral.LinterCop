@@ -5,10 +5,12 @@ codeunit 50100 MyCodeunit
         MyTable: Record MyTable;
         i: Integer;
         b: Boolean;
+        t: Time;
     begin
         [|Today|];
         [|WorkDate|];
         [|GuiAllowed|];
+        t := [|Time|];
         i := MyTable.[|Count|];
         b := MyTable.[|IsEmpty|];
     end;
