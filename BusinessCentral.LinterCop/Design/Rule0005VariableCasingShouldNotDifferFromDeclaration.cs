@@ -217,35 +217,25 @@ public class Rule0005VariableCasingShouldNotDifferFromDeclaration : DiagnosticAn
 
     private void AnalyzeIdentifierName(SyntaxNodeAnalysisContext ctx)
     {
-        try // Investigate https://github.com/StefanMaron/BusinessCentral.LinterCop/issues/898
-        {
-            if (ctx.Node is not IdentifierNameSyntax node)
-                return;
+        if (ctx.Node is not IdentifierNameSyntax node)
+            return;
 
-            if (node.Parent.Kind == SyntaxKind.PragmaWarningDirectiveTrivia)
-                return;
+        // The GetSymbolInfo from the ctx.SemanticModel will throw an System.NullReferenceException on these ParentKind nodes
+        if (node.Parent.Kind == SyntaxKind.PragmaWarningDirectiveTrivia ||
+            node.Parent.Kind == SyntaxKind.UnaryNotExpression)
+            return;
 
-            if (ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol is not ISymbol fieldSymbol)
-                return;
+        if (ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol is not ISymbol fieldSymbol)
+            return;
 
-            // TODO: Support more SymbolKinds
-            if (fieldSymbol.Kind != SymbolKind.Field)
-                return;
+        // TODO: Support more SymbolKinds
+        if (fieldSymbol.Kind != SymbolKind.Field)
+            return;
 
-            string identifierName = StringExtensions.UnquoteIdentifier(node.Identifier.ValueText);
+        string identifierName = StringExtensions.UnquoteIdentifier(node.Identifier.ValueText);
 
-            if (!identifierName.AsSpan().Equals(fieldSymbol.Name.AsSpan(), StringComparison.Ordinal))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.GetLocation(), new object[] { fieldSymbol.Name.QuoteIdentifierIfNeeded(), "" }));
-        }
-        catch (NullReferenceException)
-        {
-            ctx.ReportDiagnostic(Diagnostic.Create(
-                DiagnosticDescriptors.Rule0000ErrorInRule,
-                ctx.Node.GetLocation(),
-                "Rule0005",
-                "NullReferenceException",
-                $"Node: {ctx.Node.Kind}, ParentNode: {ctx.Node.Parent.Kind}"));
-        }
+        if (!identifierName.AsSpan().Equals(fieldSymbol.Name.AsSpan(), StringComparison.Ordinal))
+            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.GetLocation(), new object[] { fieldSymbol.Name.QuoteIdentifierIfNeeded(), "" }));
     }
 
     private void AnalyzeQualifiedName(SyntaxNodeAnalysisContext ctx)
