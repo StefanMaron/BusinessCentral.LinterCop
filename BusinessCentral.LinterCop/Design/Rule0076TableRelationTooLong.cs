@@ -69,7 +69,7 @@ public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
                 ResolveQualifiedField(qualifiedName, ctx.Compilation),
 
             IdentifierNameSyntax identifierName =>
-                ResolvePrimaryKeyField(identifierName.Identifier.ValueText, ctx.Compilation),
+                ResolvePrimaryKeyField(identifierName.Identifier.ValueText.UnquoteIdentifier(), ctx.Compilation),
 
             _ => null
         };
@@ -77,16 +77,39 @@ public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
 
     private IFieldSymbol? ResolveQualifiedField(QualifiedNameSyntax qualifiedName, Compilation compilation)
     {
+        // Without namespaces
         if (qualifiedName.Left is IdentifierNameSyntax tableNameSyntax &&
             qualifiedName.Right is IdentifierNameSyntax fieldNameSyntax)
         {
             var tableName = tableNameSyntax.GetIdentifierOrLiteralValue();
             var fieldName = fieldNameSyntax.GetIdentifierOrLiteralValue();
 
-            if (tableName != null && fieldName != null)
+            if (!string.IsNullOrEmpty(tableName) && !string.IsNullOrEmpty(fieldName))
             {
                 return GetFieldFromTable(tableName, fieldName, compilation)
                     ?? GetFieldFromTableExtension(tableName, fieldName, compilation);
+            }
+        }
+
+        // With namespaces
+        if (qualifiedName.Left is QualifiedNameSyntax qualifiedNameLeft &&
+            qualifiedName.Right is IdentifierNameSyntax qualifiedNameRight)
+        {
+            var leftIdentifier = qualifiedNameRight.GetIdentifierOrLiteralValue();
+            var rightIdentifier = qualifiedNameLeft.Right.GetIdentifierOrLiteralValue();
+
+            if (!string.IsNullOrEmpty(rightIdentifier) && !string.IsNullOrEmpty(leftIdentifier))
+            {
+                IFieldSymbol? field = GetFieldFromTable(rightIdentifier, leftIdentifier, compilation)
+                    ?? GetFieldFromTableExtension(rightIdentifier, leftIdentifier, compilation);
+
+                if (field?.ContainingNamespace?.ToString() == qualifiedNameLeft.Left.ToString())
+                    return field;
+
+                // Try resolving the primary key field if previous lookup failed
+                IFieldSymbol? primaryKeyField = ResolvePrimaryKeyField(leftIdentifier, compilation);
+                if (primaryKeyField?.ContainingNamespace?.ToString() == qualifiedNameLeft.ToString())
+                    return primaryKeyField;
             }
         }
 
