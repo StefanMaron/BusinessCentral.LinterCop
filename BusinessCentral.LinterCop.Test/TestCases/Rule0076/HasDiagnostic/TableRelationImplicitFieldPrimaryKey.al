@@ -1,12 +1,12 @@
-table 50108 MyTable
+table 50108 "My Table"
 {
     fields
     {
         field(1; MyField; Code[20]) { }
 
-        field(3; [|MySecondField|]; Code[10])
+        field(2; [|"My TableRelation Field"|]; Code[10])
         {
-            TableRelation = MyTable;
+            TableRelation = "My Table";
         }
     }
 

@@ -14,9 +14,11 @@ public class Rule0076
     [Test]
     [TestCase("TableRelationLonger")]
     [TestCase("TableRelationImplicitFieldPrimaryKey")]
+    [TestCase("TableRelationImplicitFieldPrimaryKeyWithNamespace")]
 #if !LessThenSpring2024
     [TestCase("TableExtRelationLonger")]
 #endif
+    [TestCase("TableRelationWithNamespace")]
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
