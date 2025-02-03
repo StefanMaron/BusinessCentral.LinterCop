@@ -439,7 +439,7 @@
     },
     {
       "id": "LC0088",
-      "action": "Warning",
+      "action": "Info",
       "justification": "Avoid option types to get rid of some of the bad patterns that come along with option fields."
     }
   ]

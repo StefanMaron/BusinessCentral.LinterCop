@@ -900,7 +900,7 @@ public static class DiagnosticDescriptors
         title: LinterCopAnalyzers.GetLocalizableString("Rule0088AvoidOptionTypesTitle"),
         messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0088AvoidOptionTypesFormat"),
         category: "Design",
-        defaultSeverity: DiagnosticSeverity.Warning,
+        defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true,
         description: LinterCopAnalyzers.GetLocalizableString("Rule0088AvoidOptionTypesDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0088");
