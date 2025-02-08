@@ -40,8 +40,7 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
             SymbolKind.EnumValue,
             SymbolKind.Query, //TODO: daitem captions
             SymbolKind.Profile,
-            SymbolKind.PermissionSet,
-            SymbolKind.Action, //TODO: page actions
+            SymbolKind.PermissionSet,            
             SymbolKind.RequestPage,
             SymbolKind.RequestPageExtension,
             SymbolKind.ReportLabel
@@ -112,13 +111,15 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
 
             case SymbolKind.Page:
             case SymbolKind.PageExtension:
-            case SymbolKind.Action:
             case SymbolKind.RequestPageExtension:
             case SymbolKind.RequestPage:
             case SymbolKind.Query:
                 diagnostics.Add(ReportDiagnostic(ctx.Symbol.GetProperty(PropertyKind.Caption)));
 
                 IEnumerable<IControlSymbol>? flattenedControls = GetFlattenedControls(ctx.Symbol)?.
+                            Where(e => e.GetProperty(PropertyKind.ToolTip) != null || e.GetProperty(PropertyKind.Caption) != null);
+
+                IEnumerable<IActionSymbol>? flattenedActions = GetFlattenedActions(ctx.Symbol)?.
                             Where(e => e.GetProperty(PropertyKind.ToolTip) != null || e.GetProperty(PropertyKind.Caption) != null);
 
                 foreach (IControlSymbol flattenedControl in flattenedControls ?? [])
@@ -134,6 +135,15 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
 
                     IPropertySymbol? groupName = flattenedControl.GetProperty(PropertyKind.GroupName);
                     if (groupName != null) diagnostics.Add(ReportDiagnostic(groupName));
+                }
+
+                foreach (IActionSymbol flattenedAction in flattenedActions ?? [])
+                {
+                    IPropertySymbol? toolTip = flattenedAction.GetProperty(PropertyKind.ToolTip);
+                    if (toolTip != null) diagnostics.Add(ReportDiagnostic(toolTip));
+
+                    IPropertySymbol? caption = flattenedAction.GetProperty(PropertyKind.Caption);
+                    if (caption != null) diagnostics.Add(ReportDiagnostic(caption));
                 }
                 break;
 
@@ -249,6 +259,14 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
             IPageBaseTypeSymbol page => page.FlattenedControls,
             IPageExtensionBaseTypeSymbol pageExtension => pageExtension.AddedControlsFlattened,
             IRequestPageExtensionTypeSymbol requestPageExtension => requestPageExtension.AddedControlsFlattened,
+            _ => null
+        };
+        
+    static IEnumerable<IActionSymbol>? GetFlattenedActions(ISymbol symbol) =>
+        symbol switch
+        {
+            IPageBaseTypeSymbol page => page.FlattenedActions,
+            IPageExtensionBaseTypeSymbol pageExtension => pageExtension.AddedActionsFlattened,                                                                                                                                                                                                                                                                                                                                                                                                                               
             _ => null
         };
 
