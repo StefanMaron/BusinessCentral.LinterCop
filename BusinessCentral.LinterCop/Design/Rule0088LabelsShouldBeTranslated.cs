@@ -17,9 +17,9 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
 {
     public Rule0088LabelsShouldBeTranslated()
     {
-        xliffs = new List<XmlDocument>();
+        this.translationIndex = new Dictionary<string, HashSet<string>>();
     }
-    private List<XmlDocument> xliffs;
+    private Dictionary<string, HashSet<string>> translationIndex = new Dictionary<string, HashSet<string>>();
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0088LabelsShouldBeTranslated);
@@ -40,7 +40,7 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
             SymbolKind.EnumValue,
             SymbolKind.Query, //TODO: daitem captions
             SymbolKind.Profile,
-            SymbolKind.PermissionSet,            
+            SymbolKind.PermissionSet,
             SymbolKind.RequestPage,
             SymbolKind.RequestPageExtension,
             SymbolKind.ReportLabel
@@ -54,12 +54,11 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
 
     private void UpdateCache(Compilation compilation)
     {
-        this.xliffs = new List<XmlDocument>();
+        this.translationIndex = new Dictionary<string, HashSet<string>>();
 
         NavAppManifest? manifest = ManifestHelper.GetManifest(compilation);
         if (manifest == null) return;
         if (!manifest.CompilerFeatures.ShouldGenerateTranslationFile()) return;
-
 
         IFileSystem fileSystem = new FileSystem();
         IEnumerable<string> xliffFiles = Enumerable.Empty<string>();
@@ -80,7 +79,43 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
                 var doc = new XmlDocument();
                 doc.Load(stream);
 
-                this.xliffs.Add(doc);
+                // Setup namespace manager once per document.
+                var nsManager = new XmlNamespaceManager(doc.NameTable);
+                nsManager.AddNamespace("x", "urn:oasis:names:tc:xliff:document:1.2");
+
+                // Get the target language from the file node.
+                string language = doc.SelectSingleNode("//x:file/@target-language", nsManager)?.Value ?? string.Empty;
+                if (string.IsNullOrEmpty(language))
+                    continue;
+
+                // Select all trans-unit nodes.
+                XmlNodeList? transUnits = doc.SelectNodes("//x:trans-unit", nsManager);
+                if (transUnits == null)
+                    continue;
+
+                foreach (XmlNode transUnit in transUnits)
+                {
+                    // Each trans-unit should have an "id" attribute.
+                    string? id = transUnit.Attributes?["id"]?.Value;
+                    if (string.IsNullOrEmpty(id))
+                        continue;
+
+                    // Check the target node
+                    XmlNode? targetNode = transUnit.SelectSingleNode("x:target", nsManager);
+                    bool missingTranslation = targetNode == null ||
+                                              string.IsNullOrWhiteSpace(targetNode.InnerText) ||
+                                              (targetNode.Attributes?["state"]?.Value == "needs-translation");
+
+                    if (missingTranslation)
+                    {
+                        if (!this.translationIndex.TryGetValue(id, out var languages))
+                        {
+                            languages = new HashSet<string>();
+                            this.translationIndex[id] = languages;
+                        }
+                        languages.Add(language);
+                    }
+                }
             }
         }
     }
@@ -165,27 +200,28 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
 
     private Diagnostic? ReportDiagnostic(ISymbol? label)
     {
-        if (label == null) return null;
-        if (label.IsObsoletePendingOrRemoved()) return null;
-        if(LabelIsLocked(label)) return null;
+        if (label == null)
+            return null;
+        if (label.IsObsoletePendingOrRemoved())
+            return null;
+        if (LabelIsLocked(label))
+            return null;
 
         string labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, null);
-        string languages = "";
 
-        foreach (XmlDocument doc in this.xliffs ?? Enumerable.Empty<XmlDocument>())
+        // Lookup the label in the translation index.
+        if (this.translationIndex.TryGetValue(labelValue, out var missingLanguages) && missingLanguages.Count > 0)
         {
-            languages += AnalyzeXML(doc, labelValue, label);
-        }
-
-        languages = languages.TrimStart(' ').TrimStart(',');
-
-        if (languages != "")
-        {
-            return Diagnostic.Create(DiagnosticDescriptors.Rule0088LabelsShouldBeTranslated, label.GetLocation(), new object[] { label.Name, languages });
+            string languages = string.Join(",", missingLanguages.OrderBy(lang => lang));
+            return Diagnostic.Create(
+                DiagnosticDescriptors.Rule0088LabelsShouldBeTranslated,
+                label.GetLocation(),
+                new object[] { label.Name, languages });
         }
 
         return null;
     }
+
 
     private bool LabelIsLocked(ISymbol label)
     {
@@ -261,12 +297,12 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
             IRequestPageExtensionTypeSymbol requestPageExtension => requestPageExtension.AddedControlsFlattened,
             _ => null
         };
-        
+
     static IEnumerable<IActionSymbol>? GetFlattenedActions(ISymbol symbol) =>
         symbol switch
         {
             IPageBaseTypeSymbol page => page.FlattenedActions,
-            IPageExtensionBaseTypeSymbol pageExtension => pageExtension.AddedActionsFlattened,                                                                                                                                                                                                                                                                                                                                                                                                                               
+            IPageExtensionBaseTypeSymbol pageExtension => pageExtension.AddedActionsFlattened,
             _ => null
         };
 
