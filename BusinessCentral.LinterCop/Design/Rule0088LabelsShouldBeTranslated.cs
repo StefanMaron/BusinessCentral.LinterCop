@@ -18,8 +18,10 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
     public Rule0088LabelsShouldBeTranslated()
     {
         this.translationIndex = new Dictionary<string, HashSet<string>>();
+        this.availableLanguages = new HashSet<string>();
     }
     private Dictionary<string, HashSet<string>> translationIndex = new Dictionary<string, HashSet<string>>();
+    private HashSet<string> availableLanguages = new HashSet<string>();
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0088LabelsShouldBeTranslated);
@@ -55,6 +57,7 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
     private void UpdateCache(Compilation compilation)
     {
         this.translationIndex = new Dictionary<string, HashSet<string>>();
+        this.availableLanguages = new HashSet<string>();
 
         NavAppManifest? manifest = ManifestHelper.GetManifest(compilation);
         if (manifest == null) return;
@@ -79,7 +82,7 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
                 var doc = new XmlDocument();
                 doc.Load(stream);
 
-                // Setup namespace manager once per document.
+                // Setup namespace manager.
                 var nsManager = new XmlNamespaceManager(doc.NameTable);
                 nsManager.AddNamespace("x", "urn:oasis:names:tc:xliff:document:1.2");
 
@@ -88,37 +91,41 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
                 if (string.IsNullOrEmpty(language))
                     continue;
 
-                // Select all trans-unit nodes.
+                // Record the available language.
+                this.availableLanguages.Add(language);
+
+                // Process all trans-unit nodes.
                 XmlNodeList? transUnits = doc.SelectNodes("//x:trans-unit", nsManager);
                 if (transUnits == null)
                     continue;
 
                 foreach (XmlNode transUnit in transUnits)
                 {
-                    // Each trans-unit should have an "id" attribute.
                     string? id = transUnit.Attributes?["id"]?.Value;
                     if (string.IsNullOrEmpty(id))
                         continue;
 
-                    // Check the target node
+                    // Determine if the translation is missing.
                     XmlNode? targetNode = transUnit.SelectSingleNode("x:target", nsManager);
                     bool missingTranslation = targetNode == null ||
                                               string.IsNullOrWhiteSpace(targetNode.InnerText) ||
                                               (targetNode.Attributes?["state"]?.Value == "needs-translation");
 
+                    if (!this.translationIndex.TryGetValue(id, out var languages))
+                    {
+                        languages = new HashSet<string>();
+                        this.translationIndex[id] = languages;
+                    }
+
                     if (missingTranslation)
                     {
-                        if (!this.translationIndex.TryGetValue(id, out var languages))
-                        {
-                            languages = new HashSet<string>();
-                            this.translationIndex[id] = languages;
-                        }
                         languages.Add(language);
                     }
                 }
             }
         }
     }
+
 
     private void AnalyzeLabelTranslation(SymbolAnalysisContext ctx)
     {
@@ -209,8 +216,23 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
 
         string labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, null);
 
-        // Lookup the label in the translation index.
-        if (this.translationIndex.TryGetValue(labelValue, out var missingLanguages) && missingLanguages.Count > 0)
+        // If there are no languages available, nothing to report
+        if (this.availableLanguages.Count == 0)
+            return null;
+
+        HashSet<string> missingLanguages;
+        if (!this.translationIndex.TryGetValue(labelValue, out missingLanguages))
+        {
+            // No entry found in the index means the label isn't present in any translation file
+            missingLanguages = new HashSet<string>(this.availableLanguages);
+        }
+        else
+        {
+            // Only report languages that are available and missing
+            missingLanguages = missingLanguages.Intersect(this.availableLanguages).ToHashSet();
+        }
+
+        if (missingLanguages.Count > 0)
         {
             string languages = string.Join(",", missingLanguages.OrderBy(lang => lang));
             return Diagnostic.Create(
@@ -221,6 +243,7 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
 
         return null;
     }
+
 
 
     private bool LabelIsLocked(ISymbol label)
@@ -260,35 +283,7 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
 
         return subPropertyNode?.DescendantNodes() ?? Enumerable.Empty<SyntaxNode>();
     }
-    private static string AnalyzeXML(XmlDocument doc, string labelValue, ISymbol label)
-    {
-        XmlNode root = doc.DocumentElement;
-        var nsManager = new XmlNamespaceManager(doc.NameTable);
 
-        // Find translation unit
-        nsManager.AddNamespace("x", "urn:oasis:names:tc:xliff:document:1.2");
-        var transUnitNode = root.SelectSingleNode($"//x:trans-unit[@id='{labelValue}']", nsManager);
-
-        // find target language
-        nsManager.AddNamespace("x", "urn:oasis:names:tc:xliff:document:1.2");
-        var language = root.SelectSingleNode($"//x:file/@target-language", nsManager)?.InnerText ?? string.Empty;
-
-        if (transUnitNode == null && language != string.Empty)
-        {
-            return $",{language}";
-        }
-        else
-        {
-            var targetNode = transUnitNode?.SelectSingleNode("x:target", nsManager);
-            if (targetNode == null || string.IsNullOrEmpty(targetNode.InnerText) ||
-                targetNode.Attributes["state"]?.Value == "needs-translation")
-            {
-                return $",{language}";
-            }
-        }
-
-        return string.Empty;
-    }
     static IEnumerable<IControlSymbol>? GetFlattenedControls(ISymbol symbol) =>
         symbol switch
         {
