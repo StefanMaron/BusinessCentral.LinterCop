@@ -4,6 +4,7 @@ using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -35,9 +36,9 @@ public class Rule0088AvoidOptionTypes : DiagnosticAnalyzer
             return;
         }
 
-        if (optionDataType.Parent is SimpleTypeReferenceSyntax ||
-            ctx.ContainingSymbol is IMethodSymbol method && method.IsEventSubscriber() ||
-            ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol() is ITableTypeSymbol table && table.TableType == TableTypeKind.CDS)
+        if (optionDataType.Parent is SimpleTypeReferenceSyntax && !IsParameterOrReturnValue(optionDataType) ||
+             ctx.ContainingSymbol is IMethodSymbol method && method.IsEventSubscriber() ||
+             ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol() is ITableTypeSymbol table && table.TableType == TableTypeKind.CDS)
         {
             return;
         }
@@ -47,6 +48,12 @@ public class Rule0088AvoidOptionTypes : DiagnosticAnalyzer
             optionDataType.GetLocation(),
             new object[] { optionDataType.ToString() }
         ));
+    }
+
+    private static bool IsParameterOrReturnValue(OptionDataTypeSyntax optionDataType)
+    {
+        var parent = optionDataType.Parent?.Parent;
+        return parent is not null && (parent.Kind == SyntaxKind.Parameter || parent.Kind == SyntaxKind.ReturnValue);
     }
 
     private void AnalyzeVariables(SymbolAnalysisContext ctx)
@@ -66,12 +73,9 @@ public class Rule0088AvoidOptionTypes : DiagnosticAnalyzer
                     return;
 
                 var LocalVariablesName = GetReferencedVariableNames(containingSymbol, variable);
-                if (LocalVariablesName is null)
-                    return;
-
                 HasVariablesNotInSource = ((IMethodSymbol)containingSymbol.OriginalDefinition).LocalVariables
                                                                 .Where(var => !var.Type.GetLocation().IsInSource)
-                                                                .Where(var => LocalVariablesName.Contains(var.OriginalDefinition.Name))
+                                                                .Where(var => LocalVariablesName?.Contains(var.OriginalDefinition.Name) == true)
                                                                 .Any();
                 break;
 
@@ -81,16 +85,13 @@ public class Rule0088AvoidOptionTypes : DiagnosticAnalyzer
                     return;
 
                 var GlobalVariablesName = GetReferencedVariableNames(applicationObjectTypeSymbol, variable);
-                if (GlobalVariablesName is null)
-                    return;
-
                 HasVariablesNotInSource = applicationObjectTypeSymbol.GetMembers()
                     .Where(member => member.Kind == SymbolKind.GlobalVariable || member.Kind == SymbolKind.Method)
                     .SelectMany(member => member is IMethodSymbol methodSymbol
                         ? methodSymbol.LocalVariables
                         : member is IVariableSymbol variableSymbol ? Enumerable.Repeat(variableSymbol, 1) : Enumerable.Empty<IVariableSymbol>())
                     .Where(var => !var.Type.GetLocation().IsInSource)
-                    .Where(var => GlobalVariablesName.Contains(var.OriginalDefinition.Name))
+                    .Where(var => GlobalVariablesName?.Contains(var.OriginalDefinition.Name) == true)
                     .Any();
                 break;
         }
@@ -105,54 +106,25 @@ public class Rule0088AvoidOptionTypes : DiagnosticAnalyzer
         }
     }
 
-    private static List<string>? GetReferencedVariableNames(ISymbol? containingSymbol, IVariableSymbol variable)
+    private static IEnumerable<string>? GetReferencedVariableNames(ISymbol? containingSymbol, IVariableSymbol variable)
     {
-        var nodes = GetReferencedNodes(containingSymbol, variable.Name);
-        return GetDistinctVariableNames(nodes);
-    }
-
-    private static IEnumerable<OptionAccessExpressionSyntax>? GetReferencedNodes(ISymbol? symbol, string variableName)
-    {
-        if (symbol is null)
-            return null;
-
-        SyntaxNode? syntaxNode = symbol.DeclaringSyntaxReference?.GetSyntax();
+        SyntaxNode? syntaxNode = containingSymbol?.DeclaringSyntaxReference?.GetSyntax();
         if (syntaxNode is null)
             return null;
 
-        return syntaxNode.DescendantNodes()
-                .OfType<OptionAccessExpressionSyntax>()
-                .Where(node => node.Expression.GetIdentifierOrLiteralValue() == variableName);
-    }
+        var nodes = syntaxNode.DescendantNodes()
+            .OfType<ArgumentListSyntax>()
+            .Where(argList => argList.Arguments.Any(argument =>
+                (argument is OptionAccessExpressionSyntax optionAccess &&
+                 optionAccess.Expression.GetIdentifierOrLiteralValue() == variable.Name) ||
+                argument.GetIdentifierOrLiteralValue() == variable.Name));
 
-    private static List<string>? GetDistinctVariableNames(IEnumerable<OptionAccessExpressionSyntax>? nodes)
-    {
-        if (nodes is null)
-            return null;
-
-        var variableNames = new List<string>();
-
-        foreach (var node in nodes)
-        {
-            var parentNode = node.Parent;
-            while (parentNode is not null && parentNode.Kind != SyntaxKind.ExpressionStatement)
-            {
-                parentNode = parentNode.Parent;
-            }
-
-            if (parentNode is ExpressionStatementSyntax expressionStatement &&
-                expressionStatement.Expression is InvocationExpressionSyntax invocation &&
-                invocation.Expression is MemberAccessExpressionSyntax memberAccess)
-            {
-                var variableName = memberAccess.Expression.ToString();
-                if (!variableNames.Contains(variableName))
-                    variableNames.Add(variableName);
-            }
-        }
-
-        if (variableNames.Count == 0)
-            return null;
-
-        return variableNames;
+        return nodes
+            .SelectMany(node => node.AncestorsAndSelf()
+                .OfType<ExpressionStatementSyntax>()
+                .SelectMany(exprStmt => exprStmt.DescendantNodes()
+                    .OfType<MemberAccessExpressionSyntax>()
+                    .Select(memberAccess => memberAccess.Expression.ToString().UnquoteIdentifier())))
+            .Distinct();
     }
 }

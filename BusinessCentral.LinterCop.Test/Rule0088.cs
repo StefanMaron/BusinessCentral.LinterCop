@@ -19,6 +19,9 @@ namespace BusinessCentral.LinterCop.Test
 
         [Test]
         [TestCase("OptionField")]
+        [TestCase("OptionParameterGlobalVar")]
+        [TestCase("OptionParameterLocalVar")]
+        [TestCase("OptionReturnValue")]
         [TestCase("OptionVariable")]
         public async Task HasDiagnostic(string testCase)
         {
@@ -33,6 +36,7 @@ namespace BusinessCentral.LinterCop.Test
         [TestCase("EventSubscriberOption")]
         [TestCase("ObsoleteFieldOption")]
         [TestCase("CDSDocument")]
+        // [TestCase("OptionParameter")] //TODO: See remarks in the test file
         public async Task NoDiagnostic(string testCase)
         {
             var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
