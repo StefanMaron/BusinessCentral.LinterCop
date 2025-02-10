@@ -436,6 +436,16 @@
       "id": "LC0087",
       "action": "Warning",
       "justification": "Use IsNullGuid() to check for empty GUID values."
+    },
+    {
+      "id": "LC0089",
+      "action": "Hidden",
+      "justification": "Show Cognitive Complexity diagnostics for all methods."
+    },
+    {
+      "id": "LC0090",
+      "action": "Info",
+      "justification": "Show Cognitive Complexity diagnostics for methods above threshold."
     }
   ]
 }
