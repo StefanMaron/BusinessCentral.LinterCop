@@ -895,6 +895,16 @@ public static class DiagnosticDescriptors
         description: LinterCopAnalyzers.GetLocalizableString("Rule0087UseIsNullGuidDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0087");
 
+    public static readonly DiagnosticDescriptor Rule0088AvoidOptionTypes = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "0088",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0088AvoidOptionTypesTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0088AvoidOptionTypesFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: true,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0088AvoidOptionTypesDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0088");
+
     public static readonly DiagnosticDescriptor Rule0089CognitiveComplexity = new(
         id: LinterCopAnalyzers.AnalyzerPrefix + "0089",
         title: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityTitle"),
