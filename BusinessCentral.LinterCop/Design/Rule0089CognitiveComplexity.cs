@@ -123,7 +123,7 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
     {
         if (node is IfStatementSyntax ifStatement)
         {
-#if !LessThenSpring2025
+#if !LessThenFall2025 // TODO: Change to LessThenSpring2025 when AL version 15.0 is no longer Pre-Release
             return ifStatement.Statement is ExitStatementSyntax or ContinueStatementSyntax;
 #else
             return ifStatement.Statement is ExitStatementSyntax;
