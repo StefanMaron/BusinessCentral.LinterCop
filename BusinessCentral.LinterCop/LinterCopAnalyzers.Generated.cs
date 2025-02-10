@@ -901,7 +901,7 @@ public static class DiagnosticDescriptors
         messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityFormat"),
         category: "Design",
         defaultSeverity: DiagnosticSeverity.Info,
-        isEnabledByDefault: true,
+        isEnabledByDefault: false,
         description: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0089");
 
@@ -911,7 +911,7 @@ public static class DiagnosticDescriptors
         messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityFormat"),
         category: "Design",
         defaultSeverity: DiagnosticSeverity.Info,
-        isEnabledByDefault: false,
+        isEnabledByDefault: true,
         description: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0090");
 }

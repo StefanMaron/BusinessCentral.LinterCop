@@ -66,14 +66,14 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         if (complexity >= cognitiveComplexityThreshold)
         {
             context.ReportDiagnostic(Diagnostic.Create(
-                DiagnosticDescriptors.Rule0089CognitiveComplexity,
+                DiagnosticDescriptors.Rule0090CognitiveComplexity,
                 context.OwningSymbol.GetLocation(),
                 complexity,
                 cognitiveComplexityThreshold));
         }
 
         context.ReportDiagnostic(Diagnostic.Create(
-               DiagnosticDescriptors.Rule0090CognitiveComplexity,
+               DiagnosticDescriptors.Rule0089CognitiveComplexity,
                context.OwningSymbol.GetLocation(),
                complexity,
                cognitiveComplexityThreshold));
@@ -123,7 +123,7 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
     {
         if (node is IfStatementSyntax ifStatement)
         {
-#if !LessThenFall2025 // TODO: Change to LessThenSpring2025 when AL version 15.0 is no longer Pre-Release
+#if !LessThenFall2025 // TODO: Change to LessThenSpring2025 when AL version 15.0 is no longer in Pre-Release
             return ifStatement.Statement is ExitStatementSyntax or ContinueStatementSyntax;
 #else
             return ifStatement.Statement is ExitStatementSyntax;
