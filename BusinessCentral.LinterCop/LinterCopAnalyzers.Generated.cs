@@ -894,4 +894,24 @@ public static class DiagnosticDescriptors
         isEnabledByDefault: true,
         description: LinterCopAnalyzers.GetLocalizableString("Rule0087UseIsNullGuidDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0087");
+
+    public static readonly DiagnosticDescriptor Rule0089CognitiveComplexity = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "0089",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: true,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0089");
+
+    public static readonly DiagnosticDescriptor Rule0090CognitiveComplexity = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "0090",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: false,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0090");
 }

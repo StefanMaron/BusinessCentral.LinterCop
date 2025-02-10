@@ -903,4 +903,13 @@
   <data name="Rule0087UseIsNullGuidDescription" xml:space="preserve">
     <value>When checking if a GUID is empty, avoid using direct comparisons such as MyGuid = '', as this will result in a runtime error due to the invalid GUID format. Instead, use the IsNullGuid() method to perform the check safely and correctly.</value>
   </data>
+  <data name="Rule0089CognitiveComplexityTitle" xml:space="preserve">
+    <value>Cognitive Complexity exceeds threshold.</value>
+  </data>
+  <data name="Rule0089CognitiveComplexityFormat" xml:space="preserve">
+    <value>Cognitive Complexity: {0} (threshold &gt;={1})</value>
+  </data>
+  <data name="Rule0089CognitiveComplexityDescription" xml:space="preserve">
+    <value>This rule analyzes the cognitive complexity of methods to measure how difficult the code is to understand.</value>
+  </data>
 </root>
