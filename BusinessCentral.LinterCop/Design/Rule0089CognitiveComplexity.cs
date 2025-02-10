@@ -18,7 +18,9 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         SyntaxKind.WhileStatement,
         SyntaxKind.CaseStatement,
         SyntaxKind.RepeatStatement,
+#if !LessThenFall2024
         SyntaxKind.ConditionalExpression
+#endif
     };
 
     private static readonly HashSet<SyntaxKind> nestedStructures = new()
