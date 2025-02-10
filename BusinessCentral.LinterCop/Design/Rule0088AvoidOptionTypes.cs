@@ -45,8 +45,7 @@ public class Rule0088AvoidOptionTypes : DiagnosticAnalyzer
 
         ctx.ReportDiagnostic(Diagnostic.Create(
             DiagnosticDescriptors.Rule0088AvoidOptionTypes,
-            optionDataType.GetLocation(),
-            new object[] { optionDataType.ToString() }
+            optionDataType.GetLocation()
         ));
     }
 
@@ -100,8 +99,7 @@ public class Rule0088AvoidOptionTypes : DiagnosticAnalyzer
         {
             ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0088AvoidOptionTypes,
-                variable.GetLocation(),
-                variable.Name
+                variable.GetLocation()
             ));
         }
     }
