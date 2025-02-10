@@ -912,4 +912,13 @@
   <data name="Rule0088AvoidOptionTypesDescription" xml:space="preserve">
     <value>Option types should be avoided, use enum if applicable to get rid of some of the bad patterns that come along with option fields.</value>
   </data>
+  <data name="Rule0089CognitiveComplexityTitle" xml:space="preserve">
+    <value>Cognitive Complexity exceeds threshold.</value>
+  </data>
+  <data name="Rule0089CognitiveComplexityFormat" xml:space="preserve">
+    <value>Cognitive Complexity: {0} (threshold &gt;={1})</value>
+  </data>
+  <data name="Rule0089CognitiveComplexityDescription" xml:space="preserve">
+    <value>This rule analyzes the cognitive complexity of methods to measure how difficult the code is to understand.</value>
+  </data>
 </root>

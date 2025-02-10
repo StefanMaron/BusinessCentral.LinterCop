@@ -271,3 +271,5 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0086](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0086)|Use the new `PageStyle` datatype instead string literals.|Info|14.0|
 |[LC0087](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0087)|Use `IsNullGuid()` to check for empty GUID values.|Warning|
 |[LC0088](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0088)|Option types should be avoided, use enum if applicable.|Info|
+|[LC0089](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0089)|Show Cognitive Complexity diagnostics for all methods.|Disabled|
+|[LC0090](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0090)|Show Cognitive Complexity diagnostics for methods above threshold.|Info|
