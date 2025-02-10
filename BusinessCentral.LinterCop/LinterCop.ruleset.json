@@ -436,6 +436,11 @@
       "id": "LC0087",
       "action": "Warning",
       "justification": "Use IsNullGuid() to check for empty GUID values."
+    },
+    {
+      "id": "LC0088",
+      "action": "Info",
+      "justification": "Avoid option types to get rid of some of the bad patterns that come along with option fields."
     }
   ]
 }

@@ -903,4 +903,13 @@
   <data name="Rule0087UseIsNullGuidDescription" xml:space="preserve">
     <value>When checking if a GUID is empty, avoid using direct comparisons such as MyGuid = '', as this will result in a runtime error due to the invalid GUID format. Instead, use the IsNullGuid() method to perform the check safely and correctly.</value>
   </data>
+  <data name="Rule0088AvoidOptionTypesTitle" xml:space="preserve">
+    <value>Option types should be avoided, use enum if applicable</value>
+  </data>
+  <data name="Rule0088AvoidOptionTypesFormat" xml:space="preserve">
+    <value>Option types should be avoided, use enum if applicable</value>
+  </data>
+  <data name="Rule0088AvoidOptionTypesDescription" xml:space="preserve">
+    <value>Option types should be avoided, use enum if applicable to get rid of some of the bad patterns that come along with option fields.</value>
+  </data>
 </root>
