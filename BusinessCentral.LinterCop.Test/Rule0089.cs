@@ -12,6 +12,9 @@ public class Rule0089
     }
 
     [Test]
+#if !LessThenFall2024
+    [TestCase("ConditionalExpressionNested")]
+#endif
     [TestCase("IfStatement")]
     [TestCase("IfStatementNested")]
     public async Task HasDiagnostic(string testCase)

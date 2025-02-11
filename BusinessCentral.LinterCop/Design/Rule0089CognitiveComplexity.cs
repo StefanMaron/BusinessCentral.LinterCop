@@ -3,13 +3,14 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
+using System.Collections.Concurrent;
 
 namespace BusinessCentral.LinterCop.Design;
 
 [DiagnosticAnalyzer]
 public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
 {
-    private static readonly Dictionary<Compilation, int> thresholdCache = new();
+    private static readonly ConcurrentDictionary<Compilation, int> thresholdCache = new();
 
     private static readonly HashSet<SyntaxKind> flowBreakingKinds = new()
     {
@@ -29,7 +30,10 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         SyntaxKind.ForStatement,
         SyntaxKind.WhileStatement,
         SyntaxKind.CaseStatement,
-        SyntaxKind.RepeatStatement
+        SyntaxKind.RepeatStatement,
+#if !LessThenFall2024
+        SyntaxKind.ConditionalExpression
+#endif
     };
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
