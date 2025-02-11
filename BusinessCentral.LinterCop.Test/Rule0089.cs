@@ -12,6 +12,7 @@ public class Rule0089
     }
 
     [Test]
+    [TestCase("ConditionalExpressionNested")]
     [TestCase("IfStatement")]
     [TestCase("IfStatementNested")]
     public async Task HasDiagnostic(string testCase)
