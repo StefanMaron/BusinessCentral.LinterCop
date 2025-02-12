@@ -15,6 +15,7 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
     private static readonly HashSet<SyntaxKind> flowBreakingKinds = new()
     {
         SyntaxKind.IfStatement,
+        SyntaxKind.ForStatement,
         SyntaxKind.ForEachStatement,
         SyntaxKind.WhileStatement,
         SyntaxKind.CaseStatement,
@@ -28,6 +29,7 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
     {
         SyntaxKind.IfStatement,
         SyntaxKind.ForStatement,
+        SyntaxKind.ForEachStatement,
         SyntaxKind.WhileStatement,
         SyntaxKind.CaseStatement,
         SyntaxKind.RepeatStatement,
@@ -77,10 +79,10 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         }
 
         context.ReportDiagnostic(Diagnostic.Create(
-               DiagnosticDescriptors.Rule0089CognitiveComplexity,
-               context.OwningSymbol.GetLocation(),
-               complexity,
-               cognitiveComplexityThreshold));
+            DiagnosticDescriptors.Rule0090CognitiveComplexity,
+            context.OwningSymbol.GetLocation(),
+            complexity,
+            cognitiveComplexityThreshold));
     }
 
     private int CalculateCognitiveComplexity(CodeBlockAnalysisContext context, SyntaxNode root)
@@ -97,11 +99,21 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
             {
                 complexity += 1 + nestingLevel;
                 if (IsNestedStructure(node))
-                    nestingLevel++; // Only increment for true nested structures
+                    nestingLevel++;
+            }
+
+            if (node is IfStatementSyntax ifStmt && ifStmt.ElseStatement is not null)
+            {
+                // Process 'else' with the original nesting level (without nesting penalty)
+                stack.Push((ifStmt.ElseStatement, nestingLevel - 1 < 0 ? 0 : nestingLevel - 1));
             }
 
             foreach (var child in node.ChildNodes())
-                stack.Push((child, nestingLevel));
+            {
+                // Prevent processing the else clause twice
+                if (!(node is IfStatementSyntax && child == ((IfStatementSyntax)node).ElseStatement))
+                    stack.Push((child, nestingLevel));
+            }
         }
 
         return complexity;
