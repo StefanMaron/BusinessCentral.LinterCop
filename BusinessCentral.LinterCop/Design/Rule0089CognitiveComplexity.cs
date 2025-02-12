@@ -144,7 +144,6 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
                     nestingLevel++;
             }
 
-            // Process child nodes
             foreach (var child in node.ChildNodes())
             {
                 stack.Push((child, nestingLevel));
