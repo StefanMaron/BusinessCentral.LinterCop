@@ -918,6 +918,9 @@
   <data name="Rule0089CognitiveComplexityFormat" xml:space="preserve">
     <value>Cognitive Complexity: {0} (threshold &gt;={1})</value>
   </data>
+  <data name="Rule0089DEBUGCognitiveComplexityFormat" xml:space="preserve">
+    <value>{0}: +{1} (nesting = {2})</value>
+  </data>
   <data name="Rule0089CognitiveComplexityDescription" xml:space="preserve">
     <value>This rule analyzes the cognitive complexity of methods to measure how difficult the code is to understand.</value>
   </data>

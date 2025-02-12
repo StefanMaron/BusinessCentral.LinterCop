@@ -915,6 +915,14 @@ public static class DiagnosticDescriptors
         description: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0089");
 
+    public static readonly DiagnosticDescriptor Rule0089DEBUGCognitiveComplexity = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "0089DEBUG",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0089DEBUGCognitiveComplexityFormat"),
+        category: "Debug",
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: false);
+
     public static readonly DiagnosticDescriptor Rule0090CognitiveComplexity = new(
         id: LinterCopAnalyzers.AnalyzerPrefix + "0090",
         title: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityTitle"),

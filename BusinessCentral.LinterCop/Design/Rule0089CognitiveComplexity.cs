@@ -4,6 +4,7 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
 using System.Collections.Concurrent;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -15,10 +16,10 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
     private static readonly HashSet<SyntaxKind> flowBreakingKinds = new()
     {
         SyntaxKind.IfStatement,
+        SyntaxKind.CaseStatement,
         SyntaxKind.ForStatement,
         SyntaxKind.ForEachStatement,
         SyntaxKind.WhileStatement,
-        SyntaxKind.CaseStatement,
         SyntaxKind.RepeatStatement,
 #if !LessThenFall2024
         SyntaxKind.ConditionalExpression
@@ -28,10 +29,10 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
     private static readonly HashSet<SyntaxKind> nestedStructures = new()
     {
         SyntaxKind.IfStatement,
+        SyntaxKind.CaseStatement,
         SyntaxKind.ForStatement,
         SyntaxKind.ForEachStatement,
         SyntaxKind.WhileStatement,
-        SyntaxKind.CaseStatement,
         SyntaxKind.RepeatStatement,
 #if !LessThenFall2024
         SyntaxKind.ConditionalExpression
@@ -41,6 +42,7 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(
             DiagnosticDescriptors.Rule0089CognitiveComplexity,
+            DiagnosticDescriptors.Rule0089DEBUGCognitiveComplexity,
             DiagnosticDescriptors.Rule0090CognitiveComplexity);
 
     public override void Initialize(AnalysisContext context) =>
@@ -79,7 +81,7 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         }
 
         context.ReportDiagnostic(Diagnostic.Create(
-            DiagnosticDescriptors.Rule0090CognitiveComplexity,
+            DiagnosticDescriptors.Rule0089CognitiveComplexity,
             context.OwningSymbol.GetLocation(),
             complexity,
             cognitiveComplexityThreshold));
@@ -95,24 +97,57 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         {
             var (node, nestingLevel) = stack.Pop();
 
+            // The 'else if' increment causes a problem
+            // In the AL Language 'else if' is an 'else" keyword followed by an 'if' node (not a single 'elsif' node).
+            // If we increment for both 'else' and 'if' kinds the number will be too high.
+            // So we'll increment for 'else' nodes not followed by an 'if' and rely on the 'if' to increment 'else if' statements.
+            if (node is IfStatementSyntax ifStatement)
+            {
+                // Increment for the 'if' condition (+1 + nesting level)
+                complexity += 1 + nestingLevel;
+                RaiseDEBUGDiagnostic(context, node, node.SpanStart, node.Kind, nestingLevel);
+
+                // Increase nesting level for the 'if' body
+                int newNestingLevel = nestingLevel + 1;
+
+                // Push the 'then' block with increased nesting
+                if (ifStatement.Statement != null)
+                    stack.Push((ifStatement.Statement, newNestingLevel));
+
+                // Handle the 'else' ElseStatement
+                if (ifStatement.ElseStatement is not null)
+                {
+                    if (ifStatement.ElseStatement is IfStatementSyntax)
+                    {
+                        // ELSE IF: Do not increment and no nesting penalty
+                        // Rely on the 'if' to increment
+                        stack.Push((ifStatement.ElseStatement, nestingLevel));
+                    }
+                    else
+                    {
+                        // ELSE (not followed by IF): Increment by 1, No(!) nesting penalty
+                        complexity += 1;
+                        RaiseDEBUGDiagnostic(context, node, ifStatement.ElseKeywordToken.SpanStart, SyntaxKind.ElseKeyword, nestingLevel);
+                        stack.Push((ifStatement.ElseStatement, nestingLevel));
+                    }
+                }
+
+                continue; // Skip further processing for this IF node
+            }
+
             if (IsFlowBreakingStructure(node) && !IsGuardClause(node))
             {
                 complexity += 1 + nestingLevel;
+                RaiseDEBUGDiagnostic(context, node, node.SpanStart, node.Kind, nestingLevel);
+
                 if (IsNestedStructure(node))
                     nestingLevel++;
             }
 
-            if (node is IfStatementSyntax ifStmt && ifStmt.ElseStatement is not null)
-            {
-                // Process 'else' with the original nesting level (without nesting penalty)
-                stack.Push((ifStmt.ElseStatement, nestingLevel - 1 < 0 ? 0 : nestingLevel - 1));
-            }
-
+            // Process child nodes
             foreach (var child in node.ChildNodes())
             {
-                // Prevent processing the else clause twice
-                if (!(node is IfStatementSyntax && child == ((IfStatementSyntax)node).ElseStatement))
-                    stack.Push((child, nestingLevel));
+                stack.Push((child, nestingLevel));
             }
         }
 
@@ -160,5 +195,17 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         }
 
         return threshold;
+    }
+
+    private static void RaiseDEBUGDiagnostic(CodeBlockAnalysisContext context, SyntaxNode node, int SpanStart, SyntaxKind nodeKind, int nestingLevel)
+    {
+        context.ReportDiagnostic(Diagnostic.Create(
+            DiagnosticDescriptors.Rule0089DEBUGCognitiveComplexity,
+            Location.Create(
+                node.GetLocation().SourceTree!,
+                new TextSpan(SpanStart, 1)),
+            nodeKind,
+            1 + nestingLevel,
+            nestingLevel));
     }
 }
