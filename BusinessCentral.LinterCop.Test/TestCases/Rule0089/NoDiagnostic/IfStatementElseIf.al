@@ -12,3 +12,4 @@ codeunit 50100 MyCodeunit
                 if true then               // +2 (nesting = 1)
                     if true then;          // +3 (nesting = 2)
     end;
+}
