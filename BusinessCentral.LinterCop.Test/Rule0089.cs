@@ -30,6 +30,7 @@ public class Rule0089
     [TestCase("IfStatement")]
     [TestCase("DiscountConsecutiveAndOperator")]
     [TestCase("IfStatementElseIf")]
+    [TestCase("IfStatementGuardClause")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
