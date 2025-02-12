@@ -103,16 +103,16 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
             // So we'll increment for 'else' nodes not followed by an 'if' and rely on the 'if' to increment 'else if' statements.
             if (node is IfStatementSyntax ifStatement)
             {
-                // Increment for the 'if' condition (+1 + nesting level)
-                complexity += 1 + nestingLevel;
-                RaiseDEBUGDiagnostic(context, node, node.SpanStart, node.Kind, nestingLevel);
-
-                // Increase nesting level for the 'if' body
-                int newNestingLevel = nestingLevel + 1;
+                if (!IsGuardClause(node))
+                {
+                    // Increment for the 'if' condition (+1 + nesting level)
+                    complexity += 1 + nestingLevel;
+                    RaiseDEBUGDiagnostic(context, node, node.SpanStart, node.Kind, nestingLevel);
+                }
 
                 // Push the 'then' block with increased nesting
                 if (ifStatement.Statement != null)
-                    stack.Push((ifStatement.Statement, newNestingLevel));
+                    stack.Push((ifStatement.Statement, nestingLevel + 1));
 
                 // Handle the 'else' ElseStatement
                 if (ifStatement.ElseStatement is not null)
