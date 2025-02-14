@@ -98,7 +98,7 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         {
             var (node, nestingLevel) = stack.Pop();
 
-            if (node is IfStatementSyntax ifStatement)
+            if (node.IsKind(SyntaxKind.IfStatement))
             {
                 ProcessIfStatement(context, ref stack, node, ref complexity, ref nestingLevel);
                 continue; // Skip further processing for this IF node
@@ -142,22 +142,18 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         if (ifStatement.Statement is not null)
             stack.Push((ifStatement.Statement, nestingLevel + 1));
 
-        // Handle the 'else' ElseStatement
+        // Handle 'else' statement logic from 'if' statement
         if (ifStatement.ElseStatement is not null)
         {
-            if (ifStatement.ElseStatement is IfStatementSyntax)
+            if (ifStatement.ElseStatement is not IfStatementSyntax)
             {
-                // ELSE IF: Do not increment and no nesting penalty
-                // Rely on the 'if' to increment
-                stack.Push((ifStatement.ElseStatement, nestingLevel));
-            }
-            else
-            {
-                // ELSE (not followed by IF): Increment by 1, No(!) nesting penalty
+                // 'else' not followed by 'if': Increment +1 (no nesting penalty)
                 complexity += 1;
                 RaiseDEBUGDiagnostic(context, node, ifStatement.ElseKeywordToken.SpanStart, SyntaxKind.ElseKeyword, nestingLevel);
-                stack.Push((ifStatement.ElseStatement, nestingLevel));
             }
+
+            // 'else if': Do not increment and no nesting penalty (rely on the 'if' statement to handle increment)
+            stack.Push((ifStatement.ElseStatement, nestingLevel));
         }
     }
 
