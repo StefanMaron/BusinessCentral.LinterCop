@@ -27,10 +27,15 @@ public class Rule0089
     }
 
     [Test]
+    [TestCase("CurrReportGuardClause")]
+    [TestCase("CurrXMLportGuardClause")]
     [TestCase("IfStatement")]
     [TestCase("DiscountConsecutiveAndOperator")]
     [TestCase("IfStatementElseIf")]
     [TestCase("IfStatementGuardClause")]
+#if !LessThenFall2025 // TODO: Change to LessThenSpring2025 when AL version 15.0 is no longer in Pre-Release
+    [TestCase("IfStatementGuardClauseContinue")]
+#endif
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))

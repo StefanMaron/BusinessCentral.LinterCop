@@ -40,6 +40,19 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
 #endif
     };
 
+    private static readonly HashSet<string> guardClauseIdentifiers = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "CurrReport",
+        "CurrXMLport"
+    };
+
+    private static readonly HashSet<string> guardClauseExitCommands = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Break",
+        "Skip",
+        "Quit"
+    };
+
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(
             DiagnosticDescriptors.Rule0089CognitiveComplexity,
@@ -175,15 +188,33 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
 
     private bool IsGuardClause(SyntaxNode node)
     {
-        if (node is IfStatementSyntax ifStatement)
+        if (node is not IfStatementSyntax { Statement: ExpressionStatementSyntax { Expression: CodeExpressionSyntax codeExpression } } ifStatement)
+            return node is IfStatementSyntax { Statement: ExitStatementSyntax };
+
+        if (codeExpression is IdentifierNameSyntax identifier)
         {
-            // #if !LessThenFall2025 // TODO: Change to LessThenSpring2025 when AL version 15.0 is no longer in Pre-Release
-            //             return ifStatement.Statement is ExitStatementSyntax or ContinueStatementSyntax;
-            // #else
-            return ifStatement.Statement is ExitStatementSyntax;
-            // #endif
+            return SemanticFacts.IsSameName(identifier.GetIdentifierOrLiteralValue() ?? string.Empty, "continue");
+        }
+
+        if (codeExpression is InvocationExpressionSyntax invocation)
+        {
+            if (invocation.Expression is MemberAccessExpressionSyntax memberAccess)
+            {
+                return IsGuardCommand(memberAccess);
+            }
+            if (invocation.Expression is IdentifierNameSyntax expression)
+            {
+                return SemanticFacts.IsSameName(expression.GetIdentifierOrLiteralValue() ?? string.Empty, "Error");
+            }
         }
         return false;
+    }
+
+    private bool IsGuardCommand(MemberAccessExpressionSyntax memberAccess)
+    {
+        var identifier = memberAccess.Expression.GetIdentifierOrLiteralValue() ?? string.Empty;
+        return identifier is not null && guardClauseIdentifiers.Contains(identifier) &&
+               guardClauseExitCommands.Contains(memberAccess.GetNameStringValue() ?? string.Empty);
     }
 
     private int GetCognitiveComplexityThreshold(CodeBlockAnalysisContext context)
