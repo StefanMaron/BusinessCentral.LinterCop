@@ -16,13 +16,13 @@ codeunit 50100 MyCodeunit
                 Continue;
 
         foreach i in Numbers do begin   // +1 (nesting = 0)
-            if Statement then
+            if Statement then           // +0 Guard Clause
                 Continue;
         end;
 
         foreach i in Numbers do         // +1 (nesting = 0)
             if Statement then           // +2 (nesting = 1)
-                if Statement then
+                if Statement then       // +0 Guard Clause
                     Continue;
     end;
 }
