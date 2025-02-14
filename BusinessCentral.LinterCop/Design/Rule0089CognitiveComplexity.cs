@@ -1,10 +1,11 @@
+using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
-using System.Collections.Immutable;
-using BusinessCentral.LinterCop.Helpers;
-using System.Collections.Concurrent;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
+using System.Collections.Concurrent;
+using System.Collections.Immutable;
+using System.ComponentModel;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -97,41 +98,9 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         {
             var (node, nestingLevel) = stack.Pop();
 
-            // The 'else if' increment causes a problem
-            // In the AL Language 'else if' is an 'else" keyword followed by an 'if' node (not a single 'elsif' node).
-            // If we increment for both 'else' and 'if' kinds the number will be too high.
-            // So we'll increment for 'else' nodes not followed by an 'if' and rely on the 'if' to increment 'else if' statements.
             if (node is IfStatementSyntax ifStatement)
             {
-                if (!IsGuardClause(node))
-                {
-                    // Increment for the 'if' condition (+1 + nesting level)
-                    complexity += 1 + nestingLevel;
-                    RaiseDEBUGDiagnostic(context, node, node.SpanStart, node.Kind, nestingLevel);
-                }
-
-                // Push the 'then' block with increased nesting
-                if (ifStatement.Statement != null)
-                    stack.Push((ifStatement.Statement, nestingLevel + 1));
-
-                // Handle the 'else' ElseStatement
-                if (ifStatement.ElseStatement is not null)
-                {
-                    if (ifStatement.ElseStatement is IfStatementSyntax)
-                    {
-                        // ELSE IF: Do not increment and no nesting penalty
-                        // Rely on the 'if' to increment
-                        stack.Push((ifStatement.ElseStatement, nestingLevel));
-                    }
-                    else
-                    {
-                        // ELSE (not followed by IF): Increment by 1, No(!) nesting penalty
-                        complexity += 1;
-                        RaiseDEBUGDiagnostic(context, node, ifStatement.ElseKeywordToken.SpanStart, SyntaxKind.ElseKeyword, nestingLevel);
-                        stack.Push((ifStatement.ElseStatement, nestingLevel));
-                    }
-                }
-
+                ProcessIfStatement(context, ref stack, node, ref complexity, ref nestingLevel);
                 continue; // Skip further processing for this IF node
             }
 
@@ -151,6 +120,45 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         }
 
         return complexity;
+    }
+
+    // The 'else if' increment causes a problem
+    // In the AL Language 'else if' is an 'else" keyword followed by an 'if' node (not a single 'elsif' node).
+    // If we increment for both 'else' and 'if' kinds the number will be too high.
+    // So we'll increment for 'else' nodes not followed by an 'if' and rely on the 'if' to increment 'else if' statements.
+    private void ProcessIfStatement(CodeBlockAnalysisContext context, ref Stack<(SyntaxNode, int)> stack, SyntaxNode node, ref int complexity, ref int nestingLevel)
+    {
+        if (node is not IfStatementSyntax ifStatement)
+            return;
+
+        if (!IsGuardClause(node))
+        {
+            // Increment for the 'if' condition (+1 + nesting level)
+            complexity += 1 + nestingLevel;
+            RaiseDEBUGDiagnostic(context, node, node.SpanStart, node.Kind, nestingLevel);
+        }
+
+        // Push the 'then' block with increased nesting
+        if (ifStatement.Statement is not null)
+            stack.Push((ifStatement.Statement, nestingLevel + 1));
+
+        // Handle the 'else' ElseStatement
+        if (ifStatement.ElseStatement is not null)
+        {
+            if (ifStatement.ElseStatement is IfStatementSyntax)
+            {
+                // ELSE IF: Do not increment and no nesting penalty
+                // Rely on the 'if' to increment
+                stack.Push((ifStatement.ElseStatement, nestingLevel));
+            }
+            else
+            {
+                // ELSE (not followed by IF): Increment by 1, No(!) nesting penalty
+                complexity += 1;
+                RaiseDEBUGDiagnostic(context, node, ifStatement.ElseKeywordToken.SpanStart, SyntaxKind.ElseKeyword, nestingLevel);
+                stack.Push((ifStatement.ElseStatement, nestingLevel));
+            }
+        }
     }
 
     private bool IsFlowBreakingStructure(SyntaxNode node)
@@ -173,11 +181,11 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
     {
         if (node is IfStatementSyntax ifStatement)
         {
-#if !LessThenFall2025 // TODO: Change to LessThenSpring2025 when AL version 15.0 is no longer in Pre-Release
-            return ifStatement.Statement is ExitStatementSyntax or ContinueStatementSyntax;
-#else
+            // #if !LessThenFall2025 // TODO: Change to LessThenSpring2025 when AL version 15.0 is no longer in Pre-Release
+            //             return ifStatement.Statement is ExitStatementSyntax or ContinueStatementSyntax;
+            // #else
             return ifStatement.Statement is ExitStatementSyntax;
-#endif
+            // #endif
         }
         return false;
     }
