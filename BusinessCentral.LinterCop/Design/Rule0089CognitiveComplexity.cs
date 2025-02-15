@@ -193,7 +193,7 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
 
         if (codeExpression is IdentifierNameSyntax identifier)
         {
-            return SemanticFacts.IsSameName(identifier.GetIdentifierOrLiteralValue() ?? string.Empty, "continue");
+            return SemanticFacts.IsSameName(identifier.GetIdentifierOrLiteralValue() ?? string.Empty, "Continue");
         }
 
         if (codeExpression is InvocationExpressionSyntax invocation)
