@@ -13,9 +13,9 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 namespace CustomCodeCop;
 
 [DiagnosticAnalyzer]
-public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
+public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
 {
-    public Rule0088LabelsShouldBeTranslated()
+    public Rule0091LabelsShouldBeTranslated()
     {
         this.translationIndex = new Dictionary<string, HashSet<string>>();
         this.availableLanguages = new HashSet<string>();
@@ -25,7 +25,7 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
 
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0088LabelsShouldBeTranslated);
+        ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated);
 
     public override void Initialize(AnalysisContext context)
     {
@@ -95,7 +95,7 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
                 this.availableLanguages.Add(language);
             }
         }
-        
+
         foreach (XmlDocument doc in docs)
         {
             var nsManager = new XmlNamespaceManager(doc.NameTable);
@@ -244,7 +244,7 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
         {
             string languages = string.Join(",", missingLanguages.OrderBy(lang => lang));
             return Diagnostic.Create(
-                DiagnosticDescriptors.Rule0088LabelsShouldBeTranslated,
+                DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated,
                 label.GetLocation(),
                 new object[] { label.Name, languages });
         }
@@ -311,13 +311,13 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
 
     public static class DiagnosticDescriptors
     {
-        public static readonly DiagnosticDescriptor Rule0088LabelsShouldBeTranslated = new(
-            id: LinterCopAnalyzers.AnalyzerPrefix + "0088",
-            title: LinterCopAnalyzers.GetLocalizableString("Rule0088LabelsShouldBeTranslatedTitle"),
-            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0088LabelsShouldBeTranslatedFormat"),
+        public static readonly DiagnosticDescriptor Rule0091LabelsShouldBeTranslated = new(
+            id: LinterCopAnalyzers.AnalyzerPrefix + "0091",
+            title: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedTitle"),
+            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedFormat"),
             category: "Design",
             defaultSeverity: DiagnosticSeverity.Info, isEnabledByDefault: true,
-            description: LinterCopAnalyzers.GetLocalizableString("Rule0088LabelsShouldBeTranslatedDescription"),
-            helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0088");
+            description: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedDescription"),
+            helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091");
     }
 }
