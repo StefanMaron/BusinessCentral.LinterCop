@@ -786,7 +786,7 @@
   <data name="Rule0074FlowFilterAssignmentDescription" xml:space="preserve">
     <value>Directly assigning values to FlowFilter fields bypasses their purpose and invalidates the filtering logic, resulting in incorrect or unintended calculations. Instead, use the .SetFilter() or .SetRange() methods to define the appropriate filters.</value>
   </data>
-  <data name="Rule0088FlowFilterAssignmentTitle" xml:space="preserve">
+  <data name="Rule0091LabelsShouldBeTranslatedFormat" xml:space="preserve">
     <value>Labels should be translated.</value>
   </data>
   <data name="Rule0091LabelsShouldBeTranslatedFormat" xml:space="preserve">
