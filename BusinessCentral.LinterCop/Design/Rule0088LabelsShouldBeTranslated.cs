@@ -23,6 +23,7 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
     private Dictionary<string, HashSet<string>> translationIndex = new Dictionary<string, HashSet<string>>();
     private HashSet<string> availableLanguages = new HashSet<string>();
 
+
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0088LabelsShouldBeTranslated);
 
@@ -58,6 +59,7 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
     {
         this.translationIndex = new Dictionary<string, HashSet<string>>();
         this.availableLanguages = new HashSet<string>();
+        var docs = new List<XmlDocument>();
 
         NavAppManifest? manifest = ManifestHelper.GetManifest(compilation);
         if (manifest == null) return;
@@ -81,51 +83,57 @@ public class Rule0088LabelsShouldBeTranslated : DiagnosticAnalyzer
             {
                 var doc = new XmlDocument();
                 doc.Load(stream);
+                docs.Add(doc);
 
-                // Setup namespace manager.
                 var nsManager = new XmlNamespaceManager(doc.NameTable);
                 nsManager.AddNamespace("x", "urn:oasis:names:tc:xliff:document:1.2");
 
-                // Get the target language from the file node.
                 string language = doc.SelectSingleNode("//x:file/@target-language", nsManager)?.Value ?? string.Empty;
                 if (string.IsNullOrEmpty(language))
                     continue;
 
-                // Record the available language.
                 this.availableLanguages.Add(language);
+            }
+        }
+        
+        foreach (XmlDocument doc in docs)
+        {
+            var nsManager = new XmlNamespaceManager(doc.NameTable);
+            nsManager.AddNamespace("x", "urn:oasis:names:tc:xliff:document:1.2");
 
-                // Process all trans-unit nodes.
-                XmlNodeList? transUnits = doc.SelectNodes("//x:trans-unit", nsManager);
-                if (transUnits == null)
+            string language = doc.SelectSingleNode("//x:file/@target-language", nsManager)?.Value ?? string.Empty;
+            if (string.IsNullOrEmpty(language))
+                continue;
+
+            HashSet<string> languageHashSet = new HashSet<string> { language };
+
+            // Create a set of found IDs for this language
+            XmlNodeList? transUnits = doc.SelectNodes("//x:trans-unit", nsManager);
+            if (transUnits == null)
+                continue;
+
+            foreach (XmlNode transUnit in transUnits)
+            {
+                string? id = transUnit.Attributes?["id"]?.Value;
+                if (string.IsNullOrEmpty(id))
                     continue;
 
-                foreach (XmlNode transUnit in transUnits)
+                XmlNode? targetNode = transUnit.SelectSingleNode("x:target", nsManager);
+                bool missingTranslation = targetNode == null ||
+                                                              string.IsNullOrWhiteSpace(targetNode.InnerText) ||
+                                                              (targetNode.Attributes?["state"]?.Value == "needs-translation");
+                if (!this.translationIndex.TryGetValue(id, out _))
                 {
-                    string? id = transUnit.Attributes?["id"]?.Value;
-                    if (string.IsNullOrEmpty(id))
-                        continue;
+                    this.translationIndex[id] = [.. availableLanguages];
+                }
 
-                    // Determine if the translation is missing.
-                    XmlNode? targetNode = transUnit.SelectSingleNode("x:target", nsManager);
-                    bool missingTranslation = targetNode == null ||
-                                              string.IsNullOrWhiteSpace(targetNode.InnerText) ||
-                                              (targetNode.Attributes?["state"]?.Value == "needs-translation");
-
-                    if (!this.translationIndex.TryGetValue(id, out var languages))
-                    {
-                        languages = new HashSet<string>();
-                        this.translationIndex[id] = languages;
-                    }
-
-                    if (missingTranslation)
-                    {
-                        languages.Add(language);
-                    }
+                if (!missingTranslation)
+                {
+                    this.translationIndex[id].ExceptWith(languageHashSet);
                 }
             }
         }
     }
-
 
     private void AnalyzeLabelTranslation(SymbolAnalysisContext ctx)
     {
