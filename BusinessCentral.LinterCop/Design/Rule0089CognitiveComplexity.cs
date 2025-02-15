@@ -45,17 +45,24 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
 #endif
     };
 
+    // This HashSet defines specific identifiers that, in certain cases, restrict whether a statement qualifies as a guard clause.
+    // Some exit commands (e.g., "Break", "Skip", "Quit") are only considered guard clauses if they are called on these identifiers.
     private static readonly HashSet<string> guardClauseIdentifiers = new(StringComparer.OrdinalIgnoreCase)
     {
         "CurrReport",
         "CurrXMLport"
     };
 
+    // This HashSet defines commands that act as guard clause exits, meaning they immediately alter the flow of execution.
+    // These commands are typically used in scenarios where a function, loop, or process needs to be stopped or skipped under certain conditions.
+    // However, "Exit" is not included in this set, as we can get the ExitStatementSyntax type directly on the Statement of the IfStatementSyntax
     private static readonly HashSet<string> guardClauseExitCommands = new(StringComparer.OrdinalIgnoreCase)
     {
         "Break",
-        "Skip",
-        "Quit"
+        "Continue",
+        "Error",
+        "Quit",
+        "Skip"
     };
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -182,7 +189,7 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
             return true;
 
         // Apply Cognitive Complexity discount for consecutive logical operators
-        if (node.Kind is SyntaxKind.LogicalAndExpression or SyntaxKind.LogicalOrExpression)
+        if (node.Kind is SyntaxKind.LogicalAndExpression or SyntaxKind.LogicalOrExpression or SyntaxKind.LogicalXorExpression)
             return node.Parent.Kind != node.Kind;
 
         return false;
@@ -193,32 +200,50 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
 
     private bool IsGuardClause(SyntaxNode node)
     {
-        if (node is not IfStatementSyntax { Statement: ExpressionStatementSyntax { Expression: CodeExpressionSyntax codeExpression } } ifStatement)
-            return node is IfStatementSyntax { Statement: ExitStatementSyntax };
-
-        if (codeExpression is IdentifierNameSyntax identifier)
+        return node switch
         {
-            return SemanticFacts.IsSameName(identifier.GetIdentifierOrLiteralValue() ?? string.Empty, "Continue");
-        }
+            // if not <condition> then exit;
+            IfStatementSyntax { Statement: ExitStatementSyntax } => true,
 
-        if (codeExpression is InvocationExpressionSyntax invocation)
+            IfStatementSyntax { Statement: ExpressionStatementSyntax { Expression: CodeExpressionSyntax codeExpression } }
+                => IsGuardExpression(codeExpression),
+            _ => false
+        };
+    }
+
+    private bool IsGuardExpression(CodeExpressionSyntax codeExpression)
+    {
+        return codeExpression switch
         {
-            if (invocation.Expression is MemberAccessExpressionSyntax memberAccess)
-            {
-                return IsGuardCommand(memberAccess);
-            }
-            if (invocation.Expression is IdentifierNameSyntax expression)
-            {
-                return SemanticFacts.IsSameName(expression.GetIdentifierOrLiteralValue() ?? string.Empty, "Error");
-            }
-        }
-        return false;
+            // if not <condition> then continue;
+            IdentifierNameSyntax identifier when identifier.GetIdentifierOrLiteralValue() is { } value
+                => guardClauseExitCommands.Contains(value),
+
+            InvocationExpressionSyntax invocation => IsGuardInvocation(invocation),
+            _ => false
+        };
+    }
+
+    private bool IsGuardInvocation(InvocationExpressionSyntax invocation)
+    {
+        return invocation.Expression switch
+        {
+            MemberAccessExpressionSyntax memberAccess => IsGuardCommand(memberAccess),
+
+            // if not <condition> then error;
+            IdentifierNameSyntax identifier when identifier.GetIdentifierOrLiteralValue() is { } value
+                => guardClauseExitCommands.Contains(value),
+            _ => false
+        };
     }
 
     private bool IsGuardCommand(MemberAccessExpressionSyntax memberAccess)
     {
-        var identifier = memberAccess.Expression.GetIdentifierOrLiteralValue() ?? string.Empty;
-        return identifier is not null && guardClauseIdentifiers.Contains(identifier) &&
+        if (memberAccess.Expression.GetIdentifierOrLiteralValue() is not { } identifierValue)
+            return false;
+
+        // if not <condition> then CurrReport.Break() or .Skip() or .Quit();
+        return guardClauseIdentifiers.Contains(identifierValue) &&
                guardClauseExitCommands.Contains(memberAccess.GetNameStringValue() ?? string.Empty);
     }
 
