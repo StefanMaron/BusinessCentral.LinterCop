@@ -5,7 +5,6 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
-using System.ComponentModel;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -14,6 +13,8 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
 {
     private static readonly ConcurrentDictionary<Compilation, int> thresholdCache = new();
 
+    // Flow-Breaking Structures: These disrupt the linear execution of the code.
+    // Each occurrence of these structures adds +1 complexity to the score.
     private static readonly HashSet<SyntaxKind> flowBreakingKinds = new()
     {
         SyntaxKind.IfStatement,
@@ -23,10 +24,14 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         SyntaxKind.WhileStatement,
         SyntaxKind.RepeatStatement,
 #if !LessThenFall2024
-        SyntaxKind.ConditionalExpression
+        SyntaxKind.ConditionalExpression // Ternary operator
 #endif
     };
 
+    // Nested Structures: These introduce additional cognitive load due to nesting.
+    // Unlike flow-breaking structures that always add complexity, nested structures only add an extra penalty when nested inside another structure.
+    // Currently there's no difference between the Flow-Breaking Structures and Nested Structures in the AL Language.
+    // For example in C# nestedStructures could contain try-catch-finally
     private static readonly HashSet<SyntaxKind> nestedStructures = new()
     {
         SyntaxKind.IfStatement,
@@ -36,7 +41,7 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         SyntaxKind.WhileStatement,
         SyntaxKind.RepeatStatement,
 #if !LessThenFall2024
-        SyntaxKind.ConditionalExpression
+        SyntaxKind.ConditionalExpression // Ternary operator
 #endif
     };
 
