@@ -3,7 +3,6 @@ using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
-using System.Collections.Concurrent;
 using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design;
@@ -11,7 +10,7 @@ namespace BusinessCentral.LinterCop.Design;
 [DiagnosticAnalyzer]
 public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
 {
-    private static readonly ConcurrentDictionary<Compilation, int> thresholdCache = new();
+    private int complexityThreshold;
 
     // Flow-Breaking Structures: These disrupt the linear execution of the code.
     // Each occurrence of these structures adds +1 complexity to the score.
@@ -71,8 +70,18 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
             DiagnosticDescriptors.Rule0089DEBUGCognitiveComplexity,
             DiagnosticDescriptors.Rule0090CognitiveComplexity);
 
-    public override void Initialize(AnalysisContext context) =>
-        context.RegisterCodeBlockAction(new Action<CodeBlockAnalysisContext>(this.AnalyzeCognitiveComplexity));
+    public override void Initialize(AnalysisContext context)
+    {
+        context.RegisterCompilationStartAction(compilationContext =>
+        {
+            this.complexityThreshold = LoadCognitiveComplexityThreshold(compilationContext.Compilation);
+
+            compilationContext.RegisterCodeBlockAction(codeBlockContext =>
+            {
+                AnalyzeCognitiveComplexity(codeBlockContext);
+            });
+        });
+    }
 
     private void AnalyzeCognitiveComplexity(CodeBlockAnalysisContext context)
     {
@@ -94,23 +103,21 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         if (bodyNode is null)
             return;
 
-        int cognitiveComplexityThreshold = GetCognitiveComplexityThreshold(context);
         int complexity = CalculateCognitiveComplexity(context, bodyNode);
-
-        if (complexity >= cognitiveComplexityThreshold)
+        if (complexity >= complexityThreshold)
         {
             context.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0090CognitiveComplexity,
                 context.OwningSymbol.GetLocation(),
                 complexity,
-                cognitiveComplexityThreshold));
+                complexityThreshold));
         }
 
         context.ReportDiagnostic(Diagnostic.Create(
             DiagnosticDescriptors.Rule0089CognitiveComplexity,
             context.OwningSymbol.GetLocation(),
             complexity,
-            cognitiveComplexityThreshold));
+            complexityThreshold));
     }
 
     private int CalculateCognitiveComplexity(CodeBlockAnalysisContext context, SyntaxNode root)
@@ -247,21 +254,14 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
                guardClauseExitCommands.Contains(memberAccess.GetNameStringValue() ?? string.Empty);
     }
 
-    private int GetCognitiveComplexityThreshold(CodeBlockAnalysisContext context)
+    private int LoadCognitiveComplexityThreshold(Compilation compilation)
     {
-        var compilation = context.SemanticModel.Compilation;
-
-        if (!thresholdCache.TryGetValue(compilation, out int threshold))
-        {
-            LinterSettings.Create(context.SemanticModel.Compilation.FileSystem?.GetDirectoryPath());
-            threshold = LinterSettings.instance?.cognitiveComplexityThreshold ?? 15;
-            thresholdCache[compilation] = threshold;
-        }
-
-        return threshold;
+        string? directoryPath = compilation.FileSystem?.GetDirectoryPath();
+        LinterSettings.Create(directoryPath);
+        return LinterSettings.instance?.cognitiveComplexityThreshold ?? 15;
     }
 
-    private static void RaiseDEBUGDiagnostic(CodeBlockAnalysisContext context, SyntaxNode node, int SpanStart, SyntaxKind nodeKind, int nestingLevel)
+    private void RaiseDEBUGDiagnostic(CodeBlockAnalysisContext context, SyntaxNode node, int SpanStart, SyntaxKind nodeKind, int nestingLevel)
     {
         context.ReportDiagnostic(Diagnostic.Create(
             DiagnosticDescriptors.Rule0089DEBUGCognitiveComplexity,
