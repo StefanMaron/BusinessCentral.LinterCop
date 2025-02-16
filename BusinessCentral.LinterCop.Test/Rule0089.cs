@@ -17,6 +17,7 @@ public class Rule0089
 #endif
     [TestCase("IfStatement")]
     [TestCase("IfStatementNested")]
+    [TestCase("RecursionDirect")]
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
