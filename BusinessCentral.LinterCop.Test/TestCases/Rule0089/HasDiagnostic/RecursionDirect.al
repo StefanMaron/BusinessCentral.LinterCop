@@ -1,6 +1,6 @@
 codeunit 50100 MyCodeunit
 {
-    procedure [|MyProcedure|]()     // Cognitive Complexity: 15 (threshold >=15)
+    procedure [|MyProcedure|]() // Cognitive Complexity: 15 (threshold >=15)
     var
         Condition: Boolean;
     begin
