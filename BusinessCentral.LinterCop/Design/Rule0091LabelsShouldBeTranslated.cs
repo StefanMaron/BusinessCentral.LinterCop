@@ -4,11 +4,11 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Translation;
 using System.Collections.Immutable;
-using BusinessCentral.LinterCop.AnalysisContextExtension;
 using System.Xml;
 using BusinessCentral.LinterCop;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
+using BusinessCentral.LinterCop.Helpers;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -217,7 +217,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
     {
         if (label == null)
             return null;
-        if (label.IsObsoletePendingOrRemoved())
+        if (label.ContainingSymbol.IsObsoletePendingOrRemoved())
             return null;
         if (LabelIsLocked(label))
             return null;
