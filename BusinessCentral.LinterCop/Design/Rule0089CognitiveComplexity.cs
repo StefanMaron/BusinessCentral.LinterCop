@@ -66,6 +66,13 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         "Skip"
     };
 
+    private static readonly HashSet<string> eventPublisherDecoratorNames = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "BusinessEvent",
+        "IntegrationEvent",
+        "ExternalBusinessEvent"
+    };
+
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(
             DiagnosticDescriptors.Rule0089CognitiveComplexity,
@@ -88,11 +95,7 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
 
     private void AnalyzeCognitiveComplexity(CodeBlockAnalysisContext context)
     {
-        if (context.IsObsoletePendingOrRemoved())
-            return;
-
-        if ((context.CodeBlock.Kind != SyntaxKind.MethodDeclaration) &&
-            (context.CodeBlock.Kind != SyntaxKind.TriggerDeclaration))
+        if (context.IsObsoletePendingOrRemoved() || context.CodeBlock is not MethodOrTriggerDeclarationSyntax methodOrTrigger)
             return;
 
         var containingObjectTypeSymbol = context.OwningSymbol.GetContainingObjectTypeSymbol();
@@ -100,13 +103,12 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
             containingObjectTypeSymbol.NavTypeKind == NavTypeKind.ControlAddIn)
             return;
 
-        SyntaxNode? bodyNode = context.CodeBlock.Kind == SyntaxKind.MethodDeclaration
-            ? (context.CodeBlock as MethodDeclarationSyntax)?.Body
-            : (context.CodeBlock as TriggerDeclarationSyntax)?.Body;
-        if (bodyNode is null)
+        if (methodOrTrigger.Body is null ||
+            methodOrTrigger.Body.Statements.Count == 0 &&
+            methodOrTrigger.Attributes.Any(attr => eventPublisherDecoratorNames.Contains(attr.GetIdentifierOrLiteralValue() ?? string.Empty)))
             return;
 
-        int complexity = CalculateCognitiveComplexity(context, bodyNode);
+        int complexity = CalculateCognitiveComplexity(context, methodOrTrigger.Body);
         if (complexity >= complexityThreshold)
         {
             context.ReportDiagnostic(Diagnostic.Create(
@@ -320,6 +322,10 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
 
             foreach (var methodDeclaration in root.DescendantNodes().OfType<MethodDeclarationSyntax>())
             {
+                if (methodDeclaration.Body is null ||
+                    methodDeclaration.Body.Statements.Count == 0)
+                    continue;
+
                 var methodSymbol = semanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) as IMethodSymbol;
                 if (methodSymbol == null)
                     continue;
