@@ -10,7 +10,7 @@ using BusinessCentral.LinterCop;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 
-namespace CustomCodeCop;
+namespace BusinessCentral.LinterCop.Design;
 
 [DiagnosticAnalyzer]
 public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
@@ -308,16 +308,4 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
             IPageExtensionBaseTypeSymbol pageExtension => pageExtension.AddedActionsFlattened,
             _ => null
         };
-
-    public static class DiagnosticDescriptors
-    {
-        public static readonly DiagnosticDescriptor Rule0091LabelsShouldBeTranslated = new(
-            id: LinterCopAnalyzers.AnalyzerPrefix + "0091",
-            title: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedTitle"),
-            messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedFormat"),
-            category: "Design",
-            defaultSeverity: DiagnosticSeverity.Info, isEnabledByDefault: true,
-            description: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedDescription"),
-            helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091");
-    }
 }
