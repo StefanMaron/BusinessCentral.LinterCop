@@ -12,11 +12,15 @@ public class Rule0089
     }
 
     [Test]
-#if !LessThenFall2024
+#if !LessThenFall2024 // ternary operator
     [TestCase("ConditionalExpressionNested")]
 #endif
     [TestCase("IfStatement")]
     [TestCase("IfStatementNested")]
+#if !LessThenFall2024 // The name 'this' does not exist in the current context
+    [TestCase("RecursionDirect")]
+    [TestCase("RecursionIndirect")]
+#endif
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))

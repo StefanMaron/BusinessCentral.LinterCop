@@ -1,17 +1,18 @@
+using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
-using System.Collections.Concurrent;
-using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design;
 
 [DiagnosticAnalyzer]
 public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
 {
-    private static readonly ConcurrentDictionary<Compilation, int> thresholdCache = new();
+    private int complexityThreshold;
+
+    private Dictionary<IMethodSymbol, List<IMethodSymbol>> GlobalMethodInvocationGraph = new();
 
     // Flow-Breaking Structures: These disrupt the linear execution of the code.
     // Each occurrence of these structures adds +1 complexity to the score.
@@ -71,8 +72,19 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
             DiagnosticDescriptors.Rule0089DEBUGCognitiveComplexity,
             DiagnosticDescriptors.Rule0090CognitiveComplexity);
 
-    public override void Initialize(AnalysisContext context) =>
-        context.RegisterCodeBlockAction(new Action<CodeBlockAnalysisContext>(this.AnalyzeCognitiveComplexity));
+    public override void Initialize(AnalysisContext context)
+    {
+        context.RegisterCompilationStartAction(compilationContext =>
+        {
+            LoadCognitiveComplexityThreshold(compilationContext.Compilation);
+            BuildGlobalMethodInvocationGraph(compilationContext);
+
+            compilationContext.RegisterCodeBlockAction(codeBlockContext =>
+            {
+                AnalyzeCognitiveComplexity(codeBlockContext);
+            });
+        });
+    }
 
     private void AnalyzeCognitiveComplexity(CodeBlockAnalysisContext context)
     {
@@ -94,23 +106,21 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         if (bodyNode is null)
             return;
 
-        int cognitiveComplexityThreshold = GetCognitiveComplexityThreshold(context);
         int complexity = CalculateCognitiveComplexity(context, bodyNode);
-
-        if (complexity >= cognitiveComplexityThreshold)
+        if (complexity >= complexityThreshold)
         {
             context.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0090CognitiveComplexity,
                 context.OwningSymbol.GetLocation(),
                 complexity,
-                cognitiveComplexityThreshold));
+                complexityThreshold));
         }
 
         context.ReportDiagnostic(Diagnostic.Create(
             DiagnosticDescriptors.Rule0089CognitiveComplexity,
             context.OwningSymbol.GetLocation(),
             complexity,
-            cognitiveComplexityThreshold));
+            complexityThreshold));
     }
 
     private int CalculateCognitiveComplexity(CodeBlockAnalysisContext context, SyntaxNode root)
@@ -142,6 +152,11 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
             {
                 stack.Push((child, nestingLevel));
             }
+        }
+
+        if (context.CodeBlock.IsKind(SyntaxKind.MethodDeclaration))
+        {
+            complexity += CalculateRecursionComplexity(context, root);
         }
 
         return complexity;
@@ -247,27 +262,102 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
                guardClauseExitCommands.Contains(memberAccess.GetNameStringValue() ?? string.Empty);
     }
 
-    private int GetCognitiveComplexityThreshold(CodeBlockAnalysisContext context)
+    #region Recursion
+
+    private int CalculateRecursionComplexity(CodeBlockAnalysisContext context, SyntaxNode root)
     {
-        var compilation = context.SemanticModel.Compilation;
+        int increment = 0;
+        var visited = new HashSet<IMethodSymbol>();
 
-        if (!thresholdCache.TryGetValue(compilation, out int threshold))
+        if (context.OwningSymbol is not IMethodSymbol currentMethod)
+            return increment;
+
+        foreach (var invocation in root.DescendantNodes().OfType<InvocationExpressionSyntax>())
         {
-            LinterSettings.Create(context.SemanticModel.Compilation.FileSystem?.GetDirectoryPath());
-            threshold = LinterSettings.instance?.cognitiveComplexityThreshold ?? 15;
-            thresholdCache[compilation] = threshold;
+            var symbolInfo = context.SemanticModel.GetSymbolInfo(invocation, context.CancellationToken);
+            if (symbolInfo.Symbol is IMethodSymbol invokedMethod)
+            {
+                // Check if there is a path from the invoked method back to the current method.
+                visited.Clear();
+                if (IsPathTo(invokedMethod, currentMethod, visited))
+                {
+                    increment++;
+                    RaiseDEBUGDiagnostic(context, invocation, invocation.SpanStart, invocation.Kind, 0);
+                }
+            }
         }
-
-        return threshold;
+        return increment;
     }
 
-    private static void RaiseDEBUGDiagnostic(CodeBlockAnalysisContext context, SyntaxNode node, int SpanStart, SyntaxKind nodeKind, int nestingLevel)
+    private bool IsPathTo(IMethodSymbol from, IMethodSymbol target, HashSet<IMethodSymbol> visited)
+    {
+        if (from.Equals(target))
+            return true;
+
+        if (!visited.Add(from))
+            return false;
+
+        if (!GlobalMethodInvocationGraph.TryGetValue(from, out var invokedMethods))
+            return false;
+
+        foreach (var invokedMethod in invokedMethods)
+        {
+            if (IsPathTo(invokedMethod, target, visited))
+                return true;
+        }
+
+        return false;
+    }
+
+    private void BuildGlobalMethodInvocationGraph(CompilationStartAnalysisContext context)
+    {
+        GlobalMethodInvocationGraph.Clear();
+
+        foreach (var tree in context.Compilation.SyntaxTrees)
+        {
+            var root = tree.GetRoot(context.CancellationToken);
+            var semanticModel = context.Compilation.GetSemanticModel(tree);
+
+            foreach (var methodDeclaration in root.DescendantNodes().OfType<MethodDeclarationSyntax>())
+            {
+                var methodSymbol = semanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) as IMethodSymbol;
+                if (methodSymbol == null)
+                    continue;
+
+                if (!GlobalMethodInvocationGraph.TryGetValue(methodSymbol, out var invokedMethods))
+                {
+                    invokedMethods = new List<IMethodSymbol>();
+                    GlobalMethodInvocationGraph[methodSymbol] = invokedMethods;
+                }
+
+                foreach (var invocation in methodDeclaration.DescendantNodes().OfType<InvocationExpressionSyntax>())
+                {
+                    var invokedSymbol = semanticModel.GetSymbolInfo(invocation, context.CancellationToken).Symbol as IMethodSymbol;
+                    if (invokedSymbol != null)
+                    {
+                        invokedMethods.Add(invokedSymbol);
+                    }
+                }
+            }
+        }
+    }
+
+    #endregion
+
+    private void LoadCognitiveComplexityThreshold(Compilation compilation)
+    {
+        string? directoryPath = compilation.FileSystem?.GetDirectoryPath();
+        LinterSettings.Create(directoryPath);
+        this.complexityThreshold = LinterSettings.instance?.cognitiveComplexityThreshold ?? 15;
+    }
+
+    private void RaiseDEBUGDiagnostic(CodeBlockAnalysisContext context, SyntaxNode node, int spanStart, SyntaxKind nodeKind, int nestingLevel)
     {
         context.ReportDiagnostic(Diagnostic.Create(
             DiagnosticDescriptors.Rule0089DEBUGCognitiveComplexity,
             Location.Create(
                 node.GetLocation().SourceTree!,
-                new TextSpan(SpanStart, 1)),
+                new TextSpan(spanStart, 1)),
             nodeKind,
             1 + nestingLevel,
             nestingLevel));
