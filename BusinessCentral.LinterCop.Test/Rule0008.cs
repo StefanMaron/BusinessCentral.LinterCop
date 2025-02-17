@@ -24,6 +24,7 @@ public class Rule0008
 
     [Test]
     [TestCase("1")]
+    [TestCase("2")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))

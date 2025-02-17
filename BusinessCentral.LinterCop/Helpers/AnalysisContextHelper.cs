@@ -1,65 +1,64 @@
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 
-namespace BusinessCentral.LinterCop.AnalysisContextExtension
+namespace BusinessCentral.LinterCop.Helpers;
+
+public static class AnalysisContextExtensions
 {
-    public static class AnalysisContextExtensions
+    public static bool IsObsoletePendingOrRemoved(this SymbolAnalysisContext context)
     {
-        public static bool IsObsoletePendingOrRemoved(this SymbolAnalysisContext context)
+        if (context.Symbol.IsObsoletePendingOrRemoved())
         {
-            if (context.Symbol.IsObsoletePendingOrRemoved())
-            {
-                return true;
-            }
-            if (context.Symbol.GetContainingObjectTypeSymbol().IsObsoletePendingOrRemoved())
-            {
-                return true;
-            }
-            return false;
+            return true;
         }
+        if (context.Symbol.GetContainingObjectTypeSymbol().IsObsoletePendingOrRemoved())
+        {
+            return true;
+        }
+        return false;
+    }
 
-        public static bool IsObsoletePendingOrRemoved(this OperationAnalysisContext context)
+    public static bool IsObsoletePendingOrRemoved(this OperationAnalysisContext context)
+    {
+        if (context.ContainingSymbol.IsObsoletePendingOrRemoved())
         {
-            if (context.ContainingSymbol.IsObsoletePendingOrRemoved())
-            {
-                return true;
-            }
-            if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePendingOrRemoved())
-            {
-                return true;
-            }
-            return false;
+            return true;
         }
+        if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePendingOrRemoved())
+        {
+            return true;
+        }
+        return false;
+    }
 
-        public static bool IsObsoletePendingOrRemoved(this SyntaxNodeAnalysisContext context)
+    public static bool IsObsoletePendingOrRemoved(this SyntaxNodeAnalysisContext context)
+    {
+        if (context.ContainingSymbol.IsObsoletePendingOrRemoved())
         {
-            if (context.ContainingSymbol.IsObsoletePendingOrRemoved())
-            {
-                return true;
-            }
-            if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePendingOrRemoved())
-            {
-                return true;
-            }
-            return false;
+            return true;
         }
+        if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePendingOrRemoved())
+        {
+            return true;
+        }
+        return false;
+    }
 
-        public static bool IsObsoletePendingOrRemoved(this CodeBlockAnalysisContext context)
+    public static bool IsObsoletePendingOrRemoved(this CodeBlockAnalysisContext context)
+    {
+        if (context.OwningSymbol.IsObsoletePendingOrRemoved())
         {
-            if (context.OwningSymbol.IsObsoletePendingOrRemoved())
-            {
-                return true;
-            }
-            if (context.OwningSymbol.GetContainingObjectTypeSymbol().IsObsoletePendingOrRemoved())
-            {
-                return true;
-            }
-            return false;
+            return true;
         }
+        if (context.OwningSymbol.GetContainingObjectTypeSymbol().IsObsoletePendingOrRemoved())
+        {
+            return true;
+        }
+        return false;
+    }
 
-        public static bool IsObsoletePendingOrRemoved(this ISymbol symbol)
-        {
-            return symbol.IsObsoletePending || symbol.IsObsoleteRemoved;
-        }
+    public static bool IsObsoletePendingOrRemoved(this ISymbol symbol)
+    {
+        return symbol.IsObsoletePending || symbol.IsObsoletePendingMove || symbol.IsObsoleteRemoved || symbol.IsObsoleteMoved;
     }
 }

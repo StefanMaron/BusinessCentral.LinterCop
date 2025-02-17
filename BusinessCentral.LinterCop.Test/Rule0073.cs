@@ -20,7 +20,7 @@ public class Rule0073
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0073EventPublisherIsHandledByVar>();
-        fixture.HasDiagnostic(code, Rule0073EventPublisherIsHandledByVar.DiagnosticDescriptors.Rule0073EventPublisherIsHandledByVar.Id);
+        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0073EventPublisherIsHandledByVar.Id);
     }
 
     [Test]
@@ -32,6 +32,6 @@ public class Rule0073
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0073EventPublisherIsHandledByVar>();
-        fixture.NoDiagnosticAtMarker(code, Rule0073EventPublisherIsHandledByVar.DiagnosticDescriptors.Rule0073EventPublisherIsHandledByVar.Id);
+        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0073EventPublisherIsHandledByVar.Id);
     }
 }

@@ -1,49 +1,32 @@
-﻿#nullable disable // TODO: Enable nullable and review rule
-using BusinessCentral.LinterCop.AnalysisContextExtension;
+﻿using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 
-namespace BusinessCentral.LinterCop.Design
+namespace BusinessCentral.LinterCop.Design;
+
+[DiagnosticAnalyzer]
+public class Rule0007DataPerCompanyShouldAlwaysBeSet : DiagnosticAnalyzer
 {
-    [DiagnosticAnalyzer]
-    public class Rule0007DataPerCompanyShouldAlwaysBeSet : DiagnosticAnalyzer
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0007DataPerCompanyShouldAlwaysBeSet);
+
+    public override void Initialize(AnalysisContext context)
+        => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForMissingDataPerCompanyOnTables), SymbolKind.Table);
+
+    private void CheckForMissingDataPerCompanyOnTables(SymbolAnalysisContext ctx)
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0007DataPerCompanyShouldAlwaysBeSet);
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not ITableTypeSymbol table)
+            return;
 
-        public override void Initialize(AnalysisContext context)
-            => context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckForMissingDataPerCompanyOnTables), SymbolKind.Table);
+        if (table.TableType == TableTypeKind.Temporary)
+            return;
 
-        private void CheckForMissingDataPerCompanyOnTables(SymbolAnalysisContext context)
+        if (table.GetProperty(PropertyKind.DataPerCompany) is null)
         {
-            if (context.IsObsoletePendingOrRemoved()) return;
-            ITableTypeSymbol table = (ITableTypeSymbol)context.Symbol;
-            if (table.TableType == TableTypeKind.Temporary)
-                return;
-
-            if (!IsSymbolAccessible(table))
-                return;
-
-            if (table.GetProperty(PropertyKind.DataPerCompany) == null)
-            {
-                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0007DataPerCompanyShouldAlwaysBeSet, table.GetLocation()));
-            }
+            ctx.ReportDiagnostic(Diagnostic.Create(
+                DiagnosticDescriptors.Rule0007DataPerCompanyShouldAlwaysBeSet,
+                table.GetLocation()));
         }
-
-        private static bool IsSymbolAccessible(ISymbol symbol)
-        {
-            try
-            {
-                GetDeclaration(symbol);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        private static string GetDeclaration(ISymbol symbol)
-            => symbol.Location.SourceTree.GetText(CancellationToken.None).GetSubText(symbol.DeclaringSyntaxReference.Span).ToString();
     }
 }

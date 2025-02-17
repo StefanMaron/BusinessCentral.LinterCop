@@ -12,7 +12,8 @@ public class Rule0017
     }
 
     [Test]
-    [TestCase("1")]
+    [TestCase("Assignment")]
+    [TestCase("Validate")]
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
@@ -23,7 +24,11 @@ public class Rule0017
     }
 
     [Test]
-    [TestCase("1")]
+    [TestCase("AssignmentWithLeadingComment")]
+    [TestCase("AssignmentWithTrailingComment")]
+    [TestCase("ValidateWithLeadingComment")]
+    //TODO: The HasExplainingComment method in the Rule0017WriteToFlowField class doesn't support this scenario currently
+    // [TestCase("ValidateWithTrailingComment")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))

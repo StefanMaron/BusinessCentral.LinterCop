@@ -1,60 +1,62 @@
-#nullable disable // TODO: Enable nullable and review rule
-using BusinessCentral.LinterCop.AnalysisContextExtension;
+using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using System.Collections.Immutable;
+using System.Reflection.Emit;
 using System.Text.RegularExpressions;
 
-namespace BusinessCentral.LinterCop.Design
+namespace BusinessCentral.LinterCop.Design;
+
+[DiagnosticAnalyzer]
+public class Rule0050OperatorAndPlaceholderInFilterExpression : DiagnosticAnalyzer
 {
-    [DiagnosticAnalyzer]
-    public class Rule0050OperatorAndPlaceholderInFilterExpression : DiagnosticAnalyzer
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(DiagnosticDescriptors.Rule0050OperatorAndPlaceholderInFilterExpression, DiagnosticDescriptors.Rule0059SingleQuoteEscapingIssueDetected);
+
+    private static readonly string InvalidUnaryEqualsFilter = "'<>'''";
+
+    public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeInvocation), OperationKind.InvocationExpression);
+
+    private void AnalyzeInvocation(OperationAnalysisContext ctx)
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0050OperatorAndPlaceholderInFilterExpression, DiagnosticDescriptors.Rule0059SingleQuoteEscapingIssueDetected);
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Operation is not IInvocationExpression operation)
+            return;
 
-        public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeInvocation), OperationKind.InvocationExpression);
+        if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod ||
+            operation.TargetMethod.Name != "SetFilter" ||
+            operation.Arguments.Length < 2)
+            return;
 
-        private void AnalyzeInvocation(OperationAnalysisContext ctx)
+        if (operation.Arguments[1].Value is not IOperation operand)
+            return;
+
+        if (operand.Type.GetNavTypeKindSafe() != NavTypeKind.String && operand.Type.GetNavTypeKindSafe() != NavTypeKind.Joker)
+            return;
+
+        if (operand.Syntax.Kind != SyntaxKind.LiteralExpression)
+            return;
+
+        string parameterString = operand.Syntax.ToFullString();
+        if (parameterString.Equals(InvalidUnaryEqualsFilter))
         {
-            if (ctx.IsObsoletePendingOrRemoved()) return;
-
-            IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
-            if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
-
-            if (operation.TargetMethod == null || !SemanticFacts.IsSameName(operation.TargetMethod.Name, "SetFilter") || operation.Arguments.Count() < 2)
-                return;
-
-            CheckParameter(operation.Arguments[1].Value, ref operation, ref ctx);
+            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0059SingleQuoteEscapingIssueDetected, operand.Syntax.GetLocation()));
+            return;
         }
 
-        private void CheckParameter(IOperation operand, ref IInvocationExpression operation, ref OperationAnalysisContext ctx)
-        {
-            if (operand.Type.GetNavTypeKindSafe() != NavTypeKind.String && operand.Type.GetNavTypeKindSafe() != NavTypeKind.Joker)
-                return;
+        string pattern = @"%\d+"; // Only when a placeholders (%1) is used in the filter expression we need to raise the rule that the placeholders won't work as expected
+        Regex regex = new Regex(pattern);
+        Match match = regex.Match(parameterString);
+        if (!match.Success)
+            return;
 
-            if (operand.Syntax.Kind != SyntaxKind.LiteralExpression)
-                return;
+        int operatorIndex = parameterString.IndexOfAny("*?@".ToCharArray()); // Only the *, ? and @ operator changes the behavior of the placeholder
+        if (operatorIndex == -1)
+            return;
 
-            string parameterString = operand.Syntax.ToFullString();
-            if (parameterString.Equals("'<>'''"))
-            {
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0059SingleQuoteEscapingIssueDetected, operand.Syntax.GetLocation()));
-                return;
-            }
-
-            string pattern = @"%\d+"; // Only when a placeholders (%1) is used in the filter expression we need to raise the rule that the placeholders won't work as expected
-            Regex regex = new Regex(pattern);
-            Match match = regex.Match(parameterString);
-            if (!match.Success) return;
-
-            int operatorIndex = parameterString.IndexOfAny("*?@".ToCharArray()); // Only the *, ? and @ operator changes the behavior of the placeholder
-            if (operatorIndex == -1) return;
-
-            ctx.ReportDiagnostic(
-               Diagnostic.Create(
-                   DiagnosticDescriptors.Rule0050OperatorAndPlaceholderInFilterExpression,
-                   operation.Syntax.GetLocation(), new object[] { parameterString.Substring(operatorIndex, 1), match.Value }));
-        }
+        ctx.ReportDiagnostic(Diagnostic.Create(
+            DiagnosticDescriptors.Rule0050OperatorAndPlaceholderInFilterExpression,
+            operation.Syntax.GetLocation(),
+            parameterString.Substring(operatorIndex, 1),
+            match.Value));
     }
 }

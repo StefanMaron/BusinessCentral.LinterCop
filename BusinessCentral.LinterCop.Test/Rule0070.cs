@@ -20,7 +20,7 @@ public class Rule0070
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0070ListObjectsAreOneBased>();
-        fixture.HasDiagnostic(code, Rule0070ListObjectsAreOneBased.DiagnosticDescriptors.Rule0070ListObjectsAreOneBased.Id);
+        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0070ListObjectsAreOneBased.Id);
     }
 
     [Test]
@@ -32,6 +32,6 @@ public class Rule0070
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0070ListObjectsAreOneBased>();
-        fixture.NoDiagnosticAtMarker(code, Rule0070ListObjectsAreOneBased.DiagnosticDescriptors.Rule0070ListObjectsAreOneBased.Id);
+        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0070ListObjectsAreOneBased.Id);
     }
 }
