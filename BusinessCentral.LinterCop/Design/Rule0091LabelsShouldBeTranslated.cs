@@ -9,6 +9,7 @@ using BusinessCentral.LinterCop;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using BusinessCentral.LinterCop.Helpers;
+using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -61,7 +62,12 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
         this.availableLanguages = new HashSet<string>();
         var docs = new List<XmlDocument>();
 
+    #if !LessThenSpring2024
         NavAppManifest? manifest = ManifestHelper.GetManifest(compilation);
+    #else
+        NavAppManifest? manifest = AppSourceCopConfigurationProvider.GetManifest(compilation);
+    #endif
+
         if (manifest == null) return;
         if (!manifest.CompilerFeatures.ShouldGenerateTranslationFile()) return;
 
@@ -222,7 +228,12 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
         if (LabelIsLocked(label))
             return null;
 
+    #if !LessThenSpring2024
         string labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, null);
+    #else
+        string labelValue = label.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(label.Name);
+    #endif
+    
 
         // If there are no languages available, nothing to report
         if (this.availableLanguages.Count == 0)
