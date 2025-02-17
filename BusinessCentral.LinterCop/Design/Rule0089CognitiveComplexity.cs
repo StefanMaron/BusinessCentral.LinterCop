@@ -162,6 +162,10 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         return complexity;
     }
 
+    // The 'else if' increment causes a problem
+    // In the AL Language 'else if' is an 'else" keyword followed by an 'if' node (not a single 'elsif' node).
+    // If we increment for both 'else' and 'if' kinds the number will be too high.
+    // So we'll increment for 'else' nodes not followed by an 'if' and rely on the 'if' to increment 'else if' statements.
     private void ProcessIfStatement(CodeBlockAnalysisContext context, ref Stack<(SyntaxNode, int)> stack, SyntaxNode node, ref int complexity, ref int nestingLevel)
     {
         if (node is not IfStatementSyntax ifStatement)
