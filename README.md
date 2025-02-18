@@ -126,7 +126,7 @@ The LinterCop is compatible with various approaches and solutions for the AL Lan
     - [BcContainerHelper](/.assets/CommandLine.md#BcContainerHelper)
 - [Visual Studio Code](/.assets/VSCode.md)
 - [DevOps](/.assets/DevOps.md)
-    - [AL-Go! for GitHub](/.assets/DevOps.md#AL-Go!-for-GitHub)  
+    - [AL-Go! for GitHub](/.assets/DevOps.md#AL-Go!-for-GitHub)
     - [BcContainerHelper](/.assets/DevOps.md#BcContainerHelper)
     - [Azure DevOps](/.assets/DevOps.md#Azure-DevOps)
 
@@ -273,3 +273,4 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0088](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0088)|Option types should be avoided, use enum if applicable.|Info|
 |[LC0089](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0089)|Show Cognitive Complexity diagnostics for all methods.|Disabled|
 |[LC0090](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0090)|Show Cognitive Complexity diagnostics for methods above threshold.|Info|
+|[LC0091](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091)|Labels should be translated.|Info|

@@ -932,4 +932,14 @@ public static class DiagnosticDescriptors
         isEnabledByDefault: true,
         description: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0090");
+
+    
+    public static readonly DiagnosticDescriptor Rule0091LabelsShouldBeTranslated = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "0091",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Info, isEnabledByDefault: true,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091");
 }
