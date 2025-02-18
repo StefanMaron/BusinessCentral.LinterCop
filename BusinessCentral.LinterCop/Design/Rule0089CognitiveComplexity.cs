@@ -405,7 +405,12 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
                 => binaryExpression.OperatorToken.GetLocation(),
 
             InvocationExpressionSyntax invocationExpression =>
-                ((IdentifierNameSyntax)invocationExpression.Expression).Identifier.GetLocation(),
+                invocationExpression.Expression switch
+                {
+                    IdentifierNameSyntax identifier => identifier.Identifier.GetLocation(),
+                    MemberAccessExpressionSyntax memberAccess => memberAccess.Name.Identifier.GetLocation(),
+                    _ => invocationExpression.GetLocation()
+                },
 
             _ => Location.Create(node.GetLocation().SourceTree!, new TextSpan(spanStart, 1))
         };
