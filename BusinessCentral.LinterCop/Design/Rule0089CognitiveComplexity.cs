@@ -76,7 +76,7 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(
             DiagnosticDescriptors.Rule0089CognitiveComplexity,
-            DiagnosticDescriptors.Rule0089DEBUGCognitiveComplexity,
+            DiagnosticDescriptors.Rule0089IncrementCognitiveComplexity,
             DiagnosticDescriptors.Rule0090CognitiveComplexity);
 
     public override void Initialize(AnalysisContext context)
@@ -144,7 +144,7 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
             if (IsFlowBreakingStructure(node) && !IsGuardClause(node))
             {
                 complexity += 1 + nestingLevel;
-                RaiseDEBUGDiagnostic(context, node, node.SpanStart, node.Kind, nestingLevel);
+                RaiseIncrementDiagnostic(context, GetKeywordLocation(node, node.SpanStart), node.Kind.ToString(), nestingLevel);
 
                 if (IsNestedStructure(node))
                     nestingLevel++;
@@ -175,10 +175,13 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
 
         if (!IsGuardClause(node))
         {
-            // Increment for the 'if' condition (+1 + nesting level)
+            // Increment for the 'if' statement
             complexity += 1 + nestingLevel;
-            RaiseDEBUGDiagnostic(context, node, node.SpanStart, node.Kind, nestingLevel);
+            RaiseIncrementDiagnostic(context, GetKeywordLocation(node, node.SpanStart), node.Kind.ToString(), nestingLevel);
         }
+
+        // Push the condition of the 'if' statement back to the stack
+        stack.Push((ifStatement.Condition, nestingLevel));
 
         // Push the 'then' block with increased nesting
         if (ifStatement.Statement is not null)
@@ -191,7 +194,7 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
             {
                 // 'else' not followed by 'if': Increment +1 (no nesting penalty)
                 complexity += 1;
-                RaiseDEBUGDiagnostic(context, node, ifStatement.ElseKeywordToken.SpanStart, SyntaxKind.ElseKeyword, nestingLevel);
+                RaiseIncrementDiagnostic(context, ifStatement.ElseKeywordToken.GetLocation(), "ElseStatement", nestingLevel);
             }
 
             // 'else if': Do not increment and no nesting penalty (rely on the 'if' statement to handle increment)
@@ -284,7 +287,7 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
                 if (IsPathTo(invokedMethod, currentMethod, visited))
                 {
                     increment++;
-                    RaiseDEBUGDiagnostic(context, invocation, invocation.SpanStart, invocation.Kind, 0);
+                    RaiseIncrementDiagnostic(context, GetKeywordLocation(invocation, invocation.SpanStart), "RecursionCycle", 0);
                 }
             }
         }
@@ -357,15 +360,59 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         this.complexityThreshold = LinterSettings.instance?.cognitiveComplexityThreshold ?? 15;
     }
 
-    private void RaiseDEBUGDiagnostic(CodeBlockAnalysisContext context, SyntaxNode node, int spanStart, SyntaxKind nodeKind, int nestingLevel)
+    private void RaiseIncrementDiagnostic(CodeBlockAnalysisContext context, Location location, string category, int nestingPenalty)
     {
-        context.ReportDiagnostic(Diagnostic.Create(
-            DiagnosticDescriptors.Rule0089DEBUGCognitiveComplexity,
-            Location.Create(
-                node.GetLocation().SourceTree!,
-                new TextSpan(spanStart, 1)),
-            nodeKind,
-            1 + nestingLevel,
-            nestingLevel));
+        context.ReportDiagnostic(
+            Diagnostic.Create(
+                DiagnosticDescriptors.Rule0089IncrementCognitiveComplexity,
+                location,
+                category,
+                nestingPenalty + 1,
+                nestingPenalty));
+    }
+
+    private Location GetKeywordLocation(SyntaxNode node, int spanStart)
+    {
+        return node switch
+        {
+            IfStatementSyntax ifStatement =>
+                ifStatement.IfKeywordToken.GetLocation(),
+
+            CaseStatementSyntax caseStatement =>
+                caseStatement.CaseKeywordToken.GetLocation(),
+
+            ForStatementSyntax forStatement =>
+                forStatement.ForKeywordToken.GetLocation(),
+
+            ForEachStatementSyntax forEachStatement =>
+                forEachStatement.ForEachKeywordToken.GetLocation(),
+
+            WhileStatementSyntax whileStatement =>
+                whileStatement.WhileKeywordToken.GetLocation(),
+
+            RepeatStatementSyntax repeatStatement =>
+                repeatStatement.RepeatKeywordToken.GetLocation(),
+
+#if !LessThenFall2024
+            ConditionalExpressionSyntax conditionalExpression =>
+                conditionalExpression.QuestionToken.GetLocation(),
+#endif
+
+            BinaryExpressionSyntax binaryExpression when
+                node.IsKind(SyntaxKind.LogicalAndExpression) ||
+                node.IsKind(SyntaxKind.LogicalOrExpression) ||
+                node.IsKind(SyntaxKind.LogicalXorExpression)
+                => binaryExpression.OperatorToken.GetLocation(),
+
+            InvocationExpressionSyntax invocationExpression =>
+                invocationExpression.Expression switch
+                {
+                    IdentifierNameSyntax identifier => identifier.Identifier.GetLocation(),
+                    MemberAccessExpressionSyntax memberAccess => memberAccess.Name.Identifier.GetLocation(),
+                    _ => invocationExpression.GetLocation()
+                },
+
+            _ => Location.Create(node.GetLocation().SourceTree!, new TextSpan(spanStart, 1))
+        };
     }
 }
