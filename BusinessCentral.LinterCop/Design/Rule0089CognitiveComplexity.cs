@@ -393,8 +393,10 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
             RepeatStatementSyntax repeatStatement =>
                 repeatStatement.RepeatKeywordToken.GetLocation(),
 
+#if !LessThenFall2024
             ConditionalExpressionSyntax conditionalExpression =>
                 conditionalExpression.QuestionToken.GetLocation(),
+#endif
 
             BinaryExpressionSyntax binaryExpression when
                 node.IsKind(SyntaxKind.LogicalAndExpression) ||
