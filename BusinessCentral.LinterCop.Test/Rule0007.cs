@@ -20,7 +20,7 @@ public class Rule0007
     //         .ConfigureAwait(false);
 
     //     var fixture = RoslynFixtureFactory.Create<Rule0007DataPerCompanyShouldAlwaysBeSet>();
-    //     fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0007DataPerCompanyShouldAlwaysBeSet.Id);
+    //     fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0007DataPerCompanyShouldAlwaysBeSet.Id);
     // }
 
     [Test]
@@ -31,6 +31,6 @@ public class Rule0007
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0007DataPerCompanyShouldAlwaysBeSet>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0007DataPerCompanyShouldAlwaysBeSet.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0007DataPerCompanyShouldAlwaysBeSet.Id);
     }
 }

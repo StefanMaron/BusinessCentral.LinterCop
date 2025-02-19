@@ -20,7 +20,7 @@ public class Rule0032
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0032ClearCodeunitSingleInstance>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0032ClearCodeunitSingleInstance.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0032ClearCodeunitSingleInstance.Id);
     }
 
     [Test]
@@ -32,6 +32,6 @@ public class Rule0032
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0032ClearCodeunitSingleInstance>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0032ClearCodeunitSingleInstance.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0032ClearCodeunitSingleInstance.Id);
     }
 }

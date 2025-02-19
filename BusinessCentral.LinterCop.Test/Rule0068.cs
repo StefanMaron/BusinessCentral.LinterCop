@@ -22,7 +22,7 @@ public class Rule0068
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0068CheckObjectPermission>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0068CheckObjectPermission.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0068CheckObjectPermission.Id);
     }
 
     [Test]
@@ -47,6 +47,6 @@ public class Rule0068
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0068CheckObjectPermission>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0068CheckObjectPermission.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0068CheckObjectPermission.Id);
     }
 }

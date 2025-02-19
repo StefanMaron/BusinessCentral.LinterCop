@@ -22,7 +22,7 @@ public class Rule0044
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0044AnalyzeTransferFields>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0044AnalyzeTransferFields.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0044AnalyzeTransferFields.Id);
     }
 
 #if !LessThenSpring2024
@@ -36,6 +36,6 @@ public class Rule0044
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0044AnalyzeTransferFields>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0044AnalyzeTransferFields.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0044AnalyzeTransferFields.Id);
     }
 }

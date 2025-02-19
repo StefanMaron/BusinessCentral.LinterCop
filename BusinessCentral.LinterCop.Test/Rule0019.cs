@@ -19,7 +19,7 @@ public class Rule0019
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0019DataClassificationFieldEqualsTable>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0019DataClassificationFieldEqualsTable.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0019DataClassificationFieldEqualsTable.Id);
     }
 
     [Test]
@@ -30,6 +30,6 @@ public class Rule0019
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0019DataClassificationFieldEqualsTable>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0019DataClassificationFieldEqualsTable.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0019DataClassificationFieldEqualsTable.Id);
     }
 }

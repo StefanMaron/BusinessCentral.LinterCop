@@ -19,7 +19,7 @@ public class Rule0028
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0028CodeNavigabilityOnEventSubscribers>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0028IdentifiersInEventSubscribers.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0028IdentifiersInEventSubscribers.Id);
     }
 
     [Test]
@@ -30,6 +30,6 @@ public class Rule0028
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0028CodeNavigabilityOnEventSubscribers>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0028IdentifiersInEventSubscribers.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0028IdentifiersInEventSubscribers.Id);
     }
 }

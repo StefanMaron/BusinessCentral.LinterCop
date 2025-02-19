@@ -23,7 +23,7 @@ public class Rule0043
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0043SecretText>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0043SecretText.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0043SecretText.Id);
     }
 
     [Test]
@@ -37,7 +37,7 @@ public class Rule0043
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0043SecretText>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0043SecretText.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0043SecretText.Id);
     }
 }
 #endif

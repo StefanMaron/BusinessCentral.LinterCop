@@ -20,7 +20,7 @@ public class Rule0027
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0027RunPageImplementPageManagement>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0027RunPageImplementPageManagement.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0027RunPageImplementPageManagement.Id);
     }
 
     [Test]
@@ -32,6 +32,6 @@ public class Rule0027
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0027RunPageImplementPageManagement>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0027RunPageImplementPageManagement.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0027RunPageImplementPageManagement.Id);
     }
 }

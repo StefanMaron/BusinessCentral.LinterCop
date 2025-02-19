@@ -8,7 +8,7 @@ codeunit 50100 OptionAccessExpression
         i := [|codeunit|]::MyCodeunit;
 
         i := [|DATABASE|]::MyTable;
-        i := [|Database|]::MyTable;
+        i := [|database|]::MyTable;
 
         i := [|ENUM|]::MyEnum::MyValue;
         i := [|enum|]::MyEnum::MyValue;

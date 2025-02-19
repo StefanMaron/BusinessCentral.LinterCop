@@ -19,7 +19,7 @@ public class Rule0031
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0031RecordInstanceIsolationLevel>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0031RecordInstanceIsolationLevel.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0031RecordInstanceIsolationLevel.Id);
     }
 
     // [Test]
@@ -29,6 +29,6 @@ public class Rule0031
     //         .ConfigureAwait(false);
     //
     //     var fixture = RoslynFixtureFactory.Create<Rule0031RecordInstanceIsolationLevel>();
-    //     fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0031RecordInstanceIsolationLevel.Id);
+    //     fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0031RecordInstanceIsolationLevel.Id);
     // }
 }

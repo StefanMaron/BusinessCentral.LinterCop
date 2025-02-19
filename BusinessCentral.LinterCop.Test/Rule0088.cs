@@ -29,7 +29,7 @@ namespace BusinessCentral.LinterCop.Test
                 .ConfigureAwait(false);
 
             var fixture = RoslynFixtureFactory.Create<Rule0088AvoidOptionTypes>();
-            fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0088AvoidOptionTypes.Id);
+            fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0088AvoidOptionTypes.Id);
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace BusinessCentral.LinterCop.Test
                 .ConfigureAwait(false);
 
             var fixture = RoslynFixtureFactory.Create<Rule0088AvoidOptionTypes>();
-            fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0088AvoidOptionTypes.Id);
+            fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0088AvoidOptionTypes.Id);
         }
     }
 }

@@ -21,7 +21,7 @@ public class Rule0005
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0005VariableCasingShouldNotDifferFromDeclaration>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration.Id);
     }
 
     [Test]
@@ -33,6 +33,6 @@ public class Rule0005
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0005VariableCasingShouldNotDifferFromDeclaration>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration.Id);
     }
 }

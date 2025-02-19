@@ -25,7 +25,7 @@ public class Rule0051
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0051PossibleOverflowAssigning>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0051PossibleOverflowAssigning.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0051PossibleOverflowAssigning.Id);
     }
 
     [Test]
@@ -43,7 +43,7 @@ public class Rule0051
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0051PossibleOverflowAssigning>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0051PossibleOverflowAssigning.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0051PossibleOverflowAssigning.Id);
     }
 }
 #endif

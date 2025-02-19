@@ -27,7 +27,7 @@ public class Rule0089
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0089CognitiveComplexity>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0090CognitiveComplexity.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0090CognitiveComplexity.Id);
     }
 
     [Test]
@@ -46,6 +46,6 @@ public class Rule0089
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0089CognitiveComplexity>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0090CognitiveComplexity.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0090CognitiveComplexity.Id);
     }
 }

@@ -21,7 +21,7 @@ public class Rule0086
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0086PageStyleDataType>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0086PageStyleDataType.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0086PageStyleDataType.Id);
     }
 
     [Test]
@@ -34,7 +34,7 @@ public class Rule0086
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0086PageStyleDataType>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0086PageStyleDataType.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0086PageStyleDataType.Id);
     }
 }
 #endif

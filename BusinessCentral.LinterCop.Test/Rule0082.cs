@@ -25,7 +25,7 @@ public class Rule0082
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0081AnalyzeCountMethod>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0082UseFindWithNext.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0082UseFindWithNext.Id);
     }
 
     [Test]
@@ -37,6 +37,6 @@ public class Rule0082
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0081AnalyzeCountMethod>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0082UseFindWithNext.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0082UseFindWithNext.Id);
     }
 }

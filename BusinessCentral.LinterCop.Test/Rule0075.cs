@@ -32,7 +32,7 @@ public class Rule0075
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0075RecordGetProcedureArguments>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0075RecordGetProcedureArguments.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0075RecordGetProcedureArguments.Id);
     }
 
     [Test]
@@ -63,7 +63,7 @@ public class Rule0075
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0075RecordGetProcedureArguments>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0075RecordGetProcedureArguments.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0075RecordGetProcedureArguments.Id);
     }
 }
 #endif

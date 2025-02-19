@@ -23,7 +23,7 @@ public class Rule0048
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0048ErrorWithTextConstant>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0048ErrorWithTextConstant.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0048ErrorWithTextConstant.Id);
     }
 
     [Test]
@@ -38,6 +38,6 @@ public class Rule0048
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0048ErrorWithTextConstant>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0048ErrorWithTextConstant.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0048ErrorWithTextConstant.Id);
     }
 }
