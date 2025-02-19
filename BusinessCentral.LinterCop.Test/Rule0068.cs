@@ -36,6 +36,7 @@ public class Rule0068
     [TestCase("ProcedureCallsInherentPermissionsProperty")]
     [TestCase("ProcedureCallsInherentPermissionsAttribute")]
     [TestCase("PageSourceTable")]
+    [TestCase("PageExtensionSourceTable")]
 #if !LessThenFall2023RV1
     [TestCase("ProcedureCallsPermissionsPropertyFullyQualified")]
 #endif
