@@ -27,7 +27,7 @@ public class Rule0016
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0016CheckForMissingCaptions>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0016CheckForMissingCaptions.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0016CheckForMissingCaptions.Id);
     }
 
     [Test]
@@ -46,6 +46,6 @@ public class Rule0016
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0016CheckForMissingCaptions>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0016CheckForMissingCaptions.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0016CheckForMissingCaptions.Id);
     }
 }

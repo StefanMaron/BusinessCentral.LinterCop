@@ -20,7 +20,7 @@ public class Rule0084
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0084UseReturnValueForErrorHandling>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0084UseReturnValueForErrorHandling.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0084UseReturnValueForErrorHandling.Id);
     }
 
     [Test]
@@ -32,6 +32,6 @@ public class Rule0084
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0084UseReturnValueForErrorHandling>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0084UseReturnValueForErrorHandling.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0084UseReturnValueForErrorHandling.Id);
     }
 }

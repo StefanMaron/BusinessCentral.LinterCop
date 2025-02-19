@@ -20,7 +20,7 @@ public class Rule0015
     //         .ConfigureAwait(false);
 
     //     var fixture = RoslynFixtureFactory.Create<Rule0015PermissionSetCoverage>();
-    //     fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0015PermissionSetCoverage.Id);
+    //     fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0015PermissionSetCoverage.Id);
     // }
 
     [Test]
@@ -31,6 +31,6 @@ public class Rule0015
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0015PermissionSetCoverage>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0015PermissionSetCoverage.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0015PermissionSetCoverage.Id);
     }
 }

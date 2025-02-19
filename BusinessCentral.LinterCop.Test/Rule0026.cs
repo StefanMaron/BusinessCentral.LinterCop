@@ -23,7 +23,7 @@ public class Rule0026
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0026ToolTipPunctuation>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0026ToolTipMustEndWithDot.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0026ToolTipMustEndWithDot.Id);
     }
 
     [Test]
@@ -38,6 +38,6 @@ public class Rule0026
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0026ToolTipPunctuation>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0026ToolTipMustEndWithDot.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0026ToolTipMustEndWithDot.Id);
     }
 }

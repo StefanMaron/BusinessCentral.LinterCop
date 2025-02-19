@@ -19,7 +19,7 @@ public class Rule0002
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0002CommitMustBeExplainedByComment>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0002CommitMustBeExplainedByComment.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0002CommitMustBeExplainedByComment.Id);
     }
 
     [Test]
@@ -33,6 +33,6 @@ public class Rule0002
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0002CommitMustBeExplainedByComment>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0002CommitMustBeExplainedByComment.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0002CommitMustBeExplainedByComment.Id);
     }
 }

@@ -27,7 +27,7 @@ public class Rule0083
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0083BuiltInDateTimeMethod>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0083BuiltInDateTimeMethod.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0083BuiltInDateTimeMethod.Id);
     }
 
     // [Test]
@@ -37,7 +37,7 @@ public class Rule0083
     //         .ConfigureAwait(false);
 
     //     var fixture = RoslynFixtureFactory.Create<Rule0083BuiltInDateTimeMethod>();
-    //     fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0083BuiltInDateTimeMethod.Id);
+    //     fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0083BuiltInDateTimeMethod.Id);
     // }
 }
 #endif

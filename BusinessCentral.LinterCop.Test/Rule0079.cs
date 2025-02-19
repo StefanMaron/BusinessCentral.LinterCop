@@ -19,7 +19,7 @@ public class Rule0079
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0079NonPublicEventPublisher>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0079NonPublicEventPublisher.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0079NonPublicEventPublisher.Id);
     }
 
     [Test]
@@ -31,6 +31,6 @@ public class Rule0079
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0079NonPublicEventPublisher>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0079NonPublicEventPublisher.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0079NonPublicEventPublisher.Id);
     }
 }

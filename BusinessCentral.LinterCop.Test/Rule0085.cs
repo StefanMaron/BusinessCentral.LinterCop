@@ -21,7 +21,7 @@ public class Rule0085
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0085LFSeparator>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0085LFSeparator.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0085LFSeparator.Id);
     }
 
     [Test]
@@ -33,6 +33,6 @@ public class Rule0085
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0085LFSeparator>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0085LFSeparator.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0085LFSeparator.Id);
     }
 }

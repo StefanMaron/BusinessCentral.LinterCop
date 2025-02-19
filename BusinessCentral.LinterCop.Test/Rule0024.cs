@@ -19,7 +19,7 @@ public class Rule0024
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0024SemicolonAfterMethodOrTriggerDeclaration>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0024SemicolonAfterMethodOrTriggerDeclaration.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0024SemicolonAfterMethodOrTriggerDeclaration.Id);
     }
 
     [Test]
@@ -30,6 +30,6 @@ public class Rule0024
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0024SemicolonAfterMethodOrTriggerDeclaration>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0024SemicolonAfterMethodOrTriggerDeclaration.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0024SemicolonAfterMethodOrTriggerDeclaration.Id);
     }
 }

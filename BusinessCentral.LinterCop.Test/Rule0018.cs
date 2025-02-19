@@ -19,7 +19,7 @@ public class Rule0018
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0018NoEventsInInternalCodeunits>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0018NoEventsInInternalCodeunitsAnalyzerDescriptor.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0018NoEventsInInternalCodeunitsAnalyzerDescriptor.Id);
     }
 
     [Test]
@@ -30,6 +30,6 @@ public class Rule0018
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0018NoEventsInInternalCodeunits>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0018NoEventsInInternalCodeunitsAnalyzerDescriptor.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0018NoEventsInInternalCodeunitsAnalyzerDescriptor.Id);
     }
 }

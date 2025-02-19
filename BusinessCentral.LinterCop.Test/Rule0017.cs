@@ -20,7 +20,7 @@ public class Rule0017
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0017WriteToFlowField>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0017WriteToFlowField.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0017WriteToFlowField.Id);
     }
 
     [Test]
@@ -35,6 +35,6 @@ public class Rule0017
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0017WriteToFlowField>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0017WriteToFlowField.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0017WriteToFlowField.Id);
     }
 }

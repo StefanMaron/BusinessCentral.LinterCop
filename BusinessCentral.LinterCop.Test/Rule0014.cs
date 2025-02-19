@@ -21,7 +21,7 @@ public class Rule0014
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0014PermissionSetCaptionLength>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0014PermissionSetCaptionLength.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0014PermissionSetCaptionLength.Id);
     }
 
     [Test]
@@ -33,6 +33,6 @@ public class Rule0014
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0014PermissionSetCaptionLength>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0014PermissionSetCaptionLength.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0014PermissionSetCaptionLength.Id);
     }
 }

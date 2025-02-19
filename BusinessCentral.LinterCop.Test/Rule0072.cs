@@ -20,7 +20,7 @@ public class Rule0072
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0072CheckProcedureDocumentationComment>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment.Id);
     }
 
     [Test]
@@ -33,6 +33,6 @@ public class Rule0072
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0072CheckProcedureDocumentationComment>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment.Id);
     }
 }

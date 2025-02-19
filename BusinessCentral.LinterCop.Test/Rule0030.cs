@@ -20,7 +20,7 @@ public class Rule0030
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0030AccessInternalForInstallAndUpgradeCodeunits>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0030AccessInternalForInstallAndUpgradeCodeunits.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0030AccessInternalForInstallAndUpgradeCodeunits.Id);
     }
 
     [Test]
@@ -32,6 +32,6 @@ public class Rule0030
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0030AccessInternalForInstallAndUpgradeCodeunits>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0030AccessInternalForInstallAndUpgradeCodeunits.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0030AccessInternalForInstallAndUpgradeCodeunits.Id);
     }
 }
