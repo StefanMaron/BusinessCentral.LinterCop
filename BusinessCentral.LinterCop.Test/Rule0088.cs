@@ -33,9 +33,10 @@ namespace BusinessCentral.LinterCop.Test
         }
 
         [Test]
-        [TestCase("EventSubscriberOption")]
-        [TestCase("ObsoleteFieldOption")]
         [TestCase("CDSDocument")]
+        [TestCase("EventSubscriberOption")]
+        [TestCase("FlowField")]
+        [TestCase("ObsoleteFieldOption")]
         // [TestCase("OptionParameter")] //TODO: See remarks in the test file
         public async Task NoDiagnostic(string testCase)
         {
