@@ -42,7 +42,6 @@
             [|MAXVALUE|] = 100;
             [|MINVALUE|] = 1;
             [|NOTBLANK|] = [|FALSE|];
-            [|TOOLTIP|] = 'MY TOOLTIP';
         }
         [|FIELD|](2; "My FlowField"; [|INTEGER|])
         {
