@@ -3,8 +3,8 @@ using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -107,13 +107,16 @@ public class Rule0068CheckObjectPermission : DiagnosticAnalyzer
 
     private void CheckObjectPermission(OperationAnalysisContext ctx)
     {
-        if (ctx.IsObsoletePendingOrRemoved()) return;
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Operation is not IInvocationExpression operation)
+            return;
 
-        IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
-        if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
+        if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod)
+            return;
 
         ITypeSymbol? variableType = operation.Instance?.GetSymbol()?.GetTypeSymbol();
-        if (variableType?.GetNavTypeKindSafe() != NavTypeKind.Record) return;
+        if (variableType?.GetNavTypeKindSafe() != NavTypeKind.Record)
+            return;
+
 
         ITableTypeSymbol targetTable = (ITableTypeSymbol)((IRecordTypeSymbol)variableType).OriginalDefinition;
 

@@ -1,9 +1,9 @@
+using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
-using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -84,14 +84,20 @@ public class Rule0039ArgumentDifferentTypeThenExpected : DiagnosticAnalyzer
 
     private void AnalyzeSetRecordArgument(OperationAnalysisContext ctx)
     {
-        if (ctx.IsObsoletePendingOrRemoved()) return;
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Operation is not IInvocationExpression operation)
+            return;
 
-        IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
-        if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
+        if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod)
+            return;
 
-        if (operation?.TargetMethod?.ContainingType?.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Page) return;
-        if (!pageProcedureNames.Contains(operation.TargetMethod.Name)) return;
-        if (operation.Arguments.Length != 1) return;
+        if (operation?.TargetMethod?.ContainingType?.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Page)
+            return;
+
+        if (!pageProcedureNames.Contains(operation.TargetMethod.Name))
+            return;
+
+        if (operation.Arguments.Length != 1)
+            return;
 
         if (operation.Arguments[0].Syntax.Kind != SyntaxKind.IdentifierName || operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression) return;
 
@@ -145,17 +151,22 @@ public class Rule0039ArgumentDifferentTypeThenExpected : DiagnosticAnalyzer
 
     private void AnalyzeTableReferencePageProvider(SymbolAnalysisContext ctx)
     {
-        if (ctx.IsObsoletePendingOrRemoved()) return;
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not ITableTypeSymbol table)
+            return;
 
-        ITableTypeSymbol table = (ITableTypeSymbol)ctx.Symbol;
         foreach (PropertyKind propertyKind in referencePageProviders)
         {
             IPropertySymbol? pageReference = table.GetProperty(propertyKind);
-            if (pageReference is null) continue;
+            if (pageReference is null)
+                continue;
+
             IPageTypeSymbol page = (IPageTypeSymbol)pageReference.Value;
-            if (page is null) continue;
+            if (page is null)
+                continue;
+
             ITableTypeSymbol? pageSourceTable = page.RelatedTable;
-            if (pageSourceTable is null) continue;
+            if (pageSourceTable is null)
+                continue;
 
             if (!AreTheSameNavObjects(table, pageSourceTable))
                 ctx.ReportDiagnostic(Diagnostic.Create(
@@ -169,19 +180,22 @@ public class Rule0039ArgumentDifferentTypeThenExpected : DiagnosticAnalyzer
 
     private void AnalyzeTableExtensionReferencePageProvider(SymbolAnalysisContext ctx)
     {
-        if (ctx.IsObsoletePendingOrRemoved()) return;
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not ITableExtensionTypeSymbol tableExtension)
+            return;
 
-        ITableExtensionTypeSymbol tableExtension = (ITableExtensionTypeSymbol)ctx.Symbol;
         if (tableExtension.Target is not ITableTypeSymbol table)
             return;
 
         foreach (PropertyKind propertyKind in referencePageProviders)
         {
             IPropertySymbol? pageReference = tableExtension.GetProperty(propertyKind);
-            if (pageReference is null) continue;
+            if (pageReference is null)
+                continue;
+
             IPageTypeSymbol page = (IPageTypeSymbol)pageReference.Value;
             ITableTypeSymbol? pageSourceTable = page.RelatedTable;
-            if (pageSourceTable is null) continue;
+            if (pageSourceTable is null)
+                continue;
 
             if (!AreTheSameNavObjects(table, pageSourceTable))
                 ctx.ReportDiagnostic(Diagnostic.Create(
