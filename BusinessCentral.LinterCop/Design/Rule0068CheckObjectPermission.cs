@@ -4,6 +4,7 @@ using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -203,45 +204,37 @@ public class Rule0068CheckObjectPermission : DiagnosticAnalyzer
         }
 
         bool permissionContainRequestedObject = false;
-
-        foreach (var permission in objectPermissions.Value.ToString().ToLowerInvariant().Split(','))
+        var permissions = objectPermissions.GetPropertyValueSyntax<PermissionPropertyValueSyntax>();
+        foreach (var permission in permissions.PermissionProperties)
         {
-            var parts = permission.Trim().Split(new[] { '=' }, 2);
-            if (parts.Length != 2)
+            if (!permission.ObjectType.IsKind(SyntaxKind.TableDataKeyword))
+                continue; // ensure permission is tabledata
+
+            var identifier = permission.ObjectReference.Identifier;
+            switch (identifier.Kind)
             {
-                // Handle invalid permission format
-                continue;
+                case SyntaxKind.IdentifierName:
+                    string name = ((IdentifierNameSyntax)identifier).Identifier.ValueText.UnquoteIdentifier();
+                    if (name.Equals(variableType.Name, StringComparison.OrdinalIgnoreCase))
+                        permissionContainRequestedObject = true;
+                    break;
+                case SyntaxKind.ObjectId:
+                    int objectId = Convert.ToInt32(((ObjectIdSyntax)identifier).Value.ValueText);
+                    if (objectId == targetTable.Id)
+                        permissionContainRequestedObject = true;
+                    break;
+                case SyntaxKind.QualifiedName:
+                    string qualifier = ((QualifiedNameSyntax)identifier).Left.GetText().ToString();
+                    string onlyName = ((QualifiedNameSyntax)identifier).Right.Identifier.ValueText.UnquoteIdentifier();
+                    if (qualifier.Equals(variableType.OriginalDefinition.ContainingNamespace?.QualifiedName, StringComparison.OrdinalIgnoreCase) && onlyName.Equals(variableType.Name, StringComparison.OrdinalIgnoreCase))
+                        permissionContainRequestedObject = true;
+                    break;
             }
-
-            var typeAndObjectName = parts[0].Trim();
-            var permissionValue = parts[1].Trim();
-
-            // Extract type and object name, handling quoted object names
-            var typeEndIndex = typeAndObjectName.IndexOf(' ');
-            if (typeEndIndex == -1)
+            if (permissionContainRequestedObject)
             {
-                // Handle invalid type/object name format
-                continue;
-            }
-
-            var type = typeAndObjectName[..typeEndIndex].Trim();
-            var objectName = typeAndObjectName[typeEndIndex..].Trim().Trim('"');
-
-            bool nameSpaceNameMatch = false;
-#if !LessThenFall2023RV1
-            nameSpaceNameMatch = objectName.UnquoteIdentifier() == (variableType.OriginalDefinition.ContainingNamespace?.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant());
-#endif
-
-            // Match against the parameters of the procedure
-            if (type == "tabledata" && (objectName == variableType.Name.ToLowerInvariant() || nameSpaceNameMatch))
-            {
-                permissionContainRequestedObject = true;
-                // Handle tabledata permissions
-                var permissions = permissionValue.ToCharArray();
-                if (!permissions.Contains(requestedPermission))
-                {
+                var permissionsText = permission.Permissions.ValueText;
+                if (permissionsText is null || !permissionsText.ToLowerInvariant().Contains(requestedPermission))
                     ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, location, requestedPermission, variableType.Name));
-                }
             }
         }
         if (!permissionContainRequestedObject)

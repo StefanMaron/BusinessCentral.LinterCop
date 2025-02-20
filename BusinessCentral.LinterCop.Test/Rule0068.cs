@@ -41,6 +41,9 @@ public class Rule0068
 #endif
     // [TestCase("IntegerTable")]
     [TestCase("XMLPortWithTableElementProps")]
+    [TestCase("PermissionsAsObjectId")]
+    [TestCase("PermissionPropertyWithPragma")]
+    [TestCase("PermissionPropertyWithComment")] 
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
