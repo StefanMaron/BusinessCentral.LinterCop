@@ -1,11 +1,10 @@
-﻿#nullable disable // TODO: Enable nullable and review rule
+﻿using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
-using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -13,31 +12,148 @@ namespace BusinessCentral.LinterCop.Design;
 public class Rule0005VariableCasingShouldNotDifferFromDeclaration : DiagnosticAnalyzer
 {
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; }
-        = ImmutableArray.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, DiagnosticDescriptors.Rule0000ErrorInRule);
+        = ImmutableArray.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration);
 
-    private static readonly HashSet<SyntaxKind> _dataTypeSyntaxKinds = Enum.GetValues(typeof(SyntaxKind)).Cast<SyntaxKind>().Where(x => x.ToString().AsSpan().EndsWith("DataType")).ToHashSet();
-    private static readonly string[] _areaKinds = Enum.GetValues(typeof(AreaKind)).Cast<AreaKind>().Select(x => x.ToString()).ToArray();
-    private static readonly string[] _actionAreaKinds = Enum.GetValues(typeof(ActionAreaKind)).Cast<ActionAreaKind>().Select(x => x.ToString()).ToArray();
-    private static readonly string[] _labelPropertyString = LabelPropertyHelper.GetAllLabelProperties();
-    private static readonly string[] _navTypeKindStrings = GenerateNavTypeKindArray();
-    private static readonly string[] _propertyKindStrings = Enum.GetValues(typeof(PropertyKind)).Cast<PropertyKind>().Select(x => x.ToString()).ToArray();
-    private static readonly string[] _symbolKinds = GenerateSymbolKindArray();
-    private static readonly Dictionary<TriggerTypeKind, string> _triggerTypeKinds = GenerateNTriggerTypeKindMappings();
+    #region Comparators Dictionaries
+
+    private static readonly HashSet<SyntaxKind> _dataTypeSyntaxKinds =
+        Enum.GetValues(typeof(SyntaxKind))
+            .Cast<SyntaxKind>()
+            .Where(x => x.ToString().AsSpan().EndsWith("DataType"))
+            .ToHashSet();
+
+    private static readonly Lazy<ImmutableDictionary<string, string>> _accessibilityDictionary =
+        new Lazy<ImmutableDictionary<string, string>>(() =>
+            Enum.GetValues(typeof(Accessibility))
+                .Cast<Accessibility>()
+                .Select(x => x.ToString())
+                .ToImmutableDictionary(s => s, s => s, StringComparer.OrdinalIgnoreCase));
+
+    private static readonly Lazy<ImmutableDictionary<string, string>> _actionAreaKindDictionary =
+        new Lazy<ImmutableDictionary<string, string>>(() =>
+            Enum.GetValues(typeof(ActionAreaKind))
+                .Cast<ActionAreaKind>()
+                .Select(x => x.ToString())
+                .ToImmutableDictionary(s => s, s => s, StringComparer.OrdinalIgnoreCase));
+
+    private static readonly Lazy<ImmutableDictionary<string, string>> _allowInCustomizationsKindDictionary =
+        new Lazy<ImmutableDictionary<string, string>>(() =>
+            Enum.GetValues(typeof(AllowInCustomizationsKind))
+                .Cast<AllowInCustomizationsKind>()
+                .Select(x => x.ToString())
+                .ToImmutableDictionary(s => s, s => s, StringComparer.OrdinalIgnoreCase));
+
+    private static readonly Lazy<ImmutableDictionary<string, string>> _areaKindDictionary =
+        new Lazy<ImmutableDictionary<string, string>>(() =>
+            Enum.GetValues(typeof(AreaKind))
+                .Cast<AreaKind>()
+                .Select(x => x.ToString())
+                .ToImmutableDictionary(s => s, s => s, StringComparer.OrdinalIgnoreCase));
+
+    private static readonly Lazy<ImmutableDictionary<string, string>> _blankNumbersKindDictionary =
+        new Lazy<ImmutableDictionary<string, string>>(() =>
+            Enum.GetValues(typeof(BlankNumbersKind))
+                .Cast<BlankNumbersKind>()
+                .Select(x => x.ToString())
+                .ToImmutableDictionary(s => s, s => s, StringComparer.OrdinalIgnoreCase));
+
+    private static readonly Lazy<ImmutableDictionary<string, string>> _compressionTypeKindDictionary =
+        new Lazy<ImmutableDictionary<string, string>>(() =>
+            Enum.GetValues(typeof(CompressionTypeKind))
+                .Cast<CompressionTypeKind>()
+                .Select(x => x.ToString())
+                .ToImmutableDictionary(s => s, s => s, StringComparer.OrdinalIgnoreCase));
+
+    private static readonly Lazy<ImmutableDictionary<string, string>> _dataClassificationKindDictionary =
+        new Lazy<ImmutableDictionary<string, string>>(() =>
+            Enum.GetValues(typeof(DataClassificationKind))
+                .Cast<DataClassificationKind>()
+                .Select(x => x.ToString())
+                .ToImmutableDictionary(s => s, s => s, StringComparer.OrdinalIgnoreCase));
+
+    private static readonly Lazy<ImmutableDictionary<string, string>> _fieldClassKindDictionary =
+        new Lazy<ImmutableDictionary<string, string>>(() =>
+            Enum.GetValues(typeof(FieldClassKind))
+                .Cast<FieldClassKind>()
+                .Select(x => x.ToString())
+                .ToImmutableDictionary(s => s, s => s, StringComparer.OrdinalIgnoreCase));
+
+    private static readonly Lazy<ImmutableDictionary<string, string>> _labelPropertyDictionary =
+        new Lazy<ImmutableDictionary<string, string>>(() =>
+            LabelPropertyHelper.GetAllLabelProperties()
+                            .ToImmutableDictionary(s => s, s => s, StringComparer.OrdinalIgnoreCase));
+
+    private static readonly Lazy<ImmutableDictionary<string, string>> _navTypeKindDictionary =
+        new Lazy<ImmutableDictionary<string, string>>(() =>
+            GenerateNavTypeKindDictionary());
+
+    private static readonly Lazy<ImmutableDictionary<string, string>> _obsoleteStateKindDictionary =
+        new Lazy<ImmutableDictionary<string, string>>(() =>
+            Enum.GetValues(typeof(TableObsoleteStateKind))
+                .Cast<TableObsoleteStateKind>()
+                .Select(x => x.ToString())
+            .Concat(
+                Enum.GetValues(typeof(FieldObsoleteStateKind))
+                    .Cast<FieldObsoleteStateKind>()
+                    .Select(x => x.ToString()))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToImmutableDictionary(s => s, s => s, StringComparer.OrdinalIgnoreCase));
+
+    private static readonly Lazy<ImmutableDictionary<string, string>> _propertyKindDictionary =
+        new Lazy<ImmutableDictionary<string, string>>(() =>
+            Enum.GetValues(typeof(PropertyKind))
+                .Cast<PropertyKind>()
+                .Select(x => x.ToString())
+                .ToImmutableDictionary(s => s, s => s, StringComparer.OrdinalIgnoreCase));
+
+    private static readonly Lazy<ImmutableDictionary<string, string>> _scopeKindDictionary =
+        new Lazy<ImmutableDictionary<string, string>>(() =>
+            Enum.GetValues(typeof(TableScopeKind))
+                .Cast<TableScopeKind>()
+                .Select(x => x.ToString())
+                .ToImmutableDictionary(s => s, s => s, StringComparer.OrdinalIgnoreCase));
+
+    private static readonly Lazy<ImmutableDictionary<string, string>> _subtypeKindDictionary =
+        new Lazy<ImmutableDictionary<string, string>>(() =>
+            Enum.GetValues(typeof(FieldSubtypeKind))
+                .Cast<FieldSubtypeKind>()
+                .Select(x => x.ToString())
+                .ToImmutableDictionary(s => s, s => s, StringComparer.OrdinalIgnoreCase));
+
+    private static readonly Lazy<ImmutableDictionary<string, string>> _symbolKindDictionary =
+        new Lazy<ImmutableDictionary<string, string>>(() =>
+            GenerateSymbolKindDictionary());
+
+    private static readonly Lazy<ImmutableDictionary<string, string>> _tableTypeKindDictionary =
+        new Lazy<ImmutableDictionary<string, string>>(() =>
+            Enum.GetValues(typeof(TableTypeKind))
+                .Cast<TableTypeKind>()
+                .Select(x => x.ToString())
+                .ToImmutableDictionary(s => s, s => s, StringComparer.OrdinalIgnoreCase));
+
+    private static readonly Lazy<ImmutableDictionary<TriggerTypeKind, string>> _triggerTypeKinds =
+        new Lazy<ImmutableDictionary<TriggerTypeKind, string>>(() =>
+            GenerateTriggerTypeKindDictionary());
+
+    private static readonly Dictionary<string, ImmutableDictionary<string, string>> ordinalDictionary = new Dictionary<string, ImmutableDictionary<string, string>>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "Access",                 _accessibilityDictionary.Value },
+        { "AllowInCustomizations",  _allowInCustomizationsKindDictionary.Value },
+        { "BlankNumbers",           _blankNumbersKindDictionary.Value },
+        { "Caption",                _labelPropertyDictionary.Value },
+        { "CompressionType",        _compressionTypeKindDictionary.Value },
+        { "DataClassification",     _dataClassificationKindDictionary.Value },
+        { "FieldClass",             _fieldClassKindDictionary.Value },
+        { "ObsoleteState",          _obsoleteStateKindDictionary.Value },
+        { "Scope",                  _scopeKindDictionary.Value },
+        { "Subtype",                _subtypeKindDictionary.Value },
+        { "TableType",              _tableTypeKindDictionary.Value},
+    };
+
+    #endregion
 
     public override void Initialize(AnalysisContext context)
     {
-        context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeLabel), SyntaxKind.Label);
-        context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzePropertyName), SyntaxKind.PropertyName);
-        context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeMemberAccessExpression), SyntaxKind.MemberAccessExpression);
-        context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeAreaSectionName), SyntaxKind.PageArea);
-        context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeActionAreaSectionName), SyntaxKind.PageActionArea);
-        context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeTriggerDeclaration), SyntaxKind.TriggerDeclaration);
-        context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeIdentifierName), SyntaxKind.IdentifierName);
-        context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeQualifiedName), SyntaxKind.QualifiedName);
-        context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeQualifiedNameWithoutNamespace), SyntaxKind.QualifiedName);
-        context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeLengthDataType), SyntaxKind.LengthDataType);
-        context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.AnalyzeOptionAccessExpression), SyntaxKind.OptionAccessExpression);
-
         context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.CheckForBuiltInMethodsWithCasingMismatch), new OperationKind[] {
                 OperationKind.InvocationExpression,
                 OperationKind.FieldAccess,
@@ -71,153 +187,124 @@ public class Rule0005VariableCasingShouldNotDifferFromDeclaration : DiagnosticAn
             });
     }
 
-    private static string[] GenerateNavTypeKindArray()
+    private void CheckForBuiltInTypeCasingMismatch(SymbolAnalysisContext ctx)
     {
-        var navTypeKinds = Enum.GetValues(typeof(NavTypeKind))
-            .Cast<NavTypeKind>()
-            .Select(s => s.ToString())
-            .ToList();
+        var node = ctx.Symbol.DeclaringSyntaxReference?.GetSyntax(ctx.CancellationToken);
+        if (node is null)
+            return;
 
-        navTypeKinds.Add("Database"); // for Database::"G/L Entry" (there is no NavTypeKind for this)
-        return navTypeKinds.ToArray();
+        var semanticModel = ctx.Compilation.GetSemanticModel(node.SyntaxTree);
+
+        AnalyzeTokens(ctx, node);
+        AnalyzeNodes(ctx, semanticModel, node);
     }
 
-    private static string[] GenerateSymbolKindArray()
+    private void AnalyzeTokens(SymbolAnalysisContext ctx, SyntaxNode root)
     {
-        var symbolKinds = Enum.GetValues(typeof(SymbolKind))
-            .Cast<SymbolKind>()
-            .Select(x => x.ToString())
-            .ToList();
+        var tokens = root.DescendantTokens()
+                         .Where(t => !string.IsNullOrEmpty(t.ValueText) &&
+                                t.Kind.IsKeyword() &&
+                                t.Parent is not null &&
+                                !_dataTypeSyntaxKinds.Contains(t.Parent.Kind));
 
-        // Find the index of "XmlPort" and update it to "Xmlport"
-        int index = symbolKinds.FindIndex(s => s == "XmlPort");
-        if (index != -1)
+        foreach (SyntaxToken token in tokens)
         {
-            symbolKinds[index] = "Xmlport";
+            ctx.CancellationToken.ThrowIfCancellationRequested();
+
+            SyntaxToken syntaxToken = SyntaxFactory.Token(token.Kind);
+            if (syntaxToken.Kind == SyntaxKind.None)
+                continue;
+
+            if (!syntaxToken.ValueText.AsSpan().Equals(token.ValueText.AsSpan(), StringComparison.Ordinal))
+                ctx.ReportDiagnostic(
+                    Diagnostic.Create(
+                        DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration,
+                        token.GetLocation(),
+                        syntaxToken));
         }
-
-        symbolKinds.Add("Database"); // for Database::"G/L Entry" (there is no SymbolKind for this)
-        return symbolKinds.ToArray();
     }
 
-    private static Dictionary<TriggerTypeKind, string> GenerateNTriggerTypeKindMappings()
+    private void AnalyzeNodes(SymbolAnalysisContext ctx, SemanticModel semanticModel, SyntaxNode root)
     {
-        var mappings = new Dictionary<TriggerTypeKind, string>();
+        var stack = new Stack<SyntaxNode>();
+        stack.Push(root);
 
-        foreach (TriggerTypeKind type in Enum.GetValues(typeof(TriggerTypeKind)))
+        while (stack.Count > 0)
         {
-            string typeName = type.ToString();
-            int index = typeName.IndexOf("On");
-            if (index > 0)
+            ctx.CancellationToken.ThrowIfCancellationRequested();
+            SyntaxNode node = stack.Pop();
+
+            switch (node.Kind)
             {
-                mappings[type] = typeName.Substring(index); ;
+                case SyntaxKind.DataType:
+                case SyntaxKind.EnumDataType:
+                case SyntaxKind.LengthDataType:
+                case SyntaxKind.OptionDataType:
+                case SyntaxKind.SubtypedDataType:
+                case SyntaxKind.TextConstDataType:
+                    AnalyzeDataType(ctx, node);
+                    continue;
+
+                case SyntaxKind.IdentifierName:
+                    AnalyzeIdentifierName(ctx, semanticModel, node);
+                    continue;
+
+                case SyntaxKind.LabelDataType:
+                    AnalyzeLabelDataType(ctx, node);
+                    continue;
+
+                case SyntaxKind.MemberAccessExpression:
+                    AnalyzeMemberAccessExpression(ctx, node);
+                    continue;
+
+                case SyntaxKind.OptionAccessExpression:
+                    AnalyzeOptionAccessExpression(ctx, stack, node);
+                    continue;
+
+                case SyntaxKind.PageArea:
+                    AnalyzePageArea(ctx, node);
+                    continue;
+
+                case SyntaxKind.PageActionArea:
+                    AnalyzePageActionArea(ctx, node);
+                    continue;
+
+                case SyntaxKind.Property:
+                    AnalyzeProperty(ctx, stack, node);
+                    continue;
+
+                case SyntaxKind.QualifiedName:
+                    AnalyzeQualifiedName(ctx, semanticModel, node);
+                    continue;
+
+                case SyntaxKind.TriggerDeclaration:
+                    AnalyzeTriggerDeclaration(ctx, semanticModel, node);
+                    continue;
+
+                default:
+                    break;
+            }
+
+            foreach (var child in node.ChildNodes().Reverse())
+            {
+                stack.Push(child);
             }
         }
-
-        return mappings;
     }
 
-    private void AnalyzeLabel(SyntaxNodeAnalysisContext ctx)
+    #region Name
+
+    private void AnalyzeDataType(SymbolAnalysisContext ctx, SyntaxNode syntaxNode)
     {
-        IEnumerable<SyntaxNode> nodes = ctx.Node.DescendantNodes()
-                    .Where(n => n.Kind == SyntaxKind.IdentifierEqualsLiteral);
-
-        foreach (SyntaxNode node in nodes)
-        {
-            ctx.CancellationToken.ThrowIfCancellationRequested();
-
-            SyntaxToken syntaxToken = ((IdentifierEqualsLiteralSyntax)node).Identifier;
-            int result = Array.FindIndex(_labelPropertyString, t => t.Equals(syntaxToken.ValueText, StringComparison.OrdinalIgnoreCase));
-            if (result == -1)
-                continue;
-
-            if (!syntaxToken.ValueText.AsSpan().Equals(_labelPropertyString[result].ToString().AsSpan(), StringComparison.Ordinal))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, syntaxToken.GetLocation(), new object[] { _labelPropertyString[result].ToString(), "" }));
-        }
-    }
-
-    private void AnalyzePropertyName(SyntaxNodeAnalysisContext ctx)
-    {
-        SyntaxToken syntaxToken = ((PropertyNameSyntax)ctx.Node).Identifier;
-        int result = Array.FindIndex(_propertyKindStrings, t => t.Equals(syntaxToken.ValueText, StringComparison.OrdinalIgnoreCase));
-        if (result == -1)
+        if (syntaxNode is not DataTypeSyntax node)
             return;
 
-        if (!syntaxToken.ValueText.AsSpan().Equals(_propertyKindStrings[result].ToString().AsSpan(), StringComparison.Ordinal))
-            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, syntaxToken.GetLocation(), new object[] { _propertyKindStrings[result].ToString(), "" }));
+        CompareAgainstDictionary(ctx, node.TypeName, _navTypeKindDictionary.Value);
     }
 
-    private void AnalyzeMemberAccessExpression(SyntaxNodeAnalysisContext ctx)
+    private void AnalyzeIdentifierName(SymbolAnalysisContext ctx, SemanticModel semanticModel, SyntaxNode syntaxNode)
     {
-        SyntaxNode childNode = ctx.Node.ChildNodes().Where(n => n.Kind == SyntaxKind.IdentifierName).FirstOrDefault();
-        if (childNode is null) return;
-
-        SyntaxToken syntaxToken = ((IdentifierNameSyntax)childNode).Identifier;
-        int result = Array.FindIndex(_symbolKinds, t => t.Equals(syntaxToken.ValueText, StringComparison.OrdinalIgnoreCase));
-        if (result == -1)
-            return;
-
-        if (!syntaxToken.ValueText.AsSpan().Equals(_symbolKinds[result].ToString().AsSpan(), StringComparison.Ordinal))
-            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, syntaxToken.GetLocation(), new object[] { _symbolKinds[result].ToString(), "" }));
-    }
-
-    private void AnalyzeAreaSectionName(SyntaxNodeAnalysisContext ctx)
-    {
-        IEnumerable<SyntaxNode> childNodes = ctx.Node.ChildNodes().Where(n => n.Kind == SyntaxKind.IdentifierName);
-
-        foreach (SyntaxNode childNode in childNodes)
-        {
-            ctx.CancellationToken.ThrowIfCancellationRequested();
-
-            SyntaxToken syntaxToken = ((IdentifierNameSyntax)childNode).Identifier;
-            int result = Array.FindIndex(_areaKinds, t => t.Equals(syntaxToken.ValueText, StringComparison.OrdinalIgnoreCase));
-            if (result == -1)
-                continue;
-
-            if (!syntaxToken.ValueText.AsSpan().Equals(_areaKinds[result].ToString().AsSpan(), StringComparison.Ordinal))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, childNode.GetLocation(), new object[] { _areaKinds[result].ToString(), "" }));
-        }
-    }
-
-    private void AnalyzeActionAreaSectionName(SyntaxNodeAnalysisContext ctx)
-    {
-        IEnumerable<SyntaxNode> childNodes = ctx.Node.ChildNodes().Where(n => n.Kind == SyntaxKind.IdentifierName);
-
-        foreach (SyntaxNode childNode in childNodes)
-        {
-            ctx.CancellationToken.ThrowIfCancellationRequested();
-
-            SyntaxToken syntaxToken = ((IdentifierNameSyntax)childNode).Identifier;
-            int result = Array.FindIndex(_actionAreaKinds, t => t.Equals(syntaxToken.ValueText, StringComparison.OrdinalIgnoreCase));
-            if (result == -1)
-                continue;
-
-            if (!syntaxToken.ValueText.AsSpan().Equals(_actionAreaKinds[result].ToString().AsSpan(), StringComparison.Ordinal))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, childNode.GetLocation(), new object[] { _actionAreaKinds[result].ToString(), "" }));
-        }
-    }
-
-    private void AnalyzeTriggerDeclaration(SyntaxNodeAnalysisContext ctx)
-    {
-        if (ctx.Node is not TriggerDeclarationSyntax syntax)
-            return;
-
-        if (ctx.ContainingSymbol.ContainingSymbol is not ISymbolWithTriggers symbolWithTriggers)
-            return;
-
-        if (symbolWithTriggers.GetTriggerTypeInfo(syntax.Name.Identifier.ValueText) is not TriggerTypeInfo triggerTypeInfo)
-            return;
-
-        if (!_triggerTypeKinds.TryGetValue(triggerTypeInfo.Kind, out string targetName))
-            return;
-
-        if (!syntax.Name.Identifier.ValueText.AsSpan().Equals(targetName.AsSpan(), StringComparison.Ordinal))
-            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, syntax.Name.GetLocation(), new object[] { targetName, "" }));
-    }
-
-    private void AnalyzeIdentifierName(SyntaxNodeAnalysisContext ctx)
-    {
-        if (ctx.Node is not IdentifierNameSyntax node)
+        if (syntaxNode is not IdentifierNameSyntax node)
             return;
 
         // The GetSymbolInfo from the ctx.SemanticModel will throw an System.NullReferenceException on these ParentKind nodes
@@ -225,206 +312,203 @@ public class Rule0005VariableCasingShouldNotDifferFromDeclaration : DiagnosticAn
             node.Parent.Kind == SyntaxKind.UnaryNotExpression)
             return;
 
-        if (ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol is not ISymbol fieldSymbol)
+        if (semanticModel.GetSymbolInfo(node, ctx.CancellationToken).Symbol is not ISymbol fieldSymbol)
             return;
 
-        // TODO: Support more SymbolKinds
-        if (fieldSymbol.Kind != SymbolKind.Field)
-            return;
 
-        string identifierName = StringExtensions.UnquoteIdentifier(node.Identifier.ValueText);
-
-        if (!identifierName.AsSpan().Equals(fieldSymbol.Name.AsSpan(), StringComparison.Ordinal))
-            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.GetLocation(), new object[] { fieldSymbol.Name.QuoteIdentifierIfNeeded(), "" }));
+        CompareIdentifier(ctx, node.Identifier, fieldSymbol.Name);
     }
 
-    private void AnalyzeQualifiedName(SyntaxNodeAnalysisContext ctx)
+    private void AnalyzeLabelDataType(SymbolAnalysisContext ctx, SyntaxNode syntaxNode)
     {
-        if (ctx.Node is not QualifiedNameSyntax node)
+        if (syntaxNode is not LabelDataTypeSyntax node)
             return;
 
-        if (ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol is not ISymbol fieldSymbol)
-            return;
+        CompareAgainstDictionary(ctx, node.TypeName, _navTypeKindDictionary.Value);
 
-        string identifierName = StringExtensions.UnquoteIdentifier(node.Right.Identifier.ValueText);
-
-        if (!identifierName.AsSpan().Equals(fieldSymbol.Name.AsSpan(), StringComparison.Ordinal))
-            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, node.Right.GetLocation(), new object[] { fieldSymbol.Name.QuoteIdentifierIfNeeded(), "" }));
-    }
-
-    private void AnalyzeQualifiedNameWithoutNamespace(SyntaxNodeAnalysisContext ctx)
-    {
-        if (ctx.Node is not QualifiedNameSyntax node)
-            return;
-
-        if (node.Left.Kind != SyntaxKind.IdentifierName)
-            return;
-
-        if (ctx.SemanticModel.GetSymbolInfo(ctx.Node, ctx.CancellationToken).Symbol is not ISymbol fieldSymbol)
-            return;
-
-        if (fieldSymbol.ContainingSymbol is not IObjectTypeSymbol objectTypeSymbol)
-            return;
-
-        if (fieldSymbol.ContainingSymbol.Kind == SymbolKind.TableExtension)
+        // Handle the properties like Comment, Locked and/or MaxLength
+        var properties = node.DescendantNodes().OfType<IdentifierEqualsLiteralSyntax>();
+        foreach (var prop in properties)
         {
-            ITableExtensionTypeSymbol tableExtension = (ITableExtensionTypeSymbol)fieldSymbol.ContainingSymbol;
-            if (tableExtension.Target is not IObjectTypeSymbol tableExtensionTypeSymbol)
-            {
-                return;
-            }
-            objectTypeSymbol = tableExtensionTypeSymbol;
+            ctx.CancellationToken.ThrowIfCancellationRequested();
+            CompareAgainstDictionary(ctx, prop.Identifier, _labelPropertyDictionary.Value);
         }
-
-        IdentifierNameSyntax identifierNameSyntax = (IdentifierNameSyntax)node.Left;
-        SyntaxToken identifier = identifierNameSyntax.Identifier;
-        if (identifier == null)
-            return;
-
-        string identifierName = StringExtensions.UnquoteIdentifier(identifier.ValueText);
-
-        if (!identifierName.AsSpan().Equals(objectTypeSymbol.Name.AsSpan(), StringComparison.Ordinal))
-            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, identifierNameSyntax.GetLocation(), new object[] { objectTypeSymbol.Name.QuoteIdentifierIfNeeded(), "" }));
     }
 
-    private void AnalyzeLengthDataType(SyntaxNodeAnalysisContext ctx)
+    private void AnalyzeMemberAccessExpression(SymbolAnalysisContext ctx, SyntaxNode syntaxNode)
     {
-        if (ctx.Node is not LengthDataTypeSyntax node)
+        if (syntaxNode is not MemberAccessExpressionSyntax node)
             return;
 
-        SyntaxToken identifierToken = node.GetFirstToken();
-        if (!IsNavTypeKindWithDifferentCasing(identifierToken.ValueText, out string targetName))
-            return;
-
-        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, identifierToken.GetLocation(), new object[] { targetName, "" }));
+        var childNodes = node.ChildNodes().OfType<IdentifierNameSyntax>();
+        foreach (var childNode in childNodes)
+        {
+            ctx.CancellationToken.ThrowIfCancellationRequested();
+            CompareAgainstDictionary(ctx, childNode.Identifier, _symbolKindDictionary.Value);
+        }
     }
 
-    private void AnalyzeOptionAccessExpression(SyntaxNodeAnalysisContext ctx)
+    private void AnalyzeOptionAccessExpression(SymbolAnalysisContext ctx, Stack<SyntaxNode> stack, SyntaxNode syntaxNode)
     {
-        if (ctx.Node is not OptionAccessExpressionSyntax node)
+        if (syntaxNode is not OptionAccessExpressionSyntax node)
             return;
 
         switch (node.Expression)
         {
+            case OptionAccessExpressionSyntax optionAccessExpressionSyntax:
+                stack.Push(optionAccessExpressionSyntax.Expression);
+                break;
             case IdentifierNameSyntax identifierNameSyntax:
-                int result = Array.FindIndex(_symbolKinds, t => t.Equals(identifierNameSyntax.Identifier.ValueText, StringComparison.OrdinalIgnoreCase));
-                if (result == -1)
+                CompareAgainstDictionary(ctx, identifierNameSyntax.Identifier, _symbolKindDictionary.Value);
+                break;
+        }
+    }
+
+    private void AnalyzePageArea(SymbolAnalysisContext ctx, SyntaxNode syntaxNode)
+    {
+        if (syntaxNode is not PageAreaSyntax node)
+            return;
+
+        var childNodes = node.ChildNodes().OfType<IdentifierNameSyntax>();
+        foreach (var childNode in childNodes)
+        {
+            ctx.CancellationToken.ThrowIfCancellationRequested();
+            CompareAgainstDictionary(ctx, childNode.Identifier, _areaKindDictionary.Value);
+        }
+    }
+
+    private void AnalyzePageActionArea(SymbolAnalysisContext ctx, SyntaxNode syntaxNode)
+    {
+        if (syntaxNode is not PageActionAreaSyntax node)
+            return;
+
+        var childNodes = node.ChildNodes().OfType<IdentifierNameSyntax>();
+        foreach (var childNode in childNodes)
+        {
+            ctx.CancellationToken.ThrowIfCancellationRequested();
+            CompareAgainstDictionary(ctx, childNode.Identifier, _actionAreaKindDictionary.Value);
+        }
+    }
+
+    private void AnalyzeProperty(SymbolAnalysisContext ctx, Stack<SyntaxNode> stack, SyntaxNode syntaxNode)
+    {
+        if (syntaxNode is not PropertySyntax node)
+            return;
+
+        if (node.Name is not PropertyNameSyntax propertyNameSyntax)
+            return;
+
+        CompareAgainstDictionary(ctx, propertyNameSyntax.Identifier, _propertyKindDictionary.Value);
+
+        var propertyName = propertyNameSyntax.Identifier.ValueText;
+        if (string.IsNullOrEmpty(propertyName))
+            return;
+
+        if (ordinalDictionary.ContainsKey(propertyName))
+        {
+            if (node.Value is EnumPropertyValueSyntax enumPropValueSyntax)
+            {
+                CompareAgainstDictionary(ctx, enumPropValueSyntax.Value.Identifier, GetOrdinalDictionary(propertyName));
+            }
+
+            return;
+        }
+
+        switch (propertyName.ToLower())
+        {
+            // Push the list of fields back into the stack, which will be processed by the SyntaxKind.IdentifierName
+            case "accessbypermission":
+            case "columnstoreindex":
+            case "calcformula":
+            case "datacaptionfields":
+            case "drilldownpageid":
+            case "lookuppageid":
+                stack.Push(node.Value);
+                break;
+
+            // Handle the properties like Comment, Locked and/or MaxLength
+            case "caption":
+                var properties = node.DescendantNodes().OfType<IdentifierEqualsLiteralSyntax>();
+                foreach (var prop in properties)
+                {
+                    ctx.CancellationToken.ThrowIfCancellationRequested();
+                    CompareAgainstDictionary(ctx, prop.Identifier, GetOrdinalDictionary(propertyName));
+                }
+                break;
+        }
+    }
+
+    private void AnalyzeQualifiedName(SymbolAnalysisContext ctx, SemanticModel semanticModel, SyntaxNode syntaxNode)
+    {
+        if (syntaxNode is not QualifiedNameSyntax node)
+            return;
+
+        if (semanticModel.GetSymbolInfo(node, ctx.CancellationToken).Symbol is not ISymbol fieldSymbol)
+            return;
+
+        switch (node.Left.Kind)
+        {
+            // without namespace
+            case SyntaxKind.IdentifierName:
+
+                if (fieldSymbol.ContainingSymbol is not IObjectTypeSymbol objectTypeSymbol)
                     return;
 
-                if (!identifierNameSyntax.Identifier.ValueText.AsSpan().Equals(_symbolKinds[result].ToString().AsSpan(), StringComparison.Ordinal))
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, identifierNameSyntax.Identifier.GetLocation(), new object[] { _symbolKinds[result].ToString(), "" }));
+                if (fieldSymbol.ContainingSymbol.Kind == SymbolKind.TableExtension)
+                {
+                    ITableExtensionTypeSymbol tableExtension = (ITableExtensionTypeSymbol)fieldSymbol.ContainingSymbol;
+                    if (tableExtension.Target is not IObjectTypeSymbol tableExtensionTypeSymbol)
+                    {
+                        return;
+                    }
+                    objectTypeSymbol = tableExtensionTypeSymbol;
+                }
+
+                if (node.Left is IdentifierNameSyntax leftNode)
+                    CompareIdentifier(ctx, leftNode.Identifier, objectTypeSymbol.Name);
+
+                if (node.Right is SimpleNameSyntax rightNode)
+                    CompareIdentifier(ctx, rightNode.Identifier, fieldSymbol.Name);
+
+                break;
+
+            // with namespace
+            default:
+                CompareIdentifier(ctx, node.Right.Identifier, fieldSymbol.Name);
 
                 break;
         }
     }
 
-    private void CheckForBuiltInTypeCasingMismatch(SymbolAnalysisContext ctx)
+    private void AnalyzeTriggerDeclaration(SymbolAnalysisContext ctx, SemanticModel semanticModel, SyntaxNode syntaxNode)
     {
-        AnalyseTokens(ctx);
-        AnalyseNodes(ctx);
+        if (syntaxNode is not TriggerDeclarationSyntax node)
+            return;
+
+        var IdentifierName = node.Name.Identifier.ValueText;
+        if (string.IsNullOrEmpty(IdentifierName))
+            return;
+
+        if (ctx.Symbol.GetContainingApplicationObjectTypeSymbol() is not ISymbolWithTriggers symbolWithTriggers)
+            return;
+
+        if (symbolWithTriggers.GetTriggerTypeInfo(IdentifierName) is not TriggerTypeInfo triggerTypeInfo)
+            return;
+
+        if (!_triggerTypeKinds.Value.TryGetValue(triggerTypeInfo.Kind, out string? canonical))
+            return;
+
+        CompareIdentifier(ctx, node.Name.Identifier, canonical);
     }
 
-    private void AnalyseTokens(SymbolAnalysisContext ctx)
-    {
-        IEnumerable<SyntaxToken> descendantTokens = ctx.Symbol.DeclaringSyntaxReference?.GetSyntax().DescendantTokens()
-                                        .Where(t => t.Kind.IsKeyword())
-                                        .Where(t => !_dataTypeSyntaxKinds.Contains(t.Parent.Kind))
-                                        .Where(t => !string.IsNullOrEmpty(t.ToString()));
-
-        foreach (SyntaxToken descendantToken in descendantTokens ?? Enumerable.Empty<SyntaxToken>())
-        {
-            ctx.CancellationToken.ThrowIfCancellationRequested();
-
-            SyntaxToken syntaxToken = SyntaxFactory.Token(descendantToken.Kind);
-            if (syntaxToken.Kind == SyntaxKind.None)
-                continue;
-
-            if (!syntaxToken.ToString().AsSpan().Equals(descendantToken.ToString().AsSpan(), StringComparison.Ordinal))
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, descendantToken.GetLocation(), new object[] { syntaxToken, "" }));
-        }
-    }
-
-    private void AnalyseNodes(SymbolAnalysisContext ctx)
-    {
-        IEnumerable<SyntaxNode> descendantNodes = ctx.Symbol.DeclaringSyntaxReference?.GetSyntax().DescendantNodes()
-                                        .Where(t => t.Kind != SyntaxKind.LengthDataType) // handeld on AnalyzeLengthDataType method
-                                        .Where(n => !n.ToString().AsSpan().StartsWith("array"));
-
-        foreach (SyntaxNode descendantNode in descendantNodes ?? Enumerable.Empty<SyntaxNode>())
-        {
-            ctx.CancellationToken.ThrowIfCancellationRequested();
-
-            var syntaxNodeKindSpan = descendantNode.Kind.ToString().AsSpan();
-            var syntaxNodeSpan = descendantNode.ToString();
-
-            if ((descendantNode.IsKind(SyntaxKind.SimpleTypeReference) ||
-                 syntaxNodeKindSpan.Contains("DataType", StringComparison.Ordinal)) &&
-                !syntaxNodeKindSpan.StartsWith("Codeunit") &&
-                !syntaxNodeKindSpan.StartsWith("Enum") &&
-                !syntaxNodeKindSpan.StartsWith("Label"))
-            {
-                if (descendantNode is SimpleTypeReferenceSyntax simpleTypeRefSubstituteToken && simpleTypeRefSubstituteToken.DataType.Kind == SyntaxKind.LengthDataType)
-                    continue; // handeld on AnalyzeLengthDataType method
-
-                var targetName = _navTypeKindStrings.FirstOrDefault(Kind =>
-                {
-                    var kindSpan = Kind.AsSpan();
-                    return kindSpan.Equals(syntaxNodeSpan.AsSpan(), StringComparison.OrdinalIgnoreCase) &&
-                           !kindSpan.Equals(syntaxNodeSpan.AsSpan(), StringComparison.Ordinal);
-                });
-
-                if (targetName is not null)
-                {
-                    ctx.ReportDiagnostic(Diagnostic.Create(
-                        DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration,
-                        descendantNode.GetLocation(), new object[] { targetName, "" }));
-                    continue;
-                }
-            }
-
-            if (IsValidKind(descendantNode.Kind))
-            {
-                if (syntaxNodeKindSpan.StartsWith("Codeunit") ||
-                    !syntaxNodeKindSpan.StartsWith("Enum") ||
-                    !syntaxNodeKindSpan.StartsWith("Label"))
-                {
-                    var targetName = _navTypeKindStrings.FirstOrDefault(Kind =>
-                    {
-                        var kindSpan = Kind.AsSpan();
-                        var readOnlySpan = syntaxNodeSpan.AsSpan();
-                        return readOnlySpan.StartsWith(kindSpan, StringComparison.OrdinalIgnoreCase) &&
-                               !readOnlySpan.StartsWith(kindSpan, StringComparison.Ordinal);
-                    });
-                    if (targetName is not null)
-                    {
-                        var firstToken = descendantNode.GetFirstToken();
-                        ctx.ReportDiagnostic(Diagnostic.Create(
-                            DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration,
-                            firstToken.GetLocation(), new object[] { targetName, "" }));
-                    }
-                }
-            }
-        }
-    }
-
-    private static bool IsValidKind(SyntaxKind kind)
-    {
-        switch (kind)
-        {
-            case SyntaxKind.SubtypedDataType:
-            case SyntaxKind.GenericDataType:
-            case SyntaxKind.SimpleTypeReference:
-                return true;
-        }
-
-        return false;
-    }
+    #endregion
 
     private void CheckForBuiltInMethodsWithCasingMismatch(OperationAnalysisContext ctx)
     {
-        if (ctx.IsObsoletePendingOrRemoved()) return;
+        if (ctx.IsObsoletePendingOrRemoved())
+            return;
 
-        var targetName = "";
+        var targetName = string.Empty;
 
         switch (ctx.Operation.Kind)
         {
@@ -455,34 +539,149 @@ public class Rule0005VariableCasingShouldNotDifferFromDeclaration : DiagnosticAn
                 return;
         }
 
-        if (OnlyDiffersInCasing(ctx.Operation.Syntax.ToString().AsSpan(), targetName.AsSpan()))
+        if (string.IsNullOrEmpty(targetName))
+            return;
+
+        ReadOnlySpan<char> targetSpan = targetName.AsSpan();
+
+        if (OnlyDiffersInCasing(ctx.Operation.Syntax.ToString().UnquoteIdentifier().AsSpan(), targetSpan))
         {
-            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, ctx.Operation.Syntax.GetLocation(), new object[] { targetName, "" }));
+            ctx.ReportDiagnostic(Diagnostic.Create(
+                DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration,
+                ctx.Operation.Syntax.GetLocation(),
+                targetName,
+                string.Empty));
             return;
         }
 
-        var nodes = Array.Find(ctx.Operation.Syntax.DescendantNodes((SyntaxNode e) => true).ToArray(), element => OnlyDiffersInCasing(element.ToString().AsSpan(), targetName.AsSpan()));
-        if (nodes is not null)
-            ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, ctx.Operation.Syntax.GetLocation(), new object[] { targetName, "" }));
+        foreach (var descendant in ctx.Operation.Syntax.DescendantNodes())
+        {
+            ctx.CancellationToken.ThrowIfCancellationRequested();
+
+            if (OnlyDiffersInCasing(descendant.ToString().UnquoteIdentifier().AsSpan(), targetSpan))
+            {
+                ctx.ReportDiagnostic(Diagnostic.Create(
+                    DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration,
+                    ctx.Operation.Syntax.GetLocation(),
+                    targetName,
+                    string.Empty));
+                return;
+            }
+        }
+    }
+
+    #region Comparators
+
+    private ImmutableDictionary<string, string> GetOrdinalDictionary(string identifier)
+    {
+        ordinalDictionary.TryGetValue(identifier, out var dictionary);
+        return dictionary;
     }
 
     private bool OnlyDiffersInCasing(ReadOnlySpan<char> left, ReadOnlySpan<char> right)
     {
-        var leftSpan = left.Trim('"');
-        var rightSpan = right.Trim('"');
-        return leftSpan.Equals(rightSpan, StringComparison.OrdinalIgnoreCase) &&
-               !leftSpan.Equals(rightSpan, StringComparison.Ordinal);
+        return left.Equals(right, StringComparison.OrdinalIgnoreCase) &&
+               !left.Equals(right, StringComparison.Ordinal);
     }
 
-    private static bool IsNavTypeKindWithDifferentCasing(string inputNavTypeKind, out string matchedNavTypeKind)
+    private void CompareIdentifier(SymbolAnalysisContext ctx, SyntaxToken? identifier, string canonical)
     {
-        matchedNavTypeKind = _navTypeKindStrings.SingleOrDefault(Kind =>
-            {
-                var kindSpan = Kind.AsSpan();
-                return kindSpan.Equals(inputNavTypeKind.AsSpan(), StringComparison.OrdinalIgnoreCase) &&
-                        !kindSpan.Equals(inputNavTypeKind.AsSpan(), StringComparison.Ordinal);
-            });
+        if (identifier == null)
+            return;
 
-        return matchedNavTypeKind is not null;
+        string? tokenText = identifier?.ValueText?.UnquoteIdentifier();
+        if (string.IsNullOrEmpty(tokenText))
+            return;
+
+        var location = identifier?.GetLocation();
+        if (location == null)
+            return;
+
+        if (!tokenText.AsSpan().Equals(canonical.AsSpan(), StringComparison.Ordinal))
+        {
+            ctx.ReportDiagnostic(
+                Diagnostic.Create(
+                    DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration,
+                    location,
+                    canonical,
+                    string.Empty));
+        }
     }
+
+    private void CompareAgainstDictionary(SymbolAnalysisContext ctx, SyntaxToken Identifier, ImmutableDictionary<string, string> lookupDictionary)
+    {
+        string? tokenText = Identifier.ValueText;
+        if (string.IsNullOrEmpty(tokenText))
+            return;
+
+        if (!lookupDictionary.TryGetValue(tokenText, out string? canonical))
+            return;
+
+        if (!tokenText.AsSpan().Equals(canonical.AsSpan(), StringComparison.Ordinal))
+        {
+            ctx.ReportDiagnostic(
+                Diagnostic.Create(
+                    DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration,
+                    Identifier.GetLocation(),
+                    canonical,
+                    string.Empty));
+        }
+    }
+
+    #endregion
+
+    #region Dictionary Builders
+
+    private static ImmutableDictionary<string, string> GenerateNavTypeKindDictionary()
+    {
+        var builder = ImmutableDictionary.CreateBuilder<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (NavTypeKind navTypeKind in Enum.GetValues(typeof(NavTypeKind)))
+        {
+            string KindName = navTypeKind.ToString();
+            builder[KindName] = KindName;
+        }
+        builder["Database"] = "Database"; // for Database::"G/L Entry" (there is no NavTypeKind for this)
+
+        return builder.ToImmutable();
+    }
+
+    private static ImmutableDictionary<string, string> GenerateSymbolKindDictionary()
+    {
+        var builder = ImmutableDictionary.CreateBuilder<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (SymbolKind kind in Enum.GetValues(typeof(SymbolKind)))
+        {
+            string kindName = kind.ToString();
+            // Change "XmlPort" to "Xmlport"
+            if (kindName == "XmlPort")
+            {
+                kindName = "Xmlport";
+            }
+            builder[kindName] = kindName;
+        }
+
+        builder["Database"] = "Database";  // for Database::"G/L Entry" (there is no SymbolKind for this)
+
+        return builder.ToImmutable();
+    }
+
+    private static ImmutableDictionary<TriggerTypeKind, string> GenerateTriggerTypeKindDictionary()
+    {
+        var builder = ImmutableDictionary.CreateBuilder<TriggerTypeKind, string>();
+
+        foreach (TriggerTypeKind type in Enum.GetValues(typeof(TriggerTypeKind)))
+        {
+            string typeName = type.ToString();
+            int index = typeName.IndexOf("On");
+            if (index > 0)
+            {
+                builder[type] = typeName.Substring(index);
+            }
+        }
+
+        return builder.ToImmutable();
+    }
+
+    #endregion
 }
