@@ -131,6 +131,9 @@ public class Rule0009CodeMetrics : DiagnosticAnalyzer
             case SyntaxKind.ForEachKeyword:
             case SyntaxKind.WhileKeyword:
             case SyntaxKind.UntilKeyword:
+#if !LessThenFall2024
+            case SyntaxKind.ConditionalExpression: // Ternary operator
+#endif
                 return true;
         }
 
