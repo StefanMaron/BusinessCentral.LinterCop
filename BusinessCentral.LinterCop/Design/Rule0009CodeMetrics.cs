@@ -13,13 +13,19 @@ public class Rule0009CodeMetrics : DiagnosticAnalyzer
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(DiagnosticDescriptors.Rule0009CodeMetricsInfo, DiagnosticDescriptors.Rule0010CodeMetricsWarning);
 
+    private static readonly HashSet<string> eventPublisherDecoratorNames = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "BusinessEvent",
+        "IntegrationEvent",
+        "ExternalBusinessEvent"
+    };
+
     private static readonly HashSet<SyntaxKind> OperatorAndOperandKinds =
         Enum.GetValues(typeof(SyntaxKind))
             .Cast<SyntaxKind>()
-            .Where(value =>
-                (value.ToString().Contains("Keyword") ||
-                 value.ToString().Contains("Token")) ||
-                IsOperandKind(value))
+            .Where(value => value.ToString().Contains("Keyword") ||
+                            value.ToString().Contains("Token") ||
+                            IsOperandKind(value))
             .ToHashSet();
 
     public override void Initialize(AnalysisContext context) =>
@@ -27,28 +33,23 @@ public class Rule0009CodeMetrics : DiagnosticAnalyzer
 
     private void CheckCodeMetrics(CodeBlockAnalysisContext context)
     {
-        if ((context.CodeBlock.Kind != SyntaxKind.MethodDeclaration) &&
-            (context.CodeBlock.Kind != SyntaxKind.TriggerDeclaration))
+        if (context.IsObsoletePendingOrRemoved() || context.CodeBlock is not MethodOrTriggerDeclarationSyntax methodOrTrigger)
             return;
-
-        if (context.IsObsoletePendingOrRemoved()) return;
 
         var containingObjectTypeSymbol = context.OwningSymbol.GetContainingObjectTypeSymbol();
         if (containingObjectTypeSymbol.NavTypeKind == NavTypeKind.Interface ||
             containingObjectTypeSymbol.NavTypeKind == NavTypeKind.ControlAddIn)
             return;
 
-        SyntaxNode bodyNode = context.CodeBlock.Kind == SyntaxKind.MethodDeclaration
-            ? (context.CodeBlock as MethodDeclarationSyntax)?.Body
-            : (context.CodeBlock as TriggerDeclarationSyntax)?.Body;
-
-        if (bodyNode is null)
+        if (methodOrTrigger.Body is null ||
+            methodOrTrigger.Body.Statements.Count == 0 &&
+            methodOrTrigger.Attributes.Any(attr => eventPublisherDecoratorNames.Contains(attr.GetIdentifierOrLiteralValue() ?? string.Empty)))
             return;
 
-        var descendants = bodyNode.DescendantNodesAndTokens(e => true).ToArray();
+        var descendants = methodOrTrigger.Body.DescendantNodesAndTokens(e => true).ToArray();
 
         int cyclomaticComplexity = GetCyclomaticComplexity(descendants);
-        double HalsteadVolume = GetHalsteadVolume(context, bodyNode, descendants, cyclomaticComplexity);
+        double HalsteadVolume = GetHalsteadVolume(context, methodOrTrigger.Body, descendants, cyclomaticComplexity);
 
         if (LinterSettings.instance is null)
             LinterSettings.Create(context.SemanticModel.Compilation.FileSystem.GetDirectoryPath());
