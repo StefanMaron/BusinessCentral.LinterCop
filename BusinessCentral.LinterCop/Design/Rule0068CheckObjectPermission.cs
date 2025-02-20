@@ -117,13 +117,8 @@ public class Rule0068CheckObjectPermission : DiagnosticAnalyzer
 
         ITableTypeSymbol targetTable = (ITableTypeSymbol)((IRecordTypeSymbol)variableType).OriginalDefinition;
 
-        if (ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol()?.NavTypeKind == NavTypeKind.Page)
-        {
-            IPropertySymbol? sourceTableProperty = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol()?.GetProperty(PropertyKind.SourceTable);
-            if (sourceTableProperty is not null)
-                if (sourceTableProperty.Value == targetTable)
-                    return;
-        }
+        if (TargetTableIsPageSourceTable(ctx, targetTable))
+            return;
 
         if (variableType.ToString().ToLower().EndsWith("temporary") || (targetTable.TableType == TableTypeKind.Temporary)) return;
 
@@ -252,6 +247,30 @@ public class Rule0068CheckObjectPermission : DiagnosticAnalyzer
         if (permissions is not null && permissions.Contains(requestedPermission.ToString().ToLowerInvariant()[0]))
             return true;
 
+        return false;
+    }
+
+    private bool TargetTableIsPageSourceTable(OperationAnalysisContext ctx, ITableTypeSymbol targetTable)
+    {
+        var applicationObjectTypeSymbol = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol();
+        if (applicationObjectTypeSymbol is not null)
+        {
+            IPropertySymbol? sourceTableProperty = null;
+            switch (applicationObjectTypeSymbol.GetNavTypeKindSafe())
+            {
+                case NavTypeKind.Page:
+                    sourceTableProperty = applicationObjectTypeSymbol.GetProperty(PropertyKind.SourceTable);
+                    break;
+                case NavTypeKind.PageExtension:
+                    var extendedPageSymbol = ((IPageExtensionTypeSymbol)applicationObjectTypeSymbol).Target;
+                    if (extendedPageSymbol is not null)
+                        sourceTableProperty = extendedPageSymbol.GetProperty(PropertyKind.SourceTable);
+                    break;
+            }
+            if (sourceTableProperty is not null)
+                if (sourceTableProperty.Value == targetTable)
+                    return true;
+        }
         return false;
     }
 }
