@@ -230,9 +230,11 @@ public class Rule0068CheckObjectPermission : DiagnosticAnalyzer
                         permissionContainRequestedObject = true;
                     break;
             }
-            if (permissionContainRequestedObject && !permission.Permissions.ValueText.ToLowerInvariant().Contains(requestedPermission))
+            if (permissionContainRequestedObject)
             {
-                ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, location, requestedPermission, variableType.Name));
+                var permissionsText = permission.Permissions.ValueText;
+                if (permissionsText is null || !permissionsText.ToLowerInvariant().Contains(requestedPermission))
+                    ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, location, requestedPermission, variableType.Name));
             }
         }
         if (!permissionContainRequestedObject)
