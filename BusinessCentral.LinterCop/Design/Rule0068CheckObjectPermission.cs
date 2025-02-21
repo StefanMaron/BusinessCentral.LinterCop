@@ -233,6 +233,7 @@ public class Rule0068CheckObjectPermission : DiagnosticAnalyzer
                 var permissionsText = permission.Permissions.ValueText;
                 if (permissionsText is null || !permissionsText.ToLowerInvariant().Contains(requestedPermission))
                     ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, location, requestedPermission, variableType.Name));
+                break; // analysed the permissions for the requested object, break the foreach loop
             }
         }
         if (!permissionContainRequestedObject)
