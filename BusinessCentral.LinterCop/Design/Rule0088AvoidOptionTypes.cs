@@ -36,11 +36,35 @@ public class Rule0088AvoidOptionTypes : DiagnosticAnalyzer
             return;
         }
 
-        if (optionDataType.Parent is SimpleTypeReferenceSyntax && !IsParameterOrReturnValue(optionDataType) ||
-             ctx.ContainingSymbol is IMethodSymbol method && method.IsEventSubscriber() ||
-             ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol() is ITableTypeSymbol table && table.TableType == TableTypeKind.CDS)
-        {
+        bool skipDueToLocalOrGlobalVariable = optionDataType.Parent is SimpleTypeReferenceSyntax && !IsParameterOrReturnValue(optionDataType);
+        if (skipDueToLocalOrGlobalVariable)
             return;
+
+        bool skipDueToIsEventSubscriber = ctx.ContainingSymbol is IMethodSymbol method && method.IsEventSubscriber();
+        if (skipDueToIsEventSubscriber)
+            return;
+
+        bool skipDueToTableIsOfTypeCDS = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol() is ITableTypeSymbol table && table.TableType == TableTypeKind.CDS;
+        if (skipDueToTableIsOfTypeCDS)
+            return;
+
+        // Handle FlowField with CalcFormula to a Field of Type option
+        if (optionDataType.Parent is FieldSyntax fieldSyntax)
+        {
+            var calcFormulaPropertySyntax = fieldSyntax.PropertyList?.Properties
+                .OfType<PropertySyntax>()
+                .Select(p => p.Value)
+                .OfType<CalculationFormulaPropertyValueSyntax>()
+                .FirstOrDefault();
+
+            if (calcFormulaPropertySyntax is not null &&
+                calcFormulaPropertySyntax is FieldCalculationFormulaSyntax fieldCalculation &&
+                fieldCalculation.Field is QualifiedNameSyntax qualifiedNameSyntax &&
+                ctx.SemanticModel.GetSymbolInfo(qualifiedNameSyntax, ctx.CancellationToken).Symbol is ISymbol fieldSymbol &&
+                fieldSymbol.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Option)
+            {
+                return;
+            }
         }
 
         ctx.ReportDiagnostic(Diagnostic.Create(
