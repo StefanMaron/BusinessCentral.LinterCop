@@ -5,7 +5,7 @@ page 1 PageCaption
     {
         area(Content)
         {
-            label('PageLabel')
+            label(PageLabel)
             {
                 [|Caption|] = 'PageLabelCaption_PageLabel';
             }
