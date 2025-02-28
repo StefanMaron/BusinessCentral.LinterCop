@@ -19,7 +19,9 @@ public class Rule0005Declaration
     [TestCase("LabelProperties")]
     [TestCase("LengthDataType")]
     [TestCase("OptionDataType")]
+#if !LessThenFall2024
     [TestCase("Property")]
+#endif
     [TestCase("TextConstDataType")]
     [TestCase("TriggerDeclaration")]
     public async Task HasDiagnostic(string testCase)
@@ -40,7 +42,9 @@ public class Rule0005Declaration
     [TestCase("LabelProperties")]
     [TestCase("LengthDataType")]
     [TestCase("OptionDataType")]
+#if !LessThenFall2024
     [TestCase("Property")]
+#endif
     [TestCase("TextConstDataType")]
     [TestCase("TriggerDeclaration")]
     public async Task NoDiagnostic(string testCase)
