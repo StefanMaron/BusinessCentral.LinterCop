@@ -12,6 +12,7 @@ public class Rule0005Declaration
     }
 
     [Test]
+#if !LessThenFall2024
     [TestCase("DataType")]
     [TestCase("EnumDataType")]
     [TestCase("FieldGroup")]
@@ -19,11 +20,10 @@ public class Rule0005Declaration
     [TestCase("LabelProperties")]
     [TestCase("LengthDataType")]
     [TestCase("OptionDataType")]
-#if !LessThenFall2024
     [TestCase("Property")]
-#endif
     [TestCase("TextConstDataType")]
     [TestCase("TriggerDeclaration")]
+#endif
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
@@ -34,6 +34,7 @@ public class Rule0005Declaration
     }
 
     [Test]
+#if !LessThenFall2024
     [TestCase("DataType")]
     [TestCase("EnumDataType")]
     [TestCase("FieldGroup")]
@@ -42,11 +43,10 @@ public class Rule0005Declaration
     [TestCase("LabelProperties")]
     [TestCase("LengthDataType")]
     [TestCase("OptionDataType")]
-#if !LessThenFall2024
     [TestCase("Property")]
-#endif
     [TestCase("TextConstDataType")]
     [TestCase("TriggerDeclaration")]
+#endif
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
