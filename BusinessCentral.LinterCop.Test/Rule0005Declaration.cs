@@ -1,3 +1,4 @@
+#if !LessThenFall2024
 namespace BusinessCentral.LinterCop.Test;
 
 public class Rule0005Declaration
@@ -12,7 +13,6 @@ public class Rule0005Declaration
     }
 
     [Test]
-#if !LessThenFall2024
     [TestCase("DataType")]
     [TestCase("EnumDataType")]
     [TestCase("FieldGroup")]
@@ -23,7 +23,6 @@ public class Rule0005Declaration
     [TestCase("Property")]
     [TestCase("TextConstDataType")]
     [TestCase("TriggerDeclaration")]
-#endif
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
@@ -34,7 +33,6 @@ public class Rule0005Declaration
     }
 
     [Test]
-#if !LessThenFall2024
     [TestCase("DataType")]
     [TestCase("EnumDataType")]
     [TestCase("FieldGroup")]
@@ -46,7 +44,6 @@ public class Rule0005Declaration
     [TestCase("Property")]
     [TestCase("TextConstDataType")]
     [TestCase("TriggerDeclaration")]
-#endif
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
@@ -56,3 +53,4 @@ public class Rule0005Declaration
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0005CasingMismatch.Id);
     }
 }
+#endif
