@@ -1,3 +1,4 @@
+#if !LessThenFall2024
 namespace BusinessCentral.LinterCop.Test;
 
 public class Rule0005Keyword
@@ -37,3 +38,4 @@ public class Rule0005Keyword
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0005CasingMismatch.Id);
     }
 }
+#endif
