@@ -55,7 +55,7 @@ public static class DiagnosticDescriptors
         description: LinterCopAnalyzers.GetLocalizableString("Rule0004LookupPageIdAndDrillDownPageIdDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0004");
 
-    public static readonly DiagnosticDescriptor Rule0005VariableCasingShouldNotDifferFromDeclaration = new(
+    public static readonly DiagnosticDescriptor Rule0005CasingMismatch = new(
         id: LinterCopAnalyzers.AnalyzerPrefix + "0005",
         title: LinterCopAnalyzers.GetLocalizableString("Rule0005VariableCasingShouldNotDifferFromDeclarationTitle"),
         messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0005VariableCasingShouldNotDifferFromDeclarationFormat"),
@@ -933,7 +933,7 @@ public static class DiagnosticDescriptors
         description: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0090");
 
-    
+
     public static readonly DiagnosticDescriptor Rule0091LabelsShouldBeTranslated = new(
         id: LinterCopAnalyzers.AnalyzerPrefix + "0091",
         title: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedTitle"),

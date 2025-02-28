@@ -13,7 +13,7 @@ public class Rule0003DoNotUseObjectIDsInVariablesOrProperties : DiagnosticAnalyz
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(
             DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties,
-            DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration);
+            DiagnosticDescriptors.Rule0005CasingMismatch);
 
     public override void Initialize(AnalysisContext context) =>
         context.RegisterSyntaxNodeAction(new Action<SyntaxNodeAnalysisContext>(this.CheckForObjectIDsInVariablesOrProperties), new SyntaxKind[] {
@@ -52,7 +52,7 @@ public class Rule0003DoNotUseObjectIDsInVariablesOrProperties : DiagnosticAnalyz
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
 
             if (ctx.Node.GetLastToken().ToString().Trim('"') != correctName)
-                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, ctx.Node.GetLocation(), new object[] { correctName, "" }));
+                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005CasingMismatch, ctx.Node.GetLocation(), new object[] { correctName, "" }));
         }
         if (ctx.ContainingSymbol.Kind == SymbolKind.Property)
         {
@@ -71,9 +71,11 @@ public class Rule0003DoNotUseObjectIDsInVariablesOrProperties : DiagnosticAnalyz
                         {
                             if (subnodes.Current.Kind == SyntaxKind.ObjectId)
                                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, nodes.Current.GetLocation(), new object[] { "", "the object name" }));
-                        };
+                        }
+                        ;
                     }
-                };
+                }
+                ;
             }
 
             if (property.PropertyKind != PropertyKind.Permissions && property.PropertyKind != PropertyKind.AccessByPermission)
@@ -82,7 +84,7 @@ public class Rule0003DoNotUseObjectIDsInVariablesOrProperties : DiagnosticAnalyz
                     ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), property.ValueText }));
 
                 if (ctx.Node.GetLastToken().ToString().Trim('"') != property.ValueText)
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, ctx.Node.GetLocation(), new object[] { property.ValueText, "" }));
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005CasingMismatch, ctx.Node.GetLocation(), new object[] { property.ValueText, "" }));
             }
         }
 
@@ -108,7 +110,7 @@ public class Rule0003DoNotUseObjectIDsInVariablesOrProperties : DiagnosticAnalyz
                         ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
 
                     if (ctx.Node.GetLastToken().ToString().Trim('"') != correctName)
-                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, ctx.Node.GetLocation(), new object[] { correctName, "" }));
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005CasingMismatch, ctx.Node.GetLocation(), new object[] { correctName, "" }));
                 }
             }
             IReturnValueSymbol returnValue = method.ReturnValueSymbol;
@@ -122,7 +124,7 @@ public class Rule0003DoNotUseObjectIDsInVariablesOrProperties : DiagnosticAnalyz
                     ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, ctx.Node.GetLocation(), new object[] { ctx.Node.ToString().Trim('"'), correctName }));
 
                 if (ctx.Node.GetLastToken().ToString().Trim('"') != correctName)
-                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005VariableCasingShouldNotDifferFromDeclaration, ctx.Node.GetLocation(), new object[] { correctName, "" }));
+                    ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0005CasingMismatch, ctx.Node.GetLocation(), new object[] { correctName, "" }));
             }
         }
     }
