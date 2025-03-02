@@ -54,7 +54,7 @@ public class Rule0081AnalyzeCountMethod : DiagnosticAnalyzer
             return;
         }
 
-        if (IsEligibleForUseFindWithNext(recordTypeSymbol))
+        if (IsEligibleUseQueryOrFindWithNext(recordTypeSymbol))
         {
             if (IsOneComparison(leftValue, rightValue))
             {
@@ -113,7 +113,7 @@ public class Rule0081AnalyzeCountMethod : DiagnosticAnalyzer
         "Archive",
     };
 
-    private bool IsEligibleForUseFindWithNext(IRecordTypeSymbol record)
+    private bool IsEligibleUseQueryOrFindWithNext(IRecordTypeSymbol record)
     {
         if (possibleLargeTableIdentifierKeywords.Any(keyword => record.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0))
             return true;
