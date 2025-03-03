@@ -849,14 +849,14 @@
   <data name="Rule0081UseIsEmptyMethodDescription" xml:space="preserve">
     <value>To check for the existence of records, use the more efficient Rec.IsEmpty() function instead of Rec.Count().</value>
   </data>
-  <data name="Rule0082UseFindWithNextTitle" xml:space="preserve">
-    <value>Use Rec.Find('-') with Rec.Next() for checking exactly one record.</value>
+  <data name="Rule0082UseQueryOrFindWithNextTitle" xml:space="preserve">
+    <value>Consider using a Query object or Rec.Find('-') with Rec.Next() for checking exactly one record.</value>
   </data>
-  <data name="Rule0082UseFindWithNextFormat" xml:space="preserve">
-    <value>Use {0}.Find('-') together with {0}.Next() instead of {0}.Count() for performance optimization. Replace {0}.Count() with: {0}.Find('-') and ({0}.Next() {1} 0).</value>
+  <data name="Rule0082UseQueryOrFindWithNextFormat" xml:space="preserve">
+    <value>Consider using a Query object or {0}.Find('-') together with {0}.Next() instead of {0}.Count() for faster and more efficient record checks.</value>
   </data>
-  <data name="Rule0082UseFindWithNextDescription" xml:space="preserve">
-    <value>Instead of relying on Rec.Count(), you should use a combination of Rec.Find('-') and Rec.Next() for faster and more efficient record checks.</value>
+  <data name="Rule0082UseQueryOrFindWithNextDescription" xml:space="preserve">
+    <value>Instead of relying on Rec.Count(), consider using a Query object or a combination of Rec.Find('-') and Rec.Next() for faster and more efficient record checks.</value>
   </data>
   <data name="Rule0083BuiltInDateTimeMethodTitle" xml:space="preserve">
     <value>Use new Date/Time/DateTime methods for extracting parts.</value>

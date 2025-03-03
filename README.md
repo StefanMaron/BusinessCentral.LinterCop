@@ -12,113 +12,6 @@ If you are not happy with some rules or only feel like you need one rule of this
 
 The Linter is not finished yet (and probably never will be :D ) If you have any rule on mind that would be nice to be covered, **please start a new [discussion](https://github.com/StefanMaron/BusinessCentral.LinterCop/discussions)!** then we can maybe sharpen the rule a bit if necessary. This way we can build value for all of us. If you want to write the rule yourself you can of course also submit a pull request ;)
 
-### Contribute to Unit Tests
-
-You can also contribute to the collection of unit tests. If you want to add a new test case, please create a new test class in the [BusinessCentral.LinterCop.Test](./BusinessCentral.LinterCop.Test/) folder. The test class name should match the rule name. Use one of the existing test classes as an example.
-
-Test class:
-
-```CSharp
-namespace BusinessCentral.LinterCop.Test;
-
-public class RuleXXXX  // Id of the rule that is being tested
-{
-    private string _testCaseDir = "";
-
-    [SetUp]
-    public void Setup()
-    {
-        _testCaseDir = Path.Combine(Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName,
-            "TestCases", "RuleXXXX");  // Set path to subfolder with test cases
-    }
-
-    [Test]
-    [TestCase("1")]  // Test case 1.al
-    [TestCase("2")]  // Test case 2.al
-    ...
-    [TestCase("n")]
-    public async Task HasDiagnostic(string testCase)  // Positive test
-    {
-        // Load code file for test case
-        var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
-            .ConfigureAwait(false);
-
-        // Create fixture for rule
-        var fixture = RoslynFixtureFactory.Create<RuleXXXXMyCodeRule>();
-        // Check for reported diagnostic
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.RuleXXXXMyCodeRule.Id);
-    }
-
-    [Test]
-    [TestCase("1")]  // Test case 1.al
-    [TestCase("2")]  // Test case 2.al
-    ...
-    [TestCase("n")]
-    public async Task NoDiagnostic(string testCase)  // Negative test
-    {
-        // Load code file for test case
-        var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
-            .ConfigureAwait(false);
-
-        // Create fixture for rule
-        var fixture = RoslynFixtureFactory.Create<RuleXXXXMyCodeRule>();
-        // Check for no reported diagnostic
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.RuleXXXXMyCodeRule.Id);
-    }
-}
-```
-
-Test cases can be *positive* (a diagnostic is expected) or *negative* (no diagnostic is expected) and are contained in the [BusinessCentral.LinterCop.Test/TestCases/](./BusinessCentral.LinterCop.Test/TestCases/) folder, with a subfolder per rule and a sub-subfolder for positive *HasDiagnostic* and negative *NoDiagnostic* test cases. The individual test cases are numbered (if you have an idea for a better naming scheme, please let me know) and must be compilable AL code.
-
-Basic folder structure:
-
-```bash
-├───BusinessCentral.LinterCop.Test
-│   ├───RoslynTestKit
-│   │   ├───CodeActionLocators
-│   │   └───Utils
-│   └───TestCases
-│       ├───Rule0001
-│       │   ├───HasDiagnostic
-│       │   │   ├───1.al
-│       │   │   ├───2.al
-│       │   │   └───X.al
-│       │   └───NoDiagnostic
-│       │   │   ├───1.al
-│       │   │   ├───2.al
-│       │   │   └───X.al
-│       ├───Rule0002
-│       │   ├───HasDiagnostic
-│       │   │   ├───X.al
-│       │   └───NoDiagnostic
-│       │   │   ├───X.al
-│       ├───RuleXXXX
-│       │   ├───HasDiagnostic
-│       │   │   ├───X.al
-│       │   └───NoDiagnostic
-│       │   │   ├───X.al
-├───Rule0001.cs
-├───Rule0002.cs
-└───RuleXXXX.cs
-```
-
-You surround the range in the code you want to check for the diagnostic with `[|` and`|]`.
-
-Test case:
-
-```AL
-codeunit 50100 MyCodeunit
-{
-    procedure MyProcedure()
-    var
-        MyVariable: Integer;
-    begin
-        // We want to check for a diagnostic between the [| and |] markers
-        [|MyVariable := 1;|]
-    end;
-}
-```
-
 ## Setup
 The LinterCop is compatible with various approaches and solutions for the AL Language extension for Microsoft Dynamics 365 Business Central.
 
@@ -130,34 +23,7 @@ The LinterCop is compatible with various approaches and solutions for the AL Lan
     - [BcContainerHelper](/.assets/DevOps.md#BcContainerHelper)
     - [Azure DevOps](/.assets/DevOps.md#Azure-DevOps)
 
-### Codespace
 
-#### Starting the Codespace
-I recommend you use GitHub Codespaces for getting started, as the ContainerPrep script will take care about everything that needs to be set up.
-If you prefer to run it locally, just know that you will need to have dotnet installed. The Prep Script might need a few tweaks as well.
-
-Once the Codespace is ready, use `F1` to open the command pallete and search for `Run Task`, choose the `Prep Codespace` task from the list.
-
-At the end of this file, it will try to open new tab of vs code within the codespace, and there might be a popup asking you if you want to continue, confirm that.
-This will open the test AL project for you so you can debug your analyzer.
-
-Also note, that the app create does not have any dependencies, also not against Mircosoft Application, that way we do not need any symbols.
-
-#### Debugging
-
-For debugging you will first need to rebuild the project to have it reflect the latest changes, if you did not do so already, clone the second tab with the AL Project. Otherwise the AL Lanauage server, which is responsible for the diagnosics/warnings in vs code, might block the .dll and prevent the Compiler from replacing it.
-
-Now once you have the changes in the Analyzer code itsself, run the tasks again, this time choose `Build` it will run build dotnet and open vs code at once. So you will get a new compiled version and it will ask you again to open the AL Project after it finished compiling.
-
-I recommend you wait a few moments until the first diagnostics are coming up, that way you can be sure that everything is loaded and up and running.
-
-Now go back to the Analyzer project, set your breakpoint and press `F5`. This will open up a menu where you need to select the process to attach to. For this project this will be the `Microsoft.Dynamics.Nav.EditorServices.Host`, but you should find it if you just start to type `Dynamics`. Sometime there are multiple process running, just select the one with the highest process id.
-
-Keep an eye on the break point you have set, before debugging it should have been red, right during attaching it will turn into a grey circle. If it does not turn red again after a few seconds, it means that the process you attached to, does not run the same code you are looking it. The reason could be that the compile did not work or that you did not attach to the right process. If that happens just repeat the build and attach.
-
-After the debugger is attached correclty, you can switch to the AL Project again and resave the file you want to debug in, that will retrigger the analyzer.
-
-And thats it, that should get you started.
 
 ## Configuration
 
@@ -264,7 +130,7 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0079](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0079)|Event publishers should not be public.|Info|
 |[LC0080](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0080)|Replace double quotes in JPath expressions with two single quotes.|Warning|
 |[LC0081](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0081)|Use `Rec.IsEmpty()` for checking record existence.|Info|
-|[LC0082](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0082)|Use `Rec.Find('-')` with `Rec.Next()` for checking exactly one record.|Info|
+|[LC0082](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0082)|Consider using a `Query` or Rec.`Find('-')` with `Rec.Next()`.|Info|
 |[LC0083](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0083)|Use new Date/Time/DateTime methods for extracting parts.|Info|
 |[LC0084](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0084)|Use return value for better error handling.|Info|
 |[LC0085](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0085)|Use the (CR)LFSeparator from the "Type Helper" codeunit.|Info|
@@ -274,3 +140,139 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0089](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0089)|Show Cognitive Complexity diagnostics for all methods.|Disabled|
 |[LC0090](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0090)|Show Cognitive Complexity diagnostics for methods above threshold.|Info|
 |[LC0091](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091)|Labels should be translated.|Info|
+
+## Codespace
+
+### Starting the Codespace
+I recommend you use GitHub Codespaces for getting started, as the ContainerPrep script will take care about everything that needs to be set up.
+If you prefer to run it locally, just know that you will need to have dotnet installed. The Prep Script might need a few tweaks as well.
+
+Once the Codespace is ready, use `F1` to open the command pallete and search for `Run Task`, choose the `Prep Codespace` task from the list.
+
+At the end of this file, it will try to open new tab of vs code within the codespace, and there might be a popup asking you if you want to continue, confirm that.
+This will open the test AL project for you so you can debug your analyzer.
+
+Also note, that the app create does not have any dependencies, also not against Mircosoft Application, that way we do not need any symbols.
+
+### Debugging
+
+For debugging you will first need to rebuild the project to have it reflect the latest changes, if you did not do so already, clone the second tab with the AL Project. Otherwise the AL Lanauage server, which is responsible for the diagnosics/warnings in vs code, might block the .dll and prevent the Compiler from replacing it.
+
+Now once you have the changes in the Analyzer code itsself, run the tasks again, this time choose `Build` it will run build dotnet and open vs code at once. So you will get a new compiled version and it will ask you again to open the AL Project after it finished compiling.
+
+I recommend you wait a few moments until the first diagnostics are coming up, that way you can be sure that everything is loaded and up and running.
+
+Now go back to the Analyzer project, set your breakpoint and press `F5`. This will open up a menu where you need to select the process to attach to. For this project this will be the `Microsoft.Dynamics.Nav.EditorServices.Host`, but you should find it if you just start to type `Dynamics`. Sometime there are multiple process running, just select the one with the highest process id.
+
+Keep an eye on the break point you have set, before debugging it should have been red, right during attaching it will turn into a grey circle. If it does not turn red again after a few seconds, it means that the process you attached to, does not run the same code you are looking it. The reason could be that the compile did not work or that you did not attach to the right process. If that happens just repeat the build and attach.
+
+After the debugger is attached correclty, you can switch to the AL Project again and resave the file you want to debug in, that will retrigger the analyzer.
+
+And thats it, that should get you started.
+
+## Contribute to Unit Tests
+
+You can also contribute to the collection of unit tests. If you want to add a new test case, please create a new test class in the [BusinessCentral.LinterCop.Test](./BusinessCentral.LinterCop.Test/) folder. The test class name should match the rule name. Use one of the existing test classes as an example.
+
+Test class:
+
+```CSharp
+namespace BusinessCentral.LinterCop.Test;
+
+public class RuleXXXX  // Id of the rule that is being tested
+{
+    private string _testCaseDir = "";
+
+    [SetUp]
+    public void Setup()
+    {
+        _testCaseDir = Path.Combine(Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName,
+            "TestCases", "RuleXXXX");  // Set path to subfolder with test cases
+    }
+
+    [Test]
+    [TestCase("1")]  // Test case 1.al
+    [TestCase("2")]  // Test case 2.al
+    ...
+    [TestCase("n")]
+    public async Task HasDiagnostic(string testCase)  // Positive test
+    {
+        // Load code file for test case
+        var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
+            .ConfigureAwait(false);
+
+        // Create fixture for rule
+        var fixture = RoslynFixtureFactory.Create<RuleXXXXMyCodeRule>();
+        // Check for reported diagnostic
+        fixture.HasDiagnostic(code, DiagnosticDescriptors.RuleXXXXMyCodeRule.Id);
+    }
+
+    [Test]
+    [TestCase("1")]  // Test case 1.al
+    [TestCase("2")]  // Test case 2.al
+    ...
+    [TestCase("n")]
+    public async Task NoDiagnostic(string testCase)  // Negative test
+    {
+        // Load code file for test case
+        var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
+            .ConfigureAwait(false);
+
+        // Create fixture for rule
+        var fixture = RoslynFixtureFactory.Create<RuleXXXXMyCodeRule>();
+        // Check for no reported diagnostic
+        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.RuleXXXXMyCodeRule.Id);
+    }
+}
+```
+
+Test cases can be *positive* (a diagnostic is expected) or *negative* (no diagnostic is expected) and are contained in the [BusinessCentral.LinterCop.Test/TestCases/](./BusinessCentral.LinterCop.Test/TestCases/) folder, with a subfolder per rule and a sub-subfolder for positive *HasDiagnostic* and negative *NoDiagnostic* test cases. The individual test cases are numbered (if you have an idea for a better naming scheme, please let me know) and must be compilable AL code.
+
+Basic folder structure:
+
+```bash
+├───BusinessCentral.LinterCop.Test
+│   ├───RoslynTestKit
+│   │   ├───CodeActionLocators
+│   │   └───Utils
+│   └───TestCases
+│       ├───Rule0001
+│       │   ├───HasDiagnostic
+│       │   │   ├───1.al
+│       │   │   ├───2.al
+│       │   │   └───X.al
+│       │   └───NoDiagnostic
+│       │   │   ├───1.al
+│       │   │   ├───2.al
+│       │   │   └───X.al
+│       ├───Rule0002
+│       │   ├───HasDiagnostic
+│       │   │   ├───X.al
+│       │   └───NoDiagnostic
+│       │   │   ├───X.al
+│       ├───RuleXXXX
+│       │   ├───HasDiagnostic
+│       │   │   ├───X.al
+│       │   └───NoDiagnostic
+│       │   │   ├───X.al
+├───Rule0001.cs
+├───Rule0002.cs
+└───RuleXXXX.cs
+```
+
+You surround the range in the code you want to check for the diagnostic with `[|` and`|]`.
+
+Test case:
+
+```AL
+codeunit 50100 MyCodeunit
+{
+    procedure MyProcedure()
+    var
+        MyVariable: Integer;
+    begin
+        // We want to check for a diagnostic between the [| and |] markers
+        [|MyVariable := 1;|]
+    end;
+}
+```

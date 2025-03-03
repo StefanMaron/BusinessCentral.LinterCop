@@ -835,14 +835,14 @@ public static class DiagnosticDescriptors
         description: LinterCopAnalyzers.GetLocalizableString("Rule0081UseIsEmptyMethodDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0081");
 
-    public static readonly DiagnosticDescriptor Rule0082UseFindWithNext = new(
+    public static readonly DiagnosticDescriptor Rule0082UseQueryOrFindWithNext = new(
         id: LinterCopAnalyzers.AnalyzerPrefix + "0082",
-        title: LinterCopAnalyzers.GetLocalizableString("Rule0082UseFindWithNextTitle"),
-        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0082UseFindWithNextFormat"),
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0082UseQueryOrFindWithNextTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0082UseQueryOrFindWithNextFormat"),
         category: "Design",
         defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true,
-        description: LinterCopAnalyzers.GetLocalizableString("Rule0082UseFindWithNextDescription"),
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0082UseQueryOrFindWithNextDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0082");
 
     public static readonly DiagnosticDescriptor Rule0083BuiltInDateTimeMethod = new(

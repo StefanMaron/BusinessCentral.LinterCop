@@ -11,7 +11,9 @@ namespace BusinessCentral.LinterCop.Design;
 public class Rule0081AnalyzeCountMethod : DiagnosticAnalyzer
 {
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        ImmutableArray.Create(DiagnosticDescriptors.Rule0081UseIsEmptyMethod, DiagnosticDescriptors.Rule0082UseFindWithNext);
+        ImmutableArray.Create(
+            DiagnosticDescriptors.Rule0081UseIsEmptyMethod,
+            DiagnosticDescriptors.Rule0082UseQueryOrFindWithNext);
 
     public override void Initialize(AnalysisContext context) =>
         context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeCountMethod), OperationKind.InvocationExpression);
@@ -52,16 +54,19 @@ public class Rule0081AnalyzeCountMethod : DiagnosticAnalyzer
             return;
         }
 
-        if (IsOneComparison(leftValue, rightValue))
+        if (IsEligibleUseQueryOrFindWithNext(recordTypeSymbol))
         {
-            ReportUseFindWithNextDiagnostic(ctx, operation, GetOperatorKind(binaryExpression.OperatorToken.Kind));
-            return;
-        }
+            if (IsOneComparison(leftValue, rightValue))
+            {
+                ReportUseFindWithNextDiagnostic(ctx, operation, GetOperatorKind(binaryExpression.OperatorToken.Kind));
+                return;
+            }
 
-        if (IsLessThanTwoComparison(binaryExpression, rightValue) || IsGreaterThanTwoComparison(binaryExpression, leftValue))
-        {
-            ReportUseFindWithNextDiagnostic(ctx, operation, SyntaxKind.EqualsToken);
-            return;
+            if (IsLessThanTwoComparison(binaryExpression, rightValue) || IsGreaterThanTwoComparison(binaryExpression, leftValue))
+            {
+                ReportUseFindWithNextDiagnostic(ctx, operation, SyntaxKind.EqualsToken);
+                return;
+            }
         }
     }
 
@@ -98,6 +103,28 @@ public class Rule0081AnalyzeCountMethod : DiagnosticAnalyzer
         public const int MaxRelevantValue = 2;
     }
 
+    // Tables with one of these identifiers in the name could possible have a large amount of records
+    private static readonly HashSet<string> possibleLargeTableIdentifierKeywords = new HashSet<string>
+    {
+        "Ledger", "GL", "G/L",
+        "Posted", "Pstd",
+        "Log",
+        "Entry",
+        "Archive",
+    };
+
+    private bool IsEligibleUseQueryOrFindWithNext(IRecordTypeSymbol record)
+    {
+        if (possibleLargeTableIdentifierKeywords.Any(keyword => record.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0))
+            return true;
+
+        // Tables with a field "Entry No." could possible have a large amount of records
+        if (record.OriginalDefinition is ITableTypeSymbol table)
+            return table.PrimaryKey.Fields.Any(field => string.Equals(field.Name, "Entry No.", StringComparison.OrdinalIgnoreCase));
+
+        return false;
+    }
+
     private static void ReportUseIsEmptyDiagnostic(OperationAnalysisContext ctx, IInvocationExpression operation)
     {
         ctx.ReportDiagnostic(Diagnostic.Create(
@@ -111,7 +138,7 @@ public class Rule0081AnalyzeCountMethod : DiagnosticAnalyzer
         string operatorSign = operatorToken == SyntaxKind.EqualsToken ? "=" : "<>";
 
         ctx.ReportDiagnostic(Diagnostic.Create(
-            DiagnosticDescriptors.Rule0082UseFindWithNext,
+            DiagnosticDescriptors.Rule0082UseQueryOrFindWithNext,
             operation.Syntax.Parent.GetLocation(),
             GetSymbolName(operation), operatorSign));
     }
