@@ -120,9 +120,6 @@
   <data name="AnalyzerPrefix" xml:space="preserve">
     <value>LC</value>
   </data>
-  <data name="AnalyzerPrefixWithColon" xml:space="preserve">
-    <value>LC: </value>
-  </data>
   <data name="Rule0000ErrorInRuleDecription" xml:space="preserve">
     <value>There was an error in a Linter Rule</value>
   </data>

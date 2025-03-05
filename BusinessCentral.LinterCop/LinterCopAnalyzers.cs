@@ -35,8 +35,7 @@ namespace BusinessCentral.LinterCop
         }
 
         internal static string AnalyzerPrefix => LinterCopAnalyzers.ResourceManager.GetString(nameof(AnalyzerPrefix), LinterCopAnalyzers.resourceCulture);
-        internal static string AnalyzerPrefixWithColon => LinterCopAnalyzers.ResourceManager.GetString(nameof(AnalyzerPrefixWithColon), LinterCopAnalyzers.resourceCulture);
-        internal static string Fix0001FlowFieldsShouldNotBeEditableCodeAction => $"{AnalyzerPrefixWithColon}{ResourceManager.GetString(nameof(Fix0001FlowFieldsShouldNotBeEditableCodeAction), resourceCulture)}";
+        internal static string Fix0001FlowFieldsShouldNotBeEditableCodeAction => LinterCopAnalyzers.ResourceManager.GetString(nameof(Fix0001FlowFieldsShouldNotBeEditableCodeAction), LinterCopAnalyzers.resourceCulture);
 
         internal static LocalizableString GetLocalizableString(string nameOfLocalizableResource)
         {
