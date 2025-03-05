@@ -120,6 +120,9 @@
   <data name="AnalyzerPrefix" xml:space="preserve">
     <value>LC</value>
   </data>
+  <data name="AnalyzerPrefixWithColon" xml:space="preserve">
+    <value>LC: </value>
+  </data>
   <data name="Rule0000ErrorInRuleDecription" xml:space="preserve">
     <value>There was an error in a Linter Rule</value>
   </data>
@@ -137,6 +140,9 @@
   </data>
   <data name="Rule0001FlowFieldsShouldNotBeEditableTitle" xml:space="preserve">
     <value>FlowFields should not be editable.</value>
+  </data>
+  <data name="Fix0001FlowFieldsShouldNotBeEditableCodeAction" xml:space="preserve">
+    <value>Set Editable property to false</value>
   </data>
   <data name="Rule0002CommitMustBeExplainedByCommentDescription" xml:space="preserve">
     <value>Commit() needs a comment to justify its existence. Either a leading or a trailing comment.</value>
