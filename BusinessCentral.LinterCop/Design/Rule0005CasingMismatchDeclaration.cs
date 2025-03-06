@@ -749,6 +749,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
                                                                                                                           typeof(FieldObsoleteStateKind));
     private static readonly Lazy<ImmutableDictionary<string, string>> _occurrenceKindDictionary = CreateEnumDictionary<OccurrenceKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _pageTypeKindDictionary = CreateEnumDictionary<PageTypeKind>();
+    private static readonly Lazy<ImmutableDictionary<string, string>> _pdfFontEmbeddingKindDictionary = CreateEnumDictionary<PdfFontEmbeddingKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _readStateKindDictionary = CreateEnumDictionary<ReadStateKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _previewModeKindDictionary = CreateEnumDictionary<PreviewModeKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _promotedCategoryKindDictionary = CreateEnumDictionary<PromotedCategoryKind>();
@@ -766,6 +767,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
     private static readonly Lazy<ImmutableDictionary<string, string>> _symbolKindDictionary = new(GenerateSymbolKindDictionary);
     private static readonly Lazy<ImmutableDictionary<string, string>> _tableTypeKindDictionary = CreateEnumDictionary<TableTypeKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _testIsolationKindDictionary = CreateEnumDictionary<TestIsolationKind>();
+    private static readonly Lazy<ImmutableDictionary<string, string>> _testPermissionsKindDictionary = CreateEnumDictionary<TestPermissionsKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _textEncodingKindDictionary = CreateEnumDictionary<TextEncodingKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _textTypeKindictionary = CreateEnumDictionary<TextTypeKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _typeKindDictionary = CreateEnumDictionary(typeof(TypeKind),
@@ -809,6 +811,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
             { "ShowAs",                 _showAsKindDictionary },
             { "SqlJoinType",            _sqlJoinTypeKindDictionary },
             { "PageType",               _pageTypeKindDictionary },
+            { "PdfFontEmbedding ",      _pdfFontEmbeddingKindDictionary },
             { "PreviewMode",            _previewModeKindDictionary },
             { "PromotedCategory",       _promotedCategoryKindDictionary },
             { "ReadState",              _readStateKindDictionary },
@@ -818,6 +821,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
             { "Subtype",                _subtypeKindDictionary },
             { "TableType",              _tableTypeKindDictionary} ,
             { "TestIsolation",          _testIsolationKindDictionary },
+            { "TestPermissions ",       _testPermissionsKindDictionary },
             { "TextEncoding",           _textEncodingKindDictionary },
             { "TextType",               _textTypeKindictionary },
             { "Type",                   _typeKindDictionary },
