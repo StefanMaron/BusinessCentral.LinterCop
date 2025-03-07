@@ -26,12 +26,13 @@ public class Rule0006FieldNotAutoIncrementInTemporaryTable : DiagnosticAnalyzer
         {
             ctx.CancellationToken.ThrowIfCancellationRequested();
 
-            if (field.GetBooleanPropertyValue(PropertyKind.AutoIncrement).GetValueOrDefault())
-            {
+            var autoIncrementProperty = field.GetProperty(PropertyKind.AutoIncrement);
+            if (autoIncrementProperty is not null &&
+                 autoIncrementProperty.Value is bool isAutoIncrement && isAutoIncrement)
+
                 ctx.ReportDiagnostic(Diagnostic.Create(
                     DiagnosticDescriptors.Rule0006FieldNotAutoIncrementInTemporaryTable,
-                    field.GetProperty(PropertyKind.AutoIncrement)!.GetLocation()));
-            }
+                    autoIncrementProperty.GetLocation()));
         }
     }
 }
