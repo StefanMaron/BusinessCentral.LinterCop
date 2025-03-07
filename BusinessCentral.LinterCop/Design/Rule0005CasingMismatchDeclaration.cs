@@ -744,6 +744,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
                             .ToImmutableDictionary(s => s, s => s, StringComparer.OrdinalIgnoreCase));
     private static readonly Lazy<ImmutableDictionary<string, string>> _maxOccursKindDictionary = CreateEnumDictionary<MaxOccursKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _minOccursKindDictionary = CreateEnumDictionary<MinOccursKind>();
+    private static readonly Lazy<ImmutableDictionary<string, string>> _multiplicityKindKindDictionary = CreateEnumDictionary<MultiplicityKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _navTypeKindDictionary = new(GenerateNavTypeKindDictionary);
     private static readonly Lazy<ImmutableDictionary<string, string>> _obsoleteStateKindDictionary = CreateEnumDictionary(typeof(FieldClassKind),
                                                                                                                           typeof(FieldObsoleteStateKind));
@@ -804,6 +805,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
             { "MaxOccurs",              _maxOccursKindDictionary },
             { "Method",                 _queryColumnMethodKindDictionary },
             { "MinOccurs",              _minOccursKindDictionary },
+            { "Multiplicity",           _multiplicityKindKindDictionary },
             { "ObsoleteState",          _obsoleteStateKindDictionary },
             { "Occurrence",             _occurrenceKindDictionary },
             { "QueryType",              _queryTypeKindDictionary },
