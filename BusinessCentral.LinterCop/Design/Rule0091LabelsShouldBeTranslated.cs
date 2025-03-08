@@ -312,11 +312,13 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
             pageExtension.Target.ContainingNamespace.Equals(labelSymbol.ContainingNamespace))
             return (IRootTypeSymbol)pageExtension.Target;
 
+#if !LessThenFall2024
         if (symbol is IReportExtensionTypeSymbol reportExtension &&
             reportExtension.Target?.ContainingNamespace != null &&
             labelSymbol.ContainingNamespace != null &&
             reportExtension.Target.ContainingNamespace.Equals(labelSymbol.ContainingNamespace))
             return (IRootTypeSymbol)reportExtension.Target;
+#endif
 
         return null;
     }
