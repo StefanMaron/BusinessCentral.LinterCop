@@ -258,9 +258,17 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
         if (LabelIsLocked(label))
             return null;
 
+string labelValue = "";
 
 #if !LessThenFall2024
-        string labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, GetRootSymbol(label));
+        if (label.Kind == SymbolKind.LocalVariable || label.Kind == SymbolKind.GlobalVariable)
+        {
+            labelValue = LanguageFileUtilities.GetLabelTextConstLanguageSymbolId(label, GetRootSymbol(label));
+        }
+        else
+        {
+            labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, GetRootSymbol(label));
+        }
 #endif
 
         // If there are no languages available, nothing to report
