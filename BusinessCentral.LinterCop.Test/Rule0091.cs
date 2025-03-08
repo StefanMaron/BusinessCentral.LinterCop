@@ -315,7 +315,9 @@ public class Rule0091
     }
 
     [Test]
+#if !LessThenSpring2024
     [TestCase("TableExtension")]
+    #endif
     public async Task TableExtension(string testCase)
     {
         // Caption, FieldCaption, FieldToolTip
@@ -363,7 +365,9 @@ public class Rule0091
     }
 
     [Test]
+#if !LessThenSpring2024
     [TestCase("PageExtension")]
+    #endif
     public async Task PageExtension(string testCase)
     {
         // Caption, GroupCaption, FieldCaption, FieldToolTip, ActionCaption, ActionToolTip
@@ -501,7 +505,9 @@ public class Rule0091
     }
 
     [Test]
+#if !LessThenSpring2024
     [TestCase("ReportExtension")]
+    #endif
     public async Task ReportExtension(string testCase)
     {
         // ReportLabel, RequestPageFieldCaption, RequestPageFieldToolTip,
@@ -895,7 +901,9 @@ public class Rule0091
     }
 
     [Test]
+#if !LessThenSpring2024
     [TestCase("TableExtension")]
+    #endif
     public async Task TableExtension_Translated(string testCase)
     {
         // Caption, FieldCaption, FieldToolTip
@@ -943,7 +951,9 @@ public class Rule0091
     }
 
     [Test]
+#if !LessThenSpring2024
     [TestCase("PageExtension")]
+    #endif
     public async Task PageExtension_Translated(string testCase)
     {
         // Caption, GroupCaption, FieldCaption, FieldToolTip, ActionCaption, ActionToolTip
@@ -1081,7 +1091,9 @@ public class Rule0091
     }
 
     [Test]
+#if !LessThenSpring2024
     [TestCase("ReportExtension")]
+    #endif
     public async Task ReportExtension_Translated(string testCase)
     {
         // ReportLabel, RequestPageFieldCaption, RequestPageFieldToolTip,
@@ -1192,10 +1204,12 @@ public class Rule0091
     [TestCase("Query")]
     [TestCase("Profile")]
     [TestCase("PermissionSet")]
+#if !LessThenSpring2024
     [TestCase("TableExtension")]
     [TestCase("PageExtension")]
-    [TestCase("Report")]
     [TestCase("ReportExtension")]
+    #endif
+    [TestCase("Report")]
     [TestCase("Enum")]
     public async Task EmptyTranslation(string testCase)
     {
