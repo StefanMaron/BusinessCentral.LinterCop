@@ -326,14 +326,14 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
     private string GetLabelName(ISymbol? label) =>
         label switch
         {
-            IPageExtensionTypeSymbol page => page.Target?.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(page.Target?.Name),
-            ITableExtensionTypeSymbol table => table.Target?.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(table.Target?.Name),
+            IPageExtensionTypeSymbol page => page.Target?.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(page.Target?.Name ?? string.Empty),
+            ITableExtensionTypeSymbol table => table.Target?.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(table.Target?.Name ?? string.Empty),
 
 #if !LessThenSpring2021
-            IReportExtensionTypeSymbol report => report.Target?.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(report.Target?.Name),
+            IReportExtensionTypeSymbol report => report.Target?.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(report.Target?.Name ?? string.Empty),
 #endif
 
-            _ => label?.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(label?.Name)
+            _ => $"{(label?.Kind is SymbolKind.GlobalVariable or SymbolKind.LocalVariable ? SymbolKind.NamedType : label?.Kind)} {LanguageFileUtilities.GetNameHash(label?.Name ?? string.Empty)}"
         };
 
     private string MakeSymbolIdString(IList<string> ids)
