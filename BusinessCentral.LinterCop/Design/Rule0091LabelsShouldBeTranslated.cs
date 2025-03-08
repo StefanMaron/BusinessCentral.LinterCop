@@ -329,7 +329,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
             IPageExtensionTypeSymbol page => page.Target?.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(page.Target?.Name ?? string.Empty),
             ITableExtensionTypeSymbol table => table.Target?.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(table.Target?.Name ?? string.Empty),
 
-#if !LessThenSpring2024
+#if !LessThenFall2024
             IReportExtensionTypeSymbol report => report.Target?.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(report.Target?.Name ?? string.Empty),
 #endif
 
