@@ -49,7 +49,7 @@ public class Rule0091
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
 
-    
+
     [Test]
     [TestCase("GlobalLabel")]
     public async Task GlobalLabel(string testCase)
@@ -83,7 +83,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-    
+
     [Test]
     [TestCase("Table")]
     public async Task Table(string testCase)
@@ -132,7 +132,7 @@ public class Rule0091
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
 
-    
+
     [Test]
     [TestCase("Page")]
     public async Task Page(string testCase)
@@ -199,7 +199,7 @@ public class Rule0091
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
 
-    
+
     [Test]
     [TestCase("Query")]
     public async Task Query(string testCase)
@@ -241,7 +241,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-     
+
     [Test]
     [TestCase("Profile")]
     public async Task Profile(string testCase)
@@ -361,7 +361,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-    
+
     [Test]
     [TestCase("PageExtension")]
     public async Task PageExtension(string testCase)
@@ -427,7 +427,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-    
+
     [Test]
     [TestCase("Report")]
     public async Task Report(string testCase)
@@ -499,7 +499,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-    
+
     [Test]
     [TestCase("ReportExtension")]
     public async Task ReportExtension(string testCase)
@@ -549,7 +549,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-    
+
     [Test]
     [TestCase("Enum")]
     public async Task Enum(string testCase)
@@ -594,7 +594,7 @@ public class Rule0091
     #endregion
 
     #region Has Translations
-    
+
     [Test]
     [TestCase("LocalLabel")]
     public async Task LocalLabel_Translated(string testCase)
@@ -629,7 +629,7 @@ public class Rule0091
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
 
-    
+
     [Test]
     [TestCase("GlobalLabel")]
     public async Task GlobalLabel_Translated(string testCase)
@@ -663,7 +663,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-    
+
     [Test]
     [TestCase("Table")]
     public async Task Table_Translated(string testCase)
@@ -712,7 +712,7 @@ public class Rule0091
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
 
-    
+
     [Test]
     [TestCase("Page")]
     public async Task Page_Translated(string testCase)
@@ -779,7 +779,7 @@ public class Rule0091
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
 
-    
+
     [Test]
     [TestCase("Query")]
     public async Task Query_Translated(string testCase)
@@ -821,7 +821,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-     
+
     [Test]
     [TestCase("Profile")]
     public async Task Profile_Translated(string testCase)
@@ -941,7 +941,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-    
+
     [Test]
     [TestCase("PageExtension")]
     public async Task PageExtension_Translated(string testCase)
@@ -1007,7 +1007,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-    
+
     [Test]
     [TestCase("Report")]
     public async Task Report_Translated(string testCase)
@@ -1079,7 +1079,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-    
+
     [Test]
     [TestCase("ReportExtension")]
     public async Task ReportExtension_Translated(string testCase)
@@ -1129,7 +1129,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-    
+
     [Test]
     [TestCase("Enum")]
     public async Task Enum_Translated(string testCase)
@@ -1172,9 +1172,9 @@ public class Rule0091
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
     #endregion
-    
+
     #region Edge Cases
-    
+
     private string emptyXliff = @"<?xml version=""1.0"" encoding=""UTF-8""?>
             <xliff version=""1.2"" xmlns=""urn:oasis:names:tc:xliff:document:1.2"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:schemaLocation=""urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd"">
             <file datatype=""xml"" source-language=""en-US"" target-language=""de-DE"" original=""ALProject1"">

@@ -60,6 +60,8 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
 
     private void UpdateCache(Compilation compilation)
     {
+        if (DoNotUpdateCache) return;
+
         IEnumerable<Stream> xliffFileStream;
         xliffFileStream = this.ReadXliffFiles(compilation);
         UpdateCache(xliffFileStream);
@@ -263,7 +265,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
         }
         else
         {
-            labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, null);
+            labelValue = GetLanguageSymbolId(label);
         }
 #else
         labelValue = label.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(label.Name);
@@ -298,7 +300,90 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
         return null;
     }
 
+    private static PropertyTypeInfo? GetExtensionObjectPropertyType(ISymbol label)
+    {
+        IApplicationObjectTypeSymbol? extensionSymbol = label.GetContainingApplicationObjectTypeSymbol();
 
+        if (extensionSymbol == null) return null;
+
+        switch (extensionSymbol.Kind)
+        {
+            case SymbolKind.PageExtension:
+                var asd = ((IPageExtensionBaseTypeSymbol)extensionSymbol).Target;
+                return null;
+            // return asd.GetPropertyTypeInfo(PropertyKind.EntityName);
+            case SymbolKind.TableExtension:
+                return ((ITableExtensionTypeSymbol)extensionSymbol).GetPropertyTypeInfo(PropertyKind.Type);
+            case SymbolKind.ReportExtension:
+                return ((IReportExtensionTypeSymbol)extensionSymbol).GetPropertyTypeInfo(PropertyKind.Type);
+            case SymbolKind.EnumExtension:
+                return ((IEnumExtensionTypeSymbol)extensionSymbol).GetPropertyTypeInfo(PropertyKind.Type);
+            default:
+                return null;
+        }
+
+    }
+
+
+    internal string GetLanguageSymbolId(ISymbol? labelSymbol)
+    {
+        PooledList<string> instance = PooledList<string>.GetInstance();
+        try
+        {
+            while (labelSymbol != null && labelSymbol is not IRootTypeSymbol)
+            {
+                if (labelSymbol == null) break;
+                if (instance.Count > 0 && labelSymbol.Kind == SymbolKind.Control) continue;
+
+                instance.Add(GetLabelName(labelSymbol));
+                labelSymbol = labelSymbol.ContainingSymbol;
+            }
+
+            instance.Add(GetLabelName(labelSymbol));
+            labelSymbol = labelSymbol.ContainingSymbol;
+
+            return MakeSymbolIdString(instance);
+        }
+        finally
+        {
+            instance.Free();
+        }
+    }
+
+    private string GetLabelName(ISymbol label) =>
+        label switch
+        {
+            IPageExtensionTypeSymbol page => page.Target?.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(page.Target?.Name),
+            ITableExtensionTypeSymbol table => table.Target?.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(table.Target?.Name),
+            IReportExtensionTypeSymbol report => report.Target?.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(report.Target?.Name),
+            _ => label.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(label.Name)
+        };
+
+    // labelSymbol.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(GetLabelName(labelSymbol))
+
+    // if(label != label.ContainingSymbol) return label.Name;
+
+    // var pageObj = ctx.Symbol.GetContainingApplicationObjectTypeSymbol();
+    // if (pageObj is IPageExtensionTypeSymbol pageExtObj)
+    // {
+    //     var originalPage = pageExtObj.Target;
+    // }
+
+    // switch label.GetContainingApplicationObjectTypeSymbol():
+
+
+    private string MakeSymbolIdString(IList<string> ids)
+    {
+        string objectId = "";
+
+        // the ids are from the label to the root but the translation is from root to label
+        for (int i = ids.Count; i > 0; i--)
+        {
+            objectId += " - " + ids[i - 1];
+        }
+
+        return objectId.TrimStart(' ', '-');
+    }
 
     private bool LabelIsLocked(ISymbol label)
     {
