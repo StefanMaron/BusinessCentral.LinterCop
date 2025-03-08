@@ -52,7 +52,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
             SymbolKind.RequestPageExtension,
             SymbolKind.ReportLabel
         );
-        #endif
+#endif
     }
 
     private void UpdateCache(CompilationAnalysisContext ctx)
@@ -258,7 +258,10 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
         if (LabelIsLocked(label))
             return null;
 
-        string labelValue = GetLanguageSymbolId(label);
+
+#if !LessThenFall2024
+        string labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, GetRootSymbol(label));
+#endif
 
         // If there are no languages available, nothing to report
         if (this.availableLanguages.Count == 0)
@@ -288,66 +291,34 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
         return null;
     }
 
-    internal string GetLanguageSymbolId(ISymbol labelSymbol)
+    private IRootTypeSymbol? GetRootSymbol(ISymbol labelSymbol)
     {
-        PooledList<string> instance = PooledList<string>.GetInstance();
+        ISymbol symbol = labelSymbol;
 
-        ISymbol? rootSymbol = labelSymbol;
-        ISymbol? containingSymbol = labelSymbol.ContainingSymbol;
-
-        try
+        while (symbol.ContainingSymbol != null && symbol is not IRootTypeSymbol)
         {
-            while (rootSymbol.ContainingSymbol != null && rootSymbol is not IRootTypeSymbol)
-            {
-                rootSymbol = rootSymbol.ContainingSymbol;
-            }
-
-            instance.Add(GetLabelName(rootSymbol));
-
-            if (rootSymbol != containingSymbol?.ContainingSymbol && containingSymbol?.Kind == SymbolKind.Method) 
-            {
-                rootSymbol = containingSymbol.ContainingSymbol;
-                instance.Add(GetLabelName(containingSymbol.ContainingSymbol));
-            }
-
-            if (rootSymbol != containingSymbol) 
-            {
-                rootSymbol = containingSymbol;
-                instance.Add(GetLabelName(rootSymbol));
-            }
-
-            instance.Add(GetLabelName(labelSymbol));
-            return MakeSymbolIdString(instance);
-        }
-        finally
-        {
-            instance.Free();
-        }
-    }
-
-    private string GetLabelName(ISymbol? label) =>
-        label switch
-        {
-            IPageExtensionTypeSymbol page => page.Target?.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(page.Target?.Name ?? string.Empty),
-            ITableExtensionTypeSymbol table => table.Target?.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(table.Target?.Name ?? string.Empty),
-
-#if !LessThenFall2024
-            IReportExtensionTypeSymbol report => report.Target?.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(report.Target?.Name ?? string.Empty),
-#endif
-
-            _ => $"{(label?.Kind is SymbolKind.GlobalVariable or SymbolKind.LocalVariable ? SymbolKind.NamedType : label?.Kind)} {LanguageFileUtilities.GetNameHash(label?.Name ?? string.Empty)}"
-        };
-
-    private string MakeSymbolIdString(IList<string> ids)
-    {
-        string objectId = "";
-
-        for (int i = 0; i < ids.Count; i++)
-        {
-            objectId += " - " + ids[i];
+            symbol = symbol.ContainingSymbol;
         }
 
-        return objectId.TrimStart(' ', '-');
+        if (symbol is ITableExtensionTypeSymbol tableExtension &&
+            tableExtension.Target?.ContainingNamespace != null &&
+            labelSymbol.ContainingNamespace != null &&
+            tableExtension.Target.ContainingNamespace.Equals(labelSymbol.ContainingNamespace))
+            return (IRootTypeSymbol)tableExtension.Target;
+
+        if (symbol is IPageExtensionTypeSymbol pageExtension &&
+            pageExtension.Target?.ContainingNamespace != null &&
+            labelSymbol.ContainingNamespace != null &&
+            pageExtension.Target.ContainingNamespace.Equals(labelSymbol.ContainingNamespace))
+            return (IRootTypeSymbol)pageExtension.Target;
+
+        if (symbol is IReportExtensionTypeSymbol reportExtension &&
+            reportExtension.Target?.ContainingNamespace != null &&
+            labelSymbol.ContainingNamespace != null &&
+            reportExtension.Target.ContainingNamespace.Equals(labelSymbol.ContainingNamespace))
+            return (IRootTypeSymbol)reportExtension.Target;
+
+        return null;
     }
 
     private bool LabelIsLocked(ISymbol label)
