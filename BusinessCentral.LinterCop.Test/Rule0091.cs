@@ -86,6 +86,9 @@ public class Rule0091
 
     [Test]
     [TestCase("Table")]
+#if !LessThenSpring2024
+    [TestCase("TableToolTip")]
+    #endif
     public async Task Table(string testCase)
     {
         // TableCaption, TableFieldCaption, TableFieldToolTip
@@ -314,10 +317,9 @@ public class Rule0091
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
 
-    [Test]
 #if !LessThenSpring2024
+    [Test]
     [TestCase("TableExtension")]
-    #endif
     public async Task TableExtension(string testCase)
     {
         // Caption, FieldCaption, FieldToolTip
@@ -363,11 +365,11 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-
-    [Test]
-#if !LessThenSpring2024
-    [TestCase("PageExtension")]
     #endif
+
+#if !LessThenSpring2024
+    [Test]
+    [TestCase("PageExtension")]
     public async Task PageExtension(string testCase)
     {
         // Caption, GroupCaption, FieldCaption, FieldToolTip, ActionCaption, ActionToolTip
@@ -431,6 +433,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
+    #endif
 
     [Test]
     [TestCase("Report")]
@@ -504,10 +507,9 @@ public class Rule0091
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
 
-    [Test]
 #if !LessThenSpring2024
+    [Test]
     [TestCase("ReportExtension")]
-    #endif
     public async Task ReportExtension(string testCase)
     {
         // ReportLabel, RequestPageFieldCaption, RequestPageFieldToolTip,
@@ -555,6 +557,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
+    #endif
 
     [Test]
     [TestCase("Enum")]
@@ -672,6 +675,9 @@ public class Rule0091
 
     [Test]
     [TestCase("Table")]
+#if !LessThenSpring2024
+    [TestCase("TableToolTip")]
+    #endif
     public async Task Table_Translated(string testCase)
     {
         // TableCaption, TableFieldCaption, TableFieldToolTip
@@ -900,10 +906,9 @@ public class Rule0091
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
 
-    [Test]
 #if !LessThenSpring2024
+    [Test]
     [TestCase("TableExtension")]
-    #endif
     public async Task TableExtension_Translated(string testCase)
     {
         // Caption, FieldCaption, FieldToolTip
@@ -949,11 +954,11 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-
-    [Test]
-#if !LessThenSpring2024
-    [TestCase("PageExtension")]
     #endif
+
+#if !LessThenSpring2024
+    [Test]
+    [TestCase("PageExtension")]
     public async Task PageExtension_Translated(string testCase)
     {
         // Caption, GroupCaption, FieldCaption, FieldToolTip, ActionCaption, ActionToolTip
@@ -1017,6 +1022,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
+    #endif
 
     [Test]
     [TestCase("Report")]
@@ -1090,10 +1096,9 @@ public class Rule0091
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
 
-    [Test]
 #if !LessThenSpring2024
+    [Test]
     [TestCase("ReportExtension")]
-    #endif
     public async Task ReportExtension_Translated(string testCase)
     {
         // ReportLabel, RequestPageFieldCaption, RequestPageFieldToolTip,
@@ -1141,6 +1146,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
+    #endif
 
     [Test]
     [TestCase("Enum")]
@@ -1208,6 +1214,7 @@ public class Rule0091
     [TestCase("TableExtension")]
     [TestCase("PageExtension")]
     [TestCase("ReportExtension")]
+    [TestCase("TableToolTip")]
     #endif
     [TestCase("Report")]
     [TestCase("Enum")]
