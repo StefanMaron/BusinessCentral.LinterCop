@@ -730,12 +730,6 @@ public class Rule0091
                     <note from=""Developer"" annotates=""general"" priority=""2""/>
                     <note from=""Xliff Generator"" annotates=""general"" priority=""3"">Page PageCaption - Property Caption</note>
                     </trans-unit>
-                    <trans-unit id=""Page 501693335 - Control 739346273 - Property 2879900210"" size-unit=""char"" translate=""yes"" xml:space=""preserve"">
-                    <source>PageGroup_Group</source>
-                    <target>PageGroup_Group</target>
-                    <note from=""Developer"" annotates=""general"" priority=""2""/>
-                    <note from=""Xliff Generator"" annotates=""general"" priority=""3"">Page PageCaption - Control Group - Property Caption</note>
-                    </trans-unit>
                     <trans-unit id=""Page 501693335 - Control 2257230523 - Property 1295455071"" size-unit=""char"" translate=""yes"" xml:space=""preserve"">
                     <source>PageFieldTooltip_PageField</source>
                     <target>PageFieldTooltip_PageField</target>
@@ -747,6 +741,12 @@ public class Rule0091
                     <target>PageCaption_PageField</target>
                     <note from=""Developer"" annotates=""general"" priority=""2""/>
                     <note from=""Xliff Generator"" annotates=""general"" priority=""3"">Page PageCaption - Control PageField - Property Caption</note>
+                    </trans-unit>
+                    <trans-unit id=""Page 501693335 - Control 266656143 - Property 2879900210"" size-unit=""char"" translate=""yes"" xml:space=""preserve"">
+                    <source>PageLabelCaption_PageLabel</source>
+                    <target>PageLabelCaption_PageLabel</target>
+                    <note from=""Developer"" annotates=""general"" priority=""2""/>
+                    <note from=""Xliff Generator"" annotates=""general"" priority=""3"">Page PageCaption - Control PageLabel - Property Caption</note>
                     </trans-unit>
                     <trans-unit id=""Page 501693335 - Action 2279323338 - Property 1295455071"" size-unit=""char"" translate=""yes"" xml:space=""preserve"">
                     <source>PageActionToolTip_Action_Caption</source>
