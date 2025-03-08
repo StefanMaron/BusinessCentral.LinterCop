@@ -256,7 +256,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
         if (LabelIsLocked(label))
             return null;
 
-        string labelValue = label.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(label.Name);
+        string labelValue = GetLanguageSymbolId(label);
 
         // If there are no languages available, nothing to report
         if (this.availableLanguages.Count == 0)
