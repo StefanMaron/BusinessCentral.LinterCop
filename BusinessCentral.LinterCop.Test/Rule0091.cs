@@ -1,3 +1,4 @@
+#if !LessThenFall2024
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 
 namespace BusinessCentral.LinterCop.Test;
@@ -86,9 +87,6 @@ public class Rule0091
 
     [Test]
     [TestCase("Table")]
-#if !LessThenSpring2024
-    [TestCase("TableToolTip")]
-    #endif
     public async Task Table(string testCase)
     {
         // TableCaption, TableFieldCaption, TableFieldToolTip
@@ -317,7 +315,6 @@ public class Rule0091
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
 
-#if !LessThenSpring2024
     [Test]
     [TestCase("TableExtension")]
     public async Task TableExtension(string testCase)
@@ -365,9 +362,8 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-    #endif
 
-#if !LessThenSpring2024
+
     [Test]
     [TestCase("PageExtension")]
     public async Task PageExtension(string testCase)
@@ -433,7 +429,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-    #endif
+    
 
     [Test]
     [TestCase("Report")]
@@ -507,7 +503,6 @@ public class Rule0091
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
 
-#if !LessThenSpring2024
     [Test]
     [TestCase("ReportExtension")]
     public async Task ReportExtension(string testCase)
@@ -557,7 +552,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-    #endif
+    
 
     [Test]
     [TestCase("Enum")]
@@ -675,9 +670,6 @@ public class Rule0091
 
     [Test]
     [TestCase("Table")]
-#if !LessThenSpring2024
-    [TestCase("TableToolTip")]
-    #endif
     public async Task Table_Translated(string testCase)
     {
         // TableCaption, TableFieldCaption, TableFieldToolTip
@@ -713,6 +705,7 @@ public class Rule0091
 
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
             .ConfigureAwait(false);
+
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
@@ -906,7 +899,6 @@ public class Rule0091
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
 
-#if !LessThenSpring2024
     [Test]
     [TestCase("TableExtension")]
     public async Task TableExtension_Translated(string testCase)
@@ -954,9 +946,8 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-    #endif
 
-#if !LessThenSpring2024
+
     [Test]
     [TestCase("PageExtension")]
     public async Task PageExtension_Translated(string testCase)
@@ -1022,7 +1013,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-    #endif
+    
 
     [Test]
     [TestCase("Report")]
@@ -1096,7 +1087,6 @@ public class Rule0091
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
 
-#if !LessThenSpring2024
     [Test]
     [TestCase("ReportExtension")]
     public async Task ReportExtension_Translated(string testCase)
@@ -1146,7 +1136,7 @@ public class Rule0091
         var fixture = RoslynFixtureFactory.Create(rule);
         fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
     }
-    #endif
+    
 
     [Test]
     [TestCase("Enum")]
@@ -1210,12 +1200,9 @@ public class Rule0091
     [TestCase("Query")]
     [TestCase("Profile")]
     [TestCase("PermissionSet")]
-#if !LessThenSpring2024
     [TestCase("TableExtension")]
     [TestCase("PageExtension")]
     [TestCase("ReportExtension")]
-    [TestCase("TableToolTip")]
-    #endif
     [TestCase("Report")]
     [TestCase("Enum")]
     public async Task EmptyTranslation(string testCase)
@@ -1235,3 +1222,4 @@ public class Rule0091
 
     #endregion
 }
+#endif

@@ -31,6 +31,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
 
     public override void Initialize(AnalysisContext context)
     {
+#if !LessThenFall2024
         context.RegisterCompilationAction(new Action<CompilationAnalysisContext>(UpdateCache));
         context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(AnalyzeLabelTranslation),
             SymbolKind.Field,
@@ -51,6 +52,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
             SymbolKind.RequestPageExtension,
             SymbolKind.ReportLabel
         );
+        #endif
     }
 
     private void UpdateCache(CompilationAnalysisContext ctx)
