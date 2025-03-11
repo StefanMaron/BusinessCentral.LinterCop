@@ -23,6 +23,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
     }
     private Dictionary<string, HashSet<string>> translationIndex = new Dictionary<string, HashSet<string>>();
     private HashSet<string> availableLanguages = new HashSet<string>();
+    public bool DoNotUpdateCache { get; set; } = false;
 
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -30,6 +31,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
 
     public override void Initialize(AnalysisContext context)
     {
+#if !LessThenFall2024
         context.RegisterCompilationAction(new Action<CompilationAnalysisContext>(UpdateCache));
         context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(AnalyzeLabelTranslation),
             SymbolKind.Field,
@@ -41,6 +43,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
             SymbolKind.PageExtension,
             SymbolKind.Report,
             SymbolKind.XmlPort,
+            SymbolKind.Enum,
             SymbolKind.EnumValue,
             SymbolKind.Query, //TODO: daitem captions
             SymbolKind.Profile,
@@ -49,6 +52,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
             SymbolKind.RequestPageExtension,
             SymbolKind.ReportLabel
         );
+#endif
     }
 
     private void UpdateCache(CompilationAnalysisContext ctx)
@@ -58,34 +62,24 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
 
     private void UpdateCache(Compilation compilation)
     {
+        if (DoNotUpdateCache) return;
+
+        IEnumerable<Stream> xliffFileStream;
+        xliffFileStream = this.ReadXliffFiles(compilation);
+        UpdateCache(xliffFileStream);
+    }
+
+    public void UpdateCache(IEnumerable<Stream> xliffFileStream)
+    {
+        if (DoNotUpdateCache) return;
+
         this.translationIndex = new Dictionary<string, HashSet<string>>();
         this.availableLanguages = new HashSet<string>();
         var docs = new List<XmlDocument>();
 
-    #if !LessThenSpring2024
-        NavAppManifest? manifest = ManifestHelper.GetManifest(compilation);
-    #else
-        NavAppManifest? manifest = AppSourceCopConfigurationProvider.GetManifest(compilation);
-    #endif
-
-        if (manifest == null) return;
-        if (!manifest.CompilerFeatures.ShouldGenerateTranslationFile()) return;
-
-        IFileSystem fileSystem = new FileSystem();
-        IEnumerable<string> xliffFiles = Enumerable.Empty<string>();
-
-        try
+        foreach (var stream in xliffFileStream)
         {
-            xliffFiles = LanguageFileUtilities.GetXliffLanguageFiles(fileSystem, manifest.AppName);
-        }
-        catch (DirectoryNotFoundException)
-        {
-            return; // no Translations folder exists
-        }
-
-        foreach (string xliff in xliffFiles)
-        {
-            using (var stream = fileSystem.OpenRead(xliff))
+            using (stream)
             {
                 var doc = new XmlDocument();
                 doc.Load(stream);
@@ -139,6 +133,40 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
                 }
             }
         }
+    }
+
+    private IEnumerable<Stream> ReadXliffFiles(Compilation compilation)
+    {
+        IEnumerable<Stream> xliffFileStream = [];
+        IFileSystem fileSystem = new FileSystem();
+
+#if !LessThenSpring2024
+        NavAppManifest? manifest = ManifestHelper.GetManifest(compilation);
+#else
+        NavAppManifest? manifest = AppSourceCopConfigurationProvider.GetManifest(compilation);
+#endif
+
+        if (manifest == null) return xliffFileStream;
+        if (!manifest.CompilerFeatures.ShouldGenerateTranslationFile()) return xliffFileStream;
+
+        xliffFileStream = Enumerable.Empty<Stream>();
+        IEnumerable<string> xliffFiles = Enumerable.Empty<string>();
+
+        try
+        {
+            xliffFiles = LanguageFileUtilities.GetXliffLanguageFiles(fileSystem, manifest.AppName);
+        }
+        catch (DirectoryNotFoundException)
+        {
+            return xliffFileStream; // no Translations folder exists
+        }
+
+        foreach (string xliff in xliffFiles)
+        {
+            xliffFileStream = xliffFileStream.Append(fileSystem.OpenRead(xliff));
+        }
+
+        return xliffFileStream;
     }
 
     private void AnalyzeLabelTranslation(SymbolAnalysisContext ctx)
@@ -204,8 +232,10 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
                 break;
 
             case SymbolKind.Table:
+            case SymbolKind.TableExtension:
             case SymbolKind.XmlPort:
             case SymbolKind.EnumValue:
+            case SymbolKind.Enum:
             case SymbolKind.Profile:
             case SymbolKind.Report:
             case SymbolKind.PermissionSet:
@@ -228,12 +258,18 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
         if (LabelIsLocked(label))
             return null;
 
-    #if !LessThenSpring2024
-        string labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, null);
-    #else
-        string labelValue = label.Kind.ToString() + " " + LanguageFileUtilities.GetNameHash(label.Name);
-    #endif
-    
+string labelValue = "";
+
+#if !LessThenFall2024
+        if (label.Kind == SymbolKind.LocalVariable || label.Kind == SymbolKind.GlobalVariable)
+        {
+            labelValue = LanguageFileUtilities.GetLabelTextConstLanguageSymbolId(label, GetRootSymbol(label));
+        }
+        else
+        {
+            labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, GetRootSymbol(label));
+        }
+#endif
 
         // If there are no languages available, nothing to report
         if (this.availableLanguages.Count == 0)
@@ -263,7 +299,37 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
         return null;
     }
 
+    private IRootTypeSymbol? GetRootSymbol(ISymbol labelSymbol)
+    {
+        ISymbol symbol = labelSymbol;
 
+        while (symbol.ContainingSymbol != null && symbol is not IRootTypeSymbol)
+        {
+            symbol = symbol.ContainingSymbol;
+        }
+
+        if (symbol is ITableExtensionTypeSymbol tableExtension &&
+            tableExtension.Target?.ContainingNamespace != null &&
+            labelSymbol.ContainingNamespace != null &&
+            tableExtension.Target.ContainingNamespace.Equals(labelSymbol.ContainingNamespace))
+            return (IRootTypeSymbol)tableExtension.Target;
+
+        if (symbol is IPageExtensionTypeSymbol pageExtension &&
+            pageExtension.Target?.ContainingNamespace != null &&
+            labelSymbol.ContainingNamespace != null &&
+            pageExtension.Target.ContainingNamespace.Equals(labelSymbol.ContainingNamespace))
+            return (IRootTypeSymbol)pageExtension.Target;
+
+#if !LessThenFall2024
+        if (symbol is IReportExtensionTypeSymbol reportExtension &&
+            reportExtension.Target?.ContainingNamespace != null &&
+            labelSymbol.ContainingNamespace != null &&
+            reportExtension.Target.ContainingNamespace.Equals(labelSymbol.ContainingNamespace))
+            return (IRootTypeSymbol)reportExtension.Target;
+#endif
+
+        return null;
+    }
 
     private bool LabelIsLocked(ISymbol label)
     {

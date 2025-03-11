@@ -15,6 +15,19 @@
             "name": "Debug Codespace",
             "type": "coreclr",
             "request": "attach"
+        },
+        {
+            "name": "Run and Debug Tests",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "dotnet",
+            "args": [
+                "test",
+                "--no-build"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopAtEntry": false
         }
     ]
 }
