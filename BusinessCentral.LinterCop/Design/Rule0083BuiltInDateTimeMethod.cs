@@ -57,7 +57,7 @@ public class Rule0083BuiltInDateTimeMethod : DiagnosticAnalyzer
             1 => "Day()",
             2 => "Month()",
             3 => "Year()",
-            _ => "<Day/Month/Year>"
+            _ => null
         };
     }
 
@@ -71,8 +71,9 @@ public class Rule0083BuiltInDateTimeMethod : DiagnosticAnalyzer
         return formatSpecifier switch
         {
             1 => "DayOfWeek()",
-            2 => "Year()",
-            _ => "<DayOfWeek/Year>"
+            2 => "WeekNo()",
+            3 => "Year()",
+            _ => null
         };
     }
 
@@ -87,7 +88,7 @@ public class Rule0083BuiltInDateTimeMethod : DiagnosticAnalyzer
             "<MINUTES>" => "Minute()",
             "<SECONDS>" => "Second()",
             "<THOUSANDS>" => "Millisecond()",
-            _ => string.Empty
+            _ => null
         };
     }
 }

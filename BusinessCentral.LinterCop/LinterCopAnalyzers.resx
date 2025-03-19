@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -137,6 +137,9 @@
   </data>
   <data name="Rule0001FlowFieldsShouldNotBeEditableTitle" xml:space="preserve">
     <value>FlowFields should not be editable.</value>
+  </data>
+  <data name="Fix0001FlowFieldsShouldNotBeEditableCodeAction" xml:space="preserve">
+    <value>Set Editable property to false</value>
   </data>
   <data name="Rule0002CommitMustBeExplainedByCommentDescription" xml:space="preserve">
     <value>Commit() needs a comment to justify its existence. Either a leading or a trailing comment.</value>
@@ -849,14 +852,14 @@
   <data name="Rule0081UseIsEmptyMethodDescription" xml:space="preserve">
     <value>To check for the existence of records, use the more efficient Rec.IsEmpty() function instead of Rec.Count().</value>
   </data>
-  <data name="Rule0082UseFindWithNextTitle" xml:space="preserve">
-    <value>Use Rec.Find('-') with Rec.Next() for checking exactly one record.</value>
+  <data name="Rule0082UseQueryOrFindWithNextTitle" xml:space="preserve">
+    <value>Consider using a Query object or Rec.Find('-') with Rec.Next() for checking exactly one record.</value>
   </data>
-  <data name="Rule0082UseFindWithNextFormat" xml:space="preserve">
-    <value>Use {0}.Find('-') together with {0}.Next() instead of {0}.Count() for performance optimization. Replace {0}.Count() with: {0}.Find('-') and ({0}.Next() {1} 0).</value>
+  <data name="Rule0082UseQueryOrFindWithNextFormat" xml:space="preserve">
+    <value>Consider using a Query object or {0}.Find('-') together with {0}.Next() instead of {0}.Count() for faster and more efficient record checks.</value>
   </data>
-  <data name="Rule0082UseFindWithNextDescription" xml:space="preserve">
-    <value>Instead of relying on Rec.Count(), you should use a combination of Rec.Find('-') and Rec.Next() for faster and more efficient record checks.</value>
+  <data name="Rule0082UseQueryOrFindWithNextDescription" xml:space="preserve">
+    <value>Instead of relying on Rec.Count(), consider using a Query object or a combination of Rec.Find('-') and Rec.Next() for faster and more efficient record checks.</value>
   </data>
   <data name="Rule0083BuiltInDateTimeMethodTitle" xml:space="preserve">
     <value>Use new Date/Time/DateTime methods for extracting parts.</value>
@@ -902,5 +905,35 @@
   </data>
   <data name="Rule0087UseIsNullGuidDescription" xml:space="preserve">
     <value>When checking if a GUID is empty, avoid using direct comparisons such as MyGuid = '', as this will result in a runtime error due to the invalid GUID format. Instead, use the IsNullGuid() method to perform the check safely and correctly.</value>
+  </data>
+  <data name="Rule0088AvoidOptionTypesTitle" xml:space="preserve">
+    <value>Option types should be avoided, use enum if applicable</value>
+  </data>
+  <data name="Rule0088AvoidOptionTypesFormat" xml:space="preserve">
+    <value>Option types should be avoided, use enum if applicable</value>
+  </data>
+  <data name="Rule0088AvoidOptionTypesDescription" xml:space="preserve">
+    <value>Option types should be avoided, use enum if applicable to get rid of some of the bad patterns that come along with option fields.</value>
+  </data>
+  <data name="Rule0089CognitiveComplexityTitle" xml:space="preserve">
+    <value>Cognitive Complexity exceeds threshold.</value>
+  </data>
+  <data name="Rule0089CognitiveComplexityFormat" xml:space="preserve">
+    <value>Cognitive Complexity: {0} (threshold &gt;={1})</value>
+  </data>
+  <data name="Rule0089IncrementCognitiveComplexityFormat" xml:space="preserve">
+    <value>{0}: +{1} (1 increment + {2} nesting penalty)</value>
+  </data>
+  <data name="Rule0089CognitiveComplexityDescription" xml:space="preserve">
+    <value>This rule analyzes the cognitive complexity of methods to measure how difficult the code is to understand.</value>
+  </data>
+  <data name="Rule0091LabelsShouldBeTranslatedTitle" xml:space="preserve">
+    <value>Labels should be translated.</value>
+  </data>
+  <data name="Rule0091LabelsShouldBeTranslatedFormat" xml:space="preserve">
+    <value>{0} is missing a translation in languages: {1}</value>
+  </data>
+  <data name="Rule0091LabelsShouldBeTranslatedDescription" xml:space="preserve">
+    <value>Labels and other variants should be translated for every available translation file language.</value>
   </data>
 </root>

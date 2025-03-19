@@ -19,7 +19,7 @@ public class Rule0087
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0087UseIsNullGuid>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0087UseIsNullGuid.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0087UseIsNullGuid.Id);
     }
 
     [Test]
@@ -30,6 +30,6 @@ public class Rule0087
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0087UseIsNullGuid>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0087UseIsNullGuid.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0087UseIsNullGuid.Id);
     }
 }

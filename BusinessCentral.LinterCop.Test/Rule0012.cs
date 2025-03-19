@@ -19,7 +19,7 @@ public class Rule0012
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0012DoNotUseObjectIdInSystemFunctions>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions.Id);
     }
 
     [Test]
@@ -30,6 +30,6 @@ public class Rule0012
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0012DoNotUseObjectIdInSystemFunctions>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions.Id);
     }
 }

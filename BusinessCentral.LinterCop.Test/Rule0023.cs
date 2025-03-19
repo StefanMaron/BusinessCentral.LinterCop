@@ -20,7 +20,7 @@ public class Rule0023
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0023AlwaysSpecifyFieldgroups>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0023AlwaysSpecifyFieldgroups.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0023AlwaysSpecifyFieldgroups.Id);
     }
 
     [Test]
@@ -31,6 +31,6 @@ public class Rule0023
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0023AlwaysSpecifyFieldgroups>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0023AlwaysSpecifyFieldgroups.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0023AlwaysSpecifyFieldgroups.Id);
     }
 }

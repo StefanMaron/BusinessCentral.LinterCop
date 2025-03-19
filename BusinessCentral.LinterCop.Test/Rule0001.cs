@@ -19,7 +19,7 @@ public class Rule0001
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0001FlowFieldsShouldNotBeEditable>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0001FlowFieldsShouldNotBeEditable.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0001FlowFieldsShouldNotBeEditable.Id);
     }
 
     [Test]
@@ -34,6 +34,6 @@ public class Rule0001
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0001FlowFieldsShouldNotBeEditable>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0001FlowFieldsShouldNotBeEditable.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0001FlowFieldsShouldNotBeEditable.Id);
     }
 }

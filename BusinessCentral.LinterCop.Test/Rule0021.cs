@@ -19,7 +19,7 @@ public class Rule0021
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<BuiltInMethodImplementThroughCodeunit>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0021ConfirmImplementConfirmManagement.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0021ConfirmImplementConfirmManagement.Id);
     }
 
     [Test]
@@ -30,6 +30,6 @@ public class Rule0021
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<BuiltInMethodImplementThroughCodeunit>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0021ConfirmImplementConfirmManagement.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0021ConfirmImplementConfirmManagement.Id);
     }
 }

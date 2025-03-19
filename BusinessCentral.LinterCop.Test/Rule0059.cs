@@ -20,7 +20,7 @@ public class Rule0059
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0059SingleQuoteEscaping>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0059SingleQuoteEscapingIssueDetected.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0059SingleQuoteEscapingIssueDetected.Id);
     }
 
     [Test]
@@ -32,6 +32,6 @@ public class Rule0059
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0059SingleQuoteEscaping>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0059SingleQuoteEscapingIssueDetected.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0059SingleQuoteEscapingIssueDetected.Id);
     }
 }

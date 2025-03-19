@@ -42,7 +42,8 @@
                 "build_dotnet",
                 "run_code"
             ],
-            "dependsOrder": "sequence"
+            "dependsOrder": "sequence",
+            "problemMatcher": []
         },
         {
             "label": "LoadALLanguageDependency",

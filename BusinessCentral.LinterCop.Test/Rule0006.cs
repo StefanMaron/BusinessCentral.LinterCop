@@ -19,7 +19,7 @@ public class Rule0006
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0006FieldNotAutoIncrementInTemporaryTable>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0006FieldNotAutoIncrementInTemporaryTable.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0006FieldNotAutoIncrementInTemporaryTable.Id);
     }
 
     [Test]
@@ -30,6 +30,6 @@ public class Rule0006
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0006FieldNotAutoIncrementInTemporaryTable>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0006FieldNotAutoIncrementInTemporaryTable.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0006FieldNotAutoIncrementInTemporaryTable.Id);
     }
 }

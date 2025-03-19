@@ -19,7 +19,7 @@ public class Rule0069
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0069EmptyStatements>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0069EmptyStatements.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0069EmptyStatements.Id);
     }
 
     [Test]
@@ -32,6 +32,6 @@ public class Rule0069
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0069EmptyStatements>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0069EmptyStatements.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0069EmptyStatements.Id);
     }
 }

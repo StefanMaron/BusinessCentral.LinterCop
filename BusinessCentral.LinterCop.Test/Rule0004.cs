@@ -19,7 +19,7 @@ public class Rule0004
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0004LookupPageIdAndDrillDownPageId>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0004LookupPageIdAndDrillDownPageId.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0004LookupPageIdAndDrillDownPageId.Id);
     }
 
     [Test]
@@ -31,6 +31,6 @@ public class Rule0004
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0004LookupPageIdAndDrillDownPageId>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0004LookupPageIdAndDrillDownPageId.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0004LookupPageIdAndDrillDownPageId.Id);
     }
 }

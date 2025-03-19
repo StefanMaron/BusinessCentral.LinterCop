@@ -48,6 +48,13 @@ public abstract class AnalyzerTestFixture : BaseTestFixture
         NoDiagnostic(document, diagnosticId, codeMarkup.Locator);
     }
 
+    public void NoDiagnosticAtAllMarkers(string markup, string diagnosticId)
+    {
+        var codeMarkup = new CodeMarkup(markup);
+        var document = CreateDocumentFromCode(codeMarkup.Code);
+        NoDiagnostic(document, [diagnosticId], codeMarkup.AllLocators);
+    }
+
     public void NoDiagnostic(Document document, string diagnosticId, IDiagnosticLocator locator = null)
     {
         NoDiagnostic(document, new[] { diagnosticId }, locator);
@@ -55,10 +62,15 @@ public abstract class AnalyzerTestFixture : BaseTestFixture
 
     public void NoDiagnostic(Document document, string[] diagnosticIds, IDiagnosticLocator locator = null)
     {
+        NoDiagnostic(document, diagnosticIds, [locator]);
+    }
+
+    public void NoDiagnostic(Document document, string[] diagnosticIds, List<IDiagnosticLocator> locators)
+    {
         var diagnostics = GetDiagnostics(document);
-        if (locator != null)
+        if (locators != null)
         {
-            diagnostics = diagnostics.Where(x => locator.Match(x.Location)).ToImmutableArray();
+            diagnostics = diagnostics.Where(d => locators.Any(locator => locator.Match(d.Location))).ToImmutableArray();
         }
 
         var unexpectedDiagnostics = diagnostics.Where(d => diagnosticIds.Contains(d.Id)).ToList();
@@ -73,6 +85,13 @@ public abstract class AnalyzerTestFixture : BaseTestFixture
         var markup = new CodeMarkup(markupCode);
         var document = CreateDocumentFromCode(markup.Code);
         HasDiagnostic(document, diagnosticId, markup.Locator);
+    }
+
+    public void HasDiagnosticAtAllMarkers(string markupCode, string diagnosticId)
+    {
+        var markup = new CodeMarkup(markupCode);
+        var document = CreateDocumentFromCode(markup.Code);
+        HasDiagnostic(document, diagnosticId, markup.AllLocators);
     }
 
     public void HasDiagnosticAtLine(string code, string diagnosticId, int lineNumber)
@@ -96,12 +115,19 @@ public abstract class AnalyzerTestFixture : BaseTestFixture
 
     private void HasDiagnostic(Document document, string diagnosticId, IDiagnosticLocator locator)
     {
-        var reporteddiagnostics = GetDiagnostics(document).Where(d => locator.Match(d.Location)).ToArray();
-        var matchedDiagnostics = reporteddiagnostics.Count(d => d.Id == diagnosticId);
+        HasDiagnostic(document, diagnosticId, [locator]);
+    }
 
-        if (matchedDiagnostics == 0)
+    private void HasDiagnostic(Document document, string diagnosticId, List<IDiagnosticLocator> locators)
+    {
+        var allDiagnostics = GetDiagnostics(document);
+        foreach (var locator in locators)
         {
-            throw RoslynTestKitException.DiagnosticNotFound(diagnosticId, locator, reporteddiagnostics);
+            var reportedDiagnostics = allDiagnostics.Where(d => locator.Match(d.Location)).ToArray();
+            if (!reportedDiagnostics.Any(d => d.Id == diagnosticId))
+            {
+                throw RoslynTestKitException.DiagnosticNotFound(diagnosticId, locator, reportedDiagnostics);
+            }
         }
     }
 

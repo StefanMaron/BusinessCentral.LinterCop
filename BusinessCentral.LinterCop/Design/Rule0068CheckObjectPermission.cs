@@ -3,6 +3,7 @@ using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
 
 namespace BusinessCentral.LinterCop.Design;
@@ -106,23 +107,21 @@ public class Rule0068CheckObjectPermission : DiagnosticAnalyzer
 
     private void CheckObjectPermission(OperationAnalysisContext ctx)
     {
-        if (ctx.IsObsoletePendingOrRemoved()) return;
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Operation is not IInvocationExpression operation)
+            return;
 
-        IInvocationExpression operation = (IInvocationExpression)ctx.Operation;
-        if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod) return;
+        if (operation.TargetMethod.MethodKind != MethodKind.BuiltInMethod)
+            return;
 
         ITypeSymbol? variableType = operation.Instance?.GetSymbol()?.GetTypeSymbol();
-        if (variableType?.GetNavTypeKindSafe() != NavTypeKind.Record) return;
+        if (variableType?.GetNavTypeKindSafe() != NavTypeKind.Record)
+            return;
+
 
         ITableTypeSymbol targetTable = (ITableTypeSymbol)((IRecordTypeSymbol)variableType).OriginalDefinition;
 
-        if (ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol()?.NavTypeKind == NavTypeKind.Page)
-        {
-            IPropertySymbol? sourceTableProperty = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol()?.GetProperty(PropertyKind.SourceTable);
-            if (sourceTableProperty is not null)
-                if (sourceTableProperty.Value == targetTable)
-                    return;
-        }
+        if (TargetTableIsPageSourceTable(ctx, targetTable))
+            return;
 
         if (variableType.ToString().ToLower().EndsWith("temporary") || (targetTable.TableType == TableTypeKind.Temporary)) return;
 
@@ -203,45 +202,38 @@ public class Rule0068CheckObjectPermission : DiagnosticAnalyzer
         }
 
         bool permissionContainRequestedObject = false;
-
-        foreach (var permission in objectPermissions.Value.ToString().ToLowerInvariant().Split(','))
+        var permissions = objectPermissions.GetPropertyValueSyntax<PermissionPropertyValueSyntax>();
+        foreach (var permission in permissions.PermissionProperties)
         {
-            var parts = permission.Trim().Split(new[] { '=' }, 2);
-            if (parts.Length != 2)
+            if (!permission.ObjectType.IsKind(SyntaxKind.TableDataKeyword))
+                continue; // ensure permission is tabledata
+
+            var identifier = permission.ObjectReference.Identifier;
+            switch (identifier.Kind)
             {
-                // Handle invalid permission format
-                continue;
+                case SyntaxKind.IdentifierName:
+                    string name = ((IdentifierNameSyntax)identifier).Identifier.ValueText.UnquoteIdentifier();
+                    if (name.Equals(variableType.Name, StringComparison.OrdinalIgnoreCase))
+                        permissionContainRequestedObject = true;
+                    break;
+                case SyntaxKind.ObjectId:
+                    int objectId = Convert.ToInt32(((ObjectIdSyntax)identifier).Value.ValueText);
+                    if (objectId == targetTable.Id)
+                        permissionContainRequestedObject = true;
+                    break;
+                case SyntaxKind.QualifiedName:
+                    string qualifier = ((QualifiedNameSyntax)identifier).Left.GetText().ToString();
+                    string onlyName = ((QualifiedNameSyntax)identifier).Right.Identifier.ValueText.UnquoteIdentifier();
+                    if (qualifier.Equals(variableType.OriginalDefinition.ContainingNamespace?.QualifiedName, StringComparison.OrdinalIgnoreCase) && onlyName.Equals(variableType.Name, StringComparison.OrdinalIgnoreCase))
+                        permissionContainRequestedObject = true;
+                    break;
             }
-
-            var typeAndObjectName = parts[0].Trim();
-            var permissionValue = parts[1].Trim();
-
-            // Extract type and object name, handling quoted object names
-            var typeEndIndex = typeAndObjectName.IndexOf(' ');
-            if (typeEndIndex == -1)
+            if (permissionContainRequestedObject)
             {
-                // Handle invalid type/object name format
-                continue;
-            }
-
-            var type = typeAndObjectName[..typeEndIndex].Trim();
-            var objectName = typeAndObjectName[typeEndIndex..].Trim().Trim('"');
-
-            bool nameSpaceNameMatch = false;
-#if !LessThenFall2023RV1
-            nameSpaceNameMatch = objectName.UnquoteIdentifier() == (variableType.OriginalDefinition.ContainingNamespace?.QualifiedName.ToLowerInvariant() + "." + variableType.Name.ToLowerInvariant());
-#endif
-
-            // Match against the parameters of the procedure
-            if (type == "tabledata" && (objectName == variableType.Name.ToLowerInvariant() || nameSpaceNameMatch))
-            {
-                permissionContainRequestedObject = true;
-                // Handle tabledata permissions
-                var permissions = permissionValue.ToCharArray();
-                if (!permissions.Contains(requestedPermission))
-                {
+                var permissionsText = permission.Permissions.ValueText;
+                if (permissionsText is null || !permissionsText.ToLowerInvariant().Contains(requestedPermission))
                     ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0068CheckObjectPermission, location, requestedPermission, variableType.Name));
-                }
+                break; // analysed the permissions for the requested object, break the foreach loop
             }
         }
         if (!permissionContainRequestedObject)
@@ -259,6 +251,30 @@ public class Rule0068CheckObjectPermission : DiagnosticAnalyzer
         if (permissions is not null && permissions.Contains(requestedPermission.ToString().ToLowerInvariant()[0]))
             return true;
 
+        return false;
+    }
+
+    private bool TargetTableIsPageSourceTable(OperationAnalysisContext ctx, ITableTypeSymbol targetTable)
+    {
+        var applicationObjectTypeSymbol = ctx.ContainingSymbol.GetContainingApplicationObjectTypeSymbol();
+        if (applicationObjectTypeSymbol is not null)
+        {
+            IPropertySymbol? sourceTableProperty = null;
+            switch (applicationObjectTypeSymbol.GetNavTypeKindSafe())
+            {
+                case NavTypeKind.Page:
+                    sourceTableProperty = applicationObjectTypeSymbol.GetProperty(PropertyKind.SourceTable);
+                    break;
+                case NavTypeKind.PageExtension:
+                    var extendedPageSymbol = ((IPageExtensionTypeSymbol)applicationObjectTypeSymbol).Target;
+                    if (extendedPageSymbol is not null)
+                        sourceTableProperty = extendedPageSymbol.GetProperty(PropertyKind.SourceTable);
+                    break;
+            }
+            if (sourceTableProperty is not null)
+                if (sourceTableProperty.Value == targetTable)
+                    return true;
+        }
         return false;
     }
 }

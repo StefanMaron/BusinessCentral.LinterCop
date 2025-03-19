@@ -20,7 +20,7 @@ public class Rule0074
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0074FlowFilterAssignment>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0074FlowFilterAssignment.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0074FlowFilterAssignment.Id);
     }
 
     [Test]
@@ -31,6 +31,6 @@ public class Rule0074
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0074FlowFilterAssignment>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0074FlowFilterAssignment.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0074FlowFilterAssignment.Id);
     }
 }

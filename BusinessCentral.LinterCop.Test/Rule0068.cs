@@ -22,7 +22,7 @@ public class Rule0068
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0068CheckObjectPermission>();
-        fixture.HasDiagnostic(code, DiagnosticDescriptors.Rule0068CheckObjectPermission.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0068CheckObjectPermission.Id);
     }
 
     [Test]
@@ -36,17 +36,24 @@ public class Rule0068
     [TestCase("ProcedureCallsInherentPermissionsProperty")]
     [TestCase("ProcedureCallsInherentPermissionsAttribute")]
     [TestCase("PageSourceTable")]
+#if !LessThenSpring2024
+    [TestCase("PageExtensionSourceTable")]
+#endif
 #if !LessThenFall2023RV1
     [TestCase("ProcedureCallsPermissionsPropertyFullyQualified")]
 #endif
     // [TestCase("IntegerTable")]
     [TestCase("XMLPortWithTableElementProps")]
+    [TestCase("PermissionsAsObjectId")]
+    [TestCase("PermissionPropertyWithPragma")]
+    [TestCase("PermissionPropertyWithComment")]
+    [TestCase("MultiplePermissionsDifferentType")] 
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
             .ConfigureAwait(false);
 
         var fixture = RoslynFixtureFactory.Create<Rule0068CheckObjectPermission>();
-        fixture.NoDiagnosticAtMarker(code, DiagnosticDescriptors.Rule0068CheckObjectPermission.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0068CheckObjectPermission.Id);
     }
 }
