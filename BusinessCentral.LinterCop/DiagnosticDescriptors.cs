@@ -939,7 +939,8 @@ public static class DiagnosticDescriptors
         title: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedTitle"),
         messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedFormat"),
         category: "Design",
-        defaultSeverity: DiagnosticSeverity.Info, isEnabledByDefault: true,
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: false,
         description: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091");
 }
