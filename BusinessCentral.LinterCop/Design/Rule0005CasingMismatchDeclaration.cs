@@ -287,6 +287,14 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
         if (string.Equals(node.Identifier.ValueText, "Rec", StringComparison.OrdinalIgnoreCase))
             return;
 
+        // Handle system objects, like AccessByPermission = system "Allow Action Export To Excel" = X;
+        // The AL0443 diagnostic will handle this https://learn.microsoft.com/nl-be/dynamics365/business-central/dev-itpro/developer/diagnostics/diagnostic-al443
+        if (node.Parent?.Parent is PermissionSyntax permissionSyntax &&
+            permissionSyntax.ObjectType.Kind == SyntaxKind.SystemKeyword)
+        {
+            return;
+        }
+
         AddToCollection(AnalyzeKind.IdentifierName, node, collectedNodes);
     }
 
@@ -486,6 +494,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
         foreach (var groupNode in groupNodes)
         {
             var representative = groupNode.OrderBy(node => node.Position).Last();
+
             if (semanticModel.GetSymbolInfo(representative, ctx.CancellationToken).Symbol is not ISymbol symbol)
             {
 #if DEBUG
@@ -841,7 +850,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
             { AnalyzeKind.ActionArea,               _actionAreaKindDictionary },
             { AnalyzeKind.Property,                 _propertyKindDictionary },
             { AnalyzeKind.PropertyName,             _propertyKindDictionary },
-            { AnalyzeKind.IdentifierEqualsLiteral,  _labelPropertyDictionary },
+            { AnalyzeKind.IdentifierEqualsLiteral,  _labelPropertyDictionary }
         });
 
     private void CompareIdentifier(SymbolAnalysisContext ctx, SyntaxToken identifier, string? canonical)
