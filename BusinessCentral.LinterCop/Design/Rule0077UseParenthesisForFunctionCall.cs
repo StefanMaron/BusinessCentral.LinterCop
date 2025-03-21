@@ -7,7 +7,7 @@ using BusinessCentral.LinterCop.Helpers;
 namespace BusinessCentral.LinterCop.Design;
 
 [DiagnosticAnalyzer]
-public class Rule0077MissingParenthesis : DiagnosticAnalyzer
+public class Rule0077UseParenthesisForFunctionCall : DiagnosticAnalyzer
 {
     private static readonly HashSet<string> MethodsRequiringParenthesis = [
         "CurrentDateTime",
@@ -25,12 +25,12 @@ public class Rule0077MissingParenthesis : DiagnosticAnalyzer
     ];
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        ImmutableArray.Create(DiagnosticDescriptors.Rule0077MissingParenthesis);
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0077UseParenthesisForFunctionCall);
 
     public override void Initialize(AnalysisContext context) =>
-        context.RegisterOperationAction(AnalyzeParenthesis, OperationKind.InvocationExpression);
+        context.RegisterOperationAction(AnalyzeInvocationExpression, OperationKind.InvocationExpression);
 
-    private void AnalyzeParenthesis(OperationAnalysisContext ctx)
+    private void AnalyzeInvocationExpression(OperationAnalysisContext ctx)
     {
         if (ctx.IsObsoletePendingOrRemoved())
             return;
@@ -44,7 +44,7 @@ public class Rule0077MissingParenthesis : DiagnosticAnalyzer
         {
             var location = operation.Syntax.GetIdentifierNameSyntax()?.GetLocation() ?? operation.Syntax.GetLocation();
             ctx.ReportDiagnostic(Diagnostic.Create(
-                DiagnosticDescriptors.Rule0077MissingParenthesis,
+                DiagnosticDescriptors.Rule0077UseParenthesisForFunctionCall,
                 location,
                 method.Name));
         }
