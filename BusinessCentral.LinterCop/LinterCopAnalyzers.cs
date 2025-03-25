@@ -36,6 +36,7 @@ namespace BusinessCentral.LinterCop
 
         internal static string AnalyzerPrefix => LinterCopAnalyzers.ResourceManager.GetString(nameof(AnalyzerPrefix), LinterCopAnalyzers.resourceCulture);
         internal static string Fix0001FlowFieldsShouldNotBeEditableCodeAction => LinterCopAnalyzers.ResourceManager.GetString(nameof(Fix0001FlowFieldsShouldNotBeEditableCodeAction), LinterCopAnalyzers.resourceCulture);
+        internal static string Fix0077MissingParenthesisCodeAction => LinterCopAnalyzers.ResourceManager.GetString(nameof(Fix0077MissingParenthesisCodeAction), LinterCopAnalyzers.resourceCulture);
 
         internal static LocalizableString GetLocalizableString(string nameOfLocalizableResource)
         {

@@ -11,8 +11,9 @@ codeunit 50100 MyCodeunit
         [|WorkDate|];
         [|GuiAllowed|];
         t := [|Time|];
-        i := MyTable.[|Count|];
-        b := MyTable.[|IsEmpty|];
+        // See remarks in the Rule0077UseParenthesisForFunctionCall.cs file.
+        // i := MyTable.Count;
+        // b := MyTable.IsEmpty;
     end;
 }
 
