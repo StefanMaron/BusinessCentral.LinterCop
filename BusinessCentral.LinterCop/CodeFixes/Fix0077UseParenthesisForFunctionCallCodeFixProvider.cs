@@ -4,19 +4,23 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.CodeActions;
 using Microsoft.Dynamics.Nav.CodeAnalysis.CodeFixes;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces;
+using Microsoft.Dynamics.Nav.CodeAnalysis.CodeActions.Mef;
 
 namespace BusinessCentral.LinterCop.CodeFixes;
 
-[Microsoft.Dynamics.Nav.CodeAnalysis.CodeActions.Mef.CodeFixProvider("Fix0077UseParenthesisForFunctionCallCodeFixProvider")]
+[CodeFixProvider("Fix0077UseParenthesisForFunctionCallCodeFixProvider")]
 public sealed class Fix0077UseParenthesisForFunctionCallCodeFixProvider : CodeFixProvider
 {
-    private class UseParenthesisForFunctionCallCodeAction : CodeAction.DocumentChangeAction
+    private class Fix0077UseParenthesisForFunctionCallCodeAction : CodeAction.DocumentChangeAction
     {
         public override CodeActionKind Kind => CodeActionKind.QuickFix;
+        public override bool SupportsFixAll { get; }
 
-        public UseParenthesisForFunctionCallCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+        public Fix0077UseParenthesisForFunctionCallCodeAction(string title,
+            Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey, bool generateFixAll)
             : base(title, createChangedDocument, equivalenceKey)
         {
+            SupportsFixAll = generateFixAll;
         }
     }
 
@@ -26,20 +30,28 @@ public sealed class Fix0077UseParenthesisForFunctionCallCodeFixProvider : CodeFi
     public sealed override FixAllProvider GetFixAllProvider() =>
         WellKnownFixAllProviders.BatchFixer;
 
-    public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+    public override async Task RegisterCodeFixesAsync(CodeFixContext ctx)
     {
-        Document document = context.Document;
-        TextSpan span = context.Span;
-        CancellationToken cancellationToken = context.CancellationToken;
+        Document document = ctx.Document;
+        TextSpan span = ctx.Span;
+        CancellationToken cancellationToken = ctx.CancellationToken;
         SyntaxNode node = (await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(continueOnCapturedContext: false)).FindNode(span);
-        if (node != null)
-        {
-            UseParenthesisForFunctionCallCodeAction useParenthesisForFunctionCallCodeAction = new UseParenthesisForFunctionCallCodeAction(LinterCopAnalyzers.Fix0077MissingParenthesisCodeAction, (CancellationToken c) => AddParenthesisForFunction(document, node, c), "UseParenthesisForFunctionCallCodeAction");
-            context.RegisterCodeFix(useParenthesisForFunctionCallCodeAction, context.Diagnostics);
-        }
+
+        if (node is not null)
+            ctx.RegisterCodeFix(CreateCodeAction(node, document, true), ctx.Diagnostics[0]);
     }
 
-    private async Task<Document> AddParenthesisForFunction(Document document, SyntaxNode oldNode, CancellationToken cancellationToken)
+    private static Fix0077UseParenthesisForFunctionCallCodeAction CreateCodeAction(SyntaxNode node, Document document,
+        bool generateFixAll)
+    {
+        return new Fix0077UseParenthesisForFunctionCallCodeAction(
+            LinterCopAnalyzers.Fix0077MissingParenthesisCodeAction,
+            ct => AddParenthesisForFunction(document, node, ct),
+            nameof(Fix0077UseParenthesisForFunctionCallCodeFixProvider),
+            generateFixAll);
+    }
+
+    private static async Task<Document> AddParenthesisForFunction(Document document, SyntaxNode oldNode, CancellationToken cancellationToken)
     {
         SyntaxNode newNode;
         switch (oldNode.Kind)
