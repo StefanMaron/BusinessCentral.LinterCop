@@ -786,6 +786,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
     private static readonly Lazy<ImmutableDictionary<string, string>> _treeInitialStateKindDictionary = CreateEnumDictionary<TreeInitialStateKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _updatePropagationKindDictionary = CreateEnumDictionary<UpdatePropagationKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _usageCategoryKindDictionary = CreateEnumDictionary<UsageCategoryKind>();
+    private static readonly Lazy<ImmutableDictionary<string, string>> _xmlVersionNoKindDictionary = CreateEnumDictionary<XmlVersionNoKind>();
     private static readonly Lazy<Dictionary<string, Lazy<ImmutableDictionary<string, string>>>> propertyOrdinalDictionary = new(() =>
         new Dictionary<string, Lazy<ImmutableDictionary<string, string>>>(StringComparer.OrdinalIgnoreCase)
         {
@@ -839,7 +840,8 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
             { "TransactionType",        _transactionTypeKindDictionary },
             { "TreeInitialState",       _treeInitialStateKindDictionary },
             { "UpdatePropagation",      _updatePropagationKindDictionary },
-            { "UsageCategory",          _usageCategoryKindDictionary }
+            { "UsageCategory",          _usageCategoryKindDictionary },
+            { "XmlVersionNo",           _xmlVersionNoKindDictionary }
         });
 
     private static readonly Lazy<Dictionary<AnalyzeKind, Lazy<ImmutableDictionary<string, string>>>> analyzeKindOrdinalDictionary = new(() =>
