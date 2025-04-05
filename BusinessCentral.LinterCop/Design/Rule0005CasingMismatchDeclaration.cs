@@ -770,6 +770,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
     private static readonly Lazy<ImmutableDictionary<string, string>> _scopeKindDictionary = CreateEnumDictionary(typeof(TableScopeKind),
                                                                                                                   typeof(PageActionScopeKind)); //ControlKind
     private static readonly Lazy<ImmutableDictionary<string, string>> _showAsKindDictionary = CreateEnumDictionary<ShowAsKind>();
+    private static readonly Lazy<ImmutableDictionary<string, string>> _sqlDataTypeKindDictionary = CreateEnumDictionary<SqlDataTypeKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _sqlJoinTypeKindDictionary = CreateEnumDictionary<SqlJoinTypeKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _styleKindDictionary = CreateEnumDictionary<StyleKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _subtypeKindDictionary = CreateEnumDictionary(typeof(CodeunitSubtypeKind),
@@ -821,6 +822,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
             { "QueryType",              _queryTypeKindDictionary },
             { "Scope",                  _scopeKindDictionary },
             { "ShowAs",                 _showAsKindDictionary },
+            { "SqlDataType",            _sqlDataTypeKindDictionary },
             { "SqlJoinType",            _sqlJoinTypeKindDictionary },
             { "PageType",               _pageTypeKindDictionary },
             { "PdfFontEmbedding",       _pdfFontEmbeddingKindDictionary },
