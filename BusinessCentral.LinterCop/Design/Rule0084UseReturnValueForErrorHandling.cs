@@ -32,8 +32,7 @@ public class Rule0084UseReturnValueForErrorHandling : DiagnosticAnalyzer
             var methodName = operation.TargetMethod.Name.ToString();
             var node = operation.Syntax.DescendantNodesAndSelf()
                     .OfType<IdentifierNameSyntax>()
-                    .Where(node => node.Identifier.ValueText == methodName)
-                    .FirstOrDefault();
+                    .FirstOrDefault(node => string.Equals(node.Identifier.ValueText, methodName, StringComparison.OrdinalIgnoreCase));
 
             ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0084UseReturnValueForErrorHandling,
