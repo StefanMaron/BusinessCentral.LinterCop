@@ -101,24 +101,3 @@ runs:
         name: BusinessCentral.LinterCop.AL-PreRelease.dll
         path: BusinessCentral.LinterCop/bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
         compression-level: 0 # no compression
-
-    ### Compatibility with previous naming of files
-    ### Release Asset as Current
-    - name: Upload build artifact (Current)
-      id: upload-build-asset-current
-      uses: actions/upload-artifact@v4
-      if: ${{ inputs.asset-publish == 'true' && inputs.al-latest == 'true' }}
-      with:
-        name: BusinessCentral.LinterCop.current.dll
-        path: BusinessCentral.LinterCop/bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-        compression-level: 0 # no compression
-
-    ### Release Asset as Next
-    - name: Upload build artifact (Next)
-      id: upload-build-asset-next
-      uses: actions/upload-artifact@v4
-      if: ${{ inputs.asset-publish == 'true' && inputs.al-prerelease == 'true' }}
-      with:
-        name: BusinessCentral.LinterCop.next.dll
-        path: BusinessCentral.LinterCop/bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
-        compression-level: 0 # no compression
