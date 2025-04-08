@@ -33,6 +33,7 @@ public class Rule0005Declaration
     }
 
     [Test]
+    [TestCase("AccessByPermission")]
     [TestCase("DataType")]
     [TestCase("EnumDataType")]
     [TestCase("FieldGroup")]

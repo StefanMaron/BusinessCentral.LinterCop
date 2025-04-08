@@ -17,6 +17,7 @@ public class Rule0071
     [TestCase("Handled")]
     [TestCase("PrecedingExitOnAssignment")]
     [TestCase("PrecedingExitOnInvocation")]
+    [TestCase("SelfGuardedOrAssignment")]
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
@@ -32,6 +33,7 @@ public class Rule0071
     [TestCase("NoEventSubscriberParameterReference")]
     [TestCase("PrecedingExitOnAssignment")]
     [TestCase("PrecedingExitOnInvocation")]
+    [TestCase("SelfGuardedOrAssignment")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))

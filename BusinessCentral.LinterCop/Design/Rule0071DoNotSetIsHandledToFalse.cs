@@ -75,6 +75,9 @@ public class Rule0071DoNotSetIsHandledToFalse : DiagnosticAnalyzer
         if (HasPrecedingExitStatement(ctx.Operation, parameter))
             return;
 
+        if (IsSelfGuardedOrAssignment(assignment.Value))
+            return;
+
         // any other not true assignment should not be done
         ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0071DoNotSetIsHandledToFalse,
@@ -136,6 +139,34 @@ public class Rule0071DoNotSetIsHandledToFalse : DiagnosticAnalyzer
         }
 
         // No valid preceding exit statement was found
+        return false;
+    }
+
+    private bool IsSelfGuardedOrAssignment(IOperation operation)
+    {
+        // checks for the pattern: IsHandled := IsHandled or SomeOtherCondition;
+
+        if (operation.Kind != OperationKind.BinaryOperatorExpression)
+            return false;
+        IBinaryOperatorExpression operatorExpression = (IBinaryOperatorExpression)operation;
+        if (operatorExpression.BinaryOperationKind is not (BinaryOperationKind.BooleanOr or BinaryOperationKind.BooleanConditionalOr))
+            return false;
+
+        // check left side of or statement
+        if (operatorExpression.LeftOperand.Kind == OperationKind.ParameterReferenceExpression)
+        {
+            IParameterSymbol parameter = ((IParameterReferenceExpression)operatorExpression.LeftOperand).Parameter;
+            if (IsIsHandledEventSubscriberParameter(parameter))
+                return true;
+        }
+        // check right side of or statement
+        if (operatorExpression.RightOperand.Kind == OperationKind.ParameterReferenceExpression)
+        {
+            IParameterSymbol parameter = ((IParameterReferenceExpression)operatorExpression.RightOperand).Parameter;
+            if (IsIsHandledEventSubscriberParameter(parameter))
+                return true;
+        }
+
         return false;
     }
 }

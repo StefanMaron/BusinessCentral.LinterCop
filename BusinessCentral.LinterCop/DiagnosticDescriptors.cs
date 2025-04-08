@@ -785,14 +785,14 @@ public static class DiagnosticDescriptors
         description: LinterCopAnalyzers.GetLocalizableString("Rule0076TableRelationTooLongDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0076");
 
-    public static readonly DiagnosticDescriptor Rule0077MissingParenthesis = new(
+    public static readonly DiagnosticDescriptor Rule0077UseParenthesisForFunctionCall = new(
         id: LinterCopAnalyzers.AnalyzerPrefix + "0077",
-        title: LinterCopAnalyzers.GetLocalizableString("Rule0077MissingParenthesisTitle"),
-        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0077MissingParenthesisFormat"),
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0077UseParenthesisForFunctionCallTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0077UseParenthesisForFunctionCallFormat"),
         category: "Design",
         defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true,
-        description: LinterCopAnalyzers.GetLocalizableString("Rule0077MissingParenthesisDescription"),
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0077UseParenthesisForFunctionCallDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0077");
 
     public static readonly DiagnosticDescriptor Rule0078TemporaryRecordsShouldNotTriggerTableTriggers = new(

@@ -287,6 +287,14 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
         if (string.Equals(node.Identifier.ValueText, "Rec", StringComparison.OrdinalIgnoreCase))
             return;
 
+        // Handle system objects, like AccessByPermission = system "Allow Action Export To Excel" = X;
+        // The AL0443 diagnostic will handle this https://learn.microsoft.com/nl-be/dynamics365/business-central/dev-itpro/developer/diagnostics/diagnostic-al443
+        if (node.Parent?.Parent is PermissionSyntax permissionSyntax &&
+            permissionSyntax.ObjectType.Kind == SyntaxKind.SystemKeyword)
+        {
+            return;
+        }
+
         AddToCollection(AnalyzeKind.IdentifierName, node, collectedNodes);
     }
 
@@ -486,6 +494,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
         foreach (var groupNode in groupNodes)
         {
             var representative = groupNode.OrderBy(node => node.Position).Last();
+
             if (semanticModel.GetSymbolInfo(representative, ctx.CancellationToken).Symbol is not ISymbol symbol)
             {
 #if DEBUG
@@ -761,6 +770,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
     private static readonly Lazy<ImmutableDictionary<string, string>> _scopeKindDictionary = CreateEnumDictionary(typeof(TableScopeKind),
                                                                                                                   typeof(PageActionScopeKind)); //ControlKind
     private static readonly Lazy<ImmutableDictionary<string, string>> _showAsKindDictionary = CreateEnumDictionary<ShowAsKind>();
+    private static readonly Lazy<ImmutableDictionary<string, string>> _sqlDataTypeKindDictionary = CreateEnumDictionary<SqlDataTypeKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _sqlJoinTypeKindDictionary = CreateEnumDictionary<SqlJoinTypeKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _styleKindDictionary = CreateEnumDictionary<StyleKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _subtypeKindDictionary = CreateEnumDictionary(typeof(CodeunitSubtypeKind),
@@ -777,6 +787,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
     private static readonly Lazy<ImmutableDictionary<string, string>> _treeInitialStateKindDictionary = CreateEnumDictionary<TreeInitialStateKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _updatePropagationKindDictionary = CreateEnumDictionary<UpdatePropagationKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _usageCategoryKindDictionary = CreateEnumDictionary<UsageCategoryKind>();
+    private static readonly Lazy<ImmutableDictionary<string, string>> _xmlVersionNoKindDictionary = CreateEnumDictionary<XmlVersionNoKind>();
     private static readonly Lazy<Dictionary<string, Lazy<ImmutableDictionary<string, string>>>> propertyOrdinalDictionary = new(() =>
         new Dictionary<string, Lazy<ImmutableDictionary<string, string>>>(StringComparer.OrdinalIgnoreCase)
         {
@@ -811,9 +822,10 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
             { "QueryType",              _queryTypeKindDictionary },
             { "Scope",                  _scopeKindDictionary },
             { "ShowAs",                 _showAsKindDictionary },
+            { "SqlDataType",            _sqlDataTypeKindDictionary },
             { "SqlJoinType",            _sqlJoinTypeKindDictionary },
             { "PageType",               _pageTypeKindDictionary },
-            { "PdfFontEmbedding ",      _pdfFontEmbeddingKindDictionary },
+            { "PdfFontEmbedding",       _pdfFontEmbeddingKindDictionary },
             { "PreviewMode",            _previewModeKindDictionary },
             { "PromotedCategory",       _promotedCategoryKindDictionary },
             { "ReadState",              _readStateKindDictionary },
@@ -823,14 +835,15 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
             { "Subtype",                _subtypeKindDictionary },
             { "TableType",              _tableTypeKindDictionary} ,
             { "TestIsolation",          _testIsolationKindDictionary },
-            { "TestPermissions ",       _testPermissionsKindDictionary },
+            { "TestPermissions",        _testPermissionsKindDictionary },
             { "TextEncoding",           _textEncodingKindDictionary },
             { "TextType",               _textTypeKindictionary },
             { "Type",                   _typeKindDictionary },
             { "TransactionType",        _transactionTypeKindDictionary },
             { "TreeInitialState",       _treeInitialStateKindDictionary },
             { "UpdatePropagation",      _updatePropagationKindDictionary },
-            { "UsageCategory",          _usageCategoryKindDictionary }
+            { "UsageCategory",          _usageCategoryKindDictionary },
+            { "XmlVersionNo",           _xmlVersionNoKindDictionary }
         });
 
     private static readonly Lazy<Dictionary<AnalyzeKind, Lazy<ImmutableDictionary<string, string>>>> analyzeKindOrdinalDictionary = new(() =>
@@ -841,7 +854,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
             { AnalyzeKind.ActionArea,               _actionAreaKindDictionary },
             { AnalyzeKind.Property,                 _propertyKindDictionary },
             { AnalyzeKind.PropertyName,             _propertyKindDictionary },
-            { AnalyzeKind.IdentifierEqualsLiteral,  _labelPropertyDictionary },
+            { AnalyzeKind.IdentifierEqualsLiteral,  _labelPropertyDictionary }
         });
 
     private void CompareIdentifier(SymbolAnalysisContext ctx, SyntaxToken identifier, string? canonical)

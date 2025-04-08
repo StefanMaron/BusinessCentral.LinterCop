@@ -18,8 +18,8 @@ public class Rule0077
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
             .ConfigureAwait(false);
 
-        var fixture = RoslynFixtureFactory.Create<Rule0077MissingParenthesis>();
-        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0077MissingParenthesis.Id);
+        var fixture = RoslynFixtureFactory.Create<Rule0077UseParenthesisForFunctionCall>();
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0077UseParenthesisForFunctionCall.Id);
     }
 
     [Test]
@@ -29,7 +29,7 @@ public class Rule0077
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
             .ConfigureAwait(false);
 
-        var fixture = RoslynFixtureFactory.Create<Rule0077MissingParenthesis>();
-        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0077MissingParenthesis.Id);
+        var fixture = RoslynFixtureFactory.Create<Rule0077UseParenthesisForFunctionCall>();
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0077UseParenthesisForFunctionCall.Id);
     }
 }
