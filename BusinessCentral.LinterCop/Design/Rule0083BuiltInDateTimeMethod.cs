@@ -72,7 +72,7 @@ public class Rule0083BuiltInDateTimeMethod : DiagnosticAnalyzer
         {
             1 => "DayOfWeek()",
             2 => "WeekNo()",
-            3 => null,
+            3 => null, // Year() isn't returnig the same value. When the input date to the Date2DWY method is in a week that spans two years, the Date2DWY method computes the output year as the year that has the most days.
             _ => null
         };
     }
