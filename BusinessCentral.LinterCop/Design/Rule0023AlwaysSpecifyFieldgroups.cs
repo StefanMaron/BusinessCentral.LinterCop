@@ -20,6 +20,9 @@ public class Rule0023AlwaysSpecifyFieldgroups : DiagnosticAnalyzer
     private void CheckFieldgroups(SymbolAnalysisContext ctx)
     {
         if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not ITableTypeSymbol table)
+            return;        
+
+        if (table.TableType == TableTypeKind.Temporary)
             return;
 
         if (IsTableOfTypeSetupTable(table))
