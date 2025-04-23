@@ -72,7 +72,7 @@ public class Rule0083BuiltInDateTimeMethod : DiagnosticAnalyzer
         {
             1 => "DayOfWeek()",
             2 => "WeekNo()",
-            3 => "Year()",
+            3 => null,
             _ => null
         };
     }
