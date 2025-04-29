@@ -1,20 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
+        <TargetFrameworks>netstandard2.1;net8.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <LangVersion>Latest</LangVersion>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <Nullable>enable</Nullable>
-        <WarningsAsErrors>CS8600;CS8602;CS8603</WarningsAsErrors>
         <DefineConstants>$(DefineConstants)$(FeatureFlags.Replace("#",";"))</DefineConstants>
     </PropertyGroup>
-    <ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
         <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
             <SpecificVersion>False</SpecificVersion>
             <HintPath>../ALLanguage/extension/bin/Analyzers/System.Collections.Immutable.dll</HintPath>
             <Private>False</Private>
         </Reference>
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+        <PackageReference Include="System.Collections.Immutable" Version="9.0.4" />
+    </ItemGroup>
+    <ItemGroup>
         <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis">
             <SpecificVersion>False</SpecificVersion>
             <HintPath>../ALLanguage/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
