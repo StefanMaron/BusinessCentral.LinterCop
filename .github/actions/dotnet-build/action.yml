@@ -85,7 +85,7 @@ runs:
       if: ${{ inputs.asset-publish == 'true' }}
       with:
         name: ${{ inputs.asset-name }}
-        path: BusinessCentral.LinterCop/bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+        path: BusinessCentral.LinterCop/bin/Release/${{ steps.get-target-framework.outputs.target-framework }}/BusinessCentral.LinterCop.dll
         compression-level: 0 # no compression
 
     ### Upload Asset as Latest
@@ -95,7 +95,7 @@ runs:
       if: ${{ inputs.asset-publish == 'true' && inputs.al-latest == 'true' }}
       with:
         name: BusinessCentral.LinterCop.dll
-        path: BusinessCentral.LinterCop/bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+        path: BusinessCentral.LinterCop/bin/Release/${{ steps.get-target-framework.outputs.target-framework }}/BusinessCentral.LinterCop.dll
         compression-level: 0 # no compression
 
     ### Upload Asset as Pre-Release
@@ -105,5 +105,5 @@ runs:
       if: ${{ inputs.asset-publish == 'true' && inputs.al-prerelease == 'true' }}
       with:
         name: BusinessCentral.LinterCop.AL-PreRelease.dll
-        path: BusinessCentral.LinterCop/bin/Release/netstandard2.1/BusinessCentral.LinterCop.dll
+        path: BusinessCentral.LinterCop/bin/Release/${{ steps.get-target-framework.outputs.target-framework }}/BusinessCentral.LinterCop.dll
         compression-level: 0 # no compression
