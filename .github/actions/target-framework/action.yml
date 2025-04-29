@@ -1,0 +1,24 @@
+name: Target Framework
+description: Composite Action to determinve the TargetFramework based on the AL Language version
+
+inputs:
+  version-number:
+    required: true
+    description: version number of the AL Language
+
+outputs:
+  target-framework:
+    description: target framework version
+    value: ${{ steps.get-target-framework.outputs.target-framework }}
+
+runs:
+  using: composite
+  steps:
+    - name: Determine Target Framework
+      id: get-target-framework
+      shell: pwsh
+      env:
+        VERSION_NUMBER: ${{ inputs.version-number}}
+      run: |
+        $result = ${{github.action_path}}/Get-TargetFramework $env:VERSION_NUMBER
+        echo "target-framework=$($result)" >> $env:GITHUB_OUTPUT
