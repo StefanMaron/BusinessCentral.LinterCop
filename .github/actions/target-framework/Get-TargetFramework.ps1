@@ -26,11 +26,11 @@ function Get-TargetFramework {
         [Parameter(Mandatory = $true)]
         [System.Version] $version
     ) 
-
     
-    $legacyBoundaryVersion = [Version]"16.0.1463980" # Legacy version
+    # The minimum version that can target .NET 8.0 SDK
+    $MinNet8SdkVersion = [Version]"16.0.1463980"
 
-    if ($version -lt $legacyBoundaryVersion) {
+    if ($Version -lt $MinNet8SdkVersion) {
         return "netstandard2.1"
     }
     else {
