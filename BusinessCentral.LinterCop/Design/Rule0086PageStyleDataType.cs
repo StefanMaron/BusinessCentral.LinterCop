@@ -1,9 +1,9 @@
 #if !LessThenFall2024
+using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
-using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -43,7 +43,7 @@ public class Rule0086PageStyleDataType : DiagnosticAnalyzer
         if (string.IsNullOrEmpty(stringLiteralValue))
             return;
 
-        if (StyleKindDictionary.TryGetValue(stringLiteralValue, out string styleKind))
+        if (StyleKindDictionary.TryGetValue(stringLiteralValue, out string? styleKind))
         {
             ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0086PageStyleDataType,

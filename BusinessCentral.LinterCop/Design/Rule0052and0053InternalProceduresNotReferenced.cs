@@ -1,19 +1,20 @@
-#nullable disable // TODO: Enable nullable and review rule
+using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
+
+#if !LessThenSpring2024
+using Microsoft.Dynamics.Nav.Analyzers.Common;
+
+#else
+using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
+
+#endif
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.InternalSyntax;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
-using System.Collections.Immutable;
-#if !LessThenSpring2024
-using Microsoft.Dynamics.Nav.Analyzers.Common;
-#else
-using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
-#endif
-
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -34,9 +35,9 @@ public class Rule0052InternalProceduresNotReferencedAnalyzer : DiagnosticAnalyze
         public MethodSymbolAnalyzer(CompilationAnalysisContext compilationAnalysisContext)
         {
 #if !LessThenSpring2024
-            NavAppManifest manifest = ManifestHelper.GetManifest(compilationAnalysisContext.Compilation);
+            NavAppManifest? manifest = ManifestHelper.GetManifest(compilationAnalysisContext.Compilation);
 #else
-            NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(compilationAnalysisContext.Compilation);
+            NavAppManifest? manifest = AppSourceCopConfigurationProvider.GetManifest(compilationAnalysisContext.Compilation);
 #endif
 
             if (manifest is not null && manifest.InternalsVisibleTo is not null && manifest.InternalsVisibleTo.Any())
@@ -54,8 +55,7 @@ public class Rule0052InternalProceduresNotReferencedAnalyzer : DiagnosticAnalyze
                     ISymbol objectMember = objectMemberEnumerator.Current;
                     if (objectMember.Kind == SymbolKind.Method)
                     {
-                        IMethodSymbol methodSymbol = objectMember as IMethodSymbol;
-                        if (MethodNeedsReferenceCheck(methodSymbol))
+                        if (objectMember is IMethodSymbol methodSymbol && MethodNeedsReferenceCheck(methodSymbol))
                         {
                             methodSymbols.Add(methodSymbol, methodSymbol.Name.ToLowerInvariant());
                             internalMethodsUnused.Add(methodSymbol, methodSymbol.Name.ToLowerInvariant());
@@ -80,7 +80,7 @@ public class Rule0052InternalProceduresNotReferencedAnalyzer : DiagnosticAnalyze
                 return false;
             }
             // If the procedure and implements an interface, then we do not need to check for references for this procedure
-            IApplicationObjectTypeSymbol objectSymbol = methodSymbol.GetContainingApplicationObjectTypeSymbol();
+            IApplicationObjectTypeSymbol? objectSymbol = methodSymbol.GetContainingApplicationObjectTypeSymbol();
             if (objectSymbol is not null && HelperFunctions.MethodImplementsInterfaceMethod(objectSymbol, methodSymbol))
             {
                 return false;
@@ -144,43 +144,46 @@ public class Rule0052InternalProceduresNotReferencedAnalyzer : DiagnosticAnalyze
                     {
                         return;
                     }
-                    if (syntaxNode is not IdentifierNameSyntax identifierNameSyntax)
+                    if (syntaxNode is not IdentifierNameSyntax identifierNameSyntax || identifierNameSyntax.Identifier.ValueText is null)
                     {
                         return;
                     }
                     if (methodSymbols.ContainsValue(identifierNameSyntax.Identifier.ValueText.ToLowerInvariant()) && TryGetSymbolFromIdentifier(semanticModel, identifierNameSyntax, SymbolKind.Method, out var methodSymbol))
                     {
-                        if (methodSymbol.IsInternal)
+                        if (methodSymbol is not null)
                         {
-                            var objectSyntax = syntaxNode.GetContainingApplicationObjectSyntax();
-                            var objectSyntaxName = objectSyntax.Name.Identifier.ValueText.ToLowerInvariant();
-
-                            var methodObjectSymbol = methodSymbol.GetContainingApplicationObjectTypeSymbol();
-                            var methodObjectSymbolName = methodObjectSymbol.Name.ToLowerInvariant();
-
-                            if (
-                                (methodObjectSymbolName == objectSyntaxName) &&
-                                (objectSyntax.Kind.ToString().Replace("Object", "").ToLowerInvariant() == methodObjectSymbol.Kind.ToString().ToLowerInvariant())
-                            )
+                            if (methodSymbol.IsInternal)
                             {
-                                internalMethodsUsedInCurrentObject[methodSymbol] = methodSymbol.Name.ToLowerInvariant();
+                                var objectSyntax = syntaxNode.GetContainingApplicationObjectSyntax();
+                                var objectSyntaxName = objectSyntax.Name.Identifier.ValueText?.ToLowerInvariant();
+
+                                var methodObjectSymbol = methodSymbol.GetContainingApplicationObjectTypeSymbol();
+                                var methodObjectSymbolName = methodObjectSymbol?.Name.ToLowerInvariant();
+
+                                if (
+                                    (methodObjectSymbolName == objectSyntaxName) &&
+                                    (objectSyntax.Kind.ToString().Replace("Object", "").ToLowerInvariant() == methodObjectSymbol?.Kind.ToString().ToLowerInvariant())
+                                )
+                                {
+                                    internalMethodsUsedInCurrentObject[methodSymbol] = methodSymbol.Name.ToLowerInvariant();
+                                }
+                                else
+                                {
+                                    internalMethodsUsedInOtherObjects[methodSymbol] = methodSymbol.Name.ToLowerInvariant();
+                                }
                             }
-                            else
-                            {
-                                internalMethodsUsedInOtherObjects[methodSymbol] = methodSymbol.Name.ToLowerInvariant();
-                            }
+                            internalMethodsUnused.Remove(methodSymbol);
                         }
-                        internalMethodsUnused.Remove(methodSymbol);
                     }
                 });
             }
         }
 
-        internal static bool TryGetSymbolFromIdentifier(SemanticModel semanticModel, IdentifierNameSyntax identifierName, SymbolKind symbolKind, out IMethodSymbol methodSymbol)
+        internal static bool TryGetSymbolFromIdentifier(SemanticModel semanticModel, IdentifierNameSyntax identifierName, SymbolKind symbolKind, out IMethodSymbol? methodSymbol)
         {
             methodSymbol = null;
             SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(identifierName);
-            ISymbol symbol = symbolInfo.Symbol;
+            ISymbol? symbol = symbolInfo.Symbol;
             if (symbol is null || symbol.Kind != symbolKind)
             {
                 return false;
@@ -202,7 +205,8 @@ public class Rule0052InternalProceduresNotReferencedAnalyzer : DiagnosticAnalyze
             foreach (KeyValuePair<IMethodSymbol, string> unusedInternalMethod in internalMethodsUnused)
             {
                 IMethodSymbol methodSymbol = unusedInternalMethod.Key;
-                IApplicationObjectTypeSymbol objectSymbol = methodSymbol.GetContainingApplicationObjectTypeSymbol();
+                IApplicationObjectTypeSymbol? objectSymbol = methodSymbol.GetContainingApplicationObjectTypeSymbol();
+                if (objectSymbol is null) continue;
 
                 Diagnostic diagnostic = Diagnostic.Create(DiagnosticDescriptors.Rule0052InternalProceduresNotReferencedAnalyzerDescriptor, methodSymbol.OriginalDefinition.GetLocation(), methodSymbol.DeclaredAccessibility.ToString().ToLowerInvariant(), methodSymbol.Name.QuoteIdentifierIfNeeded(), objectSymbol.NavTypeKind, objectSymbol.Name.QuoteIdentifierIfNeeded(), objectSymbol.DeclaredAccessibility);
                 action(diagnostic);
@@ -216,7 +220,8 @@ public class Rule0052InternalProceduresNotReferencedAnalyzer : DiagnosticAnalyze
             foreach (KeyValuePair<IMethodSymbol, string> internalMethodPair in internalMethodsUsedOnlyInCurrentObject)
             {
                 IMethodSymbol methodSymbol = internalMethodPair.Key;
-                IApplicationObjectTypeSymbol objectSymbol = methodSymbol.GetContainingApplicationObjectTypeSymbol();
+                IApplicationObjectTypeSymbol? objectSymbol = methodSymbol.GetContainingApplicationObjectTypeSymbol();
+                if (objectSymbol is null) continue;
 
                 Diagnostic diagnostic = Diagnostic.Create(DiagnosticDescriptors.Rule0053InternalProcedureOnlyUsedInCurrentObjectAnalyzerDescriptor, methodSymbol.OriginalDefinition.GetLocation(), methodSymbol.DeclaredAccessibility.ToString().ToLowerInvariant(), methodSymbol.Name.QuoteIdentifierIfNeeded(), objectSymbol.NavTypeKind, objectSymbol.Name.QuoteIdentifierIfNeeded(), objectSymbol.DeclaredAccessibility);
                 action(diagnostic);

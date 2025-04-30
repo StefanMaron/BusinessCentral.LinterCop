@@ -1,9 +1,9 @@
-﻿using BusinessCentral.LinterCop.Helpers;
+﻿using System.Collections.Immutable;
+using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
-using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -18,10 +18,8 @@ public class Rule0072CheckProcedureDocumentationComment : DiagnosticAnalyzer
 
     private void AnalyzeDocumentationComments(SyntaxNodeAnalysisContext ctx)
     {
-        if (ctx.IsObsoletePendingOrRemoved()) return;
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Node is not MethodDeclarationSyntax methodDeclarationSyntax) return;
 
-        if (ctx.Node is not MethodDeclarationSyntax methodDeclarationSyntax)
-            return;
         var docCommentTrivia = methodDeclarationSyntax.GetLeadingTrivia().FirstOrDefault(trivia => trivia.Kind == SyntaxKind.SingleLineDocumentationCommentTrivia);
         if (docCommentTrivia.IsKind(SyntaxKind.None)) return; // no documentation comment exists
 
@@ -59,14 +57,14 @@ public class Rule0072CheckProcedureDocumentationComment : DiagnosticAnalyzer
         // check documentation comment parameters against method syntax
         foreach (var docCommentParameter in docCommentParameters)
         {
-            if (!methodDeclarationSyntax.ParameterList.Parameters.Any(param => param.Name.Identifier.ValueText.UnquoteIdentifier().Equals(docCommentParameter.Key, StringComparison.OrdinalIgnoreCase)))
+            if (!methodDeclarationSyntax.ParameterList.Parameters.Any(param => (param.Name.Identifier.ValueText?.UnquoteIdentifier() ?? string.Empty).Equals(docCommentParameter.Key, StringComparison.OrdinalIgnoreCase)))
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment, docCommentParameter.Value.GetLocation()));
         }
 
         // check method parameters against documentation comment syntax
         foreach (var methodParameter in methodDeclarationSyntax.ParameterList.Parameters)
         {
-            if (!docCommentParameters.Any(docParam => docParam.Key.Equals(methodParameter.Name.Identifier.ValueText.UnquoteIdentifier(), StringComparison.OrdinalIgnoreCase)))
+            if (!docCommentParameters.Any(docParam => docParam.Key.Equals(methodParameter.Name.Identifier.ValueText?.UnquoteIdentifier(), StringComparison.OrdinalIgnoreCase)))
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment, methodParameter.GetLocation()));
         }
     }

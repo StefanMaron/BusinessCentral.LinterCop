@@ -1,5 +1,4 @@
-﻿#nullable disable // TODO: Enable nullable and review rule
-using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 
 namespace BusinessCentral.LinterCop.Helpers;
 
@@ -10,7 +9,7 @@ public class HelperFunctions
         return MethodImplementsInterfaceMethod(methodSymbol.GetContainingApplicationObjectTypeSymbol(), methodSymbol);
     }
 
-    public static bool MethodImplementsInterfaceMethod(IApplicationObjectTypeSymbol objectSymbol, IMethodSymbol methodSymbol)
+    public static bool MethodImplementsInterfaceMethod(IApplicationObjectTypeSymbol? objectSymbol, IMethodSymbol methodSymbol)
     {
         if (objectSymbol is not ICodeunitTypeSymbol codeunitSymbol)
         {

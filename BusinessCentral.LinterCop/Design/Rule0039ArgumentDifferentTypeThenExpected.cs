@@ -78,7 +78,8 @@ public class Rule0039ArgumentDifferentTypeThenExpected : DiagnosticAnalyzer
                 DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected,
                 ctx.Operation.Syntax.GetLocation(),
                 2,
-                operand.GetSymbol()!.GetTypeSymbol().ToString(), pageSourceTable.GetNavTypeKindSafe() + pageSourceTable.Name.QuoteIdentifierIfNeeded()));
+                operand.GetSymbol()?.GetTypeSymbol().ToString() ?? string.Empty,
+                pageSourceTable.GetNavTypeKindSafe() + pageSourceTable.Name.QuoteIdentifierIfNeeded()));
         }
     }
 
@@ -101,7 +102,7 @@ public class Rule0039ArgumentDifferentTypeThenExpected : DiagnosticAnalyzer
 
         if (operation.Arguments[0].Syntax.Kind != SyntaxKind.IdentifierName || operation.Arguments[0].Value.Kind != OperationKind.ConversionExpression) return;
 
-        IOperation pageReference = ctx.Operation.DescendantsAndSelf().Where(x => x.GetSymbol() is not null)
+        IOperation? pageReference = ctx.Operation.DescendantsAndSelf().Where(x => x.GetSymbol() is not null)
                                                     .Where(x => x.Type.GetNavTypeKindSafe() == NavTypeKind.Page)
                                                     .SingleOrDefault();
         if (pageReference is null)
@@ -131,7 +132,7 @@ public class Rule0039ArgumentDifferentTypeThenExpected : DiagnosticAnalyzer
             ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0058PageVariableMethodOnTemporaryTable,
                 ctx.Operation.Syntax.GetLocation(),
-                variableSymbol.ToString().QuoteIdentifierIfNeeded(),
+                variableSymbol.ToString()?.QuoteIdentifierIfNeeded() ?? string.Empty,
                 operation.TargetMethod.Name));
 
             return;
@@ -144,7 +145,7 @@ public class Rule0039ArgumentDifferentTypeThenExpected : DiagnosticAnalyzer
                 DiagnosticDescriptors.Rule0039ArgumentDifferentTypeThenExpected,
                 ctx.Operation.Syntax.GetLocation(),
                 1,
-                operand.GetSymbol()!.GetTypeSymbol().ToString(),
+                operand.GetSymbol()!.GetTypeSymbol().ToString() ?? string.Empty,
                 pageSourceTable.GetNavTypeKindSafe().ToString() + ' ' + pageSourceTable.Name.QuoteIdentifierIfNeeded()
                 ));
     }
