@@ -34,9 +34,9 @@ namespace BusinessCentral.LinterCop
             set => LinterCopAnalyzers.resourceCulture = value;
         }
 
-        internal static string AnalyzerPrefix => LinterCopAnalyzers.ResourceManager.GetString(nameof(AnalyzerPrefix), LinterCopAnalyzers.resourceCulture);
-        internal static string Fix0001FlowFieldsShouldNotBeEditableCodeAction => LinterCopAnalyzers.ResourceManager.GetString(nameof(Fix0001FlowFieldsShouldNotBeEditableCodeAction), LinterCopAnalyzers.resourceCulture);
-        internal static string Fix0077MissingParenthesisCodeAction => LinterCopAnalyzers.ResourceManager.GetString(nameof(Fix0077MissingParenthesisCodeAction), LinterCopAnalyzers.resourceCulture);
+        internal static string AnalyzerPrefix => GetFromResourceManager();
+        internal static string Fix0001FlowFieldsShouldNotBeEditableCodeAction => GetFromResourceManager();
+        internal static string Fix0077MissingParenthesisCodeAction => GetFromResourceManager();
 
         internal static LocalizableString GetLocalizableString(string nameOfLocalizableResource)
         {
@@ -45,6 +45,22 @@ namespace BusinessCentral.LinterCop
                 LinterCopAnalyzers.ResourceManager,
                 typeof(LinterCopAnalyzers)
                 );
+        }
+
+        private static string GetFromResourceManager(
+            [CallerMemberName] string? resourceName = null)
+        {
+            if (resourceName is null)
+                throw new ArgumentNullException(nameof(resourceName));
+
+            string? value = LinterCopAnalyzers.ResourceManager
+                .GetString(resourceName, LinterCopAnalyzers.resourceCulture);
+
+            if (value is null)
+                throw new InvalidOperationException(
+                    $"Embedded resource '{resourceName}' not found.");
+
+            return value;
         }
     }
 }

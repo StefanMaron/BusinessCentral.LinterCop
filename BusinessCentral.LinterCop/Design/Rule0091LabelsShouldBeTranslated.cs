@@ -1,15 +1,20 @@
-using Microsoft.Dynamics.Nav.Analyzers.Common;
+using System.Collections.Immutable;
+using System.Xml;
+using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Translation;
-using System.Collections.Immutable;
-using System.Xml;
-using BusinessCentral.LinterCop;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
-using BusinessCentral.LinterCop.Helpers;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Translation;
+
+#if !LessThenSpring2024
+using Microsoft.Dynamics.Nav.Analyzers.Common;
+
+#else
 using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
+
+#endif
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -251,14 +256,14 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
 
     private Diagnostic? ReportDiagnostic(ISymbol? label)
     {
-        if (label == null)
+        if (label is null || label.ContainingSymbol is null)
             return null;
         if (label.ContainingSymbol.IsObsoletePendingOrRemoved())
             return null;
         if (LabelIsLocked(label))
             return null;
 
-string labelValue = "";
+        string labelValue = "";
 
 #if !LessThenFall2024
         if (label.Kind == SymbolKind.LocalVariable || label.Kind == SymbolKind.GlobalVariable)
@@ -275,7 +280,7 @@ string labelValue = "";
         if (this.availableLanguages.Count == 0)
             return null;
 
-        HashSet<string> missingLanguages;
+        HashSet<string>? missingLanguages;
         if (!this.translationIndex.TryGetValue(labelValue, out missingLanguages))
         {
             // No entry found in the index means the label isn't present in any translation file

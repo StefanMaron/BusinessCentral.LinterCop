@@ -123,7 +123,7 @@ public class Rule0068CheckObjectPermission : DiagnosticAnalyzer
         if (TargetTableIsPageSourceTable(ctx, targetTable))
             return;
 
-        if (variableType.ToString().ToLower().EndsWith("temporary") || (targetTable.TableType == TableTypeKind.Temporary)) return;
+        if ((variableType.ToString() ?? string.Empty).ToLower().EndsWith("temporary") || (targetTable.TableType == TableTypeKind.Temporary)) return;
 
         IEnumerable<IAttributeSymbol> inherentPermissions = [];
 
@@ -212,8 +212,8 @@ public class Rule0068CheckObjectPermission : DiagnosticAnalyzer
             switch (identifier.Kind)
             {
                 case SyntaxKind.IdentifierName:
-                    string name = ((IdentifierNameSyntax)identifier).Identifier.ValueText.UnquoteIdentifier();
-                    if (name.Equals(variableType.Name, StringComparison.OrdinalIgnoreCase))
+                    string? name = ((IdentifierNameSyntax)identifier).Identifier.ValueText?.UnquoteIdentifier();
+                    if (name is not null && name.Equals(variableType.Name, StringComparison.OrdinalIgnoreCase))
                         permissionContainRequestedObject = true;
                     break;
                 case SyntaxKind.ObjectId:
@@ -223,8 +223,8 @@ public class Rule0068CheckObjectPermission : DiagnosticAnalyzer
                     break;
                 case SyntaxKind.QualifiedName:
                     string qualifier = ((QualifiedNameSyntax)identifier).Left.GetText().ToString();
-                    string onlyName = ((QualifiedNameSyntax)identifier).Right.Identifier.ValueText.UnquoteIdentifier();
-                    if (qualifier.Equals(variableType.OriginalDefinition.ContainingNamespace?.QualifiedName, StringComparison.OrdinalIgnoreCase) && onlyName.Equals(variableType.Name, StringComparison.OrdinalIgnoreCase))
+                    string? onlyName = ((QualifiedNameSyntax)identifier).Right.Identifier.ValueText?.UnquoteIdentifier();
+                    if (onlyName is not null && qualifier.Equals(variableType.OriginalDefinition.ContainingNamespace?.QualifiedName, StringComparison.OrdinalIgnoreCase) && onlyName.Equals(variableType.Name, StringComparison.OrdinalIgnoreCase))
                         permissionContainRequestedObject = true;
                     break;
             }
@@ -246,7 +246,7 @@ public class Rule0068CheckObjectPermission : DiagnosticAnalyzer
     {
         IPropertySymbol? permissionProperty = table.GetProperty(PropertyKind.InherentPermissions);
         // InherentPermissions = RIMD;
-        char[]? permissions = permissionProperty?.Value.ToString().ToLowerInvariant().Split(new[] { '=' }, 2)[0].Trim().ToCharArray();
+        char[]? permissions = permissionProperty?.Value.ToString()?.ToLowerInvariant().Split(new[] { '=' }, 2)[0].Trim().ToCharArray();
 
         if (permissions is not null && permissions.Contains(requestedPermission.ToString().ToLowerInvariant()[0]))
             return true;

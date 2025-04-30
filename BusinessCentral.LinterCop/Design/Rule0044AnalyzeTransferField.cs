@@ -1,9 +1,9 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+﻿using System.Collections.Immutable;
+using System.Reflection;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
-using System.Collections.Immutable;
-using System.Reflection;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -218,7 +218,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
         if (identifier is not IdentifierNameSyntax identifierNameSyntax)
             return null;
 
-        return identifierNameSyntax.Identifier.ValueText.UnquoteIdentifier();
+        return identifierNameSyntax.Identifier.ValueText?.UnquoteIdentifier();
     }
 
     private Tuple<string, string>? GetInvokingRecordNames(InvocationExpressionSyntax invocationExpression)
@@ -338,20 +338,20 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
             {
                 Assembly assembly = typeof(Microsoft.Dynamics.Nav.CodeAnalysis.Symbols.VariableKind).Assembly;
 
-                Type type = assembly.GetType(pageSymbol.GetType().ToString());
+                Type? type = assembly.GetType(pageSymbol.GetType().ToString());
 
-                MethodInfo method = type.GetMethod("GetRelatedTable", BindingFlags.NonPublic | BindingFlags.Instance);
+                MethodInfo? method = type?.GetMethod("GetRelatedTable", BindingFlags.NonPublic | BindingFlags.Instance);
 
-                object obj = method.Invoke(pageSymbol, null);
+                object? obj = method?.Invoke(pageSymbol, null);
 
                 if (obj is null)
                     return null;
 
                 type = assembly.GetType(obj.GetType().ToString());
 
-                method = type.GetMethod("get_Name", BindingFlags.Public | BindingFlags.Instance);
+                method = type?.GetMethod("get_Name", BindingFlags.Public | BindingFlags.Instance);
 
-                return (string)method.Invoke(obj, null);
+                return method?.Invoke(obj, null) as string;
             }
         }
 
@@ -382,7 +382,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
         return false;
     }
 
-    private string? GetObjectName(VariableDeclarationBaseSyntax variable)
+    private string? GetObjectName(VariableDeclarationBaseSyntax? variable)
     {
         if (variable is null || variable.Type.DataType.GetType() == typeof(SimpleNamedDataTypeSyntax))
             return null;
@@ -674,30 +674,34 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
             Assembly assembly = typeof(Microsoft.Dynamics.Nav.CodeAnalysis.Symbols.VariableKind).Assembly;
 
-            Type type = assembly.GetType(table.GetType().ToString());
+            Type? type = assembly.GetType(table.GetType().ToString());
 
-            MethodInfo method = type.GetMethod("GetFields", BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo? method = type?.GetMethod("GetFields", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            var collection = (System.Collections.IEnumerable)method.Invoke(table, null);
+            var collection = (System.Collections.IEnumerable?)method?.Invoke(table, null);
+            if (collection is null)
+                return;
 
             foreach (var field in collection)
             {
                 type = assembly.GetType(field.GetType().ToString());
 
-                PropertyInfo idprop = type.GetProperty("Id", BindingFlags.Instance | BindingFlags.Public);
-                PropertyInfo nameprop = type.GetProperty("Name", BindingFlags.Instance | BindingFlags.Public);
-                PropertyInfo typeprop = type.GetProperty("Type", BindingFlags.Instance | BindingFlags.Public);
-                PropertyInfo fieldClassProp = type.GetProperty("FieldClass", BindingFlags.Instance | BindingFlags.Public);
+                PropertyInfo? idprop = type?.GetProperty("Id", BindingFlags.Instance | BindingFlags.Public);
+                PropertyInfo? nameprop = type?.GetProperty("Name", BindingFlags.Instance | BindingFlags.Public);
+                PropertyInfo? typeprop = type?.GetProperty("Type", BindingFlags.Instance | BindingFlags.Public);
+                PropertyInfo? fieldClassProp = type?.GetProperty("FieldClass", BindingFlags.Instance | BindingFlags.Public);
 
-                int id = (int)idprop.GetValue(field);
-                string name = (string)nameprop.GetValue(field);
-                string objtype = typeprop.GetValue(field).ToString();
-                string fieldClass = fieldClassProp.GetValue(field).ToString();
+                int id = (int)(idprop?.GetValue(field) ?? -1);
+                string? name = (string?)nameprop?.GetValue(field);
+                string? objtype = typeprop?.GetValue(field)?.ToString();
+                string? fieldClass = fieldClassProp?.GetValue(field)?.ToString();
+                if (id == -1 || name is null || objtype is null || fieldClass is null)
+                    continue;
 
 #if !LessThenFall2023RV1
                 // Remove the QualifiedName from the Enum for now.
                 // In the future refactor this to support Enums with the same object name cross different namespaces
-                IEnumBaseTypeSymbol? enumBaseTypeSymbol = typeprop.GetValue(field) as IEnumBaseTypeSymbol;
+                IEnumBaseTypeSymbol? enumBaseTypeSymbol = typeprop?.GetValue(field) as IEnumBaseTypeSymbol;
                 if (enumBaseTypeSymbol is not null)
                 {
                     INamespaceSymbol? namespaceSymbol = enumBaseTypeSymbol.ContainingSymbol as INamespaceSymbol;
@@ -716,7 +720,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
             foreach (FieldSyntax field in fieldList.Fields.Where(fld => fld.IsKind(SyntaxKind.Field)))
             {
-                if (!FieldIsObsolete(field) && !IsRuleDisabledWithPragma(field))
+                if (!FieldIsObsolete(field) && !IsRuleDisabledWithPragma(field) && field.Name.Identifier.ValueText is not null)
                     Fields.Add(new Field((int)field.No.Value, field.Name.Identifier.ValueText.UnquoteIdentifier(), field.Type.ToString(), field.GetLocation(), this, GetFieldClass(field)));
             }
         }
@@ -727,7 +731,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
             foreach (FieldSyntax field in fieldList.Fields)
             {
-                if (!FieldIsObsolete(field) && !IsRuleDisabledWithPragma(field))
+                if (!FieldIsObsolete(field) && !IsRuleDisabledWithPragma(field) && field.Name.Identifier.ValueText is not null)
                     Fields.Add(new Field((int)field.No.Value, field.Name.Identifier.ValueText.UnquoteIdentifier(), field.Type.ToString(), field.GetLocation(), this, GetFieldClass(field)));
             }
         }
@@ -771,7 +775,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
         private FieldClassKind GetFieldClass(FieldSyntax field)
         {
-            PropertySyntax fieldClassProperty = (PropertySyntax)field.PropertyList.Properties.Where(prop => !prop.IsKind(SyntaxKind.EmptyProperty))
+            PropertySyntax? fieldClassProperty = (PropertySyntax?)field.PropertyList.Properties.Where(prop => !prop.IsKind(SyntaxKind.EmptyProperty))
                                                                                              .Where(prop => ((PropertySyntax)prop).Name.Identifier.ToString().Equals("FieldClass"))
                                                                                              .Where(prop => ((PropertySyntax)prop).Value.GetType() == typeof(EnumPropertyValueSyntax))
                                                                                              .SingleOrDefault();
@@ -779,10 +783,10 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
                 return FieldClassKind.Normal;
 
             EnumPropertyValueSyntax fieldClassPropertyValue = (EnumPropertyValueSyntax)fieldClassProperty.Value;
-            return GetFieldClass(fieldClassPropertyValue.Value.Identifier.ValueText.UnquoteIdentifier());
+            return GetFieldClass(fieldClassPropertyValue.Value.Identifier.ValueText?.UnquoteIdentifier());
         }
 
-        private FieldClassKind GetFieldClass(string fieldClass)
+        private FieldClassKind GetFieldClass(string? fieldClass)
         {
             switch (fieldClass)
             {

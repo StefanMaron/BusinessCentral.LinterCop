@@ -1,10 +1,10 @@
 #if !LessThenFall2023RV1
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
-using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -35,12 +35,12 @@ public class Rule0035ExplicitSetAllowInCustomizations : DiagnosticAnalyzer
                                                             .Where(x => x.GetProperty(PropertyKind.ObsoleteState) is null)
                                                             .Where(x => IsSupportedType(x.OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe()))
                                                             .ToList();
-        if (!tableFields.Any())
+        if (tableFields.Count == 0)
             return;
 
         IEnumerable<IApplicationObjectTypeSymbol>? relatedPages = GetRelatedPages(ctx);
 
-        if (!relatedPages.Any())
+        if (relatedPages is null || !relatedPages.Any())
         {
             if (ctx.Symbol.GetTypeSymbol().Kind != SymbolKind.TableExtension)
                 return;

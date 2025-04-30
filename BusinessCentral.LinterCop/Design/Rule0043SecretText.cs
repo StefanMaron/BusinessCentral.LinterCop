@@ -116,7 +116,8 @@ public class Rule0043SecretText : DiagnosticAnalyzer
         switch (argument.Syntax.Kind)
         {
             case SyntaxKind.LiteralExpression:
-                return SemanticFacts.IsSameName(argument.Value.ConstantValue.Value.ToString(), authorization);
+                string? argValue = argument.Value.ConstantValue.Value.ToString();
+                return !string.IsNullOrEmpty(argValue) && SemanticFacts.IsSameName(argValue, authorization);
             case SyntaxKind.IdentifierName:
                 if (argument.Value.Kind != OperationKind.ConversionExpression) return false;
                 IOperation operand = ((IConversionExpression)argument.Value).Operand;

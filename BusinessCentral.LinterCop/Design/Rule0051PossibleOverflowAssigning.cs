@@ -1,11 +1,10 @@
 #if !LessThenFall2023RV1
+using System.Collections.Immutable;
+using System.Text.RegularExpressions;
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
-using System.Collections.Immutable;
-using System.Text.RegularExpressions;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -27,10 +26,10 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
 
     public override void Initialize(AnalysisContext context)
     {
-        context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeSetFilter), OperationKind.InvocationExpression);
-        context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeValidate), OperationKind.InvocationExpression);
+        context.RegisterOperationAction(AnalyzeSetFilter, OperationKind.InvocationExpression);
+        context.RegisterOperationAction(AnalyzeValidate, OperationKind.InvocationExpression);
 #if !LessThenSpring2024
-        context.RegisterOperationAction(new Action<OperationAnalysisContext>(this.AnalyzeGetMethod), OperationKind.InvocationExpression);
+        context.RegisterOperationAction(AnalyzeGetMethod, OperationKind.InvocationExpression);
 #endif
     }
     private void AnalyzeSetFilter(OperationAnalysisContext ctx)
@@ -195,7 +194,7 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
         {
             case OperationKind.LiteralExpression:
                 if (expression.Type.IsTextType())
-                    return expression.ConstantValue.Value.ToString().Length;
+                    return expression.ConstantValue.Value.ToString()!.Length;
                 ITypeSymbol type = expression.Type;
                 if ((type is not null ? (type.NavTypeKind == NavTypeKind.Char ? 1 : 0) : 0) != 0)
                     return 1;
@@ -286,7 +285,7 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
                     if (operation.Type.IsTextType())
                     {
                         constantValue = operation.ConstantValue;
-                        return constantValue.Value.ToString().Length;
+                        return constantValue.Value.ToString()?.Length ?? 0;
                     }
                     break;
                 }
@@ -329,7 +328,12 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
             return -1;
         }
         constantValue = operation.ConstantValue;
-        string input = constantValue.Value.ToString();
+        string? input = constantValue.Value.ToString();
+        if (input is null)
+        {
+            isError = true;
+            return -1;
+        }
         Match match = this.StrSubstNoPattern.Match(input);
         int num;
         for (num = input.Length; !isError && match.Success && num < int.MaxValue; match = match.NextMatch())

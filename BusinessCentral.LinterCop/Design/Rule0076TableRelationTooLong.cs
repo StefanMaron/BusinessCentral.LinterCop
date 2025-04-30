@@ -1,9 +1,9 @@
-﻿using BusinessCentral.LinterCop.Helpers;
+﻿using System.Collections.Immutable;
+using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
-using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design;
 [DiagnosticAnalyzer]
@@ -69,7 +69,7 @@ public class Rule0076TableRelationTooLong : DiagnosticAnalyzer
                 ResolveQualifiedField(qualifiedName, ctx.Compilation),
 
             IdentifierNameSyntax identifierName =>
-                ResolvePrimaryKeyField(identifierName.Identifier.ValueText.UnquoteIdentifier(), ctx.Compilation),
+                ResolvePrimaryKeyField(identifierName.Identifier.ValueText?.UnquoteIdentifier(), ctx.Compilation),
 
             _ => null
         };
