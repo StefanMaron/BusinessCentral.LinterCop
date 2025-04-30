@@ -1,7 +1,7 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 
 namespace BusinessCentral.LinterCop.Design;
 

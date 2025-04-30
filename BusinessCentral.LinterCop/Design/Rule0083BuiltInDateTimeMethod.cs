@@ -1,9 +1,8 @@
 #if !LessThenFall2024
+using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Utilities;
-using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design;
 

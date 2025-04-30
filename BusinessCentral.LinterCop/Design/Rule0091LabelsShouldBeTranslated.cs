@@ -10,8 +10,10 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Translation;
 
 #if !LessThenSpring2024
 using Microsoft.Dynamics.Nav.Analyzers.Common;
+
 #else
 using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
+
 #endif
 
 namespace BusinessCentral.LinterCop.Design;

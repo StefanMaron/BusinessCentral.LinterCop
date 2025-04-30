@@ -1,7 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Xml.Linq;
 using System.Xml.XPath;
-
 using Microsoft.Dynamics.Nav.Analyzers.Common;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
