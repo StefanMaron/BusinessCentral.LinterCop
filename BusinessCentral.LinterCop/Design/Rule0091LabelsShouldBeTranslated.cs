@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using System.Xml;
 using BusinessCentral.LinterCop.Helpers;
-using Microsoft.Dynamics.Nav.Analyzers.Common;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
@@ -9,9 +8,10 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Translation;
 
-#if LessThenSpring2024
+#if !LessThenSpring2024
+using Microsoft.Dynamics.Nav.Analyzers.Common;
+#else
 using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
-
 #endif
 
 namespace BusinessCentral.LinterCop.Design;
@@ -146,7 +146,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
 #if !LessThenSpring2024
         NavAppManifest? manifest = ManifestHelper.GetManifest(compilation);
 #else
-        NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(compilation);
+        NavAppManifest? manifest = AppSourceCopConfigurationProvider.GetManifest(compilation);
 #endif
 
         if (manifest == null) return xliffFileStream;
