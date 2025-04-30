@@ -9,6 +9,11 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Translation;
 
+#if LessThenSpring2024
+using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
+
+#endif
+
 namespace BusinessCentral.LinterCop.Design;
 
 [DiagnosticAnalyzer]
@@ -141,7 +146,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
 #if !LessThenSpring2024
         NavAppManifest? manifest = ManifestHelper.GetManifest(compilation);
 #else
-        NavAppManifest? manifest = AppSourceCopConfigurationProvider.GetManifest(compilation);
+        NavAppManifest manifest = AppSourceCopConfigurationProvider.GetManifest(compilation);
 #endif
 
         if (manifest == null) return xliffFileStream;
