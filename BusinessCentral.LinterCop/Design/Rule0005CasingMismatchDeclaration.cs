@@ -763,6 +763,9 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
     private static readonly Lazy<ImmutableDictionary<string, string>> _readStateKindDictionary = CreateEnumDictionary<ReadStateKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _previewModeKindDictionary = CreateEnumDictionary<PreviewModeKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _promotedCategoryKindDictionary = CreateEnumDictionary<PromotedCategoryKind>();
+#if !LessThenFall2023RV2
+    private static readonly Lazy<ImmutableDictionary<string, string>> _promptModeKindDictionary = CreateEnumDictionary<PromptModeKind>();
+#endif
     private static readonly Lazy<ImmutableDictionary<string, string>> _propertyKindDictionary = CreateEnumDictionary<PropertyKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _runPageModeKindDictionary = CreateEnumDictionary<RunPageModeKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _queryColumnMethodKindDictionary = CreateEnumDictionary<QueryColumnMethodKind>();
@@ -828,6 +831,9 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
             { "PdfFontEmbedding",       _pdfFontEmbeddingKindDictionary },
             { "PreviewMode",            _previewModeKindDictionary },
             { "PromotedCategory",       _promotedCategoryKindDictionary },
+#if !LessThenFall2023RV2
+            { "PromptMode",             _promptModeKindDictionary },
+#endif
             { "ReadState",              _readStateKindDictionary },
             { "RoleType",               _entitlementRoleTypeKindDictionary },
             { "RunPageMode",            _runPageModeKindDictionary },
