@@ -1,8 +1,8 @@
+using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
-using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -56,14 +56,13 @@ public class Rule0041EmptyCaptionLocked : DiagnosticAnalyzer
         if (ctx.Node.IsKind(SyntaxKind.EnumValue) && ctx.ContainingSymbol.Kind == SymbolKind.Enum)
             return; // Prevent double raising the rule on EnumValue in a EnumObject
 
-        if (ctx.Node?.GetProperty("Caption")?.Value is not LabelPropertyValueSyntax captionProperty)
+        if (ctx.Node.GetPropertyValue("Caption") is not LabelPropertyValueSyntax captionProperty)
             return;
 
-        if (captionProperty?.Value.LabelText.GetLiteralValue() is null ||
-            captionProperty.Value.LabelText.GetLiteralValue().ToString().Trim() != "")
+        if (!string.IsNullOrEmpty(captionProperty.Value.LabelText.GetLiteralValue().ToString()?.Trim()))
             return;
 
-        if (captionProperty.Value.Properties?.Values.Where(prop => prop.Identifier.Text.Equals("Locked", StringComparison.OrdinalIgnoreCase)).FirstOrDefault() is not null)
+        if (captionProperty.Value.Properties?.Values.Any(prop => prop.Identifier.Text.Equals("Locked", StringComparison.OrdinalIgnoreCase)) == true)
             return;
 
         ctx.ReportDiagnostic(Diagnostic.Create(

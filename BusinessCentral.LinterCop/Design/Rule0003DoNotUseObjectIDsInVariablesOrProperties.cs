@@ -1,9 +1,9 @@
-﻿#nullable disable // TODO: Enable nullable and review rule
+﻿using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
-using System.Collections.Immutable;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -70,7 +70,15 @@ public class Rule0003DoNotUseObjectIDsInVariablesOrProperties : DiagnosticAnalyz
                         while (subnodes.MoveNext())
                         {
                             if (subnodes.Current.Kind == SyntaxKind.ObjectId)
-                                ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties, nodes.Current.GetLocation(), new object[] { "", "the object name" }));
+                            {
+                                Location? location = nodes.Current.GetLocation();
+                                if (location is not null)
+                                    ctx.ReportDiagnostic(Diagnostic.Create(
+                                        DiagnosticDescriptors.Rule0003DoNotUseObjectIDsInVariablesOrProperties,
+                                        location,
+                                        new object[] { "", "the object name" }));
+
+                            }
                         }
                         ;
                     }
@@ -96,7 +104,7 @@ public class Rule0003DoNotUseObjectIDsInVariablesOrProperties : DiagnosticAnalyz
             {
                 if (parameter.ParameterType.GetNavTypeKindSafe() == NavTypeKind.DotNet) continue;
 
-                if (ctx.Node.GetLocation().SourceSpan.End == parameter.DeclaringSyntaxReference.GetSyntax(ctx.CancellationToken).Span.End)
+                if (ctx.Node.GetLocation().SourceSpan.End == parameter.DeclaringSyntaxReference?.GetSyntax(ctx.CancellationToken).Span.End)
                 {
                     if (parameter.ParameterType.GetNavTypeKindSafe() == NavTypeKind.Array)
                         correctName = ((IArrayTypeSymbol)parameter.ParameterType).ElementType.Name.ToString();

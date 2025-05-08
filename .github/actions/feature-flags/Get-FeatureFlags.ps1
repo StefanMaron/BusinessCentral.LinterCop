@@ -47,9 +47,16 @@ function Get-FeatureFlags {
         'LessThenFall2023RV2'   = '12.2'
         'LessThenFall2023RV3'   = '12.3'
         'LessThenSpring2024'    = '13.0'
+        'LessThenSpring2024RV1' = '13.1'
         'LessThenFall2024'      = '14.0'
+        'LessThenFall2024RV1'   = '14.1'
+        'LessThenFall2024RV2'   = '14.2'
+        'LessThenFall2024RV3'   = '14.3'
         'LessThenSpring2025'    = '15.0'
+        'LessThenSpring2025RV1' = '15.1'
         'LessThenFall2025'      = '16.0'
+        'LessThenSpring2026'    = '17.0'
+        'LessThenFall2026'      = '18.0'
     }
 
     $supportedRuntimeVersions = $RuntimeVersion.GetEnumerator() | Where-Object { $(ConvertTo-Version($_.Value)) -gt $(ConvertTo-Version($version)) } | Foreach-Object { $_.Key } | ForEach-Object { "#$_" }

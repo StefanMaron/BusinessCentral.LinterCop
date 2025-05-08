@@ -1,9 +1,8 @@
-﻿#nullable disable // TODO: Enable nullable and review rule
+﻿using System.Collections.Immutable;
+using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
-using System.Collections.Immutable;
-using BusinessCentral.LinterCop.Helpers;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -52,14 +51,15 @@ public class Rule0009CodeMetrics : DiagnosticAnalyzer
         double HalsteadVolume = GetHalsteadVolume(context, methodOrTrigger.Body, descendants, cyclomaticComplexity);
 
         if (LinterSettings.instance is null)
-            LinterSettings.Create(context.SemanticModel.Compilation.FileSystem.GetDirectoryPath());
+            LinterSettings.Create(context.SemanticModel.Compilation.FileSystem?.GetDirectoryPath());
+        LinterSettings settings = LinterSettings.instance!;
 
-        if (cyclomaticComplexity >= LinterSettings.instance.cyclomaticComplexityThreshold || Math.Round(HalsteadVolume) <= LinterSettings.instance.maintainabilityIndexThreshold)
+        if (cyclomaticComplexity >= settings.cyclomaticComplexityThreshold || Math.Round(HalsteadVolume) <= settings.maintainabilityIndexThreshold)
         {
-            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0010CodeMetricsWarning, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexity, LinterSettings.instance.cyclomaticComplexityThreshold, Math.Round(HalsteadVolume), LinterSettings.instance.maintainabilityIndexThreshold }));
+            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0010CodeMetricsWarning, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexity, settings.cyclomaticComplexityThreshold, Math.Round(HalsteadVolume), settings.maintainabilityIndexThreshold }));
             return;
         }
-        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0009CodeMetricsInfo, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexity, LinterSettings.instance.cyclomaticComplexityThreshold, Math.Round(HalsteadVolume), LinterSettings.instance.maintainabilityIndexThreshold }));
+        context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0009CodeMetricsInfo, context.OwningSymbol.GetLocation(), new object[] { cyclomaticComplexity, settings.cyclomaticComplexityThreshold, Math.Round(HalsteadVolume), settings.maintainabilityIndexThreshold }));
     }
 
     private static double GetHalsteadVolume(CodeBlockAnalysisContext context, SyntaxNode methodBodyNode,

@@ -1,8 +1,7 @@
-﻿#nullable disable // TODO: Enable nullable and review rule
+﻿using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design
 {
@@ -24,7 +23,7 @@ namespace BusinessCentral.LinterCop.Design
             if (method.Attributes.Length == 0)
                 return;
 
-            var ObjectAccessToUse = method.Attributes[0].DeclaringSyntaxReference.GetSyntax().DescendantNodes(o => true).FirstOrDefault(n => n.IsKind(SyntaxKind.OptionAccessExpression));
+            var ObjectAccessToUse = method.Attributes[0].DeclaringSyntaxReference?.GetSyntax().DescendantNodes(o => true).FirstOrDefault(n => n.IsKind(SyntaxKind.OptionAccessExpression));
             if (ObjectAccessToUse is null)
                 return;
 
@@ -32,7 +31,7 @@ namespace BusinessCentral.LinterCop.Design
             if (ObjectAccessToUseText == "Table")
                 ObjectAccessToUseText = "Database";
 
-            var wrongSyntaxLiteral = method.Attributes[0].DeclaringSyntaxReference.GetSyntax().DescendantNodes(o => true).FirstOrDefault(n => n.IsKind(SyntaxKind.Int32SignedLiteralValue));
+            var wrongSyntaxLiteral = method.Attributes[0].DeclaringSyntaxReference?.GetSyntax().DescendantNodes(o => true).FirstOrDefault(n => n.IsKind(SyntaxKind.Int32SignedLiteralValue));
 
             if (wrongSyntaxLiteral is not null)
                 context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0012DoNotUseObjectIdInSystemFunctions, wrongSyntaxLiteral.GetLocation(), new object[] { ObjectAccessToUseText, "" }));
@@ -47,7 +46,7 @@ namespace BusinessCentral.LinterCop.Design
                 operation.Arguments.Length == 0)
                 return;
 
-            RelevantFuntion CurrentFunction = FunctionCallsWithIDParamaters.RelevantFunctions.FirstOrDefault(o => (o.ObjectType.ToString().ToUpper() == operation.TargetMethod.ContainingSymbol.Name.ToUpper() && o.FunctionName == operation.TargetMethod.Name));
+            RelevantFuntion? CurrentFunction = FunctionCallsWithIDParamaters.RelevantFunctions.FirstOrDefault(o => o.ObjectType.ToString().ToUpper() == operation.TargetMethod.ContainingSymbol?.Name.ToUpper() && o.FunctionName == operation.TargetMethod.Name);
             if (CurrentFunction is null) return;
 
             SyntaxKind[] AllowedParameterKinds = { SyntaxKind.MemberAccessExpression, SyntaxKind.IdentifierName, SyntaxKind.InvocationExpression, SyntaxKind.QualifiedName };

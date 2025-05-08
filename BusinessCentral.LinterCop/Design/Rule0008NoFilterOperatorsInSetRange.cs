@@ -1,10 +1,9 @@
-﻿using BusinessCentral.LinterCop.Helpers;
+﻿using System.Collections.Immutable;
+using System.Text.RegularExpressions;
+using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
-using System.Collections.Immutable;
-using System.Text.RegularExpressions;
 
 namespace BusinessCentral.LinterCop.Design;
 

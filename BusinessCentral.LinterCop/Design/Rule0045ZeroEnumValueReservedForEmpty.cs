@@ -1,8 +1,8 @@
+using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
-using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -33,10 +33,10 @@ public class Rule0045ZeroEnumValueReservedForEmpty : DiagnosticAnalyzer
                 DiagnosticDescriptors.Rule0045ZeroEnumValueReservedForEmpty,
                 enumValue.Name.GetLocation()));
 
-        if (ctx.Node?.GetProperty("Caption")?.Value is not LabelPropertyValueSyntax captionProperty)
+        if (ctx.Node.GetPropertyValue("Caption") is not LabelPropertyValueSyntax captionProperty)
             return;
 
-        if (captionProperty.Value.LabelText.Value.Value.ToString().Trim() != "")
+        if (captionProperty.Value.LabelText.Value.Value.ToString()?.Trim() != "")
             ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0045ZeroEnumValueReservedForEmpty,
                 captionProperty.GetLocation()));

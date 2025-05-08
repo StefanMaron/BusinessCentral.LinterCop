@@ -1,9 +1,9 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
-using System.Collections.Immutable;
-using Microsoft.Dynamics.Nav.Analyzers.Common;
+﻿using System.Collections.Immutable;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Microsoft.Dynamics.Nav.Analyzers.Common;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -119,13 +119,13 @@ public class Rule0015PermissionSetCoverage : DiagnosticAnalyzer
         {
             while (permSetEnumerator.MoveNext())
             {
-                using (IEnumerator<XElement> permissionEnumerator = permSetEnumerator.Current.Root.XPathSelectElements(Constants.PermissionNodeXPath).GetEnumerator())
+                using (IEnumerator<XElement>? permissionEnumerator = permSetEnumerator.Current.Root?.XPathSelectElements(Constants.PermissionNodeXPath).GetEnumerator())
                 {
-                    while (permissionEnumerator.MoveNext())
+                    while (permissionEnumerator is not null && permissionEnumerator.MoveNext())
                     {
                         XElement current = permissionEnumerator.Current;
 
-                        string xmlObjectType = current.Element("ObjectType").Value;
+                        string? xmlObjectType = current.Element("ObjectType")?.Value;
 
                         if (xmlObjectType != objectType.ToString())
                         {
@@ -141,7 +141,7 @@ public class Rule0015PermissionSetCoverage : DiagnosticAnalyzer
                         }
 
                         int xmlObjectId = -1;
-                        if (!Int32.TryParse(current.Element("ObjectID").Value, out xmlObjectId))
+                        if (!Int32.TryParse(current.Element("ObjectID")?.Value, out xmlObjectId))
                         {
                             continue;
                         }

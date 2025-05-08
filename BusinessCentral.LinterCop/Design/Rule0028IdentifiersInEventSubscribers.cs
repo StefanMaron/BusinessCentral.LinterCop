@@ -1,9 +1,8 @@
-#nullable disable // TODO: Enable nullable and review rule
+using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
-using System.Collections.Immutable;
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -27,7 +26,8 @@ public class Rule0028CodeNavigabilityOnEventSubscribers : DiagnosticAnalyzer
         if (ctx.CodeBlock is not MethodDeclarationSyntax syntax)
             return;
 
-        var syntaxList = syntax.Attributes.Where(value => SemanticFacts.IsSameName(value.GetIdentifierOrLiteralValue(), "EventSubscriber"));
+
+        var syntaxList = syntax.Attributes.Where(value => SemanticFacts.IsSameName(value.GetIdentifierOrLiteralValue() ?? string.Empty, "EventSubscriber"));
 
         var eventName = syntaxList.Where(value => value.ArgumentList.Arguments[2].IsKind(SyntaxKind.LiteralAttributeArgument)).FirstOrDefault();
         if (eventName is not null)

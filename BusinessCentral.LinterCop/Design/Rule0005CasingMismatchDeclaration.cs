@@ -469,7 +469,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
         }
     }
 
-    private void AnalyzeIdentifierEqualsLiteraly(SymbolAnalysisContext ctx, List<SyntaxNode> nodes, Lazy<ImmutableDictionary<string, string>> lookupDictionary)
+    private void AnalyzeIdentifierEqualsLiteraly(SymbolAnalysisContext ctx, List<SyntaxNode> nodes, Lazy<ImmutableDictionary<string, string>>? lookupDictionary)
     {
         // The SyntaxKind.IdentifierEqualsLiteral currently are properties from a Caption
         // a Caption property (again currently) shares the same properties like Comment, Locked and/or MaxLength as a Label variable
@@ -512,13 +512,13 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
         }
     }
 
-    private void AnalyzeChildNodeIdentifiers(SymbolAnalysisContext ctx, IEnumerable<SyntaxNode> nodes, Lazy<ImmutableDictionary<string, string>> lookupDictionary)
+    private void AnalyzeChildNodeIdentifiers(SymbolAnalysisContext ctx, IEnumerable<SyntaxNode> nodes, Lazy<ImmutableDictionary<string, string>>? lookupDictionary)
     {
         foreach (var syntaxNode in nodes)
             AnalyzeIdentifier(ctx, syntaxNode.ChildNodes(), lookupDictionary);
     }
 
-    private void AnalyzeIdentifier(SymbolAnalysisContext ctx, IEnumerable<SyntaxNode> nodes, Lazy<ImmutableDictionary<string, string>> lookupDictionary)
+    private void AnalyzeIdentifier(SymbolAnalysisContext ctx, IEnumerable<SyntaxNode> nodes, Lazy<ImmutableDictionary<string, string>>? lookupDictionary)
     {
         foreach (var syntaxNode in nodes)
         {
@@ -587,7 +587,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
         }
     }
 
-    private void AnalyzeProperty(SymbolAnalysisContext ctx, List<SyntaxNode> nodes, Lazy<ImmutableDictionary<string, string>> lookupDictionary)
+    private void AnalyzeProperty(SymbolAnalysisContext ctx, List<SyntaxNode> nodes, Lazy<ImmutableDictionary<string, string>>? lookupDictionary)
     {
         var propertyNames = nodes.OfType<PropertySyntax>()
                                  .Select(n => n.Name)
@@ -623,7 +623,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
         }
     }
 
-    private void AnalyzePropertyName(SymbolAnalysisContext ctx, IEnumerable<SyntaxNode> nodes, Lazy<ImmutableDictionary<string, string>> lookupDictionary)
+    private void AnalyzePropertyName(SymbolAnalysisContext ctx, IEnumerable<SyntaxNode> nodes, Lazy<ImmutableDictionary<string, string>>? lookupDictionary)
     {
         var syntaxNodes = nodes.OfType<PropertyNameSyntax>();
         foreach (var node in syntaxNodes)
@@ -709,13 +709,13 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
 
     #region Comparators
 
-    private Lazy<ImmutableDictionary<string, string>> GetOrdinalDictionary(string identifier)
+    private Lazy<ImmutableDictionary<string, string>>? GetOrdinalDictionary(string identifier)
     {
         propertyOrdinalDictionary.Value.TryGetValue(identifier, out var dictionary);
         return dictionary;
     }
 
-    private Lazy<ImmutableDictionary<string, string>> GetOrdinalDictionary(AnalyzeKind identifier)
+    private Lazy<ImmutableDictionary<string, string>>? GetOrdinalDictionary(AnalyzeKind identifier)
     {
         analyzeKindOrdinalDictionary.Value.TryGetValue(identifier, out var dictionary);
         return dictionary;
@@ -763,6 +763,9 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
     private static readonly Lazy<ImmutableDictionary<string, string>> _readStateKindDictionary = CreateEnumDictionary<ReadStateKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _previewModeKindDictionary = CreateEnumDictionary<PreviewModeKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _promotedCategoryKindDictionary = CreateEnumDictionary<PromotedCategoryKind>();
+#if !LessThenFall2023RV2
+    private static readonly Lazy<ImmutableDictionary<string, string>> _promptModeKindDictionary = CreateEnumDictionary<PromptModeKind>();
+#endif
     private static readonly Lazy<ImmutableDictionary<string, string>> _propertyKindDictionary = CreateEnumDictionary<PropertyKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _runPageModeKindDictionary = CreateEnumDictionary<RunPageModeKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _queryColumnMethodKindDictionary = CreateEnumDictionary<QueryColumnMethodKind>();
@@ -828,6 +831,9 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
             { "PdfFontEmbedding",       _pdfFontEmbeddingKindDictionary },
             { "PreviewMode",            _previewModeKindDictionary },
             { "PromotedCategory",       _promotedCategoryKindDictionary },
+#if !LessThenFall2023RV2
+            { "PromptMode",             _promptModeKindDictionary },
+#endif
             { "ReadState",              _readStateKindDictionary },
             { "RoleType",               _entitlementRoleTypeKindDictionary },
             { "RunPageMode",            _runPageModeKindDictionary },
@@ -899,13 +905,13 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
     private void CompareAgainstDictionary(
         SymbolAnalysisContext ctx,
         SyntaxToken identifier,
-        Lazy<ImmutableDictionary<string, string>> lookupDictionary)
+        Lazy<ImmutableDictionary<string, string>>? lookupDictionary)
     {
         string? tokenText = identifier.ValueText?.UnquoteIdentifier();
         if (string.IsNullOrEmpty(tokenText))
             return;
 
-        var lookupDict = lookupDictionary.Value;
+        var lookupDict = lookupDictionary?.Value;
 
         if (lookupDict is null)
         {
