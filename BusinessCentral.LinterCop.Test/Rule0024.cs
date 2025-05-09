@@ -12,7 +12,7 @@ public class Rule0024
     }
 
     [Test]
-    [TestCase("1")]
+    [TestCase("ProcedureWithSemicolonAfterDeclaration")]
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
@@ -23,7 +23,8 @@ public class Rule0024
     }
 
     [Test]
-    [TestCase("1")]
+    [TestCase("ObsoleteStatePending")]
+    [TestCase("ProcedureWithoutBody")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))

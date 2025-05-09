@@ -22,6 +22,9 @@ public class Rule0024SemicolonAfterMethodOrTriggerDeclaration : DiagnosticAnalyz
         if (ctx.IsObsoletePendingOrRemoved() || ctx.Node is not MethodOrTriggerDeclarationSyntax syntax)
             return;
 
+        if (syntax.Body is null)
+            return;
+
         if (syntax.SemicolonToken.Kind != SyntaxKind.None)
         {
             ctx.ReportDiagnostic(Diagnostic.Create(
