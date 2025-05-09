@@ -190,14 +190,18 @@ public class Rule0089CognitiveComplexity : DiagnosticAnalyzer
         // Handle 'else' statement logic from 'if' statement
         if (ifStatement.ElseStatement is not null)
         {
+            // 'else' not followed by 'if'
             if (ifStatement.ElseStatement is not IfStatementSyntax)
             {
-                // 'else' not followed by 'if': Increment +1 (no nesting penalty)
-                complexity += 1;
+                // Increment for the 'else' statement
+                complexity += 1 + nestingLevel;
                 RaiseIncrementDiagnostic(context, ifStatement.ElseKeywordToken.GetLocation(), "ElseStatement", nestingLevel);
+
+                // increment nesting for subsequent statements
+                nestingLevel += 1;
             }
 
-            // 'else if': Do not increment and no nesting penalty (rely on the 'if' statement to handle increment)
+            // Push the 'else' block back to the stack
             stack.Push((ifStatement.ElseStatement, nestingLevel));
         }
     }
