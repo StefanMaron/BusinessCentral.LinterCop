@@ -314,22 +314,22 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
         }
 
         if (symbol is ITableExtensionTypeSymbol tableExtension &&
-            tableExtension.Target?.ContainingNamespace != null &&
-            labelSymbol.ContainingNamespace != null &&
-            tableExtension.Target.ContainingNamespace.Equals(labelSymbol.ContainingNamespace))
+            tableExtension.Target?.ContainingModule != null &&
+            labelSymbol.ContainingModule != null &&
+            tableExtension.Target.ContainingModule.AppId.Equals(labelSymbol.ContainingModule.AppId))
             return (IRootTypeSymbol)tableExtension.Target;
 
         if (symbol is IPageExtensionTypeSymbol pageExtension &&
-            pageExtension.Target?.ContainingNamespace != null &&
-            labelSymbol.ContainingNamespace != null &&
-            pageExtension.Target.ContainingNamespace.Equals(labelSymbol.ContainingNamespace))
+            pageExtension.Target?.ContainingModule != null &&
+            labelSymbol.ContainingModule != null &&
+            pageExtension.Target.ContainingModule.AppId.Equals(labelSymbol.ContainingModule.AppId))
             return (IRootTypeSymbol)pageExtension.Target;
 
 #if !LessThenFall2024
         if (symbol is IReportExtensionTypeSymbol reportExtension &&
-            reportExtension.Target?.ContainingNamespace != null &&
-            labelSymbol.ContainingNamespace != null &&
-            reportExtension.Target.ContainingNamespace.Equals(labelSymbol.ContainingNamespace))
+            reportExtension.Target?.ContainingModule != null &&
+            labelSymbol.ContainingModule != null &&
+            reportExtension.Target.ContainingModule.AppId.Equals(labelSymbol.ContainingModule.AppId))
             return (IRootTypeSymbol)reportExtension.Target;
 #endif
 
