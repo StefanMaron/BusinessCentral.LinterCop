@@ -5,6 +5,6 @@ codeunit 50100 MyCodeunit
         Customer: Record Customer;
         myText: Text;
     begin
-        myText := [|Customer.TableCaption()|];
+        myText := Customer.TableCaption();
     end;
 }
