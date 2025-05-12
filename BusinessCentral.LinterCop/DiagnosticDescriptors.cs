@@ -940,7 +940,7 @@ public static class DiagnosticDescriptors
         messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedFormat"),
         category: "Design",
         defaultSeverity: DiagnosticSeverity.Info,
-        isEnabledByDefault: false,
+        isEnabledByDefault: true,
         description: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091");
 }
