@@ -56,9 +56,6 @@ public sealed class Fix0077UseParenthesisForFunctionCallCodeFixProvider : CodeFi
         SyntaxNode newNode;
         switch (oldNode.Kind)
         {
-            case SyntaxKind.MemberAccessExpression:
-                newNode = SyntaxFactory.InvocationExpression((MemberAccessExpressionSyntax)oldNode);
-                break;
             case SyntaxKind.IdentifierName:
                 var identifierValue = oldNode.GetIdentifierOrLiteralValue() ?? string.Empty;
                 if (string.IsNullOrEmpty(identifierValue))
@@ -66,6 +63,11 @@ public sealed class Fix0077UseParenthesisForFunctionCallCodeFixProvider : CodeFi
 
                 newNode = SyntaxFactory.InvocationExpression(SyntaxFactory.IdentifierName(identifierValue)).WithTriviaFrom(oldNode);
                 break;
+
+            case SyntaxKind.MemberAccessExpression:
+                newNode = SyntaxFactory.InvocationExpression((MemberAccessExpressionSyntax)oldNode);
+                break;
+
             default:
                 return document;
         }

@@ -8,6 +8,7 @@ internal class Fix0077
     [Test]
     [TestCase("CurrentDateTime")]
     [TestCase("CompanyName")]
+    [TestCase("TableCaption")]
     public async Task HasFix(string testCase)
     {
         var currentCode = await CodeFixerTestHelpers.GetCodeFixerTestCode(nameof(Fix0077), nameof(HasFix), testCase, "current.al");
