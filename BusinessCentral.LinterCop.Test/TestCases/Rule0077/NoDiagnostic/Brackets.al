@@ -12,8 +12,10 @@ codeunit 50100 MyCodeunit
         d := [|WorkDate()|];
         b := [|GuiAllowed()|];
         t := [|Time()|];
-        i := MyTable.[|Count()|];
-        b := MyTable.[|IsEmpty()|];
+        i := [|MyTable.Count()|];
+        b := [|MyTable.IsEmpty()|];
+
+        MyTable.ReadIsolation([|IsolationLevel|]::UpdLock);
     end;
 }
 
@@ -23,4 +25,12 @@ table 50100 MyTable
     {
         field(1; MyField; Integer) { }
     }
+}
+
+xmlport 50100 MyXmlport
+{
+    trigger OnInitXmlPort()
+    begin
+        currXMLport.TextEncoding := [|TextEncoding|]::Windows;
+    end;
 }
