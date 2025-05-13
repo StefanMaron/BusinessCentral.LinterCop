@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 
 namespace BusinessCentral.LinterCop.Design;
@@ -43,6 +44,9 @@ public class Rule0086PageStyleDataType : DiagnosticAnalyzer
         if (string.IsNullOrEmpty(stringLiteralValue))
             return;
 
+        if (IsWritingToTableField(ctx))
+            return;
+
         if (StyleKindDictionary.TryGetValue(stringLiteralValue, out string? styleKind))
         {
             ctx.ReportDiagnostic(Diagnostic.Create(
@@ -69,6 +73,19 @@ public class Rule0086PageStyleDataType : DiagnosticAnalyzer
 
         // If it's locked, return false (i.e., not unlocked), otherwise true
         return !isLocked;
+    }
+
+    private static bool IsWritingToTableField(SyntaxNodeAnalysisContext ctx)
+    {
+        var assignmentNode = ctx.Node.GetFirstParent(SyntaxKind.AssignmentStatement) as AssignmentStatementSyntax;
+        if (assignmentNode?.Target is MemberAccessExpressionSyntax memberAccess &&
+            memberAccess.Expression.IsKind(SyntaxKind.IdentifierName))
+        {
+            var fieldSymbol = ctx.SemanticModel.GetSymbolInfo(memberAccess.Name).Symbol as IFieldSymbol;
+            if (fieldSymbol is not null && fieldSymbol.ContainingType?.GetNavTypeKindSafe() == NavTypeKind.Record)
+                return true;
+        }
+        return false;
     }
 }
 #endif
