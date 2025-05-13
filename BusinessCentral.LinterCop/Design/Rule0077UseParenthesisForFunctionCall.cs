@@ -24,6 +24,10 @@ public class Rule0077UseParenthesisForFunctionCall : DiagnosticAnalyzer
             operation.TargetMethod is not IMethodSymbol { MethodKind: MethodKind.BuiltInMethod } method)
             return;
 
+        // Exclude using methodes like IsolationLevel::UpdLock and/or TextEncoding::Windows
+        if (ctx.Operation.Syntax.Parent.IsKind(SyntaxKind.OptionAccessExpression))
+            return;
+
         if (!operation.Syntax.GetLastToken().IsKind(SyntaxKind.CloseParenToken))
         {
             ctx.ReportDiagnostic(Diagnostic.Create(

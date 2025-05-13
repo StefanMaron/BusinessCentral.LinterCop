@@ -11,9 +11,11 @@ codeunit 50100 MyCodeunit
         [|WorkDate|];
         [|GuiAllowed|];
         t := [|Time|];
-        // See remarks in the Rule0077UseParenthesisForFunctionCall.cs file.
-        // i := MyTable.Count;
-        // b := MyTable.IsEmpty;
+        i := [|MyTable.Count|];
+        b := [|MyTable.IsEmpty|];
+
+        [|GetLastErrorText|];
+        [|GetLastErrorCallStack|];
     end;
 }
 
