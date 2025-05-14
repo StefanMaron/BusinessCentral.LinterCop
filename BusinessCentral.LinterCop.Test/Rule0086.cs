@@ -25,6 +25,7 @@ public class Rule0086
     }
 
     [Test]
+    [TestCase("AssignToStyleExpr")]
     [TestCase("AssignToTableField")]
     [TestCase("Enum")]
     [TestCase("Label")]

@@ -36,25 +36,31 @@ public class Rule0086PageStyleDataType : DiagnosticAnalyzer
             ctx.ContainingSymbol is ISymbol { Kind: SymbolKind.Enum or SymbolKind.EnumValue })
             return;
 
-        var labelSyntax = GetLabelSyntax(stringLiteralNode);
-        if (labelSyntax is not null && IsUnlockedLabel(labelSyntax))
-            return;
-
         var stringLiteralValue = stringLiteralNode.Value.Value?.ToString();
         if (string.IsNullOrEmpty(stringLiteralValue))
             return;
 
+        if (!StyleKindDictionary.TryGetValue(stringLiteralValue, out string? styleKind))
+            return;
+
+        // Allow for Label which is not locked
+        var labelSyntax = GetLabelSyntax(stringLiteralNode);
+        if (labelSyntax is not null && IsUnlockedLabel(labelSyntax))
+            return;
+
+        // Suppress diagnostic on assigning StyleExpr property of a field
+        if (IsStyleExprAssignment(ctx))
+            return;
+
+        // Suppress diagnostic on assigment of field on a table
         if (IsWritingToTableField(ctx))
             return;
 
-        if (StyleKindDictionary.TryGetValue(stringLiteralValue, out string? styleKind))
-        {
-            ctx.ReportDiagnostic(Diagnostic.Create(
-                DiagnosticDescriptors.Rule0086PageStyleDataType,
-                ctx.Node.GetLocation(),
-                stringLiteralValue,
-                styleKind));
-        }
+        ctx.ReportDiagnostic(Diagnostic.Create(
+            DiagnosticDescriptors.Rule0086PageStyleDataType,
+            ctx.Node.GetLocation(),
+            stringLiteralValue,
+            styleKind));
     }
 
     private static LabelSyntax? GetLabelSyntax(StringLiteralValueSyntax stringLiteralNode)
@@ -73,6 +79,16 @@ public class Rule0086PageStyleDataType : DiagnosticAnalyzer
 
         // If it's locked, return false (i.e., not unlocked), otherwise true
         return !isLocked;
+    }
+
+    private static bool IsStyleExprAssignment(SyntaxNodeAnalysisContext ctx)
+    {
+        if (ctx.Node.GetFirstParent(SyntaxKind.Property) is PropertySyntax propertyNode &&
+            propertyNode.Value is StyleExpressionPropertyValueSyntax)
+        {
+            return true;
+        }
+        return false;
     }
 
     private static bool IsWritingToTableField(SyntaxNodeAnalysisContext ctx)
