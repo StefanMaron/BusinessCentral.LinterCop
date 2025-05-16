@@ -1,20 +1,14 @@
+#if !LessThenFall2024
 using System.Collections.Immutable;
 using System.Xml;
 using BusinessCentral.LinterCop.Helpers;
+using Microsoft.Dynamics.Nav.Analyzers.Common;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Translation;
-
-#if !LessThenSpring2024
-using Microsoft.Dynamics.Nav.Analyzers.Common;
-
-#else
-using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
-
-#endif
 
 namespace BusinessCentral.LinterCop.Design;
 
@@ -36,33 +30,30 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
 
     public override void Initialize(AnalysisContext context)
     {
-#if !LessThenFall2024
-        context.RegisterCompilationAction(new Action<CompilationAnalysisContext>(UpdateCache));
-        context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(AnalyzeLabelTranslation),
-            SymbolKind.Field,
-            SymbolKind.LocalVariable,
-            SymbolKind.GlobalVariable,
-            SymbolKind.Table,
-            SymbolKind.TableExtension,
-            SymbolKind.Page,
-            SymbolKind.PageExtension,
-            SymbolKind.Report,
-            SymbolKind.XmlPort,
-            SymbolKind.Enum,
-            SymbolKind.EnumValue,
-            SymbolKind.Query, //TODO: daitem captions
-            SymbolKind.Profile,
-            SymbolKind.PermissionSet,
-            SymbolKind.RequestPage,
-            SymbolKind.RequestPageExtension,
-            SymbolKind.ReportLabel
-        );
-#endif
-    }
+        context.RegisterCompilationStartAction(compilationStartContext =>
+        {
+            UpdateCache(compilationStartContext.Compilation);
 
-    private void UpdateCache(CompilationAnalysisContext ctx)
-    {
-        UpdateCache(ctx.Compilation);
+            compilationStartContext.RegisterSymbolAction(new Action<SymbolAnalysisContext>(AnalyzeLabelTranslation),
+                 SymbolKind.Field,
+                 SymbolKind.LocalVariable,
+                 SymbolKind.GlobalVariable,
+                 SymbolKind.Table,
+                 SymbolKind.TableExtension,
+                 SymbolKind.Page,
+                 SymbolKind.PageExtension,
+                 SymbolKind.Report,
+                 SymbolKind.XmlPort,
+                 SymbolKind.Enum,
+                 SymbolKind.EnumValue,
+                 SymbolKind.Query, //TODO: daitem captions
+                 SymbolKind.Profile,
+                 SymbolKind.PermissionSet,
+                 SymbolKind.RequestPage,
+                 SymbolKind.RequestPageExtension,
+                 SymbolKind.ReportLabel
+             );
+        });
     }
 
     private void UpdateCache(Compilation compilation)
@@ -144,12 +135,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
     {
         IEnumerable<Stream> xliffFileStream = [];
         IFileSystem fileSystem = new FileSystem();
-
-#if !LessThenSpring2024
         NavAppManifest? manifest = ManifestHelper.GetManifest(compilation);
-#else
-        NavAppManifest? manifest = AppSourceCopConfigurationProvider.GetManifest(compilation);
-#endif
 
         if (manifest == null) return xliffFileStream;
         if (!manifest.CompilerFeatures.ShouldGenerateTranslationFile()) return xliffFileStream;
@@ -265,7 +251,6 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
 
         string labelValue = "";
 
-#if !LessThenFall2024
         if (label.Kind == SymbolKind.LocalVariable || label.Kind == SymbolKind.GlobalVariable)
         {
             labelValue = LanguageFileUtilities.GetLabelTextConstLanguageSymbolId(label, GetRootSymbol(label));
@@ -274,7 +259,6 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
         {
             labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, GetRootSymbol(label));
         }
-#endif
 
         // If there are no languages available, nothing to report
         if (this.availableLanguages.Count == 0)
@@ -325,13 +309,11 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
             pageExtension.Target.ContainingModule.AppId.Equals(labelSymbol.ContainingModule.AppId))
             return (IRootTypeSymbol)pageExtension.Target;
 
-#if !LessThenFall2024
         if (symbol is IReportExtensionTypeSymbol reportExtension &&
             reportExtension.Target?.ContainingModule != null &&
             labelSymbol.ContainingModule != null &&
             reportExtension.Target.ContainingModule.AppId.Equals(labelSymbol.ContainingModule.AppId))
             return (IRootTypeSymbol)reportExtension.Target;
-#endif
 
         return null;
     }
@@ -391,3 +373,4 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
             _ => null
         };
 }
+#endif
