@@ -13,9 +13,9 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Translation;
 namespace BusinessCentral.LinterCop.Design;
 
 [DiagnosticAnalyzer]
-public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
+public class Rule0091TranslatableTextShouldBeTranslated : DiagnosticAnalyzer
 {
-    public Rule0091LabelsShouldBeTranslated()
+    public Rule0091TranslatableTextShouldBeTranslated()
     {
         this.translationIndex = new Dictionary<string, HashSet<string>>();
         this.availableLanguages = new HashSet<string>();
@@ -26,7 +26,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
 
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated);
+        ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated);
 
     public override void Initialize(AnalysisContext context)
     {
@@ -280,7 +280,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
         {
             string languages = string.Join(",", missingLanguages.OrderBy(lang => lang));
             return Diagnostic.Create(
-                DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated,
+                DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated,
                 label.GetLocation(),
                 new object[] { label.Name, languages });
         }
