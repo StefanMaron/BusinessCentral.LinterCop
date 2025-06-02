@@ -934,13 +934,13 @@ public static class DiagnosticDescriptors
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0090");
 
 
-    public static readonly DiagnosticDescriptor Rule0091LabelsShouldBeTranslated = new(
+    public static readonly DiagnosticDescriptor Rule0091TranslatableTextShouldBeTranslated = new(
         id: LinterCopAnalyzers.AnalyzerPrefix + "0091",
-        title: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedTitle"),
-        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedFormat"),
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0091TranslatableTextShouldBeTranslatedTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0091TranslatableTextShouldBeTranslatedFormat"),
         category: "Design",
         defaultSeverity: DiagnosticSeverity.Info,
-        isEnabledByDefault: false,
-        description: LinterCopAnalyzers.GetLocalizableString("Rule0091LabelsShouldBeTranslatedDescription"),
+        isEnabledByDefault: true,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0091TranslatableTextShouldBeTranslatedDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091");
 }

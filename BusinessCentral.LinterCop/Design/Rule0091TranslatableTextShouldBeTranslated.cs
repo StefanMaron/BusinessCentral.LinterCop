@@ -1,6 +1,8 @@
+#if !LessThenFall2024
 using System.Collections.Immutable;
 using System.Xml;
 using BusinessCentral.LinterCop.Helpers;
+using Microsoft.Dynamics.Nav.Analyzers.Common;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Packaging;
@@ -8,20 +10,12 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Translation;
 
-#if !LessThenSpring2024
-using Microsoft.Dynamics.Nav.Analyzers.Common;
-
-#else
-using Microsoft.Dynamics.Nav.Analyzers.Common.AppSourceCopConfiguration;
-
-#endif
-
 namespace BusinessCentral.LinterCop.Design;
 
 [DiagnosticAnalyzer]
-public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
+public class Rule0091TranslatableTextShouldBeTranslated : DiagnosticAnalyzer
 {
-    public Rule0091LabelsShouldBeTranslated()
+    public Rule0091TranslatableTextShouldBeTranslated()
     {
         this.translationIndex = new Dictionary<string, HashSet<string>>();
         this.availableLanguages = new HashSet<string>();
@@ -32,37 +26,34 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
 
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated);
+        ImmutableArray.Create<DiagnosticDescriptor>(DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated);
 
     public override void Initialize(AnalysisContext context)
     {
-#if !LessThenFall2024
-        context.RegisterCompilationAction(new Action<CompilationAnalysisContext>(UpdateCache));
-        context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(AnalyzeLabelTranslation),
-            SymbolKind.Field,
-            SymbolKind.LocalVariable,
-            SymbolKind.GlobalVariable,
-            SymbolKind.Table,
-            SymbolKind.TableExtension,
-            SymbolKind.Page,
-            SymbolKind.PageExtension,
-            SymbolKind.Report,
-            SymbolKind.XmlPort,
-            SymbolKind.Enum,
-            SymbolKind.EnumValue,
-            SymbolKind.Query, //TODO: daitem captions
-            SymbolKind.Profile,
-            SymbolKind.PermissionSet,
-            SymbolKind.RequestPage,
-            SymbolKind.RequestPageExtension,
-            SymbolKind.ReportLabel
-        );
-#endif
-    }
+        context.RegisterCompilationStartAction(compilationStartContext =>
+        {
+            UpdateCache(compilationStartContext.Compilation);
 
-    private void UpdateCache(CompilationAnalysisContext ctx)
-    {
-        UpdateCache(ctx.Compilation);
+            compilationStartContext.RegisterSymbolAction(new Action<SymbolAnalysisContext>(AnalyzeLabelTranslation),
+                 SymbolKind.Field,
+                 SymbolKind.LocalVariable,
+                 SymbolKind.GlobalVariable,
+                 SymbolKind.Table,
+                 SymbolKind.TableExtension,
+                 SymbolKind.Page,
+                 SymbolKind.PageExtension,
+                 SymbolKind.Report,
+                 SymbolKind.XmlPort,
+                 SymbolKind.Enum,
+                 SymbolKind.EnumValue,
+                 SymbolKind.Query, //TODO: daitem captions
+                 SymbolKind.Profile,
+                 SymbolKind.PermissionSet,
+                 SymbolKind.RequestPage,
+                 SymbolKind.RequestPageExtension,
+                 SymbolKind.ReportLabel
+             );
+        });
     }
 
     private void UpdateCache(Compilation compilation)
@@ -144,12 +135,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
     {
         IEnumerable<Stream> xliffFileStream = [];
         IFileSystem fileSystem = new FileSystem();
-
-#if !LessThenSpring2024
         NavAppManifest? manifest = ManifestHelper.GetManifest(compilation);
-#else
-        NavAppManifest? manifest = AppSourceCopConfigurationProvider.GetManifest(compilation);
-#endif
 
         if (manifest == null) return xliffFileStream;
         if (!manifest.CompilerFeatures.ShouldGenerateTranslationFile()) return xliffFileStream;
@@ -265,7 +251,6 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
 
         string labelValue = "";
 
-#if !LessThenFall2024
         if (label.Kind == SymbolKind.LocalVariable || label.Kind == SymbolKind.GlobalVariable)
         {
             labelValue = LanguageFileUtilities.GetLabelTextConstLanguageSymbolId(label, GetRootSymbol(label));
@@ -274,7 +259,6 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
         {
             labelValue = LanguageFileUtilities.GetLanguageSymbolId(label, GetRootSymbol(label));
         }
-#endif
 
         // If there are no languages available, nothing to report
         if (this.availableLanguages.Count == 0)
@@ -296,7 +280,7 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
         {
             string languages = string.Join(",", missingLanguages.OrderBy(lang => lang));
             return Diagnostic.Create(
-                DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated,
+                DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated,
                 label.GetLocation(),
                 new object[] { label.Name, languages });
         }
@@ -314,24 +298,22 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
         }
 
         if (symbol is ITableExtensionTypeSymbol tableExtension &&
-            tableExtension.Target?.ContainingNamespace != null &&
-            labelSymbol.ContainingNamespace != null &&
-            tableExtension.Target.ContainingNamespace.Equals(labelSymbol.ContainingNamespace))
+            tableExtension.Target?.ContainingModule != null &&
+            labelSymbol.ContainingModule != null &&
+            tableExtension.Target.ContainingModule.AppId.Equals(labelSymbol.ContainingModule.AppId))
             return (IRootTypeSymbol)tableExtension.Target;
 
         if (symbol is IPageExtensionTypeSymbol pageExtension &&
-            pageExtension.Target?.ContainingNamespace != null &&
-            labelSymbol.ContainingNamespace != null &&
-            pageExtension.Target.ContainingNamespace.Equals(labelSymbol.ContainingNamespace))
+            pageExtension.Target?.ContainingModule != null &&
+            labelSymbol.ContainingModule != null &&
+            pageExtension.Target.ContainingModule.AppId.Equals(labelSymbol.ContainingModule.AppId))
             return (IRootTypeSymbol)pageExtension.Target;
 
-#if !LessThenFall2024
         if (symbol is IReportExtensionTypeSymbol reportExtension &&
-            reportExtension.Target?.ContainingNamespace != null &&
-            labelSymbol.ContainingNamespace != null &&
-            reportExtension.Target.ContainingNamespace.Equals(labelSymbol.ContainingNamespace))
+            reportExtension.Target?.ContainingModule != null &&
+            labelSymbol.ContainingModule != null &&
+            reportExtension.Target.ContainingModule.AppId.Equals(labelSymbol.ContainingModule.AppId))
             return (IRootTypeSymbol)reportExtension.Target;
-#endif
 
         return null;
     }
@@ -391,3 +373,4 @@ public class Rule0091LabelsShouldBeTranslated : DiagnosticAnalyzer
             _ => null
         };
 }
+#endif

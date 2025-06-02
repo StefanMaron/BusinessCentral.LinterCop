@@ -24,17 +24,15 @@ public class Rule0077UseParenthesisForFunctionCall : DiagnosticAnalyzer
             operation.TargetMethod is not IMethodSymbol { MethodKind: MethodKind.BuiltInMethod } method)
             return;
 
-        // The CodeFixProvider for this rule only support "CurrentDateTime();" and not "System.CurrentDateTime();"
-        // So for now, only raise a diagnostic where we also can provide a code fix.
-        if (ctx.Operation.Syntax is MemberAccessExpressionSyntax)
+        // Exclude using methodes like IsolationLevel::UpdLock and/or TextEncoding::Windows
+        if (ctx.Operation.Syntax.Parent.IsKind(SyntaxKind.OptionAccessExpression))
             return;
 
         if (!operation.Syntax.GetLastToken().IsKind(SyntaxKind.CloseParenToken))
         {
-            var location = operation.Syntax.GetIdentifierNameSyntax()?.GetLocation() ?? operation.Syntax.GetLocation();
             ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0077UseParenthesisForFunctionCall,
-                location,
+                operation.Syntax.GetLocation(),
                 method.Name));
         }
     }
