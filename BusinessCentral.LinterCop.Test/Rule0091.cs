@@ -41,12 +41,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
 
@@ -76,12 +76,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
     [Test]
@@ -124,12 +124,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
 
@@ -191,12 +191,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
 
@@ -234,12 +234,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
     [Test]
@@ -270,12 +270,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
     [Test]
@@ -306,12 +306,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
     [Test]
@@ -354,12 +354,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
 
@@ -421,12 +421,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
 
@@ -494,12 +494,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
     [Test]
@@ -544,12 +544,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
 
@@ -587,12 +587,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
     #endregion
 
@@ -624,12 +624,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
 
@@ -659,12 +659,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
     [Test]
@@ -708,12 +708,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
 
@@ -775,12 +775,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
 
@@ -818,12 +818,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
     [Test]
@@ -854,12 +854,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
     [Test]
@@ -890,12 +890,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
     [Test]
@@ -938,12 +938,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
 
@@ -1005,12 +1005,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
 
@@ -1078,12 +1078,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
     [Test]
@@ -1128,12 +1128,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
 
@@ -1171,12 +1171,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(xliffContent)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
     #endregion
 
@@ -1211,12 +1211,12 @@ public class Rule0091
 
         IEnumerable<Stream>? xliffFileStream = new List<Stream> { new MemoryStream(System.Text.Encoding.UTF8.GetBytes(emptyXliff)) };
 
-        Rule0091LabelsShouldBeTranslated rule = new Rule0091LabelsShouldBeTranslated();
+        Rule0091TranslatableTextShouldBeTranslated rule = new Rule0091TranslatableTextShouldBeTranslated();
         rule.UpdateCache(xliffFileStream);
         rule.DoNotUpdateCache = true;
 
         var fixture = RoslynFixtureFactory.Create(rule);
-        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091LabelsShouldBeTranslated.Id);
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0091TranslatableTextShouldBeTranslated.Id);
     }
 
     #endregion
