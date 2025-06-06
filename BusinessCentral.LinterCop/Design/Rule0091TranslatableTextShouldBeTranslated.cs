@@ -20,6 +20,7 @@ public class Rule0091TranslatableTextShouldBeTranslated : DiagnosticAnalyzer
         this.translationIndex = new Dictionary<string, HashSet<string>>();
         this.availableLanguages = new HashSet<string>();
     }
+    private String[] languagesToTranslate;
     private Dictionary<string, HashSet<string>> translationIndex = new Dictionary<string, HashSet<string>>();
     private HashSet<string> availableLanguages = new HashSet<string>();
     public bool DoNotUpdateCache { get; set; } = false;
@@ -32,6 +33,7 @@ public class Rule0091TranslatableTextShouldBeTranslated : DiagnosticAnalyzer
     {
         context.RegisterCompilationStartAction(compilationStartContext =>
         {
+            LoadlanguagesToTranslate(compilationStartContext.Compilation);
             UpdateCache(compilationStartContext.Compilation);
 
             compilationStartContext.RegisterSymbolAction(new Action<SymbolAnalysisContext>(AnalyzeLabelTranslation),
@@ -54,6 +56,12 @@ public class Rule0091TranslatableTextShouldBeTranslated : DiagnosticAnalyzer
                  SymbolKind.ReportLabel
              );
         });
+    }
+    private void LoadlanguagesToTranslate(Compilation compilation)
+    {
+        string? directoryPath = compilation.FileSystem?.GetDirectoryPath();
+        LinterSettings.Create(directoryPath);
+        this.languagesToTranslate = LinterSettings.instance?.languagesToTranslate ?? null;
     }
 
     private void UpdateCache(Compilation compilation)
@@ -88,6 +96,11 @@ public class Rule0091TranslatableTextShouldBeTranslated : DiagnosticAnalyzer
                 if (string.IsNullOrEmpty(language))
                     continue;
 
+                if (!(languagesToTranslate == null || languagesToTranslate.Length == 0))
+                {
+                    if (!languagesToTranslate.Contains(language))
+                        continue;
+                }
                 this.availableLanguages.Add(language);
             }
         }

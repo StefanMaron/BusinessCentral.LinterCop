@@ -8,6 +8,7 @@ namespace BusinessCentral.LinterCop.Helpers
         public int cyclomaticComplexityThreshold = 8;
         public int maintainabilityIndexThreshold = 20;
         public int cognitiveComplexityThreshold = 15;
+        public String[] languagesToTranslate = null;
         public bool enableRule0011ForTableFields = false;
         public bool enableRule0016ForApiObjects = false;
         public string WorkingDir = "";
@@ -28,6 +29,7 @@ namespace BusinessCentral.LinterCop.Helpers
                     instance.cyclomaticComplexityThreshold = internalInstance.cyclomaticComplexityThreshold ?? instance.cyclomaticComplexityThreshold;
                     instance.maintainabilityIndexThreshold = internalInstance.maintainabilityIndexThreshold ?? instance.maintainabilityIndexThreshold;
                     instance.cognitiveComplexityThreshold = internalInstance.cognitiveComplexityThreshold ?? instance.cognitiveComplexityThreshold;
+                    instance.languagesToTranslate = internalInstance.languagesToTranslate ?? instance.languagesToTranslate;
                     instance.enableRule0011ForTableFields = internalInstance.enableRule0011ForTableFields;
                     instance.enableRule0016ForApiObjects = internalInstance.enableRule0016ForApiObjects;
                     instance.WorkingDir = WorkingDir;
@@ -45,6 +47,7 @@ namespace BusinessCentral.LinterCop.Helpers
         public int? cyclomaticComplexityThreshold;
         public int? maintainabilityIndexThreshold;
         public int? cognitiveComplexityThreshold;
+        public String[] languagesToTranslate;
         public bool enableRule0011ForTableFields = false;
         public bool enableRule0016ForApiObjects = false;
     }
