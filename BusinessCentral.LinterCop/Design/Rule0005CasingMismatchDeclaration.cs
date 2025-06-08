@@ -780,6 +780,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
                                                                                                                     typeof(FieldSubtypeKind));
     private static readonly Lazy<ImmutableDictionary<string, string>> _symbolKindDictionary = new(GenerateSymbolKindDictionary);
     private static readonly Lazy<ImmutableDictionary<string, string>> _tableTypeKindDictionary = CreateEnumDictionary<TableTypeKind>();
+    private static readonly Lazy<ImmutableDictionary<string, string>> _testHttpRequestPolicyKind = CreateEnumDictionary<TestHttpRequestPolicyKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _testIsolationKindDictionary = CreateEnumDictionary<TestIsolationKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _testPermissionsKindDictionary = CreateEnumDictionary<TestPermissionsKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _textEncodingKindDictionary = CreateEnumDictionary<TextEncodingKind>();
@@ -840,6 +841,7 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
             { "Style",                  _styleKindDictionary },
             { "Subtype",                _subtypeKindDictionary },
             { "TableType",              _tableTypeKindDictionary} ,
+            { "TestHttpRequestPolicy",  _testHttpRequestPolicyKind },
             { "TestIsolation",          _testIsolationKindDictionary },
             { "TestPermissions",        _testPermissionsKindDictionary },
             { "TextEncoding",           _textEncodingKindDictionary },
