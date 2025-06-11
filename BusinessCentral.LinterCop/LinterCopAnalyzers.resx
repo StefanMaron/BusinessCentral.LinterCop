@@ -819,6 +819,12 @@
   <data name="Fix0077MissingParenthesisCodeAction" xml:space="preserve">
     <value>Add parenthesis</value>
   </data>
+  <data name="Fix0019DataClassificationFieldEqualsTableCodeAction" xml:space="preserve">
+    <value>Remove DataClassification</value>
+  </data>  
+  <data name="Fix0024SemicolonAfterMethodOrTriggerDeclarationCodeAction" xml:space="preserve">
+    <value>Remove Semicolon</value>
+  </data>
   <data name="Rule0078TemporaryRecordsTitle" xml:space="preserve">
     <value>Temporary records should not trigger the table triggers.</value>
   </data>
