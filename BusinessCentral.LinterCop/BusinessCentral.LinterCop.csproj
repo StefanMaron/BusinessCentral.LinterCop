@@ -9,6 +9,7 @@
         <Nullable>enable</Nullable>
         <WarningsAsErrors>CS8600;CS8602;CS8603;CS8604;CS8605</WarningsAsErrors>
         <DefineConstants>$(DefineConstants)$(FeatureFlags.Replace("#",";"))</DefineConstants>
+        <GenerateFullPaths>true</GenerateFullPaths>
     </PropertyGroup>
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
         <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -21,7 +22,7 @@
         <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis">
             <SpecificVersion>False</SpecificVersion>
             <HintPath>../ALLanguage/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
-            <Private>False</Private>
+            <Private>False</Private>            
         </Reference>
         <Reference Include="Microsoft.Dynamics.Nav.Analyzers.Common">
             <SpecificVersion>False</SpecificVersion>

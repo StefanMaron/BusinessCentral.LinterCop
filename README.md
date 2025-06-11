@@ -46,10 +46,10 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 
 ## Rules
 
-|Id| Title|Default Severity|AL version|
-|---|---|---|---|
+|Id| Title|Default Severity|AL version|Code Fix|
+|---|---|---|---|---|
 |[LC0000](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0000)|An error occurred in a given rule. Please create an issue on GitHub|Info|
-|[LC0001](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0001)|FlowFields should not be editable.|Warning|
+|[LC0001](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0001)|FlowFields should not be editable.|Warning||✅|
 |[LC0002](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0002)|`Commit()` needs a comment to justify its existence. Either a leading or a trailing comment.|Warning|
 |[LC0003](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0003)|Do not use an Object ID for properties or variable declarations.|Warning|
 |[LC0004](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0004)|`DrillDownPageId` and `LookupPageId` must be filled in table when table is used in list page.|Warning|
@@ -67,12 +67,12 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0016](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0016)|Caption is missing. Optionally this can also be activated for fields on API objects with the setting `enableRule0016ForApiObjects`.|Warning|
 |[LC0017](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0017)|Writing to a FlowField is not common. Add a comment to explain this.|Warning|
 |[LC0018](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0018)|Events in internal codeunits are not accessible to extensions and should therefore be avoided.|Info|
-|[LC0019](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0019)|If Data Classification is set on the Table. Fields do not need the same classification.|Info|
+|[LC0019](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0019)|If Data Classification is set on the Table. Fields do not need the same classification.|Info||✅|
 |[LC0020](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0020)|If Application Area is set on the TablePage. Controls do not need the same classification.|Info|
 |[LC0021](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0021)|`Confirm()` must be implemented through the `Confirm Management` codeunit from the System Application.|Info|
 |[LC0022](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0022)|`GlobalLanguage()` must be implemented through the `Translation Helper` codeunit from the Base Application.|Info|
 |[LC0023](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0023)|Always provide fieldsgroups `DropDown` and `Brick` on tables.|Info|
-|[LC0024](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0024)|Procedure or Trigger declaration should not end with semicolon.|Info|
+|[LC0024](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0024)|Procedure or Trigger declaration should not end with semicolon.|Info||✅|
 |[LC0025](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0025)|Procedure must be either local, internal or define a documentation comment.|Info|
 |[LC0026](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0026)|ToolTip must end with a dot.|Info|
 |[LC0027](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0027)|Utilize the `Page Management` codeunit for launching page.|Info|
@@ -125,7 +125,7 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0074](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0074)|Set values for FlowFilter fields using filtering methods.|Warning|
 |[LC0075](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0075)|Incorrect number or type of arguments in `.Get()` method on Record object.|Warning|13.0
 |[LC0076](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0076)|The field with table relation should have at least the same length as the referenced field.|Warning|
-|[LC0077](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0077)|Methods  should always be called with parenthesis.|Info|
+|[LC0077](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0077)|Methods  should always be called with parenthesis.|Info||✅|
 |[LC0078](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0078)|Temporary records should not trigger table triggers.|Info|
 |[LC0079](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0079)|Event publishers should not be public.|Info|
 |[LC0080](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0080)|Replace double quotes in JPath expressions with two single quotes.|Warning|
