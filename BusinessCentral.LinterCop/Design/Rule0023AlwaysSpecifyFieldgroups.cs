@@ -3,6 +3,7 @@ using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
 
 namespace BusinessCentral.LinterCop.Design;
@@ -13,8 +14,17 @@ public class Rule0023AlwaysSpecifyFieldgroups : DiagnosticAnalyzer
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(DiagnosticDescriptors.Rule0023AlwaysSpecifyFieldgroups);
 
-    public override void Initialize(AnalysisContext context) =>
-        context.RegisterSymbolAction(new Action<SymbolAnalysisContext>(this.CheckFieldgroups), SymbolKind.Table);
+    public override void Initialize(AnalysisContext context)
+    {
+        context.RegisterCompilationStartAction(compilationContext =>
+        {
+            BuildGlobalPageTableMapping(compilationContext);
+            compilationContext.RegisterSymbolAction(symbolContext =>
+            {
+                CheckFieldgroups(symbolContext);
+            }, SymbolKind.Table);
+        });
+    }
 
     private void CheckFieldgroups(SymbolAnalysisContext ctx)
     {
@@ -24,6 +34,8 @@ public class Rule0023AlwaysSpecifyFieldgroups : DiagnosticAnalyzer
         if (IsTableOfTypeSetupTable(table))
             return;
 
+        if (IsTemporaryTable(table) && !HasRelatedPageObjects(table))
+            return;
 
         CheckFieldGroup(ctx, table, "Brick", table.GetLocation());
         CheckFieldGroup(ctx, table, "DropDown", table.GetLocation());
@@ -56,5 +68,40 @@ public class Rule0023AlwaysSpecifyFieldgroups : DiagnosticAnalyzer
             return false;
 
         return true;
+    }
+
+    private static bool IsTemporaryTable(ITableTypeSymbol table)
+        => table.TableType == TableTypeKind.Temporary;
+
+    private bool HasRelatedPageObjects(ITableTypeSymbol table)
+        => GlobalPageTableMapping.ContainsKey(table);
+
+    private Dictionary<ITableTypeSymbol, List<IPageTypeSymbol>> GlobalPageTableMapping = new();
+    private void BuildGlobalPageTableMapping(CompilationStartAnalysisContext context)
+    {
+        GlobalPageTableMapping.Clear();
+
+        foreach (var tree in context.Compilation.SyntaxTrees)
+        {
+            var root = tree.GetRoot(context.CancellationToken);
+            var semanticModel = context.Compilation.GetSemanticModel(tree);
+
+            foreach (var pageDeclaration in root.DescendantNodes().OfType<PageSyntax>())
+            {
+                var pageSymbol = semanticModel.GetDeclaredSymbol(pageDeclaration, context.CancellationToken) as IPageTypeSymbol;
+                if (pageSymbol is null || pageSymbol.RelatedTable is null)
+                    continue;
+
+                var tableSymbol = pageSymbol.RelatedTable;
+                if (!GlobalPageTableMapping.TryGetValue(tableSymbol, out var pageList))
+                {
+                    pageList = new List<IPageTypeSymbol>();
+                    GlobalPageTableMapping[tableSymbol] = pageList;
+                }
+
+                if (!pageList.Contains(pageSymbol))
+                    pageList.Add(pageSymbol);
+            }
+        }
     }
 }
