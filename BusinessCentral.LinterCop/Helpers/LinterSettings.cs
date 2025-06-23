@@ -20,7 +20,15 @@ namespace BusinessCentral.LinterCop.Helpers
             {
                 try
                 {
-                    StreamReader r = File.OpenText(Path.Combine(WorkingDir, "LinterCop.json"));
+                    StreamReader r = null;
+                    if (File.Exists(Path.Combine(WorkingDir, "LinterCop.json")))
+                    {
+                        r = File.OpenText(Path.Combine(WorkingDir, "LinterCop.json"));
+                    }
+                    else
+                    {
+                        r = File.OpenText(Path.Combine(Path.GetDirectoryName(typeof(LinterSettings).Assembly.Location)!, "LinterCop.json")); 
+                    }
                     string json = r.ReadToEnd();
                     r.Close();
                     instance = new LinterSettings();
