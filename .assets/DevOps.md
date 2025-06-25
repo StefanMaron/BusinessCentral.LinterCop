@@ -14,7 +14,7 @@ Built-in support for custom Code Cops is available out-of-the-box, allowing for 
 ![AL-Go settings](/.assets/AL-Go_settings.png)  
 https://github.com/microsoft/AL-Go/blob/main/Scenarios/settings.md#advanced-settings
 
-In the [settings.json](https://github.com/microsoft/AL-Go/blob/main/Scenarios/settings.md)  you can specify the url to dll file of the LinterCop, where you also need to enable downloading the latest VSIX.
+In the [settings.json](https://github.com/microsoft/AL-Go/blob/main/Scenarios/settings.md) you can specify the url to dll file of the LinterCop, where you also need to enable downloading the latest VSIX.
 
 ```json
 {
@@ -24,6 +24,19 @@ In the [settings.json](https://github.com/microsoft/AL-Go/blob/main/Scenarios/se
   ]
 }
 ```
+
+For upcoming versions of Business Central, such as the Next Minor or Major releases, use the `preview` version of AL Language along with the `AL-PreRelease` version of LinterCop.
+
+```json
+{
+  "vsixFile": "preview",
+  "customCodeCops": [
+    "https://github.com/StefanMaron/BusinessCentral.LinterCop/releases/latest/download/BusinessCentral.LinterCop.AL-PreRelease.dll"
+  ]
+}
+```
+
+
 
 ## BcContainerHelper
 
