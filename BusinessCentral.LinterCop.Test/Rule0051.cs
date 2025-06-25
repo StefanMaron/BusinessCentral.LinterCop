@@ -13,6 +13,7 @@ public class Rule0051
     }
 
     [Test]
+    [TestCase("ExitStatementLabel")]
 #if !LessThenSpring2024
     [TestCase("GetMethodStringLiteral")]
     [TestCase("GetMethodStrSubstNo")]
@@ -29,6 +30,8 @@ public class Rule0051
     }
 
     [Test]
+    [TestCase("ExitStatementLabelWithLocked")]
+    [TestCase("ExitStatementLabelWithMaxLength")]
 #if !LessThenSpring2024
     [TestCase("GetMethodCompanyName")]
     [TestCase("GetMethodStringLiteral")]
