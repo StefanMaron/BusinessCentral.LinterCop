@@ -582,7 +582,7 @@
   <data name="Rule0051PossibleOverflowAssigningDescription" xml:space="preserve">
     <value>Do not assign a text to a target with smaller size.</value>
   </data>
-  <data name="Fix0051PossibleOverflowAssigningCodeAction" xml:space="preserve">
+  <data name="Fix0051ApplyCopyStrCodeAction" xml:space="preserve">
     <value>Wrap with Text.CopyStr()</value>
   </data>
   <data name="Rule0052InternalProceduresNotReferencedAnalyzerDescription" xml:space="preserve">

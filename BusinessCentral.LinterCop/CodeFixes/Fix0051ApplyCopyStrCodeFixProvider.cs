@@ -11,14 +11,19 @@ namespace BusinessCentral.LinterCop.CodeFixes;
 [CodeFixProvider(nameof(Fix0051ApplyCopyStrCodeFixProvider))]
 public sealed class Fix0051ApplyCopyStrCodeFixProvider : CodeFixProvider
 {
-    private class Fix0051ApplyCopStrCodeAction : CodeAction.DocumentChangeAction
+    private const string TextClassName = "Text";
+    private const string CopyStrMethodName = "CopyStr";
+    private const string MaxStrLenMethodName = "MaxStrLen";
+    private const int StartPositionForCopyStr = 1;
+
+    private class Fix0051ApplyCopyStrCodeAction : CodeAction.DocumentChangeAction
     {
         public override CodeActionKind Kind => CodeActionKind.QuickFix;
         public override bool SupportsFixAll { get; }
         public override string? FixAllSingleInstanceTitle => string.Empty;
         public override string? FixAllTitle => Title;
 
-        public Fix0051ApplyCopStrCodeAction(string title,
+        public Fix0051ApplyCopyStrCodeAction(string title,
             Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey, bool generateFixAll)
             : base(title, createChangedDocument, equivalenceKey)
         {
@@ -48,13 +53,13 @@ public sealed class Fix0051ApplyCopyStrCodeFixProvider : CodeFixProvider
         ctx.RegisterCodeFix(CreateCodeAction(node, document, true), ctx.Diagnostics[0]);
     }
 
-    private static Fix0051ApplyCopStrCodeAction CreateCodeAction(SyntaxNode node, Document document,
+    private static Fix0051ApplyCopyStrCodeAction CreateCodeAction(SyntaxNode node, Document document,
         bool generateFixAll)
     {
-        return new Fix0051ApplyCopStrCodeAction(
+        return new Fix0051ApplyCopyStrCodeAction(
             LinterCopAnalyzers.Fix0051ApplyCopyStrCodeAction,
             ct => ApplyCopyStr(document, node, ct),
-            nameof(Fix0051ApplyCopStrCodeAction),
+            nameof(Fix0051ApplyCopyStrCodeAction),
             generateFixAll);
     }
 
@@ -79,8 +84,7 @@ public sealed class Fix0051ApplyCopyStrCodeFixProvider : CodeFixProvider
         AssignmentStatementSyntax assignmentStatement, CancellationToken cancellationToken)
     {
         // Get the target variable name (left side of assignment)
-        var targetExpression = assignmentStatement.Target;
-        if (targetExpression == null)
+        if (assignmentStatement.Target is not { } targetExpression)
             return document;
 
         // Create Text.CopyStr(source, 1, Text.MaxStrLen(target)) expression
@@ -89,22 +93,19 @@ public sealed class Fix0051ApplyCopyStrCodeFixProvider : CodeFixProvider
         // Replace the source expression with the CopyStr call in the assignment
         var newAssignmentStatement = assignmentStatement.ReplaceNode(sourceExpression, copyStrExpression);
 
-        var newRoot = (await document.GetSyntaxRootAsync(cancellationToken)).ReplaceNode(assignmentStatement, newAssignmentStatement);
-        return document.WithSyntaxRoot(newRoot);
+        return await ReplaceNodeInDocument(document, assignmentStatement, newAssignmentStatement, cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task<Document> HandleExitStatement(Document document, ExpressionSyntax sourceExpression,
         ExitStatementSyntax exitStatement, CancellationToken cancellationToken)
     {
         // Get the method declaration to extract return type length
-        var methodDeclaration = exitStatement.GetFirstParent(SyntaxKind.MethodDeclaration) as MethodDeclarationSyntax;
-        if (methodDeclaration?.ReturnValue?.DataType.DataType is not LengthDataTypeSyntax lengthDataType)
+        if (exitStatement.GetFirstParent(SyntaxKind.MethodDeclaration) is not MethodDeclarationSyntax methodDeclaration ||
+            methodDeclaration.ReturnValue?.DataType.DataType is not LengthDataTypeSyntax lengthDataType ||
+            lengthDataType.Length.Value is not int returnTypeLength)
+        {
             return document;
-
-        // Extract the length from the return type (e.g., Text[10] -> 10)
-        int returnTypeLength = 0;
-        if (lengthDataType.Length.Value is int length)
-            returnTypeLength = length;
+        }
 
         // Create Text.CopyStr(source, 1, returnTypeLength) expression
         var copyStrExpression = CreateCopyStrExpressionWithLength(sourceExpression, returnTypeLength);
@@ -112,46 +113,19 @@ public sealed class Fix0051ApplyCopyStrCodeFixProvider : CodeFixProvider
         // Replace the source expression with the CopyStr call in the exit statement
         var newExitStatement = exitStatement.ReplaceNode(sourceExpression, copyStrExpression);
 
-        var newRoot = (await document.GetSyntaxRootAsync(cancellationToken)).ReplaceNode(exitStatement, newExitStatement);
-        return document.WithSyntaxRoot(newRoot);
+        return await ReplaceNodeInDocument(document, exitStatement, newExitStatement, cancellationToken).ConfigureAwait(false);
     }
 
     private static async Task<Document> HandleValidateInvocation(Document document, ExpressionSyntax sourceExpression,
         InvocationExpressionSyntax invocationExpression, CancellationToken cancellationToken)
     {
         // Check if this is a Validate method call with at least 2 arguments
-        if (invocationExpression.ArgumentList == null || invocationExpression.ArgumentList.Arguments.Count < 2)
+        if (invocationExpression.ArgumentList?.Arguments.Count < 2)
             return document;
 
-        // Get the table reference and field name from the invocation
-        // For MyTable.Validate(MyField, value), we need to construct MyTable.MyField for MaxStrLen
-        ExpressionSyntax targetFieldExpression;
-
-        if (invocationExpression.Expression is MemberAccessExpressionSyntax memberAccess)
-        {
-            // This is a case like MyTable.Validate(MyField, ...)
-            var tableExpression = memberAccess.Expression;
-            var firstArgument = invocationExpression.ArgumentList.Arguments[0];
-
-            if (firstArgument is CodeExpressionSyntax fieldExpression)
-            {
-                // Create MyTable.MyField expression for MaxStrLen
-                targetFieldExpression = SyntaxFactory.MemberAccessExpression(tableExpression, (IdentifierNameSyntax)fieldExpression);
-            }
-            else
-            {
-                return document;
-            }
-        }
-        else
-        {
-            // Fallback: use the first argument as is
-            var firstArgument = invocationExpression.ArgumentList.Arguments[0];
-            if (firstArgument is not CodeExpressionSyntax fieldExpression)
-                return document;
-
-            targetFieldExpression = fieldExpression;
-        }
+        var targetFieldExpression = GetTargetFieldExpression(invocationExpression);
+        if (targetFieldExpression == null)
+            return document;
 
         // Create Text.CopyStr(source, 1, Text.MaxStrLen(targetFieldExpression)) expression
         var copyStrExpression = CreateCopyStrExpressionWithMaxStrLen(sourceExpression, targetFieldExpression);
@@ -159,8 +133,25 @@ public sealed class Fix0051ApplyCopyStrCodeFixProvider : CodeFixProvider
         // Replace the source expression with the CopyStr call in the invocation
         var newInvocationExpression = invocationExpression.ReplaceNode(sourceExpression, copyStrExpression);
 
-        var newRoot = (await document.GetSyntaxRootAsync(cancellationToken)).ReplaceNode(invocationExpression, newInvocationExpression);
-        return document.WithSyntaxRoot(newRoot);
+        return await ReplaceNodeInDocument(document, invocationExpression, newInvocationExpression, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static ExpressionSyntax? GetTargetFieldExpression(InvocationExpressionSyntax invocationExpression)
+    {
+        var firstArgument = invocationExpression.ArgumentList?.Arguments[0];
+        if (firstArgument is not CodeExpressionSyntax fieldExpression)
+            return null;
+
+        // Handle MyTable.Validate(MyField, ...) case
+        if (invocationExpression.Expression is MemberAccessExpressionSyntax memberAccess)
+        {
+            var tableExpression = memberAccess.Expression;
+            // Create MyTable.MyField expression for MaxStrLen
+            return SyntaxFactory.MemberAccessExpression(tableExpression, (IdentifierNameSyntax)fieldExpression);
+        }
+
+        // Fallback: use the first argument as is
+        return fieldExpression;
     }
 
     private static ExpressionSyntax CreateCopyStrExpressionWithMaxStrLen(ExpressionSyntax sourceExpression, ExpressionSyntax targetExpression)
@@ -182,11 +173,11 @@ public sealed class Fix0051ApplyCopyStrCodeFixProvider : CodeFixProvider
         // Create: Text.CopyStr(sourceExpression, 1, lengthExpression)
         var textIdentifier = CreateTextIdentifier();
         var copyStrMemberAccess = SyntaxFactory.MemberAccessExpression(textIdentifier, CreateCopyStringIdentifier());
-        var oneLiteral = CreateIntegerLiteral(1);
+        var startPositionLiteral = CreateIntegerLiteral(StartPositionForCopyStr);
 
         var copyStrArguments = default(SeparatedSyntaxList<CodeExpressionSyntax>)
             .Add((CodeExpressionSyntax)sourceExpression)
-            .Add(oneLiteral)
+            .Add(startPositionLiteral)
             .Add((CodeExpressionSyntax)lengthExpression);
         var copyStrArgumentList = SyntaxFactory.ArgumentList(copyStrArguments);
         var copyStrInvocation = SyntaxFactory.InvocationExpression(copyStrMemberAccess, copyStrArgumentList);
@@ -206,20 +197,29 @@ public sealed class Fix0051ApplyCopyStrCodeFixProvider : CodeFixProvider
 
     private static IdentifierNameSyntax CreateCopyStringIdentifier()
     {
-        return SyntaxFactory.IdentifierName("CopyStr");
+        return SyntaxFactory.IdentifierName(CopyStrMethodName);
     }
+
     private static IdentifierNameSyntax CreateTextIdentifier()
     {
-        return SyntaxFactory.IdentifierName("Text");
+        return SyntaxFactory.IdentifierName(TextClassName);
     }
 
     private static IdentifierNameSyntax CreateMaxStringLengthIdentifier()
     {
-        return SyntaxFactory.IdentifierName("MaxStrLen");
+        return SyntaxFactory.IdentifierName(MaxStrLenMethodName);
     }
 
     private static LiteralExpressionSyntax CreateIntegerLiteral(int value)
     {
         return SyntaxFactory.LiteralExpression(SyntaxFactory.Int32SignedLiteralValue(SyntaxFactory.Literal(value)));
+    }
+
+    private static async Task<Document> ReplaceNodeInDocument<T>(Document document, T oldNode, T newNode, CancellationToken cancellationToken)
+      where T : SyntaxNode
+    {
+        var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+        var newRoot = syntaxRoot?.ReplaceNode(oldNode, newNode);
+        return newRoot != null ? document.WithSyntaxRoot(newRoot) : document;
     }
 }
