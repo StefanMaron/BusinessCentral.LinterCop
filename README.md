@@ -99,7 +99,7 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0048](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0048)|Use Error with a `ErrorInfo` or `Label` variable to improve telemetry details.|Info|
 |[LC0049](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0049)|`SourceTable` property not defined on Page.|Info|
 |[LC0050](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0050)|`SetFilter` with unsupported operator in filter expression.|Info|
-|[LC0051](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0051)|Do not assign a text to a target with smaller size.|Warning|12.1|
+|[LC0051](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0051)|Do not assign a text to a target with smaller size.|Warning|12.1|✅|
 |[LC0052](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0052)|The internal procedure is declared but never used.|Info|
 |[LC0053](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0053)|The internal procedure is only used in the object in which it is declared. Consider making the procedure local.|Info|
 |[LC0054](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0054)|Interface name must start with the capital 'I' without any spaces following it.|Info|
