@@ -4,9 +4,8 @@ using BusinessCentral.LinterCop.Test.Helpers;
 namespace BusinessCentral.LinterCop.Test.CodeFixerTests.Fix0051ApplyCopyStr;
 
 // Somehow AL version 12.0 throws an error 
-// Fix0051.cs(20,44): error CS0246: The type or namespace name 'Rule0051PossibleOverflowAssigning' could not be found (are you missing a using directive or an assembly reference?) 
-#if !LessThenFall2023
-
+// error CS0246: The type or namespace name 'Rule0051PossibleOverflowAssigning' could not be found (are you missing a using directive or an assembly reference?) 
+#if !LessThenFall2023RV1
 internal class Fix0051ApplyCopyStr
 {
     [Test]
