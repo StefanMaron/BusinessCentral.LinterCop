@@ -37,7 +37,10 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
     }
 
     #region AnalyzeTypeKindLabel
-    private static readonly HashSet<string> labelExcludedProperties = new(StringComparer.OrdinalIgnoreCase) { "MaxLength", "Locked" };
+    private static readonly HashSet<string> labelExcludedProperties = new(StringComparer.OrdinalIgnoreCase) {
+        LabelPropertyHelper.MaxLength,
+        LabelPropertyHelper.Locked
+    };
 
     // This rule is an extension of the CodeCop AA0139 to only check for Label variables without the MaxLength or Locked property explicitly set.
     // https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/analyzers/codecop-aa0139
@@ -46,27 +49,22 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
         if (ctx.IsObsoletePendingOrRemoved())
             return;
 
-        var sourceConvExpr = TryGetSourceValue(ctx.Operation);
-        if (sourceConvExpr == null)
-            return;
-
         // Early return if the source is not a Label type
-        if (sourceConvExpr.Operand.Type.GetNavTypeKindSafe() != NavTypeKind.Label)
+        var sourceConvExpr = TryGetSourceValue(ctx.Operation);
+        if (sourceConvExpr?.Operand is not IOperation operand || operand.Type.GetNavTypeKindSafe() != NavTypeKind.Label)
             return;
 
-        if (sourceConvExpr.Operand.GetSymbol() is not IVariableSymbol variableSymbol)
+        if (operand.GetSymbol() is not IVariableSymbol variableSymbol)
             return;
 
-        var syntax = variableSymbol.DeclaringSyntaxReference?.GetSyntax();
-        if (syntax is null)
+        if (variableSymbol.DeclaringSyntaxReference?.GetSyntax() is not VariableDeclarationSyntax variableSyntax)
             return;
 
-        var propertiesNode = syntax.DescendantNodes()
-            .OfType<CommaSeparatedIdentifierEqualsLiteralListSyntax>()
-            .FirstOrDefault();
+        if (variableSyntax.Type.DataType is not LabelDataTypeSyntax labelSyntax)
+            return;
 
         // Let CodeCop AA0139 handle it if MaxLength or Locked is set
-        if (HasMaxLengthOrLockedPropertySet(propertiesNode))
+        if (HasMaxLengthOrLockedPropertySet(labelSyntax.Label.Properties))
             return;
 
         var targetTypeSymbol = TryGetTargetTypeSymbol(ctx);
@@ -78,11 +76,7 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
         if (isError || targetTypeLength == int.MaxValue)
             return;
 
-        var labelSyntax = syntax.DescendantNodes()
-            .OfType<LabelDataTypeSyntax>()
-            .FirstOrDefault();
-
-        if (labelSyntax?.Label?.LabelText?.Value.Value is not string labelValueText)
+        if (labelSyntax.Label.LabelText.Value.Value is not string labelValueText)
             return;
 
         // CodeCop AA0139 raises a diagnostic if the label value exceeds the target length.
@@ -92,7 +86,7 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
             ctx.ReportDiagnostic(
                 Diagnostic.Create(
                     DiagnosticDescriptors.Rule0051PossibleOverflowAssigning,
-                    sourceConvExpr.Operand.Syntax.GetLocation(),
+                    operand.Syntax.GetLocation(),
                     variableSymbol.GetTypeSymbol().ToDisplayString(),
                     targetTypeSymbol.ToDisplayString()));
         }
@@ -129,27 +123,19 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
         return returnValueSymbol?.GetTypeSymbol();
     }
 
-    private static bool HasMaxLengthOrLockedPropertySet(SyntaxNode? propertiesNode)
+    private static bool HasMaxLengthOrLockedPropertySet(CommaSeparatedIdentifierEqualsLiteralListSyntax? properties)
     {
-        bool hasMaxLengthOrLocked = false;
+        if (properties is null)
+            return false;
 
-        if (propertiesNode is null)
-            return hasMaxLengthOrLocked;
-
-        foreach (var child in propertiesNode.ChildNodes())
+        foreach (var value in properties.Values)
         {
-            if (child is IdentifierEqualsLiteralSyntax prop)
-            {
-                string name = prop.Identifier.ToString();
-                if (labelExcludedProperties.Contains(name))
-                {
-                    hasMaxLengthOrLocked = true;
-                    break;
-                }
-            }
+            var name = value.Identifier.Value?.ToString();
+            if (!string.IsNullOrEmpty(name) && labelExcludedProperties.Contains(name))
+                return true;
         }
 
-        return hasMaxLengthOrLocked;
+        return false;
     }
     #endregion
 
