@@ -1,11 +1,10 @@
 using System.Collections.Immutable;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.CodeActions;
+using Microsoft.Dynamics.Nav.CodeAnalysis.CodeActions.Mef;
 using Microsoft.Dynamics.Nav.CodeAnalysis.CodeFixes;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces;
-using Microsoft.Dynamics.Nav.CodeAnalysis.CodeActions.Mef;
-using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
 
 namespace BusinessCentral.LinterCop.CodeFixes;
 
@@ -32,7 +31,7 @@ public sealed class Fix0024SemicolonAfterMethodOrTriggerDeclarationCodeFixProvid
 
     public sealed override FixAllProvider GetFixAllProvider() =>
          WellKnownFixAllProviders.BatchFixer;
-    
+
     public override async Task RegisterCodeFixesAsync(CodeFixContext ctx)
     {
         Document document = ctx.Document;
@@ -46,7 +45,7 @@ public sealed class Fix0024SemicolonAfterMethodOrTriggerDeclarationCodeFixProvid
     private static void RegisterInstanceCodeFix(CodeFixContext ctx, SyntaxNode syntaxRoot, TextSpan span, Document document)
     {
         SyntaxNode node = syntaxRoot.FindNode(span);
-        ctx.RegisterCodeFix((CodeAction) CreateCodeAction(node, document, true), ctx.Diagnostics[0]);
+        ctx.RegisterCodeFix((CodeAction)CreateCodeAction(node, document, true), ctx.Diagnostics[0]);
     }
 
     private static Fix0024SemicolonAfterMethodOrTriggerDeclarationCodeAction CreateCodeAction(SyntaxNode node, Document document,
@@ -61,11 +60,11 @@ public sealed class Fix0024SemicolonAfterMethodOrTriggerDeclarationCodeFixProvid
 
     private static async Task<Document> RemoveSemicolon(Document document, SyntaxNode node, CancellationToken cancellationToken)
     {
-        if(node is not MethodOrTriggerDeclarationSyntax syntax )
+        if (node is not MethodOrTriggerDeclarationSyntax syntax)
             return document;
         if (syntax.Body is null)
             return document;
-        
+
         if (syntax.SemicolonToken.Kind != SyntaxKind.None)
         {
             var trailingTrivia = syntax.SemicolonToken.TrailingTrivia;
@@ -79,8 +78,8 @@ public sealed class Fix0024SemicolonAfterMethodOrTriggerDeclarationCodeFixProvid
                     return newPrevToken;
                 return original;
             });
-            
-            
+
+
             var newRoot = (await document.GetSyntaxRootAsync(cancellationToken)).ReplaceNode(node, newNode);
             return document.WithSyntaxRoot(newRoot);
         }

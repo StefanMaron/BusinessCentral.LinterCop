@@ -196,19 +196,13 @@ public sealed class Fix0051ApplyCopyStrCodeFixProvider : CodeFixProvider
     }
 
     private static IdentifierNameSyntax CreateCopyStringIdentifier()
-    {
-        return SyntaxFactory.IdentifierName(CopyStrMethodName);
-    }
+        => SyntaxFactory.IdentifierName(CopyStrMethodName);
 
     private static IdentifierNameSyntax CreateTextIdentifier()
-    {
-        return SyntaxFactory.IdentifierName(TextClassName);
-    }
+        => SyntaxFactory.IdentifierName(TextClassName);
 
     private static IdentifierNameSyntax CreateMaxStringLengthIdentifier()
-    {
-        return SyntaxFactory.IdentifierName(MaxStrLenMethodName);
-    }
+            => SyntaxFactory.IdentifierName(MaxStrLenMethodName);
 
     private static LiteralExpressionSyntax CreateIntegerLiteral(int value)
     {
