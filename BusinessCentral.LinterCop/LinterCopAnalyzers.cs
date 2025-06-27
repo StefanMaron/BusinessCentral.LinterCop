@@ -37,6 +37,7 @@ namespace BusinessCentral.LinterCop
         internal static string AnalyzerPrefix => GetFromResourceManager();
         internal static string Fix0001FlowFieldsShouldNotBeEditableCodeAction => GetFromResourceManager();
         internal static string Fix0051ApplyCopyStrCodeAction => GetFromResourceManager();
+        internal static string Fix0051AppendMaxLengthToLabelCodeAction => GetFromResourceManager();
         internal static string Fix0077MissingParenthesisCodeAction => GetFromResourceManager();
         internal static string Fix0019DataClassificationFieldEqualsTableCodeAction => GetFromResourceManager();
         internal static string Fix0024SemicolonAfterMethodOrTriggerDeclarationCodeAction => GetFromResourceManager();
