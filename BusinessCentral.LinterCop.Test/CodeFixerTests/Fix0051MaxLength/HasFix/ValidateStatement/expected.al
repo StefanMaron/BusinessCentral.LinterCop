@@ -1,11 +1,11 @@
 codeunit 50100 MyCodeunit
 {
-    procedure MyProcedure(): Text[10]
+    procedure MyProcedure()
     var
         MyTable: Record MyTable;
-        MyLabelLbl: Label 'My Label';
+        MyLabelLbl: Label 'My Label', MaxLength = 10;
     begin
-        MyTable.Validate(MyField, [|MyLabelLbl|]);
+        MyTable.Validate(MyField, MyLabelLbl);
     end;
 }
 

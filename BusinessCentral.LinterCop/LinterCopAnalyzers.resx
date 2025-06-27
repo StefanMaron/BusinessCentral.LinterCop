@@ -585,6 +585,9 @@
   <data name="Fix0051ApplyCopyStrCodeAction" xml:space="preserve">
     <value>Wrap with Text.CopyStr()</value>
   </data>
+  <data name="Fix0051AppendMaxLengthToLabelCodeAction" xml:space="preserve">
+    <value>Add MaxLength property to Label declaration</value>
+  </data>
   <data name="Rule0052InternalProceduresNotReferencedAnalyzerDescription" xml:space="preserve">
     <value>The internal method is declared but never used.</value>
   </data>

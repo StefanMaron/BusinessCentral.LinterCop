@@ -1,6 +1,6 @@
 codeunit 50100 MyCodeunit
 {
-    procedure MyProcedure(): Text[10]
+    procedure MyProcedure()
     var
         MyTable: Record MyTable;
         MyLabelLbl: Label 'My Label';

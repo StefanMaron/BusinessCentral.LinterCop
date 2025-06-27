@@ -37,7 +37,10 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
     }
 
     #region AnalyzeTypeKindLabel
-    private static readonly HashSet<string> labelExcludedProperties = new(StringComparer.OrdinalIgnoreCase) { "MaxLength", "Locked" };
+    private static readonly HashSet<string> labelExcludedProperties = new(StringComparer.OrdinalIgnoreCase) {
+        LabelPropertyHelper.MaxLength,
+        LabelPropertyHelper.Locked
+    };
 
     // This rule is an extension of the CodeCop AA0139 to only check for Label variables without the MaxLength or Locked property explicitly set.
     // https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/analyzers/codecop-aa0139
@@ -46,43 +49,34 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
         if (ctx.IsObsoletePendingOrRemoved())
             return;
 
-        var sourceConvExpr = TryGetSourceValue(ctx.Operation);
-        if (sourceConvExpr == null)
-            return;
-
         // Early return if the source is not a Label type
-        if (sourceConvExpr.Operand.Type.GetNavTypeKindSafe() != NavTypeKind.Label)
+        var sourceConvExpr = TryGetSourceValue(ctx.Operation);
+        if (sourceConvExpr?.Operand is not IOperation operand || operand.Type.GetNavTypeKindSafe() != NavTypeKind.Label)
             return;
 
-        if (sourceConvExpr.Operand.GetSymbol() is not IVariableSymbol variableSymbol)
+        if (operand.GetSymbol() is not IVariableSymbol variableSymbol)
             return;
 
-        var syntax = variableSymbol.DeclaringSyntaxReference?.GetSyntax();
-        if (syntax is null)
+        if (variableSymbol.DeclaringSyntaxReference?.GetSyntax() is not VariableDeclarationSyntax variableSyntax)
             return;
 
-        var propertiesNode = syntax.DescendantNodes()
-            .OfType<CommaSeparatedIdentifierEqualsLiteralListSyntax>()
-            .FirstOrDefault();
+        if (variableSyntax.Type.DataType is not LabelDataTypeSyntax labelSyntax)
+            return;
 
         // Let CodeCop AA0139 handle it if MaxLength or Locked is set
-        if (HasMaxLengthOrLockedPropertySet(propertiesNode))
+        if (HasMaxLengthOrLockedPropertySet(labelSyntax.Label.Properties))
             return;
 
-        var targetTypeSymbol = TryGetTargetTypeSymbol(ctx);
+        var targetTypeSymbol = OperationHelper.TryGetTargetTypeSymbol(ctx.Operation, ctx.Compilation);
         if (targetTypeSymbol == null)
             return;
 
         bool isError = false;
-        int targetTypeLength = GetTypeLength(targetTypeSymbol, ref isError);
+        int targetTypeLength = targetTypeSymbol.GetTypeLength(ref isError);
         if (isError || targetTypeLength == int.MaxValue)
             return;
 
-        var labelSyntax = syntax.DescendantNodes()
-            .OfType<LabelDataTypeSyntax>()
-            .FirstOrDefault();
-
-        if (labelSyntax?.Label?.LabelText?.Value.Value is not string labelValueText)
+        if (labelSyntax.Label.LabelText.Value.Value is not string labelValueText)
             return;
 
         // CodeCop AA0139 raises a diagnostic if the label value exceeds the target length.
@@ -92,7 +86,7 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
             ctx.ReportDiagnostic(
                 Diagnostic.Create(
                     DiagnosticDescriptors.Rule0051PossibleOverflowAssigning,
-                    sourceConvExpr.Operand.Syntax.GetLocation(),
+                    operand.Syntax.GetLocation(),
                     variableSymbol.GetTypeSymbol().ToDisplayString(),
                     targetTypeSymbol.ToDisplayString()));
         }
@@ -108,48 +102,20 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
         };
     }
 
-    private static ITypeSymbol? TryGetTargetTypeSymbol(OperationAnalysisContext ctx)
+
+    private static bool HasMaxLengthOrLockedPropertySet(CommaSeparatedIdentifierEqualsLiteralListSyntax? properties)
     {
-        return ctx.Operation switch
+        if (properties is null)
+            return false;
+
+        foreach (var value in properties.Values)
         {
-            IAssignmentStatement { Target.Type: ITypeSymbol targetType } => targetType,
-            IExitStatement => TryGetReturnTypeFromContainingMethod(ctx),
-            _ => null
-        };
-    }
-
-    private static ITypeSymbol? TryGetReturnTypeFromContainingMethod(OperationAnalysisContext ctx)
-    {
-        if (ctx.Operation.Syntax.GetFirstParent(SyntaxKind.MethodDeclaration) is not MethodDeclarationSyntax methodDeclaration)
-            return null;
-
-        var semanticModel = ctx.Compilation.GetSemanticModel(methodDeclaration.SyntaxTree);
-        var returnValueSymbol = semanticModel.GetDeclaredSymbol(methodDeclaration.ReturnValue);
-
-        return returnValueSymbol?.GetTypeSymbol();
-    }
-
-    private static bool HasMaxLengthOrLockedPropertySet(SyntaxNode? propertiesNode)
-    {
-        bool hasMaxLengthOrLocked = false;
-
-        if (propertiesNode is null)
-            return hasMaxLengthOrLocked;
-
-        foreach (var child in propertiesNode.ChildNodes())
-        {
-            if (child is IdentifierEqualsLiteralSyntax prop)
-            {
-                string name = prop.Identifier.ToString();
-                if (labelExcludedProperties.Contains(name))
-                {
-                    hasMaxLengthOrLocked = true;
-                    break;
-                }
-            }
+            var name = value.Identifier.Value?.ToString();
+            if (!string.IsNullOrEmpty(name) && labelExcludedProperties.Contains(name))
+                return true;
         }
 
-        return hasMaxLengthOrLocked;
+        return false;
     }
     #endregion
 
@@ -172,7 +138,7 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
             return;
 
         bool isError = false;
-        int typeLength = GetTypeLength(fieldType, ref isError);
+        int typeLength = fieldType.GetTypeLength(ref isError);
         if (isError || typeLength == int.MaxValue)
             return;
 
@@ -214,7 +180,7 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
             return;
 
         bool isError = false;
-        int typeLength = GetTypeLength(fieldType, ref isError);
+        int typeLength = fieldType.GetTypeLength(ref isError);
         if (isError || typeLength == int.MaxValue)
             return;
 
@@ -258,7 +224,7 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
                 continue;
 
             bool isError = false;
-            int fieldLength = GetTypeLength(fieldType, ref isError);
+            int fieldLength = fieldType.GetTypeLength(ref isError);
             if (isError || fieldLength == 0)
                 continue;
 
@@ -281,28 +247,6 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
         }
     }
 #endif
-
-    private static int GetTypeLength(ITypeSymbol type, ref bool isError)
-    {
-        if (!type.IsTextType())
-        {
-            isError = true;
-            return 0;
-        }
-        if (type.HasLength)
-            return type.Length;
-        return type.NavTypeKind == NavTypeKind.Label ? GetLabelTypeLength(type) : int.MaxValue;
-    }
-
-    private static int GetLabelTypeLength(ITypeSymbol type)
-    {
-        ILabelTypeSymbol labelType = (ILabelTypeSymbol)type;
-
-        if (labelType.Locked)
-            return labelType.GetLabelText().Length;
-
-        return labelType.MaxLength;
-    }
 
     private int CalculateMaxExpressionLength(IOperation expression, ref bool isError)
     {
@@ -359,17 +303,17 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
                         case "tolower":
                         case "toupper":
                             if (invocation.Instance is not null && invocation.Instance.IsBoundExpression())
-                                return GetTypeLength(invocation.Instance.Type, ref isError);
+                                return invocation.Instance.Type.GetTypeLength(ref isError);
                             break;
                     }
                 }
-                return GetTypeLength(expression.Type, ref isError);
+                return expression.Type.GetTypeLength(ref isError);
             case OperationKind.LocalReferenceExpression:
             case OperationKind.GlobalReferenceExpression:
             case OperationKind.ReturnValueReferenceExpression:
             case OperationKind.ParameterReferenceExpression:
             case OperationKind.FieldAccess:
-                return GetTypeLength(expression.Type, ref isError);
+                return expression.Type.GetTypeLength(ref isError);
             case OperationKind.BinaryOperatorExpression:
                 IBinaryOperatorExpression operatorExpression = (IBinaryOperatorExpression)expression;
                 return Math.Min(int.MaxValue, this.CalculateMaxExpressionLength(operatorExpression.LeftOperand, ref isError) + this.CalculateMaxExpressionLength(operatorExpression.RightOperand, ref isError));
@@ -423,13 +367,13 @@ public class Rule0051PossibleOverflowAssigning : DiagnosticAnalyzer
                         IOperation operand = arguments[0].Value;
                         if (operand.Kind == OperationKind.ConversionExpression)
                             operand = ((IConversionExpression)operand).Operand;
-                        return GetTypeLength(operand.Type, ref isError);
+                        return operand.Type.GetTypeLength(ref isError);
                     }
                     break;
                 }
                 break;
         }
-        return TryGetLength(invocation, lengthArgPos) ?? GetTypeLength(invocation.Type, ref isError);
+        return TryGetLength(invocation, lengthArgPos) ?? invocation.Type.GetTypeLength(ref isError);
     }
 
     private int CalculateStrSubstNoMethodResultLength(
