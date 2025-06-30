@@ -40,6 +40,10 @@ namespace BusinessCentral.LinterCop.Helpers
                     instance.enableRule0011ForTableFields = internalInstance.enableRule0011ForTableFields;
                     instance.enableRule0016ForApiObjects = internalInstance.enableRule0016ForApiObjects;
                 }
+                else
+                {
+                    instance = new LinterSettings();
+                }
 
                 instance.WorkingDir = WorkingDir;
             }
