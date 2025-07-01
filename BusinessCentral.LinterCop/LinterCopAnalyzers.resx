@@ -885,6 +885,9 @@
   <data name="Rule0083BuiltInDateTimeMethodDescription" xml:space="preserve">
     <value>Replace outdated functions for extracting specific parts of Date, Time, and DateTime types (such as day, month, hour, or second) with the new, modernized methods.</value>
   </data>
+  <data name="Fix0083BuiltInDateTimeMethodCodeAction" xml:space="preserve">
+    <value>Use modern Date/Time/DateTime method</value>
+  </data>
   <data name="Rule0084UseReturnValueForErrorHandlingTitle" xml:space="preserve">
     <value>Use return value for better error handling.</value>
   </data>
