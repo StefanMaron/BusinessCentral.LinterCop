@@ -1,3 +1,4 @@
+#if !LessThenFall2024
 using BusinessCentral.LinterCop.CodeFixes;
 using BusinessCentral.LinterCop.Test.Helpers;
 
@@ -31,3 +32,4 @@ internal class Fix0083
         fixture.TestCodeFix(currentCode, expectedCode, DiagnosticDescriptors.Rule0083BuiltInDateTimeMethod);
     }
 }
+#endif
