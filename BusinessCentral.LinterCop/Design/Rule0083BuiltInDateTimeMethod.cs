@@ -37,7 +37,7 @@ public class Rule0083BuiltInDateTimeMethod : DiagnosticAnalyzer
 
         ctx.ReportDiagnostic(Diagnostic.Create(
             DiagnosticDescriptors.Rule0083BuiltInDateTimeMethod,
-            ctx.Operation.Syntax.GetLocation(),
+            invocationExpression.GetLocation(),
             operation.Arguments[0].Value.Syntax.ToString(),
             recommendedMethod));
     }
