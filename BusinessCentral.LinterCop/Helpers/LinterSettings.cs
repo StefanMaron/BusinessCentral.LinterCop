@@ -9,7 +9,7 @@ namespace BusinessCentral.LinterCop.Helpers
         public int cyclomaticComplexityThreshold = 8;
         public int maintainabilityIndexThreshold = 20;
         public int cognitiveComplexityThreshold = 15;
-        public String[] languagesToTranslate = null;
+        public string[] languagesToTranslate = null;
         public bool enableRule0011ForTableFields = false;
         public bool enableRule0016ForApiObjects = false;
         public string WorkingDir = "";
@@ -20,6 +20,10 @@ namespace BusinessCentral.LinterCop.Helpers
             if (instance is null || instance.WorkingDir != WorkingDir)
             {
                 instance = new LinterSettings();
+
+                if (string.IsNullOrEmpty(WorkingDir))
+                    return;
+
                 string settingsPath = Path.Combine(WorkingDir, settingsFileName);
 
                 // If the settings file is not found in the working directory, look in the location of the LinterCop file itself
@@ -51,7 +55,7 @@ namespace BusinessCentral.LinterCop.Helpers
         public int? cyclomaticComplexityThreshold;
         public int? maintainabilityIndexThreshold;
         public int? cognitiveComplexityThreshold;
-        public String[] languagesToTranslate;
+        public string[] languagesToTranslate;
         public bool enableRule0011ForTableFields = false;
         public bool enableRule0016ForApiObjects = false;
     }
