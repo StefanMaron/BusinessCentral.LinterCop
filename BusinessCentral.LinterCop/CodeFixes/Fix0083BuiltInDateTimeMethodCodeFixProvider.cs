@@ -1,3 +1,4 @@
+#if !LessThenFall2024
 using System.Collections.Immutable;
 using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
@@ -82,3 +83,4 @@ public sealed class Fix0083BuiltInDateTimeMethodCodeFixProvider : CodeFixProvide
         return document.WithSyntaxRoot(newRoot);
     }
 }
+#endif
