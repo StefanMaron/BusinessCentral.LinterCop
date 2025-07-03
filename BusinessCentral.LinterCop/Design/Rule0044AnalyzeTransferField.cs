@@ -141,7 +141,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
             Field field = fieldGroupValues.First(x => x.Table.Equals(table));
 
-            if (field.Location is null)
+            if (field.Location is null || !IsLocationInCompilation(field.Location, ctx.Compilation))
                 continue;
 
             foreach (Field fieldGroupValue in fieldGroupValues)
@@ -162,7 +162,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
             Field field = fieldGroupValues.First(x => x.Table.Equals(table));
 
-            if (field.Location is null)
+            if (field.Location is null || !IsLocationInCompilation(field.Location, ctx.SemanticModel.Compilation))
                 continue;
 
             foreach (Field fieldGroupValue in fieldGroupValues)
@@ -173,6 +173,16 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
                 ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0044AnalyzeTableExtension, field.Location, fieldGroupValue.Table.Name));
             }
         }
+    }
+
+    // Handle 'System.ArgumentException' in Microsoft.Dynamics.Nav.CodeAnalysis.dll: 'Reported diagnostic 'LC0044' has a source location in file 'c:/somePath/someFile.al', which is not part of the compilation being analyzed.'
+    private static bool IsLocationInCompilation(Microsoft.Dynamics.Nav.CodeAnalysis.Text.Location? location, Compilation compilation)
+    {
+        if (location?.SourceTree?.FilePath is not string sourceFilePath)
+            return false;
+
+        return compilation.SyntaxTrees.Any(tree =>
+            string.Equals(tree.FilePath, sourceFilePath, StringComparison.OrdinalIgnoreCase));
     }
 
     private string? GetObjectSourceTable(SyntaxNode node, Compilation compilation)

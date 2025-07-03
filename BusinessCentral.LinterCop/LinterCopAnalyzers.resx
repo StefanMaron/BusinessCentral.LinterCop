@@ -582,6 +582,12 @@
   <data name="Rule0051PossibleOverflowAssigningDescription" xml:space="preserve">
     <value>Do not assign a text to a target with smaller size.</value>
   </data>
+  <data name="Fix0051ApplyCopyStrCodeAction" xml:space="preserve">
+    <value>Wrap with Text.CopyStr()</value>
+  </data>
+  <data name="Fix0051AppendMaxLengthToLabelCodeAction" xml:space="preserve">
+    <value>Add MaxLength property to Label declaration</value>
+  </data>
   <data name="Rule0052InternalProceduresNotReferencedAnalyzerDescription" xml:space="preserve">
     <value>The internal method is declared but never used.</value>
   </data>
@@ -819,6 +825,12 @@
   <data name="Fix0077MissingParenthesisCodeAction" xml:space="preserve">
     <value>Add parenthesis</value>
   </data>
+  <data name="Fix0019DataClassificationFieldEqualsTableCodeAction" xml:space="preserve">
+    <value>Remove DataClassification</value>
+  </data>  
+  <data name="Fix0024SemicolonAfterMethodOrTriggerDeclarationCodeAction" xml:space="preserve">
+    <value>Remove Semicolon</value>
+  </data>
   <data name="Rule0078TemporaryRecordsTitle" xml:space="preserve">
     <value>Temporary records should not trigger the table triggers.</value>
   </data>
@@ -872,6 +884,9 @@
   </data>
   <data name="Rule0083BuiltInDateTimeMethodDescription" xml:space="preserve">
     <value>Replace outdated functions for extracting specific parts of Date, Time, and DateTime types (such as day, month, hour, or second) with the new, modernized methods.</value>
+  </data>
+  <data name="Fix0083BuiltInDateTimeMethodCodeAction" xml:space="preserve">
+    <value>Use modern Date/Time/DateTime method</value>
   </data>
   <data name="Rule0084UseReturnValueForErrorHandlingTitle" xml:space="preserve">
     <value>Use return value for better error handling.</value>
