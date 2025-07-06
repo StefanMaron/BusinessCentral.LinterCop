@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using BusinessCentral.LinterCop.Helpers;
 using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.CodeActions;
 using Microsoft.Dynamics.Nav.CodeAnalysis.CodeActions.Mef;
@@ -38,40 +37,36 @@ public sealed class Fix0083BuiltInDateTimeMethodCodeFixProvider : CodeFixProvide
         if (syntaxRoot.FindNode(context.Span) is not InvocationExpressionSyntax invocation)
             return;
 
-        if (invocation.Expression is not IdentifierNameSyntax identifier)
-            return;
+        var diagnostic = context.Diagnostics
+            .FirstOrDefault(d => d.Id == DiagnosticDescriptors.Rule0083BuiltInDateTimeMethod.Id);
 
-        var replacement = Rule0083BuiltInDateTimeMethodHelper.GetReplacementMethod(identifier.Identifier.Text, invocation);
-        if (replacement is null)
+        if (diagnostic is null || !diagnostic.Properties.TryGetValue("ReplacementMethodName", out var replacementMethodName) || string.IsNullOrEmpty(replacementMethodName))
             return;
 
         context.RegisterCodeFix(
-            CreateCodeAction(invocation, context.Document, replacement, generateFixAll: true),
+            CreateCodeAction(invocation, context.Document, SyntaxFactory.IdentifierName(replacementMethodName), generateFixAll: true),
             context.Diagnostics[0]);
     }
 
-    private static Fix0083BuiltInDateTimeMethodCodeAction CreateCodeAction(InvocationExpressionSyntax originalNode, Document document, InvocationExpressionSyntax replacementNode, bool generateFixAll)
+    private static Fix0083BuiltInDateTimeMethodCodeAction CreateCodeAction(InvocationExpressionSyntax originalNode, Document document, IdentifierNameSyntax replacementMethod, bool generateFixAll)
     {
         return new Fix0083BuiltInDateTimeMethodCodeAction(
             LinterCopAnalyzers.Fix0083BuiltInDateTimeMethodCodeAction,
-            ct => ReplaceWithNewMethodAsync(document, originalNode, replacementNode, ct),
+            ct => ReplaceWithNewMethodAsync(document, originalNode, replacementMethod, ct),
             nameof(Fix0083BuiltInDateTimeMethodCodeFixProvider),
             generateFixAll);
     }
 
-    private static async Task<Document> ReplaceWithNewMethodAsync(Document document, InvocationExpressionSyntax originalNode, InvocationExpressionSyntax replacementNode, CancellationToken cancellationToken)
+    private static async Task<Document> ReplaceWithNewMethodAsync(Document document, InvocationExpressionSyntax originalNode, IdentifierNameSyntax replacementMethod, CancellationToken cancellationToken)
     {
         if (originalNode.ArgumentList.Arguments.Count == 0)
             return document;
 
         var firstArgument = originalNode.ArgumentList.Arguments[0];
 
-        if (replacementNode.Expression is not IdentifierNameSyntax replacementMethodName)
-            return document;
-
         var memberAccess = SyntaxFactory.MemberAccessExpression(
             firstArgument,
-            replacementMethodName);
+            replacementMethod);
 
         var newInvocation = SyntaxFactory.InvocationExpression(memberAccess)
             .WithTriviaFrom(originalNode);
