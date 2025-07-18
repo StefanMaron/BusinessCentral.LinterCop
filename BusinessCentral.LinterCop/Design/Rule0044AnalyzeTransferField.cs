@@ -644,6 +644,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
                 new Tuple<string, string>("Billing Line", "Billing Line Archive"),
                 new Tuple<string, string>("Subscription Line", "Planned Subscription Line"),
+                new Tuple<string, string>("Sales Subscription Line", "Sales Sub. Line Archive"),
                 new Tuple<string, string>("Customer Subscription Contract", "Sales Header"),
                 new Tuple<string, string>("Vendor Subscription Contract", "Purchase Header"),
 
