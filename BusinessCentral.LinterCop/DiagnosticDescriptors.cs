@@ -943,4 +943,14 @@ public static class DiagnosticDescriptors
         isEnabledByDefault: true,
         description: LinterCopAnalyzers.GetLocalizableString("Rule0091TranslatableTextShouldBeTranslatedDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091");
+
+    public static readonly DiagnosticDescriptor Rule0092ValidateReportLayoutFiles = new(
+        "LC0092",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0092ValidateReportLayoutFilesTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0092ValidateReportLayoutFilesFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0092ValidateReportLayoutFilesDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0092");
 }

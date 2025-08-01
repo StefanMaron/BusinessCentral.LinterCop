@@ -954,4 +954,13 @@
   <data name="Rule0091TranslatableTextShouldBeTranslatedDescription" xml:space="preserve">
     <value>Labels and other variants should be translated for every available translation file language.</value>
   </data>
+  <data name="Rule0092ValidateReportLayoutFilesTitle" xml:space="preserve">
+    <value>Report layout files should exist.</value>
+  </data>
+  <data name="Rule0092ValidateReportLayoutFilesFormat" xml:space="preserve">
+    <value>Layout file '{0}' does not exist in the project</value>
+  </data>
+  <data name="Rule0092ValidateReportLayoutFilesDescription" xml:space="preserve">
+    <value>Validates that layout files referenced in report definitions exist in the project structure. Checks both modern rendering section layouts and legacy layout properties.</value>
+  </data>
 </root>
