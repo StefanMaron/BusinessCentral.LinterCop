@@ -943,4 +943,14 @@ public static class DiagnosticDescriptors
         isEnabledByDefault: true,
         description: LinterCopAnalyzers.GetLocalizableString("Rule0091TranslatableTextShouldBeTranslatedDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091");
+
+    public static readonly DiagnosticDescriptor Rule0093GlobalTestMethodRequiresTestAttribute = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "0093",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0093GlobalTestMethodRequiresTestAttributeTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0093GlobalTestMethodRequiresTestAttributeFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: true,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0093GlobalTestMethodRequiresTestAttributeDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0093");
 }

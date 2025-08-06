@@ -140,6 +140,7 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0089](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0089)|Show Cognitive Complexity diagnostics for all methods.|Disabled|
 |[LC0090](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0090)|Show Cognitive Complexity diagnostics for methods above threshold.|Info|
 |[LC0091](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091)|Translatable texts should be translated|Info|14.0|
+|[LC0093](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0093)|Global procedure in test codeunit requires test attribute.|Info||
 
 ## Codespace
 

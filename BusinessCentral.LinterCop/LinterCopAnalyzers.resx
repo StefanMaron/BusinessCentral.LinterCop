@@ -954,4 +954,13 @@
   <data name="Rule0091TranslatableTextShouldBeTranslatedDescription" xml:space="preserve">
     <value>Labels and other variants should be translated for every available translation file language.</value>
   </data>
+  <data name="Rule0093GlobalTestMethodRequiresTestAttributeTitle" xml:space="preserve">
+    <value>Global procedure in test codeunit requires test attribute.</value>
+  </data>
+  <data name="Rule0093GlobalTestMethodRequiresTestAttributeFormat" xml:space="preserve">
+    <value>Global procedure \"{0}\" in test codeunit requires [Test] attribute"</value>
+  </data>
+  <data name="Rule0093GlobalTestMethodRequiresTestAttributeDescription" xml:space="preserve">
+    <value>Global procedure in test codeunit requires test attribute. Use e.g. library codeunits for public procedures.</value>
+  </data>
 </root>
