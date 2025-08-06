@@ -933,7 +933,6 @@ public static class DiagnosticDescriptors
         description: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0090");
 
-
     public static readonly DiagnosticDescriptor Rule0091TranslatableTextShouldBeTranslated = new(
         id: LinterCopAnalyzers.AnalyzerPrefix + "0091",
         title: LinterCopAnalyzers.GetLocalizableString("Rule0091TranslatableTextShouldBeTranslatedTitle"),
@@ -943,4 +942,14 @@ public static class DiagnosticDescriptors
         isEnabledByDefault: true,
         description: LinterCopAnalyzers.GetLocalizableString("Rule0091TranslatableTextShouldBeTranslatedDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091");
+
+    public static readonly DiagnosticDescriptor Rule0092ProcedureNamePattern = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "0092",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0092ProcedureNamePatternTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0092ProcedureNamePatternFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: true,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0092ProcedureNamePatternDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0092");
 }

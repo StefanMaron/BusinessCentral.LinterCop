@@ -140,6 +140,7 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0089](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0089)|Show Cognitive Complexity diagnostics for all methods.|Disabled|
 |[LC0090](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0090)|Show Cognitive Complexity diagnostics for methods above threshold.|Info|
 |[LC0091](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091)|Translatable texts should be translated|Info|14.0|
+|[LC0092](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0092)||Info|Procedure names must match the allowed pattern and must not match the disallowed pattern|
 
 ## Codespace
 
