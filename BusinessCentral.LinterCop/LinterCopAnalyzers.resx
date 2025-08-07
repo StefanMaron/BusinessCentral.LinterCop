@@ -954,4 +954,13 @@
   <data name="Rule0091TranslatableTextShouldBeTranslatedDescription" xml:space="preserve">
     <value>Labels and other variants should be translated for every available translation file language.</value>
   </data>
+    <data name="Rule0094NoGlobalVariablesInCodeunitTitle" xml:space="preserve">
+    <value>Avoid global variables in codeunits.</value>
+  </data>
+  <data name="Rule0094NoGlobalVariablesInCodeunitFormat" xml:space="preserve">
+    <value>Codeunit variable \"{0}\" should be local if possible</value>
+  </data>
+  <data name="Rule0094NoGlobalVariablesInCodeunitDescription" xml:space="preserve">
+    <value>Avoid global variables in codeunits to reduce hidden coupling and side effects, and to improve testability and maintainability.</value>
+  </data>
 </root>
