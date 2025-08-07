@@ -451,6 +451,11 @@
       "id": "LC0090",
       "action": "Info",
       "justification": "Show Cognitive Complexity diagnostics for methods above threshold."
+    },
+    {
+      "id": "LC0095",
+      "action": "Info",
+      "justification": "\"Rec\" usage only allowed in pages, codeunits with source table and event subscribers."
     }
   ]
 }

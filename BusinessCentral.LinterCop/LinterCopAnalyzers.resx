@@ -954,4 +954,13 @@
   <data name="Rule0091TranslatableTextShouldBeTranslatedDescription" xml:space="preserve">
     <value>Labels and other variants should be translated for every available translation file language.</value>
   </data>
+    <data name="Rule0095AvoidUnneccessaryRecUsageTitle" xml:space="preserve">
+    <value>\"Rec\" usage not allowed.</value>
+  </data>
+  <data name="Rule0095AvoidUnneccessaryRecUsageFormat" xml:space="preserve">
+    <value>"\"Rec\" usage only allowed in pages, codeunits with source table and event subscribers".</value>
+  </data>
+  <data name="Rule0095AvoidUnneccessaryRecUsageDescription" xml:space="preserve">
+    <value>"\"Rec\" usage only allowed in pages, codeunits with source table and event subscribers". Outside those contexts \"Rec\" is unnecessary boilerplate.</value>
+  </data>
 </root>
