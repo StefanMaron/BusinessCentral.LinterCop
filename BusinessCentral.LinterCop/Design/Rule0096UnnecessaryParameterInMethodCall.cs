@@ -10,8 +10,8 @@ namespace BusinessCentral.LinterCop.Design;
 [DiagnosticAnalyzer]
 public class Rule0096UnnecessaryParameterInMethodCall : DiagnosticAnalyzer
 {
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        [DiagnosticDescriptors.Rule0096UnnecessaryParameterInMethodCall];
+public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+    ImmutableArray.Create(DiagnosticDescriptors.Rule0096UnnecessaryParameterInMethodCall);
 
     public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(
         new Action<OperationAnalysisContext>(this.AnalyzeInvocation),
