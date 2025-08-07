@@ -943,4 +943,14 @@ public static class DiagnosticDescriptors
         isEnabledByDefault: true,
         description: LinterCopAnalyzers.GetLocalizableString("Rule0091TranslatableTextShouldBeTranslatedDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091");
+
+    public static readonly DiagnosticDescriptor Rule0096UnnecessaryParameterInMethodCall = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "0096",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0096UnnecessaryParameterInMethodCallTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0096UnnecessaryParameterInMethodCallFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: true,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0096UnnecessaryParameterInMethodCallDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0096");
 }
