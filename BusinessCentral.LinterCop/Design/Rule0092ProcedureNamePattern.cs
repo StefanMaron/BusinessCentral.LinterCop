@@ -51,11 +51,11 @@ public class Rule0092ProcedureNamePattern : DiagnosticAnalyzer
 
     private void Check(SymbolAnalysisContext ctx)
     {
-        if (ctx.Symbol is IMethodSymbol method)
-        {
-            CheckAllowPatterns(ctx, method);
-            CheckDisallowPatterns(ctx, method);
-        }
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not IMethodSymbol method)
+            return;
+
+        CheckAllowPatterns(ctx, method);
+        CheckDisallowPatterns(ctx, method);
     }
 
     private void CheckDisallowPatterns(SymbolAnalysisContext ctx, IMethodSymbol method)

@@ -63,6 +63,7 @@ public class Rule0092
     [Test]
     [TestCase("LocalProcedureWithGlobalDisallowPattern")]
     [TestCase("GlobalProcedureWithoutLocalAllowPattern")]
+    [TestCase("ObsoleteLowerCaseStart")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
