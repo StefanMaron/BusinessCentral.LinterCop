@@ -14,6 +14,8 @@ public class Rule0072
     [Test]
     [TestCase("Return")]
     [TestCase("Parameter")]
+    [TestCase("DuplicateParameter")]
+    [TestCase("DuplicateReturns")]
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
