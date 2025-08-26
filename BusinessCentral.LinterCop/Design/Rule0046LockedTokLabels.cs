@@ -24,16 +24,20 @@ public class Rule0046LockedTokLabels : DiagnosticAnalyzer
         if (symbol.Type is not ILabelTypeSymbol type)
             return;
 
-        if (type.Locked)
-            if (!type.Name.EndsWith("Tok"))
-                ctx.ReportDiagnostic(Diagnostic.Create(
-                    DiagnosticDescriptors.Rule0047LockedLabelsTok,
-                    symbol.GetLocation(), symbol.Name));
+        bool IsEndsWithTok = type.Name?.EndsWith("Tok", StringComparison.Ordinal) == true;
+        bool isLocked = type.Locked is true;
+        if (isLocked && !IsEndsWithTok)
+        {
+            ctx.ReportDiagnostic(Diagnostic.Create(
+                DiagnosticDescriptors.Rule0047LockedLabelsTok,
+                symbol.GetLocation(), symbol.Name));
+        }
 
-        if (type.Name.EndsWith("Tok"))
-            if (!type.Locked)
-                ctx.ReportDiagnostic(Diagnostic.Create(
-                    DiagnosticDescriptors.Rule0046TokLabelsLocked,
-                    symbol.GetLocation()));
+        if (!isLocked && IsEndsWithTok)
+        {
+            ctx.ReportDiagnostic(Diagnostic.Create(
+                DiagnosticDescriptors.Rule0046TokLabelsLocked,
+                symbol.GetLocation()));
+        }
     }
 }
