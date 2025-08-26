@@ -972,12 +972,13 @@
   <data name="Rule0093GlobalTestMethodRequiresTestAttributeDescription" xml:space="preserve">
     <value>Global procedure in test codeunit requires test attribute. Use e.g. library codeunits for public procedures.</value>
   </data>
-      <data name="Rule0096UnnecessaryParameterInMethodCallTitle" xml:space="preserve">
+  <data name="Rule0096UnnecessaryParameterInMethodCallTitle" xml:space="preserve">
     <value>Unnecessary parameter.</value>
   </data>
   <data name="Rule0096UnnecessaryParameterInMethodCallFormat" xml:space="preserve">
     <value>A method invoked on a record must not contain same variable in parameter list as the one on which the call was made.</value>
   </data>
-    <data name="Rule0096UnnecessaryParameterInMethodCallDescription" xml:space="preserve">
-  <value>A method invoked on a record must not contain same variable in parameter list as the one on which the call was made.</value>
+  <data name="Rule0096UnnecessaryParameterInMethodCallDescription" xml:space="preserve">
+    <value>A method invoked on a record must not contain same variable in parameter list as the one on which the call was made.</value>
+ </data>
 </root>

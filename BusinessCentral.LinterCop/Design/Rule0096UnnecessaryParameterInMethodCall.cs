@@ -10,8 +10,8 @@ namespace BusinessCentral.LinterCop.Design;
 [DiagnosticAnalyzer]
 public class Rule0096UnnecessaryParameterInMethodCall : DiagnosticAnalyzer
 {
-public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-    ImmutableArray.Create(DiagnosticDescriptors.Rule0096UnnecessaryParameterInMethodCall);
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0096UnnecessaryParameterInMethodCall);
 
     public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(
         new Action<OperationAnalysisContext>(this.AnalyzeInvocation),
@@ -19,11 +19,9 @@ public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get;
 
     private void AnalyzeInvocation(OperationAnalysisContext context)
     {
-        if (context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoletePending ||
-            context.ContainingSymbol.GetContainingObjectTypeSymbol().IsObsoleteRemoved) return;
-        if (context.ContainingSymbol.IsObsoletePending || context.ContainingSymbol.IsObsoleteRemoved) return;
+        if (context.IsObsoletePendingOrRemoved() || context.Operation is not IInvocationExpression operation)
+            return;
 
-        IInvocationExpression operation = (IInvocationExpression)context.Operation;
         // Procedure does not contain arguments -> nothing to check
         if (operation.Arguments.IsEmpty)
             return;
@@ -48,13 +46,23 @@ public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get;
         if (instanceSyntax == null)
             return;
 
-        foreach (var arg in operation.Arguments)
+        var semanticModel = context.Compilation.GetSemanticModel(instanceSyntax.SyntaxTree);
+        var instanceSymbol = semanticModel.GetSymbolInfo(instanceSyntax).Symbol;
+
+        if (instanceSymbol == null)
+            return;
+
+        foreach (var argument in operation.Arguments)
         {
-            if (arg.Syntax.ToString().Equals(instanceSyntax.ToString(), StringComparison.OrdinalIgnoreCase))
+            var argumentSymbol = semanticModel.GetSymbolInfo(argument.Syntax).Symbol;
+
+            if (argumentSymbol != null &&
+                instanceSymbol.Equals(argumentSymbol))
             {
                 context.ReportDiagnostic(Diagnostic.Create(
-                                            DiagnosticDescriptors.Rule0096UnnecessaryParameterInMethodCall,
-                                            arg.Syntax.GetLocation()));
+                    DiagnosticDescriptors.Rule0096UnnecessaryParameterInMethodCall,
+                    argument.Syntax.GetLocation()
+                ));
             }
         }
     }
@@ -63,11 +71,15 @@ public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get;
     {
         foreach (var arg in operation.Arguments)
         {
-            if (arg.Syntax.ToString().ToUpper() == "REC")
+            var semanticModel = context.Compilation.GetSemanticModel(arg.Syntax.SyntaxTree);
+            var symbolInfo = semanticModel.GetSymbolInfo(arg.Syntax).Symbol;
+
+            if (symbolInfo != null && string.Equals(symbolInfo.Name, "Rec", StringComparison.OrdinalIgnoreCase))
             {
                 context.ReportDiagnostic(Diagnostic.Create(
-                                            DiagnosticDescriptors.Rule0096UnnecessaryParameterInMethodCall,
-                                            arg.Syntax.GetLocation()));
+                    DiagnosticDescriptors.Rule0096UnnecessaryParameterInMethodCall,
+                    arg.Syntax.GetLocation()
+                ));
             }
         }
     }
