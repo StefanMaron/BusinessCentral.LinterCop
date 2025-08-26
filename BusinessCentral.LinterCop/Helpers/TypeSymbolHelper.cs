@@ -42,8 +42,8 @@ public static class TypeSymbolExtensions
     {
         ILabelTypeSymbol labelType = (ILabelTypeSymbol)type;
 
-        if (labelType.Locked)
-            return labelType.GetLabelText().Length;
+        if (labelType.Locked is true)
+            return labelType.Text?.Length ?? 0;
 
         return labelType.MaxLength;
     }

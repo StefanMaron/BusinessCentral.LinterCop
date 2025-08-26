@@ -32,7 +32,7 @@ public class Rule0055TokSuffixForTokenLabels : DiagnosticAnalyzer
         if (variable.Type is not ILabelTypeSymbol label)
             return;
 
-        if (!label.Locked || label.Name.EndsWith("Tok"))
+        if (label.Locked is not true || label.Name.EndsWith("Tok"))
             return;
 
         string labelNameNoSuffix = label.Name;
@@ -40,7 +40,7 @@ public class Rule0055TokSuffixForTokenLabels : DiagnosticAnalyzer
         if (label.Name.Length > 3 && approvedSuffixes.Any(label.Name.EndsWith))
             labelNameNoSuffix = label.Name.Substring(0, label.Name.Length - 3);
 
-        if (labelNameNoSuffix.ToLowerInvariant() == label.GetLabelText().ToLowerInvariant())
+        if (labelNameNoSuffix.ToLowerInvariant() == label.Text?.ToLowerInvariant())
         {
             ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0055TokSuffixForTokenLabels,
@@ -49,9 +49,9 @@ public class Rule0055TokSuffixForTokenLabels : DiagnosticAnalyzer
             return;
         }
 
-        string LabelTextAlphanumeric = string.Join("", label.GetLabelText().Where(c => Char.IsLetterOrDigit(c)));
+        string labelTextAlphanumeric = string.Join("", (label.Text ?? string.Empty).Where(c => char.IsLetterOrDigit(c)));
 
-        if (labelNameNoSuffix.ToLowerInvariant() == LabelTextAlphanumeric.ToLowerInvariant())
+        if (labelNameNoSuffix.ToLowerInvariant() == labelTextAlphanumeric.ToLowerInvariant())
             ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0055TokSuffixForTokenLabels,
                 variable.GetLocation()));

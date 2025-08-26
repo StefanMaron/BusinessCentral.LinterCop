@@ -336,9 +336,9 @@ public class Rule0091TranslatableTextShouldBeTranslated : DiagnosticAnalyzer
         IEnumerable<SyntaxNode> subProperties;
 
         // checks local and global Label variables
-        if (label.GetTypeSymbol() is ILabelTypeSymbol labelTypeSymbol)
+        if (label.GetTypeSymbol() is ILabelTypeSymbol { Locked: true })
         {
-            if (labelTypeSymbol.Locked) return true;
+            return true;
         }
         else
         {
