@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace BusinessCentral.LinterCop.Helpers
 {
-    class LinterSettings
+    public class LinterSettings
     {
         private const string settingsFileName = "LinterCop.json";
         public int cyclomaticComplexityThreshold = 8;
@@ -13,6 +13,7 @@ namespace BusinessCentral.LinterCop.Helpers
         public bool enableRule0011ForTableFields = false;
         public bool enableRule0016ForApiObjects = false;
         public string WorkingDir = "";
+        public ProcedureNamePattern procedureNamePattern = new();
         static public LinterSettings instance;
 
         static public void Create(string WorkingDir)
@@ -43,20 +44,56 @@ namespace BusinessCentral.LinterCop.Helpers
                     instance.languagesToTranslate = internalInstance.languagesToTranslate ?? instance.languagesToTranslate;
                     instance.enableRule0011ForTableFields = internalInstance.enableRule0011ForTableFields;
                     instance.enableRule0016ForApiObjects = internalInstance.enableRule0016ForApiObjects;
+
+                    if (internalInstance.procedureNamePattern != null)
+                        instance.procedureNamePattern = internalInstance.procedureNamePattern;
                 }
 
                 instance.WorkingDir = WorkingDir;
             }
         }
-    }
 
-    internal class InternalLinterSettings
-    {
-        public int? cyclomaticComplexityThreshold;
-        public int? maintainabilityIndexThreshold;
-        public int? cognitiveComplexityThreshold;
-        public string[] languagesToTranslate;
-        public bool enableRule0011ForTableFields = false;
-        public bool enableRule0016ForApiObjects = false;
+        public class InternalLinterSettings
+        {
+            public int? cyclomaticComplexityThreshold;
+            public int? maintainabilityIndexThreshold;
+            public int? cognitiveComplexityThreshold;
+            public string[] languagesToTranslate;
+            public bool enableRule0011ForTableFields = false;
+            public bool enableRule0016ForApiObjects = false;
+
+            [JsonProperty("procedure.name")]
+            public ProcedureNamePattern procedureNamePattern;
+        }
+
+        public class ProcedureNamePattern
+        {
+            [JsonProperty("allow.pattern")]
+            public string AllowPattern = "";
+
+            [JsonProperty("disallow.pattern")]
+            public string DisallowPattern = "";
+
+            [JsonProperty("global.procedure.allow.pattern")]
+            public string GlobalProcedureAllowPattern = "";
+            [JsonProperty("global.procedure.disallow.pattern")]
+            public string GlobalProcedureDisallowPattern = "";
+
+            [JsonProperty("local.procedure.allow.pattern")]
+            public string LocalProcedureAllowPattern = "";
+            [JsonProperty("local.procedure.disallow.pattern")]
+            public string LocalProcedureDisallowPattern = "";
+
+
+            [JsonProperty("event.subscriber.allow.pattern")]
+            public string EventSubscriberAllowPattern = "";
+            [JsonProperty("event.subscriber.disallow.pattern")]
+            public string EventSubscriberDisallowPattern = "";
+
+            [JsonProperty("event.declaration.allow.pattern")]
+            public string EventDeclarationAllowPattern = "";
+            [JsonProperty("event.declaration.disallow.pattern")]
+            public string EventDeclarationDisallowPattern = "";
+        }
     }
 }

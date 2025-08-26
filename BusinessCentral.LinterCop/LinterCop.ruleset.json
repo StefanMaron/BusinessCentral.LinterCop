@@ -451,6 +451,16 @@
       "id": "LC0090",
       "action": "Info",
       "justification": "Show Cognitive Complexity diagnostics for methods above threshold."
+    },
+    {
+      "id": "LC0092",
+      "action": "Info",
+      "justification": "Procedure names must match the allowed pattern and must not match the disallowed pattern to increase readability and enforce naming conventions."
+    },
+    {
+      "id": "LC0093",
+      "action": "Info",
+      "justification": "Global test method requires test attribute. Use e.g. library codeunits for public procedures."
     }
   ]
 }
