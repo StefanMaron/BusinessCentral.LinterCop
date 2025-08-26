@@ -230,27 +230,27 @@ public class Rule0092NamePattern : DiagnosticAnalyzer
 
     private void CheckParameterName(SymbolAnalysisContext ctx)
     {
-        if (ctx.Symbol is IMethodSymbol methodSym)
-        {
-            foreach (var parSym in methodSym.Parameters)
-            {
-                CheckVariableOrParameterPattern(ctx, parSym.GetLocation(), parSym.Name, "Parameter");
-            }
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not IMethodSymbol methodSym)
+            return;
 
-            var retSym = methodSym.ReturnValueSymbol;
-            if (retSym != null && retSym.IsNamed)
-            {
-                CheckVariableOrParameterPattern(ctx, retSym.GetLocation(), retSym.Name, "Return value");
-            }
+        foreach (var parSym in methodSym.Parameters)
+        {
+            CheckVariableOrParameterPattern(ctx, parSym.GetLocation(), parSym.Name, "Parameter");
+        }
+
+        var retSym = methodSym.ReturnValueSymbol;
+        if (retSym != null && retSym.IsNamed)
+        {
+            CheckVariableOrParameterPattern(ctx, retSym.GetLocation(), retSym.Name, "Return value");
         }
     }
 
     private void CheckVariableName(SymbolAnalysisContext ctx)
     {
-        if (ctx.Symbol is IVariableSymbol varSym)
-        {
-            CheckVariableOrParameterPattern(ctx, varSym.GetLocation(), varSym.Name, "Variable");
-        }
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not IVariableSymbol varSym)
+            return;
+
+        CheckVariableOrParameterPattern(ctx, varSym.GetLocation(), varSym.Name, "Variable");
     }
 
     private void CheckVariableOrParameterPattern(SymbolAnalysisContext ctx, Location location, string text, string kind)
