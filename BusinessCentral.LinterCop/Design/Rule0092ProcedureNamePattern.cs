@@ -23,7 +23,10 @@ public class Rule0092ProcedureNamePattern : DiagnosticAnalyzer
 
     public Rule0092ProcedureNamePattern()
     {
-        var settings = LinterSettings.instance.procedureNamePattern;
+        var settings = LinterSettings.instance?.procedureNamePattern;
+        if (settings == null)
+            return;
+
         _allowPattern = Pattern.CompilePattern(settings.AllowPattern);
         _disallowPattern = Pattern.CompilePattern(settings.DisallowPattern);
         _globalAllowPattern = Pattern.CompilePattern(settings.GlobalProcedureAllowPattern);
@@ -184,7 +187,21 @@ public class Rule0092ProcedureNamePattern : DiagnosticAnalyzer
 
     private void CheckPattern(SymbolAnalysisContext ctx, Regex pattern, string patternSource, bool isMatch, string name)
     {
-        if (pattern.IsMatch(name) != isMatch)
+        bool matches;
+        try
+        {
+            matches = pattern.IsMatch(name);
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            return;
+        }
+        catch (Exception)
+        {
+            return;
+        }
+
+        if (matches != isMatch)
         {
             ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0092ProcedureNamePattern,
