@@ -338,7 +338,7 @@ public class Rule0091TranslatableTextShouldBeTranslated : DiagnosticAnalyzer
         // checks local and global Label variables
         if (label.GetTypeSymbol() is ILabelTypeSymbol labelTypeSymbol)
         {
-            if (labelTypeSymbol.Locked) return true;
+            if (labelTypeSymbol.Locked is true) return true;
         }
         else
         {
