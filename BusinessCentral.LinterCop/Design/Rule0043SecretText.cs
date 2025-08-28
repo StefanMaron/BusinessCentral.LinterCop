@@ -123,7 +123,7 @@ public class Rule0043SecretText : DiagnosticAnalyzer
                 IOperation operand = ((IConversionExpression)argument.Value).Operand;
                 if (operand.GetSymbol()?.OriginalDefinition.GetTypeSymbol().GetNavTypeKindSafe() != NavTypeKind.Label) return false;
                 ILabelTypeSymbol label = (ILabelTypeSymbol)operand.GetSymbol()!.OriginalDefinition.GetTypeSymbol();
-                return SemanticFacts.IsSameName(label.GetLabelText(), authorization);
+                return SemanticFacts.IsSameName(label.Text ?? string.Empty, authorization);
             default:
                 return false;
         }
