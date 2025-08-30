@@ -59,4 +59,7 @@ public class HelperFunctions
         }
         return true;
     }
+
+    public static bool IsRecord(ITypeSymbol symb) =>
+        symb != null && symb.Kind == SymbolKind.Record;
 }
