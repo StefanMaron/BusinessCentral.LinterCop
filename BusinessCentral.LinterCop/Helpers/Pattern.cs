@@ -1,15 +1,20 @@
 using System.Text.RegularExpressions;
 
 namespace BusinessCentral.LinterCop.Helpers;
-public class Pattern
+public static class Pattern
 {
-    public static Regex? CompilePattern(string patternString)
+    public static Regex? CompilePattern(string? patternString, RegexOptions options = RegexOptions.Compiled | RegexOptions.CultureInvariant)
     {
-        if (patternString != null && patternString != "")
-        {
-            return new Regex(patternString);
-        }
+        if (string.IsNullOrWhiteSpace(patternString))
+            return null;
 
-        return null;
+        try
+        {
+            return new Regex(patternString.Trim(), options, TimeSpan.FromSeconds(2));
+        }
+        catch (ArgumentException)
+        {
+            return null;
+        }
     }
 }
