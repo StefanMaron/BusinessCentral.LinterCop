@@ -10,7 +10,10 @@ function ConvertTo-Version {
         [Parameter(Mandatory = $true)]
         [string] $version
     ) 
-    
+
+    # Remove everything after the first hyphen (including -beta, -alpha, etc.)
+    $version = $version -split '-' | Select-Object -First 1
+
     $result = $null
     if ([System.Version]::TryParse($version, [ref]$result)) {
         return $result
