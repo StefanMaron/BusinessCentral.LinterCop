@@ -1,6 +1,9 @@
 # Get-TargetFramework.ps1
 Param (
     [Parameter(Mandatory = $true)]
+    [string] $assetType,
+
+    [Parameter(Mandatory = $true)]
     [string] $version
 )
 
@@ -10,7 +13,10 @@ function ConvertTo-Version {
         [Parameter(Mandatory = $true)]
         [string] $version
     ) 
-    
+
+    # Remove everything after the first hyphen (including -beta, -alpha, etc.)
+    $version = $version -split '-' | Select-Object -First 1
+
     $result = $null
     if ([System.Version]::TryParse($version, [ref]$result)) {
         return $result
@@ -36,6 +42,12 @@ function Get-TargetFramework {
     else {
         return "net8.0"
     }
+}
+
+# Check if assetType is 'NuGetPackage' and return net8.0 directly
+if ($assetType -eq 'NuGetPackage') {
+    Write-Output "net8.0"
+    return
 }
 
 # Convert input version string to System.Version

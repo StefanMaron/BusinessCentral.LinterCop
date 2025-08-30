@@ -13,13 +13,17 @@ jobs:
         id: generate_hash
         shell: pwsh
         run: |
-          $results = Invoke-WebRequest -Method POST -UseBasicParsing `
+          $marketplace = Invoke-WebRequest -Method POST -UseBasicParsing `
               -Uri https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery?api-version=3.0-preview.1 `
               -Body '{"filters":[{"criteria":[{"filterType":4,"value":"fe889a8a-1498-4047-850d-eb8ea82de1d1"}],"pageNumber":1,"pageSize":10,"sortBy":0,"sortOrder":0}],"assetTypes":[],"flags":0x0}' `
-              -ContentType application/json
+              -ContentType application/json | ConvertFrom-Json
+
+          $PackageId = 'Microsoft.Dynamics.BusinessCentral.Development.Tools'
+          $nuget = Invoke-WebRequest -Method GET -UseBasicParsing `
+              -Uri "https://api.nuget.org/v3-flatcontainer/$($PackageId.ToLower())/index.json" | ConvertFrom-Json
 
           $md5 = [System.Security.Cryptography.MD5]::Create()
-          $bytes = [System.Text.Encoding]::UTF8.GetBytes($results)
+          $bytes = [System.Text.Encoding]::UTF8.GetBytes(@{marketplace = $marketplace; nuget = $nuget})
           $hashBytes = $md5.ComputeHash($bytes)
           $hashString = [BitConverter]::ToString($hashBytes).ToLower() -replace '-', ''
           Write-Host "Calculated hash is: $($hashString)"

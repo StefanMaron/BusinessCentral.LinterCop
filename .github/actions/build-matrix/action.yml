@@ -37,6 +37,7 @@ runs:
                 version      = $item.version;
                 assetname    = "BusinessCentral.LinterCop.AL-$($item.version).dll";
                 assetUri     = $item.source;
+                assetType    = $item.type;
                 latest       = $($item.version -eq $env:AL_VERSION_LATEST);
                 prerelease   = $($item.version -eq $env:AL_VERSION_PRERELEASE);
             }
