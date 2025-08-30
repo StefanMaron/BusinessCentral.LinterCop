@@ -17,7 +17,10 @@ inputs:
     description: The version number of the corresponding AL Language
   al-asset-uri:
     required: true
-    description: The asset uri for retrieving the VSIXPackages of the AL Language
+    description: The asset uri for retrieving the VSIXPackage/NuGetPackage of the AL Language
+  al-asset-type:
+    required: true
+    description: The asset type, VSIXPackage or NuGetPackage
   al-latest:
     default: "false"
     required: false
@@ -36,6 +39,7 @@ runs:
       with:
         version-number: ${{ inputs.al-version-number }}
         asset-uri: ${{ inputs.al-asset-uri }}
+        asset-type: ${{ inputs.al-asset-type }}
         target-path: ALLanguage
 
     - name: Set AssemblyInfo
@@ -61,6 +65,7 @@ runs:
       id: get-target-framework
       uses: ./.github/actions/target-framework
       with:
+        asset-type: ${{ inputs.al-asset-type }}
         version-number: ${{ inputs.al-version-number }}
 
     - name: Build

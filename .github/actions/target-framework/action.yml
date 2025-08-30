@@ -2,6 +2,9 @@ name: Target Framework
 description: Composite Action to determinve the TargetFramework based on the AL Language version
 
 inputs:
+  asset-type:
+    required: true
+    description: The asset type, VSIXPackage or NuGetPackage
   version-number:
     required: true
     description: version number of the AL Language
@@ -18,7 +21,8 @@ runs:
       id: get-target-framework
       shell: pwsh
       env:
+        ASSET_TYPE: ${{ inputs.asset-type}}
         VERSION_NUMBER: ${{ inputs.version-number}}
       run: |
-        $result = ${{github.action_path}}/Get-TargetFramework $env:VERSION_NUMBER
+        $result = ${{github.action_path}}/Get-TargetFramework $env:ASSET_TYPE $env:VERSION_NUMBER
         echo "target-framework=$($result)" >> $env:GITHUB_OUTPUT

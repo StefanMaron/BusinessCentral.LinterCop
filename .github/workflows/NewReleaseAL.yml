@@ -76,6 +76,7 @@ jobs:
           asset-publish: "true"
           al-version-number: ${{ matrix.version }}
           al-asset-uri: ${{ matrix.assetUri }}
+          al-asset-type: ${{ matrix.assetType }}
           al-latest: ${{ matrix.latest }}
           al-prerelease: ${{ matrix.prerelease }}
 
