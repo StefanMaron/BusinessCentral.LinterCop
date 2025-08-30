@@ -54,7 +54,7 @@ runs:
         | Select-Object -First 1
 
         # Regular expression pattern to match version numbers
-        $pattern = 'AL-(\d+\.\d+\.\d+)'
+        $pattern = 'AL-(\d+\.\d+\.\d+(?:-[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*)?)'
 
         # Extract version numbers
         $versions = $releaseLatest.assets | ForEach-Object {
