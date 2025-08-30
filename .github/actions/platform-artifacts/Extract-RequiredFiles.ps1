@@ -13,17 +13,9 @@ param(
 Remove-Item -Path $DestinationPath -Recurse -Force -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Path $DestinationPath | Out-Null
 
-#Add-Type -AssemblyName System.IO.Compression
-#Add-Type -AssemblyName System.IO.Compression.FileSystem
-
 # Normalize the archive subpath to ZIP's forward-slash form and ensure trailing slash
 $norm = ($PathInArchive -replace '\\', '/').TrimStart('/')
 if ($norm.Length -gt 0 -and -not $norm.EndsWith('/')) { $norm += '/' }
-
-# # Detect ExtractToFile overloads
-# $has3 = [System.IO.Compression.ZipFileExtensions].GetMethods() |
-# Where-Object { $_.Name -eq 'ExtractToFile' -and $_.GetParameters().Length -eq 3 } |
-# Select-Object -First 1
 
 $archive = [System.IO.Compression.ZipFile]::OpenRead($ArchivePath)
 
@@ -52,13 +44,7 @@ try {
         $destDir = Split-Path $destPath -Parent
         if (-not (Test-Path $destDir)) { New-Item -ItemType Directory -Path $destDir -Force | Out-Null }
 
-        # if ($has3) {
         [System.IO.Compression.ZipFileExtensions]::ExtractToFile($entry, $destPath, $true)
-        # }
-        # else {
-        #     if (Test-Path $destPath) { Remove-Item $destPath -Force }
-        #     [System.IO.Compression.ZipFileExtensions]::ExtractToFile($entry, $destPath)
-        # }
     }
 }
 finally {
