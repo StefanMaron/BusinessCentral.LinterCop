@@ -27,7 +27,7 @@
         <Reference Include="Microsoft.Dynamics.Nav.Analyzers.Common">
             <SpecificVersion>False</SpecificVersion>
             <HintPath>../ALLanguage/Microsoft.Dynamics.Nav.Analyzers.Common.dll</HintPath>
-            <Private>True</Private>
+            <Private>False</Private>
         </Reference>
         <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces">
             <SpecificVersion>False</SpecificVersion>
