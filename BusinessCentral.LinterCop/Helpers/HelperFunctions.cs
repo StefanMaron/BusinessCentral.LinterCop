@@ -1,4 +1,6 @@
 ﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 
 namespace BusinessCentral.LinterCop.Helpers;
 
@@ -58,5 +60,11 @@ public class HelperFunctions
             }
         }
         return true;
+    }
+
+    public static bool IsOperationInvokedInTable(OperationAnalysisContext context, IOperation operation)
+    {
+        var containing = operation?.Syntax?.GetContainingObjectSyntax();
+        return containing is TableSyntax;
     }
 }
