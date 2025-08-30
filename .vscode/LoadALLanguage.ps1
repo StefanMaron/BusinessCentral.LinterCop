@@ -10,7 +10,7 @@ $vsixUrl = $listing.results.extensions.versions `
 $archivePath = "ALLanguage.vsix"
 Invoke-WebRequest $vsixUrl -OutFile $archivePath;
 
-$extractor = Join-Path $PSScriptRoot '..\.github\actions\marketplace\Get-NuGet-Packages.ps1'
+$extractor = Join-Path $PSScriptRoot '..\.github\actions\platform-artifacts\Extract-RequiredFiles.ps1'
 & $extractor -DestinationPath 'ALLanguage' -ArchivePath $archivePath -PathInArchive 'extension\bin\Analyzers'
 
 Remove-Item -Path $archivePath -Force -ErrorAction SilentlyContinue
