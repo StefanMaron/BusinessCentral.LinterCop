@@ -451,6 +451,11 @@
       "id": "LC0090",
       "action": "Info",
       "justification": "Show Cognitive Complexity diagnostics for methods above threshold."
+    },
+    {
+      "id": "LC0094",
+      "action": "Info",
+      "justification": "Avoid global variables to reduce hidden coupling and side effects, and to improve testability and maintainability."
     }
   ]
 }

@@ -943,4 +943,14 @@ public static class DiagnosticDescriptors
         isEnabledByDefault: true,
         description: LinterCopAnalyzers.GetLocalizableString("Rule0091TranslatableTextShouldBeTranslatedDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091");
+
+    public static readonly DiagnosticDescriptor Rule0094NoGlobalVariablesInCodeunit = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "0094",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0094NoGlobalVariablesInCodeunitTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0094NoGlobalVariablesInCodeunitFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: true,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0094NoGlobalVariablesInCodeunitDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0094");
 }
