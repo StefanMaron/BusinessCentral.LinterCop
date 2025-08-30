@@ -455,7 +455,7 @@
     {
       "id": "LC0092",
       "action": "Info",
-      "justification": "Procedure names must match the allowed pattern and must not match the disallowed pattern to increase readability and enforce naming conventions."
+      "justification": "Names must match the allowed pattern and must not match the disallowed pattern to increase readability and enforce naming conventions."
     },
     {
       "id": "LC0093",

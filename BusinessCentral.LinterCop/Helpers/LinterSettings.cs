@@ -14,6 +14,7 @@ namespace BusinessCentral.LinterCop.Helpers
         public bool enableRule0016ForApiObjects = false;
         public string WorkingDir = "";
         public ProcedureNamePattern procedureNamePattern = new();
+        public VariableAndParameterNamePattern variableAndParameterNamePattern = new();
         static public LinterSettings instance;
 
         static public void Create(string WorkingDir)
@@ -47,6 +48,8 @@ namespace BusinessCentral.LinterCop.Helpers
 
                     if (internalInstance.procedureNamePattern != null)
                         instance.procedureNamePattern = internalInstance.procedureNamePattern;
+                    if (internalInstance.variableAndParameterNamePattern != null)
+                        instance.variableAndParameterNamePattern = internalInstance.variableAndParameterNamePattern;
                 }
 
                 instance.WorkingDir = WorkingDir;
@@ -64,6 +67,9 @@ namespace BusinessCentral.LinterCop.Helpers
 
             [JsonProperty("procedure.name")]
             public ProcedureNamePattern procedureNamePattern;
+
+            [JsonProperty("variable.name")]
+            public VariableAndParameterNamePattern variableAndParameterNamePattern = new();
         }
 
         public class ProcedureNamePattern
@@ -94,6 +100,15 @@ namespace BusinessCentral.LinterCop.Helpers
             public string EventDeclarationAllowPattern = "";
             [JsonProperty("event.declaration.disallow.pattern")]
             public string EventDeclarationDisallowPattern = "";
+        }
+
+        public class VariableAndParameterNamePattern
+        {
+            [JsonProperty("allow.pattern")]
+            public string AllowPattern = "";
+
+            [JsonProperty("disallow.pattern")]
+            public string DisallowPattern = "";
         }
     }
 }
