@@ -65,6 +65,7 @@ runs:
       id: get-target-framework
       uses: ./.github/actions/target-framework
       with:
+        asset-type: ${{ inputs.al-asset-type }}
         version-number: ${{ inputs.al-version-number }}
 
     - name: Build
