@@ -61,7 +61,7 @@ runs:
 
         Write-Output "Extracting $($env:ASSET_TYPE) from path: $pathInArchive"
 
-        & "$env:ACTION_PATH\Extract-RequiredFiles.ps1" -DestinationPath $env:TARGET_PATH -ArchivePath $env:ARCHIVE_PATH -PathInArchive $pathInArchive
+        & "$env:ACTION_PATH\Extract-RequiredFiles.ps1" -DestinationPath $env:TARGET_PATH -ArchivePath $env:ARCHIVE_PATH -PathInArchive $($pathInArchive)
 
     # - name: Extract platform artifact
     #   if: steps.get_platform_artifact.outputs.cache-hit != 'true'
