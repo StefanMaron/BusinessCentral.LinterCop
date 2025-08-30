@@ -30,7 +30,7 @@ $currentRelease = $listingFiltered `
 | Where-Object { $_.properties.key -notcontains 'Microsoft.VisualStudio.Code.PreRelease' } `
 | Select-Object -First 1 -ExpandProperty version
 
-# Remove pre-release versions lower than currentRelease
+# Remove pre-release versions lower than current release
 $listingFiltered = $listingFiltered `
 | Where-Object { 
     $version = ConvertTo-Version($_.version)
