@@ -51,8 +51,8 @@ runs:
         ACTION_PATH: ${{ github.action_path }}
       run: |
         $pathInArchive = switch ($env:ASSET_TYPE) {
-          'VSIXPackage' { 'tools\net8.0\any' }
-          'NuGetPackage' { 'extension\bin\Analyzers' }
+          'VSIXPackage' { 'extension\bin\Analyzers' }
+          'NuGetPackage' { 'tools\net8.0\any' }
           default { 
             Write-Error "Invalid asset-type: $($env:ASSET_TYPE). Must be 'VSIXPackage' or 'NuGetPackage'."
             exit 1
@@ -61,7 +61,7 @@ runs:
 
         Write-Output "Extracting $($env:ASSET_TYPE) from path: $pathInArchive"
 
-        & "$env:ACTION_PATH\Extract-RequiredFiles.ps1" -DestinationPath $env:TARGET_PATH -ArchivePath $env:ARCHIVE_PATH -PathInArchive $($pathInArchive)
+        & "$env:ACTION_PATH\Extract-RequiredFiles.ps1" -DestinationPath $env:TARGET_PATH -ArchivePath $env:ARCHIVE_PATH -PathInArchive $pathInArchive
 
     # - name: Extract platform artifact
     #   if: steps.get_platform_artifact.outputs.cache-hit != 'true'
