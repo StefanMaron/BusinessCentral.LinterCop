@@ -38,19 +38,6 @@ runs:
         asset-uri: ${{ inputs.al-asset-uri }}
         target-path: ALLanguage
 
-    - name: Set AssemblyInfo
-      shell: pwsh
-      if: ${{ inputs.asset-publish == 'true' }}
-      env:
-        AL_VERSION: ${{ inputs.al-version-number }}
-        LC_VERSION: ${{ inputs.asset-version-number }}
-      run:
-        (Get-Content BusinessCentral.LinterCop/AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
-        ("Version(""" + ($env:LC_VERSION
-        -replace "v","") + """)]") | Out-File BusinessCentral.LinterCop/AssemblyInfo.cs
-
-        (Get-Content BusinessCentral.LinterCop/AssemblyInfo.cs) -replace 'AssemblyTitle\("([^"]*)"\)', "AssemblyTitle(`"AL-$env:AL_VERSION`")" | Out-File BusinessCentral.LinterCop/AssemblyInfo.cs
-
     - name: Populate Feature Flags
       id: get-feature-flags
       uses: ./.github/actions/feature-flags
@@ -65,7 +52,16 @@ runs:
 
     - name: Build
       shell: pwsh
-      run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }} --configuration Release --framework ${{ steps.get-target-framework.outputs.target-framework }}
+      run: >
+        dotnet build BusinessCentral.LinterCop
+        --configuration Release
+        --framework ${{ steps.get-target-framework.outputs.target-framework }}
+        -p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }}
+        -p:Version=${{ inputs.asset-version-number }}
+        -p:FileVersion=${{ inputs.asset-version-number }}
+        -p:InformationalVersion="AL-${{ inputs.al-version-number }}"
+        -p:AssemblyTitle="AL-${{ inputs.al-version-number }}"
+        -p:Product="BusinessCentral.LinterCop"
 
     - name: Cache NuGet packages
       uses: actions/cache@v4
