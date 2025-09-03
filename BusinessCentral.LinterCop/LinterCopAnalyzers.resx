@@ -120,6 +120,15 @@
   <data name="AnalyzerPrefix" xml:space="preserve">
     <value>LC</value>
   </data>
+  <data name="AssemblyVersionCompatibilityMismatchDecription" xml:space="preserve">
+    <value>Analyzer and AL Language version mismatch</value>
+  </data>
+  <data name="AssemblyVersionCompatibilityMismatchFormat" xml:space="preserve">
+    <value>LinterCop version '{0}' is not compatible with AL Language version '{1}'. Please install the matching version of LinterCop for this AL Language.</value>
+  </data>
+  <data name="AssemblyVersionCompatibilityMismatchTitle" xml:space="preserve">
+    <value>The version of LinterCop does not match the version of the AL Language compiler it is running on. This mismatch may lead to incorrect diagnostics.</value>
+  </data>
   <data name="Rule0000ErrorInRuleDecription" xml:space="preserve">
     <value>There was an error in a Linter Rule</value>
   </data>
