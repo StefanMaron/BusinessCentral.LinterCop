@@ -5,7 +5,6 @@ inputs:
   asset-version-number:
     required: false
     description: The version number for the artifact
-    default: "1.0.0.0"
   asset-name:
     required: false
     description: The name for the artifact
@@ -51,6 +50,21 @@ runs:
       with:
         version-number: ${{ inputs.al-version-number }}
 
+    - name: Normalize asset version number
+      id: normalize-asset-version
+      shell: pwsh
+      run: |
+        $input = "${{ inputs.asset-version-number }}"
+        if ([string]::IsNullOrWhiteSpace($input)) {
+          $normalized = "1.0.0.0"
+        }
+        else {
+          $normalized = $input.TrimStart("v")
+        }
+
+        echo "Normalized version: $normalized"
+        echo "normalized-asset-version=$normalized" >> $env:GITHUB_OUTPUT
+
     - name: Build
       shell: pwsh
       run: >
@@ -58,8 +72,8 @@ runs:
         --configuration Release
         --framework ${{ steps.get-target-framework.outputs.target-framework }}
         -p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }}
-        -p:Version=${{ inputs.asset-version-number }}
-        -p:FileVersion=${{ inputs.asset-version-number }}
+        -p:Version=${{ steps.normalize-version.outputs.normalized-version }} `
+        -p:FileVersion=${{ steps.normalize-version.outputs.normalized-version }} `
         -p:InformationalVersion="AL-${{ inputs.al-version-number }}"
         -p:AssemblyTitle="AL-${{ inputs.al-version-number }}"
         -p:Product="BusinessCentral.LinterCop"
