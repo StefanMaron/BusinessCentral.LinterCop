@@ -5,6 +5,7 @@ inputs:
   asset-version-number:
     required: false
     description: The version number for the artifact
+    default: "1.0.0.0"
   asset-name:
     required: false
     description: The name for the artifact
