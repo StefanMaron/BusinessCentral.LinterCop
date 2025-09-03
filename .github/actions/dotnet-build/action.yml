@@ -72,7 +72,7 @@ runs:
         --configuration Release
         --framework ${{ steps.get-target-framework.outputs.target-framework }}
         -p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }}
-        -p:Version=${{ steps.normalize-version.outputs.normalized-asset-version }} `
+        -p:Version=${{ steps['normalize-version'].outputs['normalized-asset-version'] }} `
         -p:FileVersion=${{ steps.normalize-version.outputs.normalized-asset-version }} `
         -p:InformationalVersion="AL-${{ inputs.al-version-number }}"
         -p:AssemblyTitle="AL-${{ inputs.al-version-number }}"
