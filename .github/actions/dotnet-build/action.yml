@@ -50,8 +50,8 @@ runs:
       with:
         version-number: ${{ inputs.al-version-number }}
 
-    - name: Normalize asset version number
-      id: normalize-asset-version
+    - name: Normalize version number
+      id: normalize-version
       shell: pwsh
       run: |
         $input = "${{ inputs.asset-version-number }}"
@@ -72,8 +72,8 @@ runs:
         --configuration Release
         --framework ${{ steps.get-target-framework.outputs.target-framework }}
         -p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }}
-        -p:Version=${{ steps.normalize-version.outputs.normalized-version }} `
-        -p:FileVersion=${{ steps.normalize-version.outputs.normalized-version }} `
+        -p:Version=${{ steps.normalize-version.outputs.normalized-asset-version }} `
+        -p:FileVersion=${{ steps.normalize-version.outputs.normalized-asset-version }} `
         -p:InformationalVersion="AL-${{ inputs.al-version-number }}"
         -p:AssemblyTitle="AL-${{ inputs.al-version-number }}"
         -p:Product="BusinessCentral.LinterCop"
