@@ -26,20 +26,27 @@ public class Rule0092NamePattern : DiagnosticAnalyzer
 
     public Rule0092NamePattern()
     {
-        var procedureNameSettings = LinterSettings.instance.procedureNamePattern;
-        _procedureNameAllowPattern = Pattern.CompilePattern(procedureNameSettings.AllowPattern);
-        _procedureNameDisallowPattern = Pattern.CompilePattern(procedureNameSettings.DisallowPattern);
-        _procedureNameGlobalAllowPattern = Pattern.CompilePattern(procedureNameSettings.GlobalProcedureAllowPattern);
-        _procedureNameGlobalDisallowPattern = Pattern.CompilePattern(procedureNameSettings.GlobalProcedureDisallowPattern);
-        _procedureNameLocalAllowPattern = Pattern.CompilePattern(procedureNameSettings.LocalProcedureAllowPattern);
-        _procedureNameLocalDisallowPattern = Pattern.CompilePattern(procedureNameSettings.LocalProcedureDisallowPattern);
-        _eventSubscriberAllowPattern = Pattern.CompilePattern(procedureNameSettings.EventSubscriberAllowPattern);
-        _eventSubscriberDisallowPattern = Pattern.CompilePattern(procedureNameSettings.EventSubscriberDisallowPattern);
-        _eventDeclarationAllowPattern = Pattern.CompilePattern(procedureNameSettings.EventDeclarationAllowPattern);
-        _eventDeclarationDisallowPattern = Pattern.CompilePattern(procedureNameSettings.EventDeclarationDisallowPattern);
+        var procedureNameSettings = LinterSettings.instance?.procedureNamePattern;
+        if (procedureNameSettings != null)
+        {
+            _procedureNameAllowPattern = Pattern.CompilePattern(procedureNameSettings.AllowPattern);
+            _procedureNameDisallowPattern = Pattern.CompilePattern(procedureNameSettings.DisallowPattern);
+            _procedureNameGlobalAllowPattern = Pattern.CompilePattern(procedureNameSettings.GlobalProcedureAllowPattern);
+            _procedureNameGlobalDisallowPattern = Pattern.CompilePattern(procedureNameSettings.GlobalProcedureDisallowPattern);
+            _procedureNameLocalAllowPattern = Pattern.CompilePattern(procedureNameSettings.LocalProcedureAllowPattern);
+            _procedureNameLocalDisallowPattern = Pattern.CompilePattern(procedureNameSettings.LocalProcedureDisallowPattern);
+            _eventSubscriberAllowPattern = Pattern.CompilePattern(procedureNameSettings.EventSubscriberAllowPattern);
+            _eventSubscriberDisallowPattern = Pattern.CompilePattern(procedureNameSettings.EventSubscriberDisallowPattern);
+            _eventDeclarationAllowPattern = Pattern.CompilePattern(procedureNameSettings.EventDeclarationAllowPattern);
+            _eventDeclarationDisallowPattern = Pattern.CompilePattern(procedureNameSettings.EventDeclarationDisallowPattern);
+        }
 
-        _variableAndParameterNameAllowPattern = Pattern.CompilePattern(LinterSettings.instance.variableAndParameterNamePattern.AllowPattern);
-        _variableAndParameterNameDisallowPattern = Pattern.CompilePattern(LinterSettings.instance.variableAndParameterNamePattern.DisallowPattern);
+        var variableAndParameterNameSettings = LinterSettings.instance?.variableAndParameterNamePattern;
+        if (variableAndParameterNameSettings != null)
+        {
+            _variableAndParameterNameAllowPattern = Pattern.CompilePattern(variableAndParameterNameSettings.AllowPattern);
+            _variableAndParameterNameDisallowPattern = Pattern.CompilePattern(variableAndParameterNameSettings.DisallowPattern);
+        }
     }
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =

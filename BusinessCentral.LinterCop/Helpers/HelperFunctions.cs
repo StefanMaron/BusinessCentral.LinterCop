@@ -1,5 +1,5 @@
-﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
 
@@ -75,7 +75,21 @@ public class HelperFunctions
 
     private static void CheckPattern(SymbolAnalysisContext ctx, Location location, Regex pattern, string patternSource, bool isMatch, string name, string indentifierKind)
     {
-        if (pattern.IsMatch(name) != isMatch)
+        bool matches;
+        try
+        {
+            matches = pattern.IsMatch(name);
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            return;
+        }
+        catch (Exception)
+        {
+            return;
+        }
+
+        if (matches != isMatch)
         {
             ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0092NamesPattern,
