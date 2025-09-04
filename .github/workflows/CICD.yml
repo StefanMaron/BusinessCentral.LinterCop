@@ -90,6 +90,7 @@ jobs:
       - name: Code Sign artifacts
         id: code-sign
         uses: ./.github/actions/dotnet-sign
+        if: false # Temporary disable code signing until we have resolved issue #1149
         with:
           base-directory: ${{ github.workspace }}\BuildArtifacts
           description: "BusinessCentral.LinterCop"
