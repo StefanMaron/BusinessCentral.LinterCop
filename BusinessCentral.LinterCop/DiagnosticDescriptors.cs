@@ -933,7 +933,6 @@ public static class DiagnosticDescriptors
         description: LinterCopAnalyzers.GetLocalizableString("Rule0089CognitiveComplexityDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0090");
 
-
     public static readonly DiagnosticDescriptor Rule0091TranslatableTextShouldBeTranslated = new(
         id: LinterCopAnalyzers.AnalyzerPrefix + "0091",
         title: LinterCopAnalyzers.GetLocalizableString("Rule0091TranslatableTextShouldBeTranslatedTitle"),
@@ -943,4 +942,39 @@ public static class DiagnosticDescriptors
         isEnabledByDefault: true,
         description: LinterCopAnalyzers.GetLocalizableString("Rule0091TranslatableTextShouldBeTranslatedDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091");
+
+    public static readonly DiagnosticDescriptor Rule0092NamesPattern = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "0092",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0092NamesPatternTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0092NamesPatternFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: true,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0092NamesPatternDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0092");
+
+    public static readonly DiagnosticDescriptor Rule0093GlobalTestMethodRequiresTestAttribute = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "0093",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0093GlobalTestMethodRequiresTestAttributeTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0093GlobalTestMethodRequiresTestAttributeFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: true,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0093GlobalTestMethodRequiresTestAttributeDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0093");
+
+    public static readonly DiagnosticDescriptor Rule9999AssemblyVersionCompatibilityAnalyzer = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "9999",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule9999AssemblyVersionCompatibilityAnalyzerTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule9999AssemblyVersionCompatibilityAnalyzerFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Error,
+#if DEBUG // The AssemblyFileVersion property is only set in Release builds through the pipeline, so we disable this check by default in Debug builds
+        isEnabledByDefault: false,
+#else
+        isEnabledByDefault: true,
+#endif
+        description: LinterCopAnalyzers.GetLocalizableString("Rule9999AssemblyVersionCompatibilityAnalyzerDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC9999");
+
 }

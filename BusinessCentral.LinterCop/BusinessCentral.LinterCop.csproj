@@ -5,7 +5,7 @@
         <TargetFrameworks>netstandard2.1;net8.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <LangVersion>Latest</LangVersion>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
         <Nullable>enable</Nullable>
         <WarningsAsErrors>CS8600;CS8602;CS8603;CS8604;CS8605</WarningsAsErrors>
         <DefineConstants>$(DefineConstants)$(FeatureFlags.Replace("#",";"))</DefineConstants>

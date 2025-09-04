@@ -42,19 +42,6 @@ runs:
         asset-type: ${{ inputs.al-asset-type }}
         target-path: ALLanguage
 
-    - name: Set AssemblyInfo
-      shell: pwsh
-      if: ${{ inputs.asset-publish == 'true' }}
-      env:
-        AL_VERSION: ${{ inputs.al-version-number }}
-        LC_VERSION: ${{ inputs.asset-version-number }}
-      run:
-        (Get-Content BusinessCentral.LinterCop/AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
-        ("Version(""" + ($env:LC_VERSION
-        -replace "v","") + """)]") | Out-File BusinessCentral.LinterCop/AssemblyInfo.cs
-
-        (Get-Content BusinessCentral.LinterCop/AssemblyInfo.cs) -replace 'AssemblyTitle\("([^"]*)"\)', "AssemblyTitle(`"AL-$env:AL_VERSION`")" | Out-File BusinessCentral.LinterCop/AssemblyInfo.cs
-
     - name: Populate Feature Flags
       id: get-feature-flags
       uses: ./.github/actions/feature-flags
@@ -68,9 +55,33 @@ runs:
         asset-type: ${{ inputs.al-asset-type }}
         version-number: ${{ inputs.al-version-number }}
 
+    - name: Normalize version number
+      id: normalize-version
+      shell: pwsh
+      run: |
+        $input = "${{ inputs.asset-version-number }}"
+        if ([string]::IsNullOrWhiteSpace($input)) {
+          $normalized = "1.0.0.0"
+        }
+        else {
+          $normalized = $input.TrimStart("v")
+        }
+
+        echo "Normalized version: $normalized"
+        echo "normalized-asset-version=$normalized" >> $env:GITHUB_OUTPUT
+
     - name: Build
       shell: pwsh
-      run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }} --configuration Release --framework ${{ steps.get-target-framework.outputs.target-framework }}
+      run: >
+        dotnet build BusinessCentral.LinterCop
+        --configuration Release
+        --framework ${{ steps.get-target-framework.outputs.target-framework }}
+        -p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }}
+        -p:Product="BusinessCentral.LinterCop"
+        -p:Version=${{ steps.normalize-version.outputs.normalized-asset-version }}
+        -p:InformationalVersion=${{ steps.normalize-version.outputs.normalized-asset-version }}
+        -p:AssemblyTitle="AL-${{ inputs.al-version-number }}"
+        -p:FileVersion=${{ inputs.al-version-number }}
 
     - name: Cache NuGet packages
       uses: actions/cache@v4
