@@ -74,7 +74,7 @@ runs:
       id: get-dll-version
       shell: pwsh
       run: |
-        $filePath = "../ALLanguage/Microsoft.Dynamics.Nav.CodeAnalysis.dll"
+        $filePath = "./ALLanguage/Microsoft.Dynamics.Nav.CodeAnalysis.dll"
 
         $assembly = [System.Reflection.Assembly]::LoadFrom($filePath)
         $attributes = $asm.GetCustomAttributes([System.Reflection.AssemblyFileVersionAttribute], $false)
