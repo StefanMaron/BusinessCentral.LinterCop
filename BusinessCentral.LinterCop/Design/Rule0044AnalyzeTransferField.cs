@@ -644,6 +644,11 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
 
                 new Tuple<string, string>("Onboarding Signal", "Onboarding Signal Buffer"),
 
+                // AU
+                new Tuple<string, string>("Sales Invoice Header", "Sales Tax Invoice Header"),
+                new Tuple<string, string>("Sales Cr.Memo Header", "Sales Tax Invoice Header"),
+                new Tuple<string, string>("Purch. Cr. Memo Hdr.", "Purch. Tax Inv. Header"),
+
                 // DACH
                 new Tuple<string, string>("Delivery Reminder Header", "Issued Deliv. Reminder Header"),
                 new Tuple<string, string>("Delivery Reminder Line", "Issued Deliv. Reminder Line"),
