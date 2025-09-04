@@ -71,21 +71,21 @@ runs:
         echo "normalized-asset-version=$normalized" >> $env:GITHUB_OUTPUT
 
     - name: Get version from Microsoft.Dynamics.Nav.CodeAnalysis.dll
-      id: get-dll-version
+      id: get-codeanalysis-version
       shell: pwsh
       run: |
         $filePath = "./ALLanguage/Microsoft.Dynamics.Nav.CodeAnalysis.dll"
 
-        $assembly = [System.Reflection.Assembly]::LoadFrom($filePath)
-        $attributes = $asm.GetCustomAttributes([System.Reflection.AssemblyFileVersionAttribute], $false)
-        if ($attributes.Count -gt 0) {
-            $version = $attributes[0].Version
+        $asm = [System.Reflection.Assembly]::LoadFrom($filePath)
+        $attr = $asm.GetCustomAttributes([System.Reflection.AssemblyFileVersionAttribute], $false)
+        if ($attr.Count -gt 0) {
+            $version = $attr[0].Version
         } else {
-            $version = $assembly.GetName().Version.ToString()
+            $version = $asm.GetName().Version.ToString()
         }
 
-        Write-Host "version: $version"
-        "FILE_VERSION=$version" >> $env:GITHUB_ENV
+        Write-Host "CodeAnalysis.dll version: $version"
+        echo "codeanalysis-version=$version" >> $env:GITHUB_OUTPUT
 
     - name: Build
       shell: pwsh
@@ -98,7 +98,7 @@ runs:
         -p:Version=${{ steps.normalize-version.outputs.normalized-asset-version }}
         -p:InformationalVersion=${{ steps.normalize-version.outputs.normalized-asset-version }}
         -p:AssemblyTitle="AL-${{ inputs.al-version-number }}"
-        -p:FileVersion=${{ steps.get-dll-version.outputs.version }}
+        -p:FileVersion=${{ steps.get-codeanalysis-version.outputs.codeanalysis-version }}
 
     - name: Cache NuGet packages
       uses: actions/cache@v4
