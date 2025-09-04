@@ -642,7 +642,23 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
                 new Tuple<string, string>("Incoming Document Attachment", "Inc. Doc. Attachment Overview"),
                 new Tuple<string, string>("Config. Field Mapping", "Config. Field Map"),
 
-                new Tuple<string, string>("Onboarding Signal", "Onboarding Signal Buffer")
+                new Tuple<string, string>("Onboarding Signal", "Onboarding Signal Buffer"),
+
+                // DACH
+                new Tuple<string, string>("Delivery Reminder Header", "Issued Deliv. Reminder Header"),
+                new Tuple<string, string>("Delivery Reminder Line", "Issued Deliv. Reminder Line"),
+
+                // US
+                new Tuple<string, string>("Sales Invoice Header", "Document Header"),
+                new Tuple<string, string>("Sales Cr.Memo Header", "Document Header"),
+                new Tuple<string, string>("Service Invoice Header", "Document Header"),
+                new Tuple<string, string>("Service Cr.Memo Header", "Document Header"),
+                new Tuple<string, string>("Sales Shipment Header", "Document Header"),
+                new Tuple<string, string>("Sales Invoice Line", "Document Line"),
+                new Tuple<string, string>("Sales Cr.Memo Line", "Document Line"),
+                new Tuple<string, string>("Service Invoice Line", "Document Line"),
+                new Tuple<string, string>("Service Cr.Memo Line", "Document Line"),
+                new Tuple<string, string>("Sales Shipment Line", "Document Line")
             };
     }
 
