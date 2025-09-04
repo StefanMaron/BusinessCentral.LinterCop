@@ -70,6 +70,23 @@ runs:
         echo "Normalized version: $normalized"
         echo "normalized-asset-version=$normalized" >> $env:GITHUB_OUTPUT
 
+    - name: Get version from Microsoft.Dynamics.Nav.CodeAnalysis.dll
+      id: get-dll-version
+      shell: pwsh
+      run: |
+        $filePath = "../ALLanguage/Microsoft.Dynamics.Nav.CodeAnalysis.dll"
+
+        $assembly = [System.Reflection.Assembly]::LoadFrom($filePath)
+        $attributes = $asm.GetCustomAttributes([System.Reflection.AssemblyFileVersionAttribute], $false)
+        if ($attributes.Count -gt 0) {
+            $version = $attributes[0].Version
+        } else {
+            $version = $assembly.GetName().Version.ToString()
+        }
+
+        Write-Host "version: $version"
+        "FILE_VERSION=$version" >> $env:GITHUB_ENV
+
     - name: Build
       shell: pwsh
       run: >
@@ -81,7 +98,7 @@ runs:
         -p:Version=${{ steps.normalize-version.outputs.normalized-asset-version }}
         -p:InformationalVersion=${{ steps.normalize-version.outputs.normalized-asset-version }}
         -p:AssemblyTitle="AL-${{ inputs.al-version-number }}"
-        -p:FileVersion=${{ inputs.al-version-number }}
+        -p:FileVersion=${{ steps.get-dll-version.outputs.version }}
 
     - name: Cache NuGet packages
       uses: actions/cache@v4
