@@ -124,7 +124,7 @@
     <value>Analyzer and AL Language version mismatch</value>
   </data>
   <data name="AssemblyVersionCompatibilityMismatchFormat" xml:space="preserve">
-    <value>LinterCop version '{0}' is not compatible with AL Language version '{1}'. Please install the matching version of LinterCop for this AL Language.</value>
+    <value>Incompatible versions detected. AL Language '{0}' does not match the version '{1}' that LinterCop was built for.</value>
   </data>
   <data name="AssemblyVersionCompatibilityMismatchTitle" xml:space="preserve">
     <value>The version of LinterCop does not match the version of the AL Language compiler it is running on. This mismatch may lead to incorrect diagnostics.</value>

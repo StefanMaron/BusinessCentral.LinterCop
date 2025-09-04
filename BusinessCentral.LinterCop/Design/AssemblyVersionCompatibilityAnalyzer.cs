@@ -18,28 +18,28 @@ public class AssemblyVersionCompatibilityAnalyzer : DiagnosticAnalyzer
     private void CompareAssemblyVersion(CompilationStartAnalysisContext startCtx)
     {
         var codeAnalysisAsm = typeof(Compilation).Assembly;
-        var codeAnalysisAsmVersion = codeAnalysisAsm.GetName().Version?.ToString();
+        var codeAnalysisAsmVersion = codeAnalysisAsm.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version;
 
         var thisAsm = GetThisAnalyzerAssembly<Rule0089CognitiveComplexity>();
-        var thisAsmVersion = thisAsm.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+        var thisAsmCompatibilityVersion = thisAsm.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version;
 
         startCtx.RegisterCompilationEndAction(endCtx =>
-            ReportDiagnostic(endCtx, codeAnalysisAsmVersion, thisAsmVersion));
+            ReportDiagnostic(endCtx, codeAnalysisAsmVersion, thisAsmCompatibilityVersion));
     }
 
-    private static void ReportDiagnostic(CompilationAnalysisContext endCtx, string? codeAnalysisVersion, string? thisAnalyzerVersion)
+    private static void ReportDiagnostic(CompilationAnalysisContext endCtx, string? codeAnalysisVersion, string? thisCompatibilityVersion)
     {
-        if (string.IsNullOrEmpty(codeAnalysisVersion) || string.IsNullOrEmpty(thisAnalyzerVersion))
+        if (string.IsNullOrEmpty(codeAnalysisVersion) || string.IsNullOrEmpty(thisCompatibilityVersion))
             return;
 
-        if (codeAnalysisVersion != thisAnalyzerVersion)
+        if (codeAnalysisVersion != thisCompatibilityVersion)
         {
             endCtx.ReportDiagnostic(
                 Diagnostic.Create(
                     DiagnosticDescriptors.AssemblyVersionCompatibilityMismatch,
                     Location.None,
                     codeAnalysisVersion,
-                    thisAnalyzerVersion)
+                    thisCompatibilityVersion)
                     );
         }
     }
@@ -71,12 +71,12 @@ public class AssemblyVersionCompatibilityAnalyzer : DiagnosticAnalyzer
     private static class DiagnosticDescriptors
     {
         public static readonly DiagnosticDescriptor AssemblyVersionCompatibilityMismatch = new(
-            id: ":LinterCop",
+            id: "LinterCop",
             title: LinterCopAnalyzers.GetLocalizableString("AssemblyVersionCompatibilityMismatchTitle"),
             messageFormat: LinterCopAnalyzers.GetLocalizableString("AssemblyVersionCompatibilityMismatchFormat"),
             category: "Design",
             defaultSeverity: DiagnosticSeverity.Error,
-#if DEBUG // During develop don't enable by default
+#if DEBUG // The InformationalVersion property is only set in Release builds though the pipeline, so we disable this check in Debug builds
             isEnabledByDefault: false,
 #else
             isEnabledByDefault: true,
