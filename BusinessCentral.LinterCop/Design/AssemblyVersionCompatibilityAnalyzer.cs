@@ -76,7 +76,7 @@ public class AssemblyVersionCompatibilityAnalyzer : DiagnosticAnalyzer
             messageFormat: LinterCopAnalyzers.GetLocalizableString("AssemblyVersionCompatibilityMismatchFormat"),
             category: "Design",
             defaultSeverity: DiagnosticSeverity.Error,
-#if DEBUG // The InformationalVersion property is only set in Release builds though the pipeline, so we disable this check in Debug builds
+#if DEBUG // The AssemblyFileVersion property is only set in Release builds though the pipeline, so we disable this check in Debug builds
             isEnabledByDefault: false,
 #else
             isEnabledByDefault: true,
