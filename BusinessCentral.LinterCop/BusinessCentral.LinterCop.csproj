@@ -14,34 +14,34 @@
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
         <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
             <SpecificVersion>False</SpecificVersion>
-            <HintPath>../ALLanguage/extension/bin/Analyzers/System.Collections.Immutable.dll</HintPath>
+            <HintPath>../ALLanguage/System.Collections.Immutable.dll</HintPath>
             <Private>False</Private>
         </Reference>
     </ItemGroup>
     <ItemGroup>
         <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis">
             <SpecificVersion>False</SpecificVersion>
-            <HintPath>../ALLanguage/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
+            <HintPath>../ALLanguage/Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
             <Private>False</Private>            
         </Reference>
         <Reference Include="Microsoft.Dynamics.Nav.Analyzers.Common">
             <SpecificVersion>False</SpecificVersion>
-            <HintPath>../ALLanguage/extension/bin/Analyzers/Microsoft.Dynamics.Nav.Analyzers.Common.dll</HintPath>
+            <HintPath>../ALLanguage/Microsoft.Dynamics.Nav.Analyzers.Common.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces">
             <SpecificVersion>False</SpecificVersion>
-            <HintPath>../ALLanguage/extension/bin/Analyzers/Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
+            <HintPath>../ALLanguage/Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="System.Composition.AttributedModel">
             <SpecificVersion>False</SpecificVersion>
-            <HintPath>../ALLanguage/extension/bin/Analyzers/System.Composition.AttributedModel.dll</HintPath>
+            <HintPath>../ALLanguage/System.Composition.AttributedModel.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
             <SpecificVersion>False</SpecificVersion>
-            <HintPath>../ALLanguage/extension/bin/Analyzers/Newtonsoft.Json.dll</HintPath>
+            <HintPath>../ALLanguage/Newtonsoft.Json.dll</HintPath>
             <Private>False</Private>
         </Reference>
     </ItemGroup>

@@ -62,6 +62,7 @@ jobs:
           asset-publish: ${{ needs.setup.outputs.github-event-name != 'pull_request' }}
           al-version-number: ${{ matrix.version }}
           al-asset-uri: ${{ matrix.assetUri }}
+          al-asset-type: ${{ matrix.assetType }}
           al-latest: ${{ matrix.latest }}
           al-prerelease: ${{ matrix.prerelease }}
 
