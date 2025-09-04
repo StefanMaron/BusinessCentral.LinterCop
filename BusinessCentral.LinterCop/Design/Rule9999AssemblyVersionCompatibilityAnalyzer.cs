@@ -7,10 +7,10 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
 namespace BusinessCentral.LinterCop.Design;
 
 [DiagnosticAnalyzer]
-public class AssemblyVersionCompatibilityAnalyzer : DiagnosticAnalyzer
+public class Rule9999AssemblyVersionCompatibilityAnalyzer : DiagnosticAnalyzer
 {
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-            ImmutableArray.Create(DiagnosticDescriptors.AssemblyVersionCompatibilityMismatch);
+            ImmutableArray.Create(DiagnosticDescriptors.Rule9999AssemblyVersionCompatibilityAnalyzer);
 
     public override void Initialize(AnalysisContext context) =>
             context.RegisterCompilationStartAction(new Action<CompilationStartAnalysisContext>(this.CompareAssemblyVersion));
@@ -36,7 +36,7 @@ public class AssemblyVersionCompatibilityAnalyzer : DiagnosticAnalyzer
         {
             endCtx.ReportDiagnostic(
                 Diagnostic.Create(
-                    DiagnosticDescriptors.AssemblyVersionCompatibilityMismatch,
+                    DiagnosticDescriptors.Rule9999AssemblyVersionCompatibilityAnalyzer,
                     Location.None,
                     codeAnalysisVersion,
                     thisCompatibilityVersion)
@@ -58,7 +58,7 @@ public class AssemblyVersionCompatibilityAnalyzer : DiagnosticAnalyzer
             .GetAssemblies()
             .FirstOrDefault(a => a.GetType(analyzerType.FullName!, throwOnError: false, ignoreCase: false) is not null);
 
-        return resolved ?? analyzerAsm;
+        return resolved ?? analyzerAsm; //
 
         static bool IsMicrosoftCompilerAssembly(Assembly a)
         {
@@ -66,22 +66,5 @@ public class AssemblyVersionCompatibilityAnalyzer : DiagnosticAnalyzer
             return name.StartsWith("Microsoft.Dynamics.", StringComparison.OrdinalIgnoreCase)
                 && name.EndsWith(".CodeAnalysis", StringComparison.OrdinalIgnoreCase);
         }
-    }
-
-    private static class DiagnosticDescriptors
-    {
-        public static readonly DiagnosticDescriptor AssemblyVersionCompatibilityMismatch = new(
-            id: "LinterCop",
-            title: LinterCopAnalyzers.GetLocalizableString("AssemblyVersionCompatibilityMismatchTitle"),
-            messageFormat: LinterCopAnalyzers.GetLocalizableString("AssemblyVersionCompatibilityMismatchFormat"),
-            category: "Design",
-            defaultSeverity: DiagnosticSeverity.Warning,
-#if DEBUG // The AssemblyFileVersion property is only set in Release builds though the pipeline, so we disable this check in Debug builds
-            isEnabledByDefault: false,
-#else
-            isEnabledByDefault: true,
-#endif
-            description: LinterCopAnalyzers.GetLocalizableString("AssemblyVersionCompatibilityMismatchDescription"),
-            helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop");
     }
 }
