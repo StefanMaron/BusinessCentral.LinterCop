@@ -649,7 +649,7 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
                 new Tuple<string, string>("Customer Subscription Contract", "Sales Header"),
                 new Tuple<string, string>("Vendor Subscription Contract", "Purchase Header"),
 
-                new Tuple<string, string>("Onboarding Signal", "Onboarding Signal Buffer")
+                new Tuple<string, string>("Onboarding Signal", "Onboarding Signal Buffer"),
 
                 // AU
                 new Tuple<string, string>("Sales Invoice Header", "Sales Tax Invoice Header"),
