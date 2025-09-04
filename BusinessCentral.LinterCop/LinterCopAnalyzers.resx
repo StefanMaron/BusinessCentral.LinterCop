@@ -120,15 +120,6 @@
   <data name="AnalyzerPrefix" xml:space="preserve">
     <value>LC</value>
   </data>
-  <data name="AssemblyVersionCompatibilityMismatchDecription" xml:space="preserve">
-    <value>Analyzer and AL Language version mismatch</value>
-  </data>
-  <data name="AssemblyVersionCompatibilityMismatchFormat" xml:space="preserve">
-    <value>LinterCop version '{0}' is not compatible with AL Language version '{1}'. Please install the matching version of LinterCop for this AL Language.</value>
-  </data>
-  <data name="AssemblyVersionCompatibilityMismatchTitle" xml:space="preserve">
-    <value>The version of LinterCop does not match the version of the AL Language compiler it is running on. This mismatch may lead to incorrect diagnostics.</value>
-  </data>
   <data name="Rule0000ErrorInRuleDecription" xml:space="preserve">
     <value>There was an error in a Linter Rule</value>
   </data>
@@ -980,5 +971,14 @@
   </data>
   <data name="Rule0093GlobalTestMethodRequiresTestAttributeDescription" xml:space="preserve">
     <value>Global procedure in test codeunit requires test attribute. Use e.g. library codeunits for public procedures.</value>
+  </data>
+  <data name="Rule9999AssemblyVersionCompatibilityAnalyzerDecription" xml:space="preserve">
+    <value>Analyzer and AL Language version mismatch</value>
+  </data>
+  <data name="Rule9999AssemblyVersionCompatibilityAnalyzerFormat" xml:space="preserve">
+    <value>Incompatible versions detected. AL Language '{0}' does not match the version '{1}' that LinterCop was built for.</value>
+  </data>
+  <data name="Rule9999AssemblyVersionCompatibilityAnalyzerTitle" xml:space="preserve">
+    <value>The version of LinterCop does not match the version of the AL Language compiler it is running on. This mismatch may lead to incorrect diagnostics.</value>
   </data>
 </root>

@@ -461,6 +461,11 @@
       "id": "LC0093",
       "action": "Info",
       "justification": "Global test method requires test attribute. Use e.g. library codeunits for public procedures."
+    },
+    {
+      "id": "LC9999",
+      "action": "Error",
+      "justification": "The version of LinterCop does not match the version of the AL Language compiler it is running on."
     }
   ]
 }
