@@ -18,10 +18,7 @@ public class Rule0088AvoidOptionTypes : DiagnosticAnalyzer
     {
         context.RegisterSyntaxNodeAction(
             new Action<SyntaxNodeAnalysisContext>(this.AnalyzeSyntaxNodes),
-            new SyntaxKind[]{
-                    SyntaxKind.OptionDataType
-            }
-        );
+            SyntaxKind.OptionDataType);
 
         context.RegisterSymbolAction(
             new Action<SymbolAnalysisContext>(this.AnalyzeVariables),
@@ -29,12 +26,11 @@ public class Rule0088AvoidOptionTypes : DiagnosticAnalyzer
             SymbolKind.LocalVariable);
     }
 
+    #region SyntaxNodeAnalysis 
     private void AnalyzeSyntaxNodes(SyntaxNodeAnalysisContext ctx)
     {
         if (ctx.IsObsoletePendingOrRemoved() || ctx.Node is not OptionDataTypeSyntax optionDataType)
-        {
             return;
-        }
 
         bool skipDueToLocalOrGlobalVariable = optionDataType.Parent is SimpleTypeReferenceSyntax && !IsParameterOrReturnValue(optionDataType);
         if (skipDueToLocalOrGlobalVariable)
@@ -48,23 +44,10 @@ public class Rule0088AvoidOptionTypes : DiagnosticAnalyzer
         if (skipDueToTableIsOfTypeCDS)
             return;
 
-        // Handle FlowField with CalcFormula to a Field of Type option
-        if (optionDataType.Parent is FieldSyntax fieldSyntax)
+        if (optionDataType.Parent is FieldSyntax fieldSyntax &&
+            IsFlowFieldWithOptionCalculation(fieldSyntax, ctx))
         {
-            var calcFormulaPropertySyntax = fieldSyntax.PropertyList?.Properties
-                .OfType<PropertySyntax>()
-                .Select(p => p.Value)
-                .OfType<CalculationFormulaPropertyValueSyntax>()
-                .FirstOrDefault();
-
-            if (calcFormulaPropertySyntax is not null &&
-                calcFormulaPropertySyntax is FieldCalculationFormulaSyntax fieldCalculation &&
-                fieldCalculation.Field is QualifiedNameSyntax qualifiedNameSyntax &&
-                ctx.SemanticModel.GetSymbolInfo(qualifiedNameSyntax, ctx.CancellationToken).Symbol is ISymbol fieldSymbol &&
-                fieldSymbol.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Option)
-            {
-                return;
-            }
+            return;
         }
 
         ctx.ReportDiagnostic(Diagnostic.Create(
@@ -79,6 +62,32 @@ public class Rule0088AvoidOptionTypes : DiagnosticAnalyzer
         return parent is not null && (parent.Kind == SyntaxKind.Parameter || parent.Kind == SyntaxKind.ReturnValue);
     }
 
+    private static bool IsFlowFieldWithOptionCalculation(FieldSyntax fieldSyntax, SyntaxNodeAnalysisContext ctx)
+    {
+        var propertyList = fieldSyntax.PropertyList?.Properties;
+        if (propertyList is null)
+            return false;
+
+        foreach (var property in propertyList)
+        {
+            ctx.CancellationToken.ThrowIfCancellationRequested();
+
+            if (property is PropertySyntax propertySyntax &&
+                propertySyntax.Value is FieldCalculationFormulaSyntax fieldCalculation &&
+                fieldCalculation.Field is QualifiedNameSyntax qualifiedNameSyntax)
+            {
+                var fieldSymbol = ctx.SemanticModel.GetSymbolInfo(qualifiedNameSyntax, ctx.CancellationToken).Symbol;
+                if (fieldSymbol?.GetTypeSymbol().GetNavTypeKindSafe() == NavTypeKind.Option)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    #endregion
+
+    #region VariableAnalysis
     private void AnalyzeVariables(SymbolAnalysisContext ctx)
     {
         if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not IVariableSymbol variable)
@@ -95,11 +104,9 @@ public class Rule0088AvoidOptionTypes : DiagnosticAnalyzer
                 if (containingSymbol is null)
                     return;
 
-                var LocalVariablesName = GetReferencedVariableNames(containingSymbol, variable);
-                HasVariablesNotInSource = ((IMethodSymbol)containingSymbol.OriginalDefinition).LocalVariables
-                                                                .Where(var => !var.Type.GetLocation().IsInSource)
-                                                                .Where(var => LocalVariablesName?.Contains(var.OriginalDefinition.Name) == true)
-                                                                .Any();
+                var localVariablesName = GetReferencedVariableNames(containingSymbol, variable);
+                var localVariables = ((IMethodSymbol)containingSymbol.OriginalDefinition).LocalVariables;
+                HasVariablesNotInSource = HasReferencedVariablesNotInSource(localVariables, localVariablesName);
                 break;
 
             case SymbolKind.GlobalVariable:
@@ -107,19 +114,13 @@ public class Rule0088AvoidOptionTypes : DiagnosticAnalyzer
                 if (applicationObjectTypeSymbol is null)
                     return;
 
-                var GlobalVariablesName = GetReferencedVariableNames(applicationObjectTypeSymbol, variable);
-                HasVariablesNotInSource = applicationObjectTypeSymbol.GetMembers()
-                    .Where(member => member.Kind == SymbolKind.GlobalVariable || member.Kind == SymbolKind.Method)
-                    .SelectMany(member => member is IMethodSymbol methodSymbol
-                        ? methodSymbol.LocalVariables
-                        : member is IVariableSymbol variableSymbol ? Enumerable.Repeat(variableSymbol, 1) : Enumerable.Empty<IVariableSymbol>())
-                    .Where(var => !var.Type.GetLocation().IsInSource)
-                    .Where(var => GlobalVariablesName?.Contains(var.OriginalDefinition.Name) == true)
-                    .Any();
+                var globalVariablesName = GetReferencedVariableNames(applicationObjectTypeSymbol, variable);
+                var globalVariables = GetGlobalVariablesFromApplicationObject(applicationObjectTypeSymbol);
+                HasVariablesNotInSource = HasReferencedVariablesNotInSource(globalVariables, globalVariablesName);
                 break;
         }
 
-        if (HasVariablesNotInSource == false)
+        if (HasVariablesNotInSource is false)
         {
             ctx.ReportDiagnostic(Diagnostic.Create(
                 DiagnosticDescriptors.Rule0088AvoidOptionTypes,
@@ -128,25 +129,84 @@ public class Rule0088AvoidOptionTypes : DiagnosticAnalyzer
         }
     }
 
-    private static IEnumerable<string>? GetReferencedVariableNames(ISymbol? containingSymbol, IVariableSymbol variable)
+    private static bool HasReferencedVariablesNotInSource(
+        IEnumerable<IVariableSymbol> variables,
+        HashSet<string>? referencedNames)
+    {
+        if (referencedNames is null)
+            return false;
+
+        // Filter by name first (cheaper operation), then check location
+        return variables
+            .Where(var => referencedNames.Contains(var.OriginalDefinition.Name))
+            .Any(var => !var.Type.GetLocation().IsInSource);
+    }
+
+    private static List<IVariableSymbol> GetGlobalVariablesFromApplicationObject(IApplicationObjectTypeSymbol applicationObjectTypeSymbol)
+    {
+        var variables = new List<IVariableSymbol>();
+
+        foreach (var member in applicationObjectTypeSymbol.GetMembers())
+        {
+            if (member.Kind == SymbolKind.GlobalVariable && member is IVariableSymbol globalVar)
+            {
+                variables.Add(globalVar);
+            }
+            else if (member.Kind == SymbolKind.Method && member is IMethodSymbol method)
+            {
+                variables.AddRange(method.LocalVariables);
+            }
+        }
+
+        return variables;
+    }
+
+    private static HashSet<string>? GetReferencedVariableNames(ISymbol? containingSymbol, IVariableSymbol variable)
     {
         SyntaxNode? syntaxNode = containingSymbol?.DeclaringSyntaxReference?.GetSyntax();
         if (syntaxNode is null)
             return null;
 
-        var nodes = syntaxNode.DescendantNodes()
-            .OfType<ArgumentListSyntax>()
-            .Where(argList => argList.Arguments.Any(argument =>
-                (argument is OptionAccessExpressionSyntax optionAccess &&
-                 optionAccess.Expression.GetIdentifierOrLiteralValue() == variable.Name) ||
-                argument.GetIdentifierOrLiteralValue() == variable.Name));
+        var variableName = variable.Name;
+        var referencedNames = new HashSet<string>();
 
-        return nodes
-            .SelectMany(node => node.AncestorsAndSelf()
-                .OfType<ExpressionStatementSyntax>()
-                .SelectMany(exprStmt => exprStmt.DescendantNodes()
-                    .OfType<MemberAccessExpressionSyntax>()
-                    .Select(memberAccess => memberAccess.Expression.ToString().UnquoteIdentifier())))
-            .Distinct();
+        // Find all argument lists that reference the variable
+        var argumentLists = syntaxNode.DescendantNodes()
+            .OfType<ArgumentListSyntax>();
+
+        foreach (var argList in argumentLists)
+        {
+            // Check if any argument in this list references our variable
+            bool hasVariableReference = false;
+            foreach (var argument in argList.Arguments)
+            {
+                if ((argument is OptionAccessExpressionSyntax optionAccess &&
+                     optionAccess.Expression.GetIdentifierOrLiteralValue() == variableName) ||
+                    argument.GetIdentifierOrLiteralValue() == variableName)
+                {
+                    hasVariableReference = true;
+                    break;
+                }
+            }
+
+            if (hasVariableReference)
+            {
+                // Get the member access expressions from the containing expression statement
+                foreach (var exprStmt in argList.AncestorsAndSelf().OfType<ExpressionStatementSyntax>())
+                {
+                    foreach (var memberAccess in exprStmt.DescendantNodes().OfType<MemberAccessExpressionSyntax>())
+                    {
+                        var expressionName = memberAccess.Expression.ToString().UnquoteIdentifier();
+                        if (!string.IsNullOrEmpty(expressionName))
+                        {
+                            referencedNames.Add(expressionName);
+                        }
+                    }
+                }
+            }
+        }
+
+        return referencedNames;
     }
+    #endregion
 }
