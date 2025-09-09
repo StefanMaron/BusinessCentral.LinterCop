@@ -96,7 +96,7 @@ public class Rule0092
     [TestCase("VariableNameWithoutSpecialCharacters")]
     [TestCase("CaptionWithoutSpecialCharacters")]
     [TestCase("FieldNamesWithoutSpecialCharacters")]
-    [TestCase("ValidApiFieldNames")]
+    [TestCase("ValidAPIFieldNames")]
     [TestCase("ValidGroupNames")]
     [TestCase("ValidActionNames")]
     public async Task NoDiagnostic(string testCase)
