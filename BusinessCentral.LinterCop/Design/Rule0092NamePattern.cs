@@ -23,6 +23,15 @@ public class Rule0092NamePattern : DiagnosticAnalyzer
     private Regex? _eventDeclarationDisallowPattern = null;
     private Regex? _variableAndParameterNameAllowPattern = null;
     private Regex? _variableAndParameterNameDisallowPattern = null;
+    private Regex? _captionNameAllowPattern = null;
+    private Regex? _captionNameDisallowPattern = null;
+    private Regex? _fieldNameAllowPattern = null;
+    private Regex? _fieldNameDisallowPattern = null;
+    private Regex? _groupNameAllowPattern = null;
+    private Regex? _groupNameDisallowPattern = null;
+    private Regex? _actionNameAllowPattern = null;
+    private Regex? _actionNameDisallowPattern = null;
+    private Regex _apiPageFieldAllowPattern;
 
     public Rule0092NamePattern()
     {
@@ -46,6 +55,35 @@ public class Rule0092NamePattern : DiagnosticAnalyzer
         {
             _variableAndParameterNameAllowPattern = Pattern.CompilePattern(variableAndParameterNameSettings.AllowPattern);
             _variableAndParameterNameDisallowPattern = Pattern.CompilePattern(variableAndParameterNameSettings.DisallowPattern);
+        }
+
+        var captionNameSettings = LinterSettings.instance?.captionNamePattern;
+        if (captionNameSettings != null)
+        {
+            _captionNameAllowPattern = Pattern.CompilePattern(captionNameSettings.AllowPattern);
+            _captionNameDisallowPattern = Pattern.CompilePattern(captionNameSettings.DisallowPattern);
+        }
+
+        var fieldNameSettings = LinterSettings.instance?.fieldNamePattern;
+        if (fieldNameSettings != null)
+        {
+            _fieldNameAllowPattern = Pattern.CompilePattern(fieldNameSettings.AllowPattern);
+            _fieldNameDisallowPattern = Pattern.CompilePattern(fieldNameSettings.DisallowPattern);
+        }
+        _apiPageFieldAllowPattern = new Regex(@"^[a-z][A-Za-z0-9]*$"); // See: https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-api-pagetype#naming-conventions
+
+        var groupNameSettings = LinterSettings.instance?.groupNamePattern;
+        if (groupNameSettings != null)
+        {
+            _groupNameAllowPattern = Pattern.CompilePattern(groupNameSettings.AllowPattern);
+            _groupNameDisallowPattern = Pattern.CompilePattern(groupNameSettings.DisallowPattern);
+        }
+
+        var actionNameSettings = LinterSettings.instance?.actionNamePattern;
+        if (actionNameSettings != null)
+        {
+            _actionNameAllowPattern = Pattern.CompilePattern(actionNameSettings.AllowPattern);
+            _actionNameDisallowPattern = Pattern.CompilePattern(actionNameSettings.DisallowPattern);
         }
     }
 
@@ -87,6 +125,43 @@ public class Rule0092NamePattern : DiagnosticAnalyzer
                 new Action<SymbolAnalysisContext>(this.CheckParameterName),
                 new SymbolKind[]{
                     SymbolKind.Method,
+                }
+            );
+        }
+        if (_captionNameAllowPattern != null || _captionNameDisallowPattern != null)
+        {
+            context.RegisterSymbolAction(
+                new Action<SymbolAnalysisContext>(this.CheckCaptionName),
+                new SymbolKind[]{
+                    SymbolKind.Property,
+                }
+            );
+        }
+        if (_fieldNameAllowPattern != null || _fieldNameDisallowPattern != null)
+        {
+            context.RegisterSymbolAction(
+                new Action<SymbolAnalysisContext>(this.CheckFieldName),
+                new SymbolKind[]{
+                    SymbolKind.Field,
+                }
+            );
+        }
+        // always register for API page field name pattern, as this is not configurable
+        context.RegisterSymbolAction(
+            new Action<SymbolAnalysisContext>(this.CheckAPIFieldName),
+            new SymbolKind[]{
+                SymbolKind.Control,
+            }
+        );
+        if (_groupNameAllowPattern != null || _groupNameDisallowPattern != null ||
+            _actionNameAllowPattern != null || _actionNameDisallowPattern != null)
+        {
+            context.RegisterSymbolAction(
+                this.CheckGroupAndActionName,
+                new SymbolKind[]{
+                    SymbolKind.Page,
+                    SymbolKind.PageExtension,
+                    SymbolKind.RequestPage,
                 }
             );
         }
@@ -284,6 +359,269 @@ public class Rule0092NamePattern : DiagnosticAnalyzer
                     text,
                     kind
             );
+        }
+    }
+
+    private void CheckCaptionName(SymbolAnalysisContext ctx)
+    {
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not IPropertySymbol caption)
+            return;
+
+        if (caption.PropertyKind != PropertyKind.Caption)
+            return;
+
+
+        if (_captionNameAllowPattern != null)
+        {
+            HelperFunctions.CheckMatchesPattern(
+                ctx,
+                ctx.Symbol.GetLocation(),
+                _captionNameAllowPattern,
+                "caption.name.allow.pattern",
+                caption.ValueText,
+                "Caption"
+            );
+        }
+        if (_captionNameDisallowPattern != null)
+        {
+            HelperFunctions.CheckDoesNotMatchPattern(
+                ctx,
+                ctx.Symbol.GetLocation(),
+                _captionNameDisallowPattern,
+                "caption.name.disallow.pattern",
+                caption.ValueText,
+                "Caption"
+            );
+        }
+    }
+
+    private void CheckAPIFieldName(SymbolAnalysisContext ctx)
+    {
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not IControlSymbol field)
+            return;
+
+        if (field.ControlKind != ControlKind.Field)
+            return;
+
+
+        if (ctx.Symbol is IControlSymbol ctrlSym && ctrlSym.ControlKind == ControlKind.Field)
+        {
+            var sym = ctx.Symbol.GetContainingSymbolOfKind<IPageTypeSymbol>(SymbolKind.Page);
+            if (sym != null && sym.PageType == PageTypeKind.API)
+            {
+                // On API Pages, there are specific rules for field names
+                HelperFunctions.CheckMatchesPattern(
+                    ctx,
+                    ctx.Symbol.GetLocation(),
+                    _apiPageFieldAllowPattern,
+                    "",
+                    field.Name,
+                    "API-Page field"
+                );
+            }
+            else
+            {
+                CheckFieldPattern(ctx, ctrlSym.Name, "Page field");
+            }
+        }
+    }
+
+    private void CheckFieldName(SymbolAnalysisContext ctx)
+    {
+        if (ctx.IsObsoletePendingOrRemoved() || ctx.Symbol is not IFieldSymbol field)
+            return;
+
+        CheckFieldPattern(ctx, field.Name, "Table field");
+    }
+
+    private void CheckFieldPattern(SymbolAnalysisContext ctx, string text, string kind)
+    {
+        if (_fieldNameAllowPattern != null)
+        {
+            HelperFunctions.CheckMatchesPattern(
+                ctx,
+                ctx.Symbol.GetLocation(),
+                _fieldNameAllowPattern,
+                "field.name.allow.pattern",
+                text,
+                kind
+            );
+        }
+
+        if (_fieldNameDisallowPattern != null)
+        {
+            HelperFunctions.CheckDoesNotMatchPattern(
+                ctx,
+                ctx.Symbol.GetLocation(),
+                _fieldNameDisallowPattern,
+                "field.name.disallow.pattern",
+                text,
+                kind
+            );
+        }
+    }
+
+    private void CheckGroupAndActionName(SymbolAnalysisContext ctx)
+    {
+        if (ctx.IsObsoletePendingOrRemoved())
+            return;
+
+
+        if (ctx.Symbol is IPageBaseTypeSymbol page)
+        {
+            foreach (var ctrl in page.FlattenedControls)
+            {
+                CheckGroupName(ctx, ctrl);
+            }
+
+            foreach (var action in page.FlattenedActions)
+            {
+                CheckActionName(ctx, action);
+            }
+        }
+        else if (ctx.Symbol is IPageExtensionTypeSymbol pageext)
+        {
+            foreach (var ctrl in pageext.AddedControlsFlattened)
+            {
+                CheckGroupName(ctx, ctrl);
+            }
+
+            foreach (var action in pageext.AddedActionsFlattened)
+            {
+                CheckActionName(ctx, action);
+            }
+        }
+    }
+
+    private void CheckGroupName(SymbolAnalysisContext ctx, IControlSymbol ctrl)
+    {
+        if (ctrl.ControlKind == ControlKind.Group && !string.IsNullOrEmpty(ctrl.Name))
+        {
+            if (_groupNameAllowPattern != null && !_groupNameAllowPattern.IsMatch(ctrl.Name))
+            {
+                try
+                {
+                    var identifier = ctrl
+                        .DeclaringSyntaxReference?
+                        .GetSyntax()
+                        .ChildNodes()
+                        .First(node => node.IsKind(SyntaxKind.IdentifierName));
+
+                    if (identifier != null)
+                    {
+                        ctx.ReportDiagnostic(Diagnostic.Create(
+                            DiagnosticDescriptors.Rule0092NamesPattern,
+                            identifier.GetLocation(),
+                            [
+                                "Group",
+                                ctrl.Name,
+                                "must",
+                                "group.name.allow.pattern",
+                                _groupNameAllowPattern,
+                            ]
+                        ));
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                }
+            }
+
+            if (_groupNameDisallowPattern != null && _groupNameDisallowPattern.IsMatch(ctrl.Name))
+            {
+                try
+                {
+                    var identifier = ctrl
+                        .DeclaringSyntaxReference?
+                        .GetSyntax()
+                        .ChildNodes()
+                        .First(node => node.IsKind(SyntaxKind.IdentifierName));
+
+                    if (identifier != null)
+                    {
+                        ctx.ReportDiagnostic(Diagnostic.Create(
+                            DiagnosticDescriptors.Rule0092NamesPattern,
+                            identifier.GetLocation(),
+                            [
+                                "Group",
+                                ctrl.Name,
+                                "must not",
+                                "group.name.disallow.pattern",
+                                _groupNameDisallowPattern,
+                            ]
+                        ));
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                }
+            }
+        }
+    }
+    
+    private void CheckActionName(SymbolAnalysisContext ctx, IActionSymbol action)
+    {
+        if (!string.IsNullOrEmpty(action.Name))
+        {
+            if (_actionNameAllowPattern != null && !_actionNameAllowPattern.IsMatch(action.Name))
+            {
+                try
+                {
+                    var identifier = action
+                        .DeclaringSyntaxReference?
+                        .GetSyntax()
+                        .ChildNodes()
+                        .First(node => node.IsKind(SyntaxKind.IdentifierName));
+
+                    if (identifier != null)
+                    {
+                        ctx.ReportDiagnostic(Diagnostic.Create(
+                            DiagnosticDescriptors.Rule0092NamesPattern,
+                            identifier.GetLocation(),
+                            [
+                                "Action",
+                                action.Name,
+                                "must",
+                                "action.name.allow.pattern",
+                                _actionNameAllowPattern,
+                            ]
+                        ));
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                }
+            }
+
+            if (_actionNameDisallowPattern != null && _actionNameDisallowPattern.IsMatch(action.Name))
+            {
+                try
+                {
+                    var identifier = action
+                        .DeclaringSyntaxReference?
+                        .GetSyntax()
+                        .ChildNodes()
+                        .First(node => node.IsKind(SyntaxKind.IdentifierName));
+
+                    if (identifier != null)
+                    {
+                        ctx.ReportDiagnostic(Diagnostic.Create(
+                            DiagnosticDescriptors.Rule0092NamesPattern,
+                            identifier.GetLocation(),
+                            [
+                                "Action",
+                                action.Name,
+                                "must not",
+                                "action.name.disallow.pattern",
+                                _actionNameDisallowPattern,
+                            ]
+                        ));
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                }
+            }
         }
     }
 }

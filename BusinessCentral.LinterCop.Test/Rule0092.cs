@@ -35,7 +35,23 @@ public class Rule0092
                     "variable.name" : {
                         "allow.pattern": "^[A-Z][A-Za-z0-9]*$", // No special characters allowed & must start with upper case letter
                         "disallow.pattern": "^A42.*", // variable and parameter names must not start with A42
-                    }
+                    },
+                    "caption.name" : {
+                        "allow.pattern": "^[A-Z][A-Za-z0-9]*$", // No special characters allowed & must start with upper case letter
+                        "disallow.pattern": "^A42.*", // caption must not start with A42
+                    },
+                    "field.name" : {
+                        "allow.pattern": "^[A-Z][A-Za-z0-9]*$", // No special characters allowed & must start with upper case letter
+                        "disallow.pattern": "^A42.*", // field name must not start with A42
+                    },
+                    "group.name" : {
+                        "allow.pattern": "^[A-Z][A-Za-z0-9]*$", // No special characters allowed & must start with upper case letter
+                        "disallow.pattern": "^A42.*", // group name must not start with A42
+                    },
+                    "action.name" : {
+                        "allow.pattern": "^[A-Z][A-Za-z0-9]*$", // No special characters allowed & must start with upper case letter
+                        "disallow.pattern": "^A42.*", // action name must not start with A42
+                    },
                 }
             """);
 
@@ -59,6 +75,11 @@ public class Rule0092
     [TestCase("ReturnParameterWithSpecialCharacter")]
     [TestCase("VariableWithSpecialCharacter")]
     [TestCase("VariableWithDisallowPattern")]
+    [TestCase("CaptionWithDisallowedChars")]
+    [TestCase("FieldNamesWithSpecialCharacters")]
+    [TestCase("ApiFieldWithSpecialCharacters")]
+    [TestCase("InvalidGroupNames")]
+    [TestCase("InvalidActionNames")]
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
@@ -73,6 +94,11 @@ public class Rule0092
     [TestCase("GlobalProcedureWithoutLocalAllowPattern")]
     [TestCase("ObsoleteLowerCaseStart")]
     [TestCase("VariableNameWithoutSpecialCharacters")]
+    [TestCase("CaptionWithoutSpecialCharacters")]
+    [TestCase("FieldNamesWithoutSpecialCharacters")]
+    [TestCase("ValidApiFieldNames")]
+    [TestCase("ValidGroupNames")]
+    [TestCase("ValidActionNames")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
