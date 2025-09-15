@@ -968,7 +968,7 @@ public static class DiagnosticDescriptors
         title: LinterCopAnalyzers.GetLocalizableString("Rule9999AssemblyVersionCompatibilityAnalyzerTitle"),
         messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule9999AssemblyVersionCompatibilityAnalyzerFormat"),
         category: "Design",
-        defaultSeverity: DiagnosticSeverity.Error,
+        defaultSeverity: DiagnosticSeverity.Info,
 #if DEBUG // The AssemblyFileVersion property is only set in Release builds through the pipeline, so we disable this check by default in Debug builds
         isEnabledByDefault: false,
 #else
