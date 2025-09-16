@@ -758,6 +758,9 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
     private static readonly Lazy<ImmutableDictionary<string, string>> _obsoleteStateKindDictionary = CreateEnumDictionary(typeof(FieldClassKind),
                                                                                                                           typeof(FieldObsoleteStateKind));
     private static readonly Lazy<ImmutableDictionary<string, string>> _occurrenceKindDictionary = CreateEnumDictionary<OccurrenceKind>();
+    private static readonly Lazy<ImmutableDictionary<string, string>> _paperSourceDefaultPageKindDictionary = CreateEnumDictionary<PaperSourceDefaultPageKind>();
+    private static readonly Lazy<ImmutableDictionary<string, string>> _paperSourceFirstPageKindDictionary = CreateEnumDictionary<PaperSourceFirstPageKind>();
+    private static readonly Lazy<ImmutableDictionary<string, string>> _paperSourceLastPageKindDictionary = CreateEnumDictionary<PaperSourceLastPageKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _pageTypeKindDictionary = CreateEnumDictionary<PageTypeKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _pdfFontEmbeddingKindDictionary = CreateEnumDictionary<PdfFontEmbeddingKind>();
     private static readonly Lazy<ImmutableDictionary<string, string>> _readStateKindDictionary = CreateEnumDictionary<ReadStateKind>();
@@ -825,6 +828,9 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
             { "Multiplicity",           _multiplicityKindKindDictionary },
             { "ObsoleteState",          _obsoleteStateKindDictionary },
             { "Occurrence",             _occurrenceKindDictionary },
+            { "PaperSourceDefaultPage", _paperSourceDefaultPageKindDictionary },
+            { "PaperSourceFirstPage",   _paperSourceFirstPageKindDictionary },
+            { "PaperSourceLastPage",    _paperSourceLastPageKindDictionary },
             { "QueryType",              _queryTypeKindDictionary },
             { "Scope",                  _scopeKindDictionary },
             { "ShowAs",                 _showAsKindDictionary },
