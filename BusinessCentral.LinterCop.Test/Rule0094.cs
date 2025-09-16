@@ -1,6 +1,6 @@
 ﻿namespace BusinessCentral.LinterCop.Test;
 
-public class Rule0096
+public class Rule0094
 {
     private string _testCaseDir = "";
 
@@ -8,7 +8,7 @@ public class Rule0096
     public void Setup()
     {
         _testCaseDir = Path.Combine(Directory.GetParent(Environment.CurrentDirectory)!.Parent!.Parent!.FullName,
-            "TestCases", "Rule0096");
+            "TestCases", "Rule0094");
     }
 
     [Test]
@@ -19,18 +19,20 @@ public class Rule0096
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
             .ConfigureAwait(false);
 
-        var fixture = RoslynFixtureFactory.Create<Rule0096UnnecessaryParameterInMethodCall>();
-        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0096UnnecessaryParameterInMethodCall.Id);
+        var fixture = RoslynFixtureFactory.Create<Rule0094UnnecessaryParameterInMethodCall>();
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0094UnnecessaryParameterInMethodCall.Id);
     }
 
     [Test]
     [TestCase("DifferentParameter")]
+    [TestCase("ClearMethod")]
+    [TestCase("EventSubscriber")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
             .ConfigureAwait(false);
 
-        var fixture = RoslynFixtureFactory.Create<Rule0096UnnecessaryParameterInMethodCall>();
-        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0096UnnecessaryParameterInMethodCall.Id);
+        var fixture = RoslynFixtureFactory.Create<Rule0094UnnecessaryParameterInMethodCall>();
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0094UnnecessaryParameterInMethodCall.Id);
     }
 }

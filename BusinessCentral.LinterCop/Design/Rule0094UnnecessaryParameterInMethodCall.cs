@@ -8,10 +8,10 @@ using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 namespace BusinessCentral.LinterCop.Design;
 
 [DiagnosticAnalyzer]
-public class Rule0096UnnecessaryParameterInMethodCall : DiagnosticAnalyzer
+public class Rule0094UnnecessaryParameterInMethodCall : DiagnosticAnalyzer
 {
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        ImmutableArray.Create(DiagnosticDescriptors.Rule0096UnnecessaryParameterInMethodCall);
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0094UnnecessaryParameterInMethodCall);
 
     public override void Initialize(AnalysisContext context) => context.RegisterOperationAction(
         new Action<OperationAnalysisContext>(this.AnalyzeInvocation),
@@ -24,6 +24,10 @@ public class Rule0096UnnecessaryParameterInMethodCall : DiagnosticAnalyzer
 
         // Procedure does not contain arguments -> nothing to check
         if (operation.Arguments.IsEmpty)
+            return;
+
+        // ignore Event publisher
+        if (operation.TargetMethod is IMethodSymbol methodSymbol && methodSymbol.IsEvent)
             return;
 
         var instance = operation.Instance;
@@ -60,7 +64,7 @@ public class Rule0096UnnecessaryParameterInMethodCall : DiagnosticAnalyzer
                 instanceSymbol.Equals(argumentSymbol))
             {
                 context.ReportDiagnostic(Diagnostic.Create(
-                    DiagnosticDescriptors.Rule0096UnnecessaryParameterInMethodCall,
+                    DiagnosticDescriptors.Rule0094UnnecessaryParameterInMethodCall,
                     argument.Syntax.GetLocation()
                 ));
             }
@@ -69,6 +73,10 @@ public class Rule0096UnnecessaryParameterInMethodCall : DiagnosticAnalyzer
 
     private void CheckMethodCalledInCurrentTable(OperationAnalysisContext context, IInvocationExpression operation)
     {
+        // Ignore Clear(...) invocations
+        if (IsClearInvocation(operation))
+            return;
+
         foreach (var arg in operation.Arguments)
         {
             var semanticModel = context.Compilation.GetSemanticModel(arg.Syntax.SyntaxTree);
@@ -77,10 +85,19 @@ public class Rule0096UnnecessaryParameterInMethodCall : DiagnosticAnalyzer
             if (symbolInfo != null && string.Equals(symbolInfo.Name, "Rec", StringComparison.OrdinalIgnoreCase))
             {
                 context.ReportDiagnostic(Diagnostic.Create(
-                    DiagnosticDescriptors.Rule0096UnnecessaryParameterInMethodCall,
+                    DiagnosticDescriptors.Rule0094UnnecessaryParameterInMethodCall,
                     arg.Syntax.GetLocation()
                 ));
             }
         }
+    }
+
+    private static bool IsClearInvocation(IInvocationExpression operation)
+    {
+        var methodSymbol = operation.TargetMethod;
+        if (methodSymbol is null)
+            return false;
+
+        return string.Equals(methodSymbol.Name, "Clear", StringComparison.OrdinalIgnoreCase);
     }
 }
