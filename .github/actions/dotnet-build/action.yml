@@ -17,7 +17,10 @@ inputs:
     description: The version number of the corresponding AL Language
   al-asset-uri:
     required: true
-    description: The asset uri for retrieving the VSIXPackages of the AL Language
+    description: The asset uri for retrieving the VSIXPackage/NuGetPackage of the AL Language
+  al-asset-type:
+    required: true
+    description: The asset type, VSIXPackage or NuGetPackage
   al-latest:
     default: "false"
     required: false
@@ -36,20 +39,8 @@ runs:
       with:
         version-number: ${{ inputs.al-version-number }}
         asset-uri: ${{ inputs.al-asset-uri }}
+        asset-type: ${{ inputs.al-asset-type }}
         target-path: ALLanguage
-
-    - name: Set AssemblyInfo
-      shell: pwsh
-      if: ${{ inputs.asset-publish == 'true' }}
-      env:
-        AL_VERSION: ${{ inputs.al-version-number }}
-        LC_VERSION: ${{ inputs.asset-version-number }}
-      run:
-        (Get-Content BusinessCentral.LinterCop/AssemblyInfo.cs) -replace 'Version\("([\d\.]+)"\)]',
-        ("Version(""" + ($env:LC_VERSION
-        -replace "v","") + """)]") | Out-File BusinessCentral.LinterCop/AssemblyInfo.cs
-
-        (Get-Content BusinessCentral.LinterCop/AssemblyInfo.cs) -replace 'AssemblyTitle\("([^"]*)"\)', "AssemblyTitle(`"AL-$env:AL_VERSION`")" | Out-File BusinessCentral.LinterCop/AssemblyInfo.cs
 
     - name: Populate Feature Flags
       id: get-feature-flags
@@ -61,11 +52,53 @@ runs:
       id: get-target-framework
       uses: ./.github/actions/target-framework
       with:
+        asset-type: ${{ inputs.al-asset-type }}
         version-number: ${{ inputs.al-version-number }}
+
+    - name: Normalize version number
+      id: normalize-version
+      shell: pwsh
+      run: |
+        $input = "${{ inputs.asset-version-number }}"
+        if ([string]::IsNullOrWhiteSpace($input)) {
+          $normalized = "1.0.0.0"
+        }
+        else {
+          $normalized = $input.TrimStart("v")
+        }
+
+        echo "Normalized version: $normalized"
+        echo "normalized-asset-version=$normalized" >> $env:GITHUB_OUTPUT
+
+    - name: Get version from Microsoft.Dynamics.Nav.CodeAnalysis.dll
+      id: get-codeanalysis-version
+      shell: pwsh
+      run: |
+        $filePath = "./ALLanguage/Microsoft.Dynamics.Nav.CodeAnalysis.dll"
+
+        $asm = [System.Reflection.Assembly]::LoadFrom($filePath)
+        $attr = $asm.GetCustomAttributes([System.Reflection.AssemblyFileVersionAttribute], $false)
+        if ($attr.Count -gt 0) {
+            $version = $attr[0].Version
+        } else {
+            $version = $asm.GetName().Version.ToString()
+        }
+
+        Write-Host "CodeAnalysis.dll version: $version"
+        echo "codeanalysis-version=$version" >> $env:GITHUB_OUTPUT
 
     - name: Build
       shell: pwsh
-      run: dotnet build BusinessCentral.LinterCop /p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }} --configuration Release --framework ${{ steps.get-target-framework.outputs.target-framework }}
+      run: >
+        dotnet build BusinessCentral.LinterCop
+        --configuration Release
+        --framework ${{ steps.get-target-framework.outputs.target-framework }}
+        -p:FeatureFlags=${{ steps.get-feature-flags.outputs.feature-flags }}
+        -p:Product="BusinessCentral.LinterCop"
+        -p:Version=${{ steps.normalize-version.outputs.normalized-asset-version }}
+        -p:InformationalVersion=${{ steps.normalize-version.outputs.normalized-asset-version }}
+        -p:AssemblyTitle="AL-${{ inputs.al-version-number }}"
+        -p:FileVersion=${{ steps.get-codeanalysis-version.outputs.codeanalysis-version }}
 
     - name: Cache NuGet packages
       uses: actions/cache@v4

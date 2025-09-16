@@ -954,14 +954,14 @@
   <data name="Rule0091TranslatableTextShouldBeTranslatedDescription" xml:space="preserve">
     <value>Labels and other variants should be translated for every available translation file language.</value>
   </data>
-  <data name="Rule0092ProcedureNamePatternTitle" xml:space="preserve">
-    <value>Procedures must match pattern / must not match pattern.</value>
+  <data name="Rule0092NamePatternTitle" xml:space="preserve">
+    <value>Names must match pattern / must not match pattern.</value>
   </data>
-  <data name="Rule0092ProcedureNamePatternFormat" xml:space="preserve">
-    <value>Procedure name \"{0}\" {1} match {2} \"{3}\"</value>
+  <data name="Rule0092NamePatternFormat" xml:space="preserve">
+    <value>{0} name \"{1}\" {2} match {3} \"{4}\"</value>
   </data>
-  <data name="Rule0092ProcedureNamePatternDescription" xml:space="preserve">
-    <value>Procedure names must match the allowed pattern and must not match the disallowed pattern.</value>
+  <data name="Rule0092NamePatternDescription" xml:space="preserve">
+    <value>Names must match the allowed pattern and must not match the disallowed pattern.</value>
   </data>  
   <data name="Rule0093GlobalTestMethodRequiresTestAttributeTitle" xml:space="preserve">
     <value>Global procedure in test codeunit requires test attribute.</value>
@@ -980,5 +980,14 @@
   </data>
   <data name="Rule0094UnnecessaryParameterInMethodCallDescription" xml:space="preserve">
     <value>A method invoked on a record must not contain same variable in parameter list as the one on which the call was made.</value>
- </data>
+  </data>
+  <data name="Rule9999AssemblyVersionCompatibilityAnalyzerDecription" xml:space="preserve">
+    <value>Analyzer and AL Language version mismatch</value>
+  </data>
+  <data name="Rule9999AssemblyVersionCompatibilityAnalyzerFormat" xml:space="preserve">
+    <value>Incompatible versions detected. AL Language '{0}' does not match the version '{1}' that LinterCop was built for.</value>
+  </data>
+  <data name="Rule9999AssemblyVersionCompatibilityAnalyzerTitle" xml:space="preserve">
+    <value>The version of LinterCop does not match the version of the AL Language compiler it is running on. This mismatch may lead to incorrect diagnostics.</value>
+  </data>
 </root>

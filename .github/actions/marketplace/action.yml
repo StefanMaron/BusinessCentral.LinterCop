@@ -19,26 +19,32 @@ runs:
       id: get-marketplace
       shell: pwsh
       run: |
-        $listing = ${{github.action_path}}/Get-Marketplace.ps1 | ConvertFrom-Json
+        $marketplace = ${{github.action_path}}/Get-Marketplace.ps1 | ConvertFrom-Json
 
-        $versionLatest = $listing `
+        $versionLatest = $marketplace `
          | Where-Object properties -ne $null `
          | Where-Object { $_.properties.key -notcontains 'Microsoft.VisualStudio.Code.PreRelease' } | Select-Object -First 1 -ExpandProperty version
         echo "latest=$($versionLatest)" >> $env:GITHUB_OUTPUT
 
-        $versionPreRelease = $listing `
+        $versionPreRelease = $marketplace `
          | Where-Object properties -ne $null `
          | Where-Object { $_.properties.key -contains 'Microsoft.VisualStudio.Code.PreRelease' } | Select-Object -First 1 -ExpandProperty version
         echo "prerelease=$($versionPreRelease)" >> $env:GITHUB_OUTPUT
 
         # Populate list of sources
-        $sources = foreach ($item in $listing) {
+        $sources = foreach ($item in $marketplace) {
             $VSIXPackage = $item.files | Where-Object { $_.assetType -eq "Microsoft.VisualStudio.Services.VSIXPackage" }
             if ($VSIXPackage) {
                 [PSCustomObject]@{
                     version = $item.version
                     source  = $VSIXPackage.source
+                    type    = 'VSIXPackage'
                 }
             }
         }
+
+        # Add NuGet packages to list of sources
+        $nupkgs = ${{github.action_path}}/Get-NuGet-Packages | ConvertFrom-Json
+        $sources += $nupkgs
+
         echo "sources=$($sources | ConvertTo-Json -Compress)" >> $env:GITHUB_OUTPUT

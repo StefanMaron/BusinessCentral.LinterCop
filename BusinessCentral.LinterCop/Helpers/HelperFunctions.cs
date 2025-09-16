@@ -1,6 +1,8 @@
 ﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
+using System.Text.RegularExpressions;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
 
 namespace BusinessCentral.LinterCop.Helpers;
 
@@ -66,5 +68,47 @@ public class HelperFunctions
     {
         var containing = operation?.Syntax?.GetContainingObjectSyntax();
         return containing is TableSyntax;
+    }
+    
+    public static void CheckMatchesPattern(SymbolAnalysisContext ctx, Location location, Regex pattern, string patternSource, string name, string indentifierKind)
+    {
+        CheckPattern(ctx, location, pattern, patternSource, true, name, indentifierKind);
+    }
+
+    public static void CheckDoesNotMatchPattern(SymbolAnalysisContext ctx, Location location, Regex pattern, string patternSource, string name, string indentifierKind)
+    {
+        CheckPattern(ctx, location, pattern, patternSource, false, name, indentifierKind);
+    }
+
+    private static void CheckPattern(SymbolAnalysisContext ctx, Location location, Regex pattern, string patternSource, bool isMatch, string name, string indentifierKind)
+    {
+        bool matches;
+        try
+        {
+            matches = pattern.IsMatch(name);
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            return;
+        }
+        catch (Exception)
+        {
+            return;
+        }
+
+        if (matches != isMatch)
+        {
+            ctx.ReportDiagnostic(Diagnostic.Create(
+                DiagnosticDescriptors.Rule0092NamesPattern,
+                location,
+                [
+                    indentifierKind,
+                    name,
+                    isMatch ? "must" : "must not",
+                    patternSource,
+                    pattern.ToString(),
+                ]
+            ));
+        }
     }
 }

@@ -52,6 +52,12 @@
             "problemMatcher": []
         },
         {
+            "label": "LoadALToolsDependency",
+            "type": "shell",
+            "command": "Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process; ./.vscode/LoadALTools.ps1",
+            "problemMatcher": []
+        },
+        {
             "label": "Prep Codespace",
             "type": "shell",
             "command": "pwsh ./.devcontainer/ContainerPrep.ps1",

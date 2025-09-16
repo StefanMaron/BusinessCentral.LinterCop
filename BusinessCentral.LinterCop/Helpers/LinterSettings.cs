@@ -14,6 +14,11 @@ namespace BusinessCentral.LinterCop.Helpers
         public bool enableRule0016ForApiObjects = false;
         public string WorkingDir = "";
         public ProcedureNamePattern procedureNamePattern = new();
+        public VariableAndParameterNamePattern variableAndParameterNamePattern = new();
+        public CaptionPattern captionNamePattern = new();
+        public FieldPattern fieldNamePattern = new();
+        public GroupNamePattern groupNamePattern = new();
+        public ActionNamePattern actionNamePattern = new();
         static public LinterSettings instance;
 
         static public void Create(string WorkingDir)
@@ -47,6 +52,16 @@ namespace BusinessCentral.LinterCop.Helpers
 
                     if (internalInstance.procedureNamePattern != null)
                         instance.procedureNamePattern = internalInstance.procedureNamePattern;
+                    if (internalInstance.variableAndParameterNamePattern != null)
+                        instance.variableAndParameterNamePattern = internalInstance.variableAndParameterNamePattern;
+                    if (internalInstance.captionNamePattern != null)
+                        instance.captionNamePattern = internalInstance.captionNamePattern;
+                    if (internalInstance.fieldNamePattern != null)
+                        instance.fieldNamePattern = internalInstance.fieldNamePattern;
+                    if (internalInstance.groupNamePattern != null)
+                        instance.groupNamePattern = internalInstance.groupNamePattern;
+                    if (internalInstance.actionNamePattern != null)
+                        instance.actionNamePattern = internalInstance.actionNamePattern;
                 }
 
                 instance.WorkingDir = WorkingDir;
@@ -64,6 +79,21 @@ namespace BusinessCentral.LinterCop.Helpers
 
             [JsonProperty("procedure.name")]
             public ProcedureNamePattern procedureNamePattern;
+
+            [JsonProperty("variable.name")]
+            public VariableAndParameterNamePattern variableAndParameterNamePattern = new();
+
+            [JsonProperty("caption.name")]
+            public CaptionPattern captionNamePattern = new();
+
+            [JsonProperty("field.name")]
+            public FieldPattern fieldNamePattern = new();
+
+            [JsonProperty("group.name")]
+            public GroupNamePattern groupNamePattern= new();
+            
+            [JsonProperty("action.name")]
+            public ActionNamePattern actionNamePattern = new();
         }
 
         public class ProcedureNamePattern
@@ -94,6 +124,51 @@ namespace BusinessCentral.LinterCop.Helpers
             public string EventDeclarationAllowPattern = "";
             [JsonProperty("event.declaration.disallow.pattern")]
             public string EventDeclarationDisallowPattern = "";
+        }
+
+        public class VariableAndParameterNamePattern
+        {
+            [JsonProperty("allow.pattern")]
+            public string AllowPattern = "";
+
+            [JsonProperty("disallow.pattern")]
+            public string DisallowPattern = "";
+        }
+
+        public class CaptionPattern
+        {
+            [JsonProperty("allow.pattern")]
+            public string AllowPattern = "";
+
+            [JsonProperty("disallow.pattern")]
+            public string DisallowPattern = "";
+        }
+
+        public class FieldPattern
+        {
+            [JsonProperty("allow.pattern")]
+            public string AllowPattern = "";
+
+            [JsonProperty("disallow.pattern")]
+            public string DisallowPattern = "";
+        }
+
+        public class GroupNamePattern
+        {
+            [JsonProperty("allow.pattern")]
+            public string AllowPattern = "";
+
+            [JsonProperty("disallow.pattern")]
+            public string DisallowPattern = "";
+        }
+        
+        public class ActionNamePattern
+        {
+            [JsonProperty("allow.pattern")]
+            public string AllowPattern = "";
+
+            [JsonProperty("disallow.pattern")]
+            public string DisallowPattern = "";
         }
     }
 }

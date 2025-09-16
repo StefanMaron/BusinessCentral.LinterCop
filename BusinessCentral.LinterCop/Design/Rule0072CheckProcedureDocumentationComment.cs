@@ -39,8 +39,14 @@ public class Rule0072CheckProcedureDocumentationComment : DiagnosticAnalyzer
                     var parameterName = nameAttribute.Identifier.GetText().ToString();
                     if (!docCommentParameters.ContainsKey(parameterName))
                         docCommentParameters.Add(parameterName, element);
+                    else
+                        // report diagnostic for duplicate parameter documentation
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment, element.GetLocation()));
                     break;
                 case "returns":
+                    if (docCommentReturns is not null)
+                        // report diagnostic for duplicate returns documentation
+                        ctx.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.Rule0072CheckProcedureDocumentationComment, element.GetLocation()));
                     docCommentReturns = element;
                     break;
             }

@@ -27,11 +27,31 @@ public class Rule0092
             """
                 {
                     "procedure.name" : {
-                        "allow.pattern": "^[A-Z][A-Za-z0-9]*$", // No special characters allowed &  must start with upper case letter
+                        "allow.pattern": "^[A-Z][A-Za-z0-9_]*$", // No special characters allowed (exept "_") & must start with upper case letter
                         "disallow.pattern": "^A42.*", // prodeure names must not start with A42
                         "global.procedure.disallow.pattern": "^Global.*", // global procedure names must not start with Global 
                         "local.procedure.allow.pattern": "^.*_loc$" // local procedure names have to end with _loc
-                    }
+                    },
+                    "variable.name" : {
+                        "allow.pattern": "^[A-Z][A-Za-z0-9]*$", // No special characters allowed & must start with upper case letter
+                        "disallow.pattern": "^A42.*", // variable and parameter names must not start with A42
+                    },
+                    "caption.name" : {
+                        "allow.pattern": "^[A-Z][A-Za-z0-9]*$", // No special characters allowed & must start with upper case letter
+                        "disallow.pattern": "^A42.*", // caption must not start with A42
+                    },
+                    "field.name" : {
+                        "allow.pattern": "^[A-Z][A-Za-z0-9]*$", // No special characters allowed & must start with upper case letter
+                        "disallow.pattern": "^A42.*", // field name must not start with A42
+                    },
+                    "group.name" : {
+                        "allow.pattern": "^[A-Z][A-Za-z0-9]*$", // No special characters allowed & must start with upper case letter
+                        "disallow.pattern": "^A42.*", // group name must not start with A42
+                    },
+                    "action.name" : {
+                        "allow.pattern": "^[A-Z][A-Za-z0-9]*$", // No special characters allowed & must start with upper case letter
+                        "disallow.pattern": "^A42.*", // action name must not start with A42
+                    },
                 }
             """);
 
@@ -51,25 +71,40 @@ public class Rule0092
     [TestCase("LowerCaseStart")]
     [TestCase("SpecialCharacters")]
     [TestCase("StartWithDisallowedChars")]
+    [TestCase("ParameterWithSpecialCharacters")]
+    [TestCase("ReturnParameterWithSpecialCharacter")]
+    [TestCase("VariableWithSpecialCharacter")]
+    [TestCase("VariableWithDisallowPattern")]
+    [TestCase("CaptionWithDisallowedChars")]
+    [TestCase("FieldNamesWithSpecialCharacters")]
+    [TestCase("ApiFieldWithSpecialCharacters")]
+    [TestCase("InvalidGroupNames")]
+    [TestCase("InvalidActionNames")]
     public async Task HasDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "HasDiagnostic", $"{testCase}.al"))
             .ConfigureAwait(false);
 
-        var fixture = RoslynFixtureFactory.Create<Rule0092ProcedureNamePattern>();
-        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0092ProcedureNamePattern.Id);
+        var fixture = RoslynFixtureFactory.Create<Rule0092NamePattern>();
+        fixture.HasDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0092NamesPattern.Id);
     }
 
     [Test]
     [TestCase("LocalProcedureWithGlobalDisallowPattern")]
     [TestCase("GlobalProcedureWithoutLocalAllowPattern")]
     [TestCase("ObsoleteLowerCaseStart")]
+    [TestCase("VariableNameWithoutSpecialCharacters")]
+    [TestCase("CaptionWithoutSpecialCharacters")]
+    [TestCase("FieldNamesWithoutSpecialCharacters")]
+    [TestCase("ValidAPIFieldNames")]
+    [TestCase("ValidGroupNames")]
+    [TestCase("ValidActionNames")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
             .ConfigureAwait(false);
 
-        var fixture = RoslynFixtureFactory.Create<Rule0016CheckForMissingCaptions>();
-        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0092ProcedureNamePattern.Id);
+        var fixture = RoslynFixtureFactory.Create<Rule0092NamePattern>();
+        fixture.NoDiagnosticAtAllMarkers(code, DiagnosticDescriptors.Rule0092NamesPattern.Id);
     }
 }
