@@ -83,11 +83,6 @@ public class Rule0005CasingMismatchDeclaration : DiagnosticAnalyzer
     // Grouping nodes for increase performance
     private void CheckNodes(SymbolAnalysisContext ctx)
     {
-        if (!ctx.Compilation.Options.SpecificDiagnosticOptions.TryGetValue(
-                DiagnosticDescriptors.Rule0005CasingMismatch.Id,
-                out var severity) || severity == ReportDiagnostic.Suppress)
-            return;
-
         var node = ctx.Symbol.DeclaringSyntaxReference?.GetSyntax(ctx.CancellationToken);
         if (node is null)
             return;
