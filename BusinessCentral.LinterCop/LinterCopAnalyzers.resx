@@ -972,6 +972,15 @@
   <data name="Rule0093GlobalTestMethodRequiresTestAttributeDescription" xml:space="preserve">
     <value>Global procedure in test codeunit requires test attribute. Use e.g. library codeunits for public procedures.</value>
   </data>
+  <data name="Rule0094UnnecessaryParameterInMethodCallTitle" xml:space="preserve">
+    <value>Unnecessary parameter.</value>
+  </data>
+  <data name="Rule0094UnnecessaryParameterInMethodCallFormat" xml:space="preserve">
+    <value>A method invoked on a record must not contain same variable in parameter list as the one on which the call was made.</value>
+  </data>
+  <data name="Rule0094UnnecessaryParameterInMethodCallDescription" xml:space="preserve">
+    <value>A method invoked on a record must not contain same variable in parameter list as the one on which the call was made.</value>
+  </data>
   <data name="Rule9999AssemblyVersionCompatibilityAnalyzerDecription" xml:space="preserve">
     <value>Analyzer and AL Language version mismatch</value>
   </data>

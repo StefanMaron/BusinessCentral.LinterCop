@@ -142,6 +142,7 @@ For an example and the default values see: [LinterCop.ruleset.json](./BusinessCe
 |[LC0091](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0091)|Translatable texts should be translated|Info|14.0|
 |[LC0092](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0092)|Names must match the allowed pattern and must not match the disallowed pattern|Info|
 |[LC0093](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0093)|Global procedure in test codeunit requires test attribute.|Info||
+|[LC0094](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0094)|A method invoked on a record must not contain same variable in parameter list as the one on which the call was made.|Info||
 |[LC9999](https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0099)|The version of LinterCop does not match the version of the AL Language compiler it is running on.|Error||
 
 ## Codespace
