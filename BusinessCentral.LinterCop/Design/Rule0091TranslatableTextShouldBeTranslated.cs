@@ -147,8 +147,11 @@ public class Rule0091TranslatableTextShouldBeTranslated : DiagnosticAnalyzer
     private IEnumerable<Stream> ReadXliffFiles(Compilation compilation)
     {
         IEnumerable<Stream> xliffFileStream = [];
-        IFileSystem fileSystem = new FileSystem();
         NavAppManifest? manifest = ManifestHelper.GetManifest(compilation);
+
+        // use compilation.FileSystem to ensure correct app context (multi-app workspaces).
+        // instantiating FileSystem() directly may default to the first app's directory in multi-app workspaces
+        IFileSystem fileSystem = compilation.FileSystem ?? new FileSystem();
 
         if (manifest == null) return xliffFileStream;
         if (!manifest.CompilerFeatures.ShouldGenerateTranslationFile()) return xliffFileStream;
