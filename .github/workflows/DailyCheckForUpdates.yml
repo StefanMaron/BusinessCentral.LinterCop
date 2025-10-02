@@ -22,8 +22,9 @@ jobs:
           $nuget = Invoke-WebRequest -Method GET -UseBasicParsing `
               -Uri "https://api.nuget.org/v3-flatcontainer/$($PackageId.ToLower())/index.json" | ConvertFrom-Json
 
+          $jsonString = @{marketplace = $marketplace; nuget = $nuget} | ConvertTo-Json -Compress -Depth 10
           $md5 = [System.Security.Cryptography.MD5]::Create()
-          $bytes = [System.Text.Encoding]::UTF8.GetBytes(@{marketplace = $marketplace; nuget = $nuget})
+          $bytes = [System.Text.Encoding]::UTF8.GetBytes($jsonString)
           $hashBytes = $md5.ComputeHash($bytes)
           $hashString = [BitConverter]::ToString($hashBytes).ToLower() -replace '-', ''
           Write-Host "Calculated hash is: $($hashString)"
