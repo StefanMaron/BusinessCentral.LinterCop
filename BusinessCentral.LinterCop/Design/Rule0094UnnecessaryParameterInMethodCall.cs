@@ -30,6 +30,12 @@ public class Rule0094UnnecessaryParameterInMethodCall : DiagnosticAnalyzer
         if (operation.TargetMethod is IMethodSymbol methodSymbol && methodSymbol.IsEvent)
             return;
 
+        // ignore methods called in another module
+        var currentModule = context.Compilation.ModuleName;
+        var targetModule = operation.TargetMethod?.ContainingModule?.Name;
+        if (currentModule == null || !string.Equals(currentModule, targetModule))
+            return;
+
         var instance = operation.Instance;
         if (instance?.Type is { NavTypeKind: NavTypeKind.Record })
         {
@@ -73,10 +79,6 @@ public class Rule0094UnnecessaryParameterInMethodCall : DiagnosticAnalyzer
 
     private void CheckMethodCalledInCurrentTable(OperationAnalysisContext context, IInvocationExpression operation)
     {
-        // Ignore Clear(...) invocations
-        if (IsClearInvocation(operation))
-            return;
-
         foreach (var arg in operation.Arguments)
         {
             var semanticModel = context.Compilation.GetSemanticModel(arg.Syntax.SyntaxTree);
@@ -90,14 +92,5 @@ public class Rule0094UnnecessaryParameterInMethodCall : DiagnosticAnalyzer
                 ));
             }
         }
-    }
-
-    private static bool IsClearInvocation(IInvocationExpression operation)
-    {
-        var methodSymbol = operation.TargetMethod;
-        if (methodSymbol is null)
-            return false;
-
-        return string.Equals(methodSymbol.Name, "Clear", StringComparison.OrdinalIgnoreCase);
     }
 }

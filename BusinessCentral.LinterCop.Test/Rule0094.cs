@@ -25,8 +25,9 @@ public class Rule0094
 
     [Test]
     [TestCase("DifferentParameter")]
-    [TestCase("ClearMethod")]
+    [TestCase("BaseAppMethods")]
     [TestCase("EventSubscriber")]
+    [TestCase("RunModalExample")]
     public async Task NoDiagnostic(string testCase)
     {
         var code = await File.ReadAllTextAsync(Path.Combine(_testCaseDir, "NoDiagnostic", $"{testCase}.al"))
