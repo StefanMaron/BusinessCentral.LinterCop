@@ -1,5 +1,4 @@
 $PackageId = 'Microsoft.Dynamics.BusinessCentral.Development.Tools'
-$IncludePrerelease = $true
 
 # Resolve latest version from NuGet flat container
 $indexUrl = "https://api.nuget.org/v3-flatcontainer/$($PackageId.ToLower())/index.json"
@@ -10,21 +9,48 @@ catch {
     throw "Failed to query NuGet index for '$PackageId'. $_"
 }
 
-$versions = @($idx.versions)
-if (-not $IncludePrerelease) {
-    $versions = $versions | Where-Object { $_ -notmatch '-' }
-}
-if (-not $versions -or $versions.Count -eq 0) {
+$allVersions = @($idx.versions)
+if (-not $allVersions -or $allVersions.Count -eq 0) {
     throw "No versions found for $PackageId."
 }
 
-$version = $versions[-1]
-$source = "https://api.nuget.org/v3-flatcontainer/$($PackageId.ToLower())/$version/$($PackageId.ToLower()).$version.nupkg"
-
-$listing = [PSCustomObject]@{
-    version = $version
-    source  = $source
-    type    = 'NuGetPackage'
+# Find latest stable version (no suffix)
+$stableVersions = $allVersions | Where-Object { $_ -notmatch '-' }
+$latestStable = if ($stableVersions -and $stableVersions.Count -gt 0) { 
+    $stableVersions[-1] 
+}
+else { 
+    $null 
 }
 
-Write-Output $listing | ConvertTo-Json -Compress
+# Find latest beta version
+$betaVersions = $allVersions | Where-Object { $_ -match '-beta' }
+$latestBeta = if ($betaVersions -and $betaVersions.Count -gt 0) { 
+    $betaVersions[-1] 
+}
+else { 
+    $null 
+}
+
+# Build output array
+$results = @()
+
+if ($latestStable) {
+    $stableSource = "https://api.nuget.org/v3-flatcontainer/$($PackageId.ToLower())/$latestStable/$($PackageId.ToLower()).$latestStable.nupkg"
+    $results += [PSCustomObject]@{
+        version = $latestStable
+        source  = $stableSource
+        type    = 'NuGetPackage'
+    }
+}
+
+if ($latestBeta) {
+    $betaSource = "https://api.nuget.org/v3-flatcontainer/$($PackageId.ToLower())/$latestBeta/$($PackageId.ToLower()).$latestBeta.nupkg"
+    $results += [PSCustomObject]@{
+        version = $latestBeta
+        source  = $betaSource
+        type    = 'NuGetPackage'
+    }
+}
+
+Write-Output $results | ConvertTo-Json -Compress
