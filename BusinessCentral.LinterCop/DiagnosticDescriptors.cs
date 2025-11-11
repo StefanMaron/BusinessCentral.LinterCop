@@ -945,12 +945,12 @@ public static class DiagnosticDescriptors
 
     public static readonly DiagnosticDescriptor Rule0092NamesPattern = new(
         id: LinterCopAnalyzers.AnalyzerPrefix + "0092",
-        title: LinterCopAnalyzers.GetLocalizableString("Rule0092NamesPatternTitle"),
-        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0092NamesPatternFormat"),
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0092NamePatternTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0092NamePatternFormat"),
         category: "Design",
         defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true,
-        description: LinterCopAnalyzers.GetLocalizableString("Rule0092NamesPatternDescription"),
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0092NamePatternDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0092");
 
     public static readonly DiagnosticDescriptor Rule0093GlobalTestMethodRequiresTestAttribute = new(
