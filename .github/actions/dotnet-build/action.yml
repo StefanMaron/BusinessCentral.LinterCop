@@ -98,6 +98,7 @@ runs:
         -p:Version=${{ steps.normalize-version.outputs.normalized-asset-version }}
         -p:InformationalVersion=${{ steps.normalize-version.outputs.normalized-asset-version }}
         -p:AssemblyTitle="AL-${{ inputs.al-version-number }}"
+        -p:MSBuildAssemblyNameOverride="BusinessCentral.LinterCop.AL-${{ inputs.al-version-number }}" # TODO: this naming needs to account for prerelease and latest
         -p:FileVersion=${{ steps.get-codeanalysis-version.outputs.codeanalysis-version }}
 
     - name: Cache NuGet packages
@@ -118,7 +119,7 @@ runs:
       if: ${{ inputs.asset-publish == 'true' }}
       with:
         name: ${{ inputs.asset-name }}
-        path: BusinessCentral.LinterCop/bin/Release/${{ steps.get-target-framework.outputs.target-framework }}/BusinessCentral.LinterCop.dll
+        path: BusinessCentral.LinterCop/bin/Release/${{ steps.get-target-framework.outputs.target-framework }}/BusinessCentral.LinterCop.dll # TODO: this needs to now be dynamically evaluated based on the name change above
         compression-level: 0 # no compression
 
     ### Upload Asset as Latest
@@ -128,7 +129,7 @@ runs:
       if: ${{ inputs.asset-publish == 'true' && inputs.al-latest == 'true' }}
       with:
         name: BusinessCentral.LinterCop.dll
-        path: BusinessCentral.LinterCop/bin/Release/${{ steps.get-target-framework.outputs.target-framework }}/BusinessCentral.LinterCop.dll
+        path: BusinessCentral.LinterCop/bin/Release/${{ steps.get-target-framework.outputs.target-framework }}/BusinessCentral.LinterCop.dlll # TODO: this needs to now be dynamically evaluated based on the name change above
         compression-level: 0 # no compression
 
     ### Upload Asset as Pre-Release
@@ -138,5 +139,5 @@ runs:
       if: ${{ inputs.asset-publish == 'true' && inputs.al-prerelease == 'true' }}
       with:
         name: BusinessCentral.LinterCop.AL-PreRelease.dll
-        path: BusinessCentral.LinterCop/bin/Release/${{ steps.get-target-framework.outputs.target-framework }}/BusinessCentral.LinterCop.dll
+        path: BusinessCentral.LinterCop/bin/Release/${{ steps.get-target-framework.outputs.target-framework }}/BusinessCentral.LinterCop.dlll # TODO: this needs to now be dynamically evaluated based on the name change above
         compression-level: 0 # no compression

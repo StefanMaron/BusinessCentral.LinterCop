@@ -1,4 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName Condition=" '$(MSBuildAssemblyNameOverride)' == '' ">BusinessCentral.LinterCop</AssemblyName>
+        <AssemblyName Condition=" '$(MSBuildAssemblyNameOverride)' != '' ">$(MSBuildAssemblyNameOverride)</AssemblyName>
+    </PropertyGroup>
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
