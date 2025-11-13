@@ -981,6 +981,15 @@
   <data name="Rule0094UnnecessaryParameterInMethodCallDescription" xml:space="preserve">
     <value>A method invoked on a record must not contain same variable in parameter list as the one on which the call was made.</value>
   </data>
+  <data name="Rule0095UnusedParameterInProcedureTitle" xml:space="preserve">
+    <value>Unused parameter.</value>
+  </data>
+  <data name="Rule0095UnusedParameterInProcedureFormat" xml:space="preserve">
+    <value>Parameter '{0}' is not used in the method body.</value>
+  </data>
+  <data name="Rule0095UnusedParameterInProcedureDescription" xml:space="preserve">
+    <value>Unused parameters should be avoided.</value>
+  </data>
   <data name="Rule9999AssemblyVersionCompatibilityAnalyzerDecription" xml:space="preserve">
     <value>Analyzer and AL Language version mismatch</value>
   </data>
