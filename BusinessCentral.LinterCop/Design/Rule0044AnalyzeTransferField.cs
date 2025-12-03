@@ -543,6 +543,8 @@ public class Rule0044AnalyzeTransferFields : DiagnosticAnalyzer
                 new Tuple<string, string>("Warehouse Activity Line", "Posted Invt. Put-away Line"),
 
                 new Tuple<string, string>("Posted Whse. Receipt Header", "Warehouse Receipt Header"),
+                new Tuple<string, string>("Posted Whse. Receipt Line", "Warehouse Receipt Line"),
+                new Tuple<string, string>("Posted Whse. Shipment Header", "Warehouse Shipment Header"),
                 new Tuple<string, string>("Posted Whse. Shipment Line", "Warehouse Shipment Line"),
                 new Tuple<string, string>("Whse. Item Entry Relation", "Item Entry Relation"),
 
