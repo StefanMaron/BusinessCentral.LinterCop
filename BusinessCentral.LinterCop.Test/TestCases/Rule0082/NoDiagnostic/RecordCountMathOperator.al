@@ -9,6 +9,7 @@ codeunit 50100 MyCodeunit
         i := [|MyTable.Count() + 1|];
         i := [|MyTable.Count() / 1|];
         i := [|MyTable.Count() * 1|];
+        i := [|MyTable.Count() MOD 1|];
     end;
 }
 
