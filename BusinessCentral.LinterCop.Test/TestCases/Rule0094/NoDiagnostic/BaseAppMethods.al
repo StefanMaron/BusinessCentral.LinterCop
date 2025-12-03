@@ -5,8 +5,10 @@ table 50100 MyTable
         field(1; Id; Integer) { }
     }
 
-    internal procedure ClearRec()
+    internal procedure CallBaseMethods()
+    var SomeText: Text;
     begin
         Clear([|Rec|]);
+        SomeText := Format([|Rec|]);
     end;
 }
