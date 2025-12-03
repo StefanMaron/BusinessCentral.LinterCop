@@ -30,6 +30,7 @@ public class Rule0082
 
     [Test]
     [TestCase("RecordCountEqualsTwo")]
+    [TestCase("RecordCountMathOperator")]
     [TestCase("RecordTemporaryCountEqualsOne")]
     public async Task NoDiagnostic(string testCase)
     {
