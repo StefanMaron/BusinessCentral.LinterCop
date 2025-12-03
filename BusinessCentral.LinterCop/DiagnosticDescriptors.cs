@@ -973,6 +973,16 @@ public static class DiagnosticDescriptors
         description: LinterCopAnalyzers.GetLocalizableString("Rule0094UnnecessaryParameterInMethodCallDescription"),
         helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0094");
         
+    public static readonly DiagnosticDescriptor Rule0095UnusedProcedureParameter  = new(
+        id: LinterCopAnalyzers.AnalyzerPrefix + "0095",
+        title: LinterCopAnalyzers.GetLocalizableString("Rule0095UnusedParameterInProcedureTitle"),
+        messageFormat: LinterCopAnalyzers.GetLocalizableString("Rule0095UnusedParameterInProcedureFormat"),
+        category: "Design",
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: true,
+        description: LinterCopAnalyzers.GetLocalizableString("Rule0095UnusedParameterInProcedureDescription"),
+        helpLinkUri: "https://github.com/StefanMaron/BusinessCentral.LinterCop/wiki/LC0095");
+
     public static readonly DiagnosticDescriptor Rule9999AssemblyVersionCompatibilityAnalyzer = new(
         id: LinterCopAnalyzers.AnalyzerPrefix + "9999",
         title: LinterCopAnalyzers.GetLocalizableString("Rule9999AssemblyVersionCompatibilityAnalyzerTitle"),

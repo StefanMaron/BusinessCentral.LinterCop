@@ -463,6 +463,16 @@
       "justification": "Global test method requires test attribute. Use e.g. library codeunits for public procedures."
     },
     {
+      "id": "LC0094",
+      "action": "Info",
+      "justification": "Unnecessary parameters in method calls should be avoided."
+    },
+    {
+      "id": "LC0095",
+      "action": "Info",
+      "justification": "Unused internal procedure parameters should be removed to improve code readability."
+    },
+    {
       "id": "LC9999",
       "action": "Error",
       "justification": "The version of LinterCop does not match the version of the AL Language compiler it is running on."
