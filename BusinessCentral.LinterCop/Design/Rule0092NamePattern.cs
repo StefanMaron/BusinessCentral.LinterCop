@@ -31,9 +31,31 @@ public class Rule0092NamePattern : DiagnosticAnalyzer
     private Regex? _groupNameDisallowPattern = null;
     private Regex? _actionNameAllowPattern = null;
     private Regex? _actionNameDisallowPattern = null;
-    private Regex _apiPageFieldAllowPattern;
+    private Regex _apiPageFieldAllowPattern = new Regex(@"^[a-z][A-Za-z0-9]*$"); // See: https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-api-pagetype#naming-conventions;
 
-    public Rule0092NamePattern()
+
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+        ImmutableArray.Create(DiagnosticDescriptors.Rule0092NamesPattern);
+
+    public override void Initialize(AnalysisContext context)
+    {
+        context.RegisterCompilationStartAction(compilationContext =>
+        {
+            // Initialize LinterSettings based on compilation context if not already set
+            if (LinterSettings.instance is null)
+            {
+                string? directoryPath = compilationContext.Compilation.FileSystem?.GetDirectoryPath();
+                LinterSettings.Create(directoryPath);
+            }
+            
+            // Initialize patterns with loaded settings
+            InitializePatterns();
+            
+            RegisterAnalyzers(compilationContext);
+        });
+    }
+    
+    public void InitializePatterns()
     {
         var procedureNameSettings = LinterSettings.instance?.procedureNamePattern;
         if (procedureNameSettings != null)
@@ -70,7 +92,6 @@ public class Rule0092NamePattern : DiagnosticAnalyzer
             _fieldNameAllowPattern = Pattern.CompilePattern(fieldNameSettings.AllowPattern);
             _fieldNameDisallowPattern = Pattern.CompilePattern(fieldNameSettings.DisallowPattern);
         }
-        _apiPageFieldAllowPattern = new Regex(@"^[a-z][A-Za-z0-9]*$"); // See: https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-api-pagetype#naming-conventions
 
         var groupNameSettings = LinterSettings.instance?.groupNamePattern;
         if (groupNameSettings != null)
@@ -87,10 +108,7 @@ public class Rule0092NamePattern : DiagnosticAnalyzer
         }
     }
 
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        ImmutableArray.Create(DiagnosticDescriptors.Rule0092NamesPattern);
-
-    public override void Initialize(AnalysisContext context)
+    public void RegisterAnalyzers(CompilationStartAnalysisContext context)
     {
         if (_procedureNameAllowPattern != null ||
             _procedureNameDisallowPattern != null ||
