@@ -56,7 +56,7 @@ public class Rule0081AnalyzeCountMethod : DiagnosticAnalyzer
 
         if (IsEligibleUseQueryOrFindWithNext(recordTypeSymbol))
         {
-            if (IsOneComparison(leftValue, rightValue))
+            if (IsOneComparison(binaryExpression, leftValue, rightValue))
             {
                 ReportUseFindWithNextDiagnostic(ctx, operation, GetOperatorKind(binaryExpression.OperatorToken.Kind));
                 return;
@@ -70,6 +70,14 @@ public class Rule0081AnalyzeCountMethod : DiagnosticAnalyzer
         }
     }
 
+    private static bool IsComparisonOperator(SyntaxKind kind) =>
+        kind is SyntaxKind.EqualsToken
+            or SyntaxKind.NotEqualsToken
+            or SyntaxKind.LessThanToken
+            or SyntaxKind.GreaterThanToken
+            or SyntaxKind.LessThanEqualsToken
+            or SyntaxKind.GreaterThanEqualsToken;
+
     private static int GetLiteralExpressionValue(CodeExpressionSyntax codeExpression) =>
         codeExpression is LiteralExpressionSyntax { Literal.Kind: SyntaxKind.Int32SignedLiteralValue } literalExpression &&
         literalExpression.Literal.GetLiteralValue() is int value ? value : -1;
@@ -77,17 +85,17 @@ public class Rule0081AnalyzeCountMethod : DiagnosticAnalyzer
     private static SyntaxKind GetOperatorKind(SyntaxKind tokenKind) =>
         tokenKind == SyntaxKind.EqualsToken ? SyntaxKind.EqualsToken : SyntaxKind.NotEqualsToken;
 
-    private static bool IsZeroComparison(int left, int right)
-        => left == Literals.Zero || right == Literals.Zero;
+    private static bool IsZeroComparison(int left, int right) =>
+        left == Literals.Zero || right == Literals.Zero;
 
     private static bool IsLessThanOneComparison(BinaryExpressionSyntax expr, int right) =>
-             expr.OperatorToken.Kind == SyntaxKind.LessThanToken && right == Literals.One;
+        expr.OperatorToken.Kind == SyntaxKind.LessThanToken && right == Literals.One;
 
     private static bool IsGreaterThanOneComparison(BinaryExpressionSyntax expr, int left) =>
         expr.OperatorToken.Kind == SyntaxKind.GreaterThanToken && left == Literals.One;
 
-    private static bool IsOneComparison(int left, int right) =>
-        left == Literals.One || right == Literals.One;
+    private static bool IsOneComparison(BinaryExpressionSyntax expr, int left, int right) =>
+        IsComparisonOperator(expr.OperatorToken.Kind) && (left == Literals.One || right == Literals.One);
 
     private static bool IsLessThanTwoComparison(BinaryExpressionSyntax expr, int right) =>
         expr.OperatorToken.Kind == SyntaxKind.LessThanToken && right == Literals.Two;
