@@ -70,6 +70,14 @@ public class Rule0081AnalyzeCountMethod : DiagnosticAnalyzer
         }
     }
 
+    private static bool IsComparisonOperator(SyntaxKind kind) =>
+        kind is SyntaxKind.EqualsToken
+            or SyntaxKind.NotEqualsToken
+            or SyntaxKind.LessThanToken
+            or SyntaxKind.GreaterThanToken
+            or SyntaxKind.LessThanEqualsToken
+            or SyntaxKind.GreaterThanEqualsToken;
+
     private static int GetLiteralExpressionValue(CodeExpressionSyntax codeExpression) =>
         codeExpression is LiteralExpressionSyntax { Literal.Kind: SyntaxKind.Int32SignedLiteralValue } literalExpression &&
         literalExpression.Literal.GetLiteralValue() is int value ? value : -1;
@@ -87,7 +95,7 @@ public class Rule0081AnalyzeCountMethod : DiagnosticAnalyzer
         expr.OperatorToken.Kind == SyntaxKind.GreaterThanToken && left == Literals.One;
 
     private static bool IsOneComparison(BinaryExpressionSyntax expr, int left, int right) =>
-        (expr.OperatorToken.Kind == SyntaxKind.EqualsToken || expr.OperatorToken.Kind == SyntaxKind.NotEqualsToken) && (left == Literals.One || right == Literals.One);
+        IsComparisonOperator(expr.OperatorToken.Kind) && (left == Literals.One || right == Literals.One);
 
     private static bool IsLessThanTwoComparison(BinaryExpressionSyntax expr, int right) =>
         expr.OperatorToken.Kind == SyntaxKind.LessThanToken && right == Literals.Two;
