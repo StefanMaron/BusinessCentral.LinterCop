@@ -3,7 +3,7 @@ codeunit 50100 MyCodeunit
     procedure MyProcedure()
     var
         MyTable: Record MyTable;
-        i: Integer
+        i: Integer;
     begin
         i := [|MyTable.Count() - 1|];
         i := [|MyTable.Count() + 1|];
