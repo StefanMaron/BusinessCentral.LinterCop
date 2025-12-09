@@ -1,5 +1,6 @@
 ﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Symbols;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Syntax;
 using System.Text.RegularExpressions;
 using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
@@ -22,11 +23,30 @@ public class HelperFunctions
 
         foreach (var implementedInterface in codeunitSymbol.ImplementedInterfaces)
         {
-            if (implementedInterface.GetMembers().OfType<IMethodSymbol>().Any(interfaceMethodSymbol => MethodImplementsInterfaceMethod(methodSymbol, interfaceMethodSymbol)))
+            if (MethodImplementsInterfaceMethod(implementedInterface, methodSymbol))
             {
                 return true;
             }
         }
+
+        return false;
+    }
+
+    public static bool MethodImplementsInterfaceMethod(IInterfaceTypeSymbol interfaceTypeSymbol, IMethodSymbol methodSymbol)
+    {
+        if (interfaceTypeSymbol.GetMembers().OfType<IMethodSymbol>().Any(interfaceMethodSymbol => MethodImplementsInterfaceMethod(methodSymbol, interfaceMethodSymbol)))
+        {
+            return true;
+        }
+#if !LessThenFall2024
+        foreach (var extendedInterface in interfaceTypeSymbol.ExtendedInterfaces)
+        {
+            if (MethodImplementsInterfaceMethod(extendedInterface, methodSymbol))
+            {
+                return true;
+            }
+        }
+#endif
 
         return false;
     }
