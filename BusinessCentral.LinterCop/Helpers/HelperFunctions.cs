@@ -13,7 +13,7 @@ public class HelperFunctions
         return MethodImplementsInterfaceMethod(methodSymbol.GetContainingApplicationObjectTypeSymbol(), methodSymbol);
     }
 
-    public static bool MethodImplementsInterfaceMethod(IApplicationObjectTypeSymbol? objectSymbol, IMethodSymbol methodSymbol)
+    public static bool MethodImplementsInterfaceMethod(IApplicationObjectTypeSymbol objectSymbol, IMethodSymbol methodSymbol)
     {
         if (objectSymbol is not ICodeunitTypeSymbol codeunitSymbol)
         {
@@ -22,7 +22,24 @@ public class HelperFunctions
 
         foreach (var implementedInterface in codeunitSymbol.ImplementedInterfaces)
         {
-            if (implementedInterface.GetMembers().OfType<IMethodSymbol>().Any(interfaceMethodSymbol => MethodImplementsInterfaceMethod(methodSymbol, interfaceMethodSymbol)))
+            if (MethodImplementsInterfaceMethod(implementedInterface, methodSymbol))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static bool MethodImplementsInterfaceMethod(IInterfaceTypeSymbol interfaceTypeSymbol, IMethodSymbol methodSymbol)
+    {
+        if (interfaceTypeSymbol.GetMembers().OfType<IMethodSymbol>().Any(interfaceMethodSymbol => MethodImplementsInterfaceMethod(methodSymbol, interfaceMethodSymbol)))
+        {
+            return true;
+        }
+        foreach (var extendedInterface in interfaceTypeSymbol.ExtendedInterfaces)
+        {
+            if (MethodImplementsInterfaceMethod(extendedInterface, methodSymbol))
             {
                 return true;
             }
