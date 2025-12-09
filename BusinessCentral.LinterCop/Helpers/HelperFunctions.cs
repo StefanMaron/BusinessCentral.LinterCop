@@ -38,6 +38,7 @@ public class HelperFunctions
         {
             return true;
         }
+#if !LessThenFall2024
         foreach (var extendedInterface in interfaceTypeSymbol.ExtendedInterfaces)
         {
             if (MethodImplementsInterfaceMethod(extendedInterface, methodSymbol))
@@ -45,6 +46,7 @@ public class HelperFunctions
                 return true;
             }
         }
+#endif
 
         return false;
     }
