@@ -14,7 +14,7 @@ public class HelperFunctions
         return MethodImplementsInterfaceMethod(methodSymbol.GetContainingApplicationObjectTypeSymbol(), methodSymbol);
     }
 
-    public static bool MethodImplementsInterfaceMethod(IApplicationObjectTypeSymbol objectSymbol, IMethodSymbol methodSymbol)
+    public static bool MethodImplementsInterfaceMethod(IApplicationObjectTypeSymbol? objectSymbol, IMethodSymbol methodSymbol)
     {
         if (objectSymbol is not ICodeunitTypeSymbol codeunitSymbol)
         {
