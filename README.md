@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> This repository is deprecated and will not receive any new updates for the foreseeable future.
+> Development continues at [ALCops](https://alcops.dev) ([GitHub](https://github.com/ALCops)).
+> If you would like to contribute, please do so in one of the active repositories there.
+
 # BusinessCentral.LinterCop
 
 [![Github All Releases](https://img.shields.io/github/downloads/StefanMaron/BusinessCentral.LinterCop/total?label=Downloads%20total)]()
